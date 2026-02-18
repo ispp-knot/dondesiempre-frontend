@@ -1,12 +1,15 @@
-const {
+import { spawnSync } from "node:child_process";
+import {
   PHASE_DEVELOPMENT_SERVER,
   PHASE_PRODUCTION_BUILD,
-} = require("next/constants");
+} from "next/constants.js";
+import { NextConfig } from "next";
 
-/** @type {(phase: string, defaultConfig: import("next").NextConfig) => Promise<import("next").NextConfig>} */
-module.exports = async (phase : string) => {
-  /** @type {import("next").NextConfig} */
-  const nextConfig = {};
+export default async function config(
+  phase: string,
+  _defaultConfig: NextConfig,
+) {
+  const nextConfig: NextConfig = {};
 
   if (phase === PHASE_DEVELOPMENT_SERVER || phase === PHASE_PRODUCTION_BUILD) {
     // This is optional!
@@ -15,13 +18,12 @@ module.exports = async (phase : string) => {
     // `git rev-parse HEAD` might not the most efficient way
     // of determining a revision, however. You may prefer to use
     // the hashes of every extra file you precache.
-    const { spawnSync } = require("node:child_process");
-    const revision = spawnSync("git", ["rev-parse", "HEAD"], { encoding: "utf-8" }).stdout ?? crypto.randomUUID();
+    const revision =
+      spawnSync("git", ["rev-parse", "HEAD"], { encoding: "utf-8" }).stdout ??
+      crypto.randomUUID();
 
     const withSerwist = (await import("@serwist/next")).default({
       additionalPrecacheEntries: [{ url: "/~offline", revision }],
-      // Note: This is only an example. If you use Pages Router,
-      // use something else that works, such as "service-worker/index.ts".
       swSrc: "app/sw.ts",
       swDest: "public/sw.js",
     });
@@ -29,4 +31,5 @@ module.exports = async (phase : string) => {
   }
 
   return nextConfig;
-};
+}
+
