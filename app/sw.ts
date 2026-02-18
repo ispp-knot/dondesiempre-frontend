@@ -1,6 +1,5 @@
-import { defaultCache } from "@serwist/next/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { Serwist } from "serwist";
+import { Serwist, StaleWhileRevalidate } from "serwist";
 
 // This declares the value of `injectionPoint` to TypeScript.
 // `injectionPoint` is the string that will be replaced by the
@@ -16,10 +15,26 @@ declare const self: ServiceWorkerGlobalScope;
 
 const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
+  precacheOptions: {
+    // Whether outdated caches should be removed.
+    cleanupOutdatedCaches: true,
+    concurrency: 10,
+    ignoreURLParametersMatching: [],
+  },
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
-  runtimeCaching: defaultCache,
+  runtimeCaching: [
+    {
+      matcher({ request }) {
+        // Cache everything except backend API calls
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+        if (!backendUrl) return true; // Cache everything if no backend URL set
+        return !request.url.includes(backendUrl);
+      },
+      handler: new StaleWhileRevalidate({ cacheName: "app" }),
+    },
+  ],
   fallbacks: {
     entries: [
       {

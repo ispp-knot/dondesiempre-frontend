@@ -7,5 +7,6 @@ export async function authorizedOfetch(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   // This will later be a wrapper that adds authorization to the headers
-  return ofetch(request, options);
+  debugger;
+  return ofetch(request, { timeout: 5000, ...options });
 }
