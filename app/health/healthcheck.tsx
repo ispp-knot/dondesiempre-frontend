@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { getHealth } from "@/lib/api/getHealth";
-import { useQuery } from "@tanstack/react-query";
+import { getHealth } from '@/lib/api/getHealth';
+import { useQuery } from '@tanstack/react-query';
 
 export function HealthCheck() {
   const healthCheckQuery = useQuery({
-    queryKey: ["health"],
+    queryKey: ['health'],
     queryFn: getHealth,
   });
 
