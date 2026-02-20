@@ -1,14 +1,8 @@
-import { spawnSync } from "node:child_process";
-import {
-  PHASE_DEVELOPMENT_SERVER,
-  PHASE_PRODUCTION_BUILD,
-} from "next/constants.js";
-import { NextConfig } from "next";
+import { spawnSync } from 'node:child_process';
+import { PHASE_DEVELOPMENT_SERVER, PHASE_PRODUCTION_BUILD } from 'next/constants.js';
+import { NextConfig } from 'next';
 
-export default async function config(
-  phase: string,
-  _defaultConfig: NextConfig,
-) {
+export default async function config(phase: string, _defaultConfig: NextConfig) {
   const nextConfig: NextConfig = {};
 
   if (phase === PHASE_DEVELOPMENT_SERVER || phase === PHASE_PRODUCTION_BUILD) {
@@ -19,13 +13,12 @@ export default async function config(
     // of determining a revision, however. You may prefer to use
     // the hashes of every extra file you precache.
     const _revision =
-      spawnSync("git", ["rev-parse", "HEAD"], { encoding: "utf-8" }).stdout ??
-      crypto.randomUUID();
+      spawnSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf-8' }).stdout ?? crypto.randomUUID();
 
-    const withSerwist = (await import("@serwist/next")).default({
+    const withSerwist = (await import('@serwist/next')).default({
       additionalPrecacheEntries: [],
-      swSrc: "app/sw.ts",
-      swDest: "public/sw.js",
+      swSrc: 'app/sw.ts',
+      swDest: 'public/sw.js',
     });
     return withSerwist(nextConfig);
   }
