@@ -1,4 +1,4 @@
-import { LngLatBounds } from 'maplibre-gl';
+import { LngLat, LngLatBounds } from 'maplibre-gl';
 import { Store } from '../types';
 
 const STORE_COLORS = [
@@ -31,11 +31,10 @@ export async function getStoresInBoundingBox(boundingBox: LngLatBounds): Promise
 
     stores.push({
       name: `Store ${i + 1}`,
-      location: { lng: randomLng, lat: randomLat },
+      location: new LngLat(randomLng, randomLat),
       color: STORE_COLORS[i % STORE_COLORS.length],
       address: `${Math.floor(Math.random() * 1000) + 1} Main Street, City`,
       rating: Math.round((Math.random() * 4 + 1) * 10) / 10, // Random rating between 1.0 and 5.0
-      imageUrl: '',
     });
   }
 

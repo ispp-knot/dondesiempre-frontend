@@ -6,5 +6,5 @@ export type Store = {
   color: string;
   address: string;
   rating: number;
-  imageUrl: string;
+  imageUrl?: string;
 };
