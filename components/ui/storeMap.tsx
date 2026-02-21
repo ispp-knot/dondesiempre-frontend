@@ -1,11 +1,5 @@
 import { Store } from '@/lib/api/types';
-import {
-  LngLat,
-  Map,
-  MapEvent,
-  MapRef,
-  Marker,
-} from '@vis.gl/react-maplibre';
+import { LngLat, Map, MapEvent, MapRef, Marker } from '@vis.gl/react-maplibre';
 import { createRef, useCallback, useState } from 'react';
 import { StorePin } from './storePin';
 import { StoreMapCard } from './storeMapCard';
