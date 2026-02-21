@@ -1,6 +1,14 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
+import { Quicksand } from 'next/font/google';
 import { Providers } from './providers';
+import './globals.css';
+
+const quicksand = Quicksand({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-quicksand',
+});
 
 const APP_NAME = 'PWA App';
 const APP_DEFAULT_TITLE = 'My Awesome PWA App';
@@ -48,9 +56,9 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" dir="ltr">
+    <html lang="es" dir="ltr">
       <head />
-      <body>
+      <body className={quicksand.className}>
         <Providers>{children}</Providers>
       </body>
     </html>
