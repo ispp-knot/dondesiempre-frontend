@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "autolint": "eslint --fix",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
