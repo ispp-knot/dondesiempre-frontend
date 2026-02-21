@@ -9,7 +9,7 @@
         }
     },
     "sprite": "https://tiles.basemaps.cartocdn.com/gl/positron-gl-style/sprite",
-    "glyphs": "https://tiles.basemaps.cartocdn.com/fonts/{fontstack}/{range}.pbf",
+    "glyphs": "https://fonts.openmaptiles.org/{fontstack}/{range}.pbf",
     "layers": [
         {
             "id": "background",
@@ -638,11 +638,8 @@
             "layout": {
                 "text-field": "{name_en}",
                 "text-font": [
-                    "Montserrat Regular Italic",
-                    "Open Sans Italic",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "symbol-placement": "line",
                 "symbol-spacing": 300,
@@ -1790,7 +1787,6 @@
                         ]
                     ]
                 },
-                "line-opacity": 1,
                 "line-opacity": 1,
                 "line-color": {
                     "stops": [
@@ -3206,7 +3202,6 @@
                     ]
                 },
                 "line-opacity": 1,
-                "line-opacity": 1,
                 "line-color": {
                     "stops": [
                         [
@@ -4238,11 +4233,8 @@
                     ]
                 },
                 "text-font": [
-                    "Montserrat Medium Italic",
-                    "Open Sans Italic",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-line-height": 1.2,
                 "text-padding": 2,
@@ -4288,11 +4280,8 @@
                 "symbol-placement": "point",
                 "text-size": 12,
                 "text-font": [
-                    "Montserrat Medium Italic",
-                    "Open Sans Italic",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-line-height": 1.2,
                 "text-padding": 2,
@@ -4372,11 +4361,8 @@
                     ]
                 },
                 "text-font": [
-                    "Montserrat Regular Italic",
-                    "Open Sans Italic",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-line-height": 1.2,
                 "text-padding": 2,
@@ -4448,11 +4434,8 @@
                     ]
                 },
                 "text-font": [
-                    "Montserrat Regular Italic",
-                    "Open Sans Italic",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "symbol-spacing": 350,
                 "text-pitch-alignment": "auto",
@@ -4500,11 +4483,8 @@
                     ]
                 },
                 "text-font": [
-                    "Montserrat Regular",
-                    "Open Sans Regular",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": {
                     "stops": [
@@ -4585,11 +4565,8 @@
                     ]
                 },
                 "text-font": [
-                    "Montserrat Regular",
-                    "Open Sans Regular",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": {
                     "stops": [
@@ -4678,11 +4655,8 @@
                     ]
                 },
                 "text-font": [
-                    "Montserrat Medium",
-                    "Open Sans Bold",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": {
                     "stops": [
@@ -4760,11 +4734,8 @@
                     ]
                 },
                 "text-font": [
-                    "Montserrat Medium",
-                    "Open Sans Bold",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": {
                     "stops": [
@@ -4840,11 +4811,8 @@
             "layout": {
                 "text-field": "{name_en}",
                 "text-font": [
-                    "Montserrat Medium",
-                    "Open Sans Bold",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": {
                     "stops": [
@@ -4916,11 +4884,8 @@
             "layout": {
                 "text-field": "{name_en}",
                 "text-font": [
-                    "Montserrat Medium",
-                    "Open Sans Bold",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": {
                     "stops": [
@@ -5008,11 +4973,8 @@
             "layout": {
                 "text-field": "{name_en}",
                 "text-font": [
-                    "Montserrat Medium",
-                    "Open Sans Bold",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": {
                     "stops": [
@@ -5053,11 +5015,8 @@
             "layout": {
                 "text-field": "{name_en}",
                 "text-font": [
-                    "Montserrat Medium",
-                    "Open Sans Bold",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-transform": "uppercase",
                 "text-size": 14,
@@ -5106,11 +5065,8 @@
                     ]
                 },
                 "text-font": [
-                    "Montserrat Medium",
-                    "Open Sans Bold",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": {
                     "stops": [
@@ -5198,11 +5154,8 @@
                     ]
                 },
                 "text-font": [
-                    "Montserrat Medium",
-                    "Open Sans Bold",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": {
                     "stops": [
@@ -5270,11 +5223,8 @@
             "layout": {
                 "text-field": "{name_en}",
                 "text-font": [
-                    "Montserrat Medium",
-                    "Open Sans Bold",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": 12,
                 "icon-image": "circle-11",
@@ -5322,11 +5272,8 @@
             "layout": {
                 "text-field": "{name_en}",
                 "text-font": [
-                    "Montserrat Medium",
-                    "Open Sans Bold",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": 12,
                 "icon-image": "circle-11",
@@ -5374,11 +5321,8 @@
             "layout": {
                 "text-field": "{name_en}",
                 "text-font": [
-                    "Montserrat Medium",
-                    "Open Sans Bold",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": 12,
                 "icon-image": "circle-11",
@@ -5426,11 +5370,8 @@
             "layout": {
                 "text-field": "{name_en}",
                 "text-font": [
-                    "Montserrat Medium",
-                    "Open Sans Bold",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": 12,
                 "icon-image": "circle-11",
@@ -5473,11 +5414,8 @@
             "layout": {
                 "text-field": "{name_en}",
                 "text-font": [
-                    "Montserrat Medium",
-                    "Open Sans Bold",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": 12,
                 "icon-image": "circle-11",
@@ -5527,11 +5465,8 @@
             "layout": {
                 "text-field": "{name}",
                 "text-font": [
-                    "Montserrat Medium",
-                    "Open Sans Bold",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": {
                     "stops": [
@@ -5574,11 +5509,8 @@
             "layout": {
                 "text-field": "{name}",
                 "text-font": [
-                    "Montserrat Medium",
-                    "Open Sans Bold",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": {
                     "stops": [
@@ -5622,11 +5554,8 @@
             "layout": {
                 "symbol-placement": "line",
                 "text-font": [
-                    "Montserrat Regular",
-                    "Open Sans Regular",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": 9,
                 "text-field": "{name}",
@@ -5660,11 +5589,8 @@
             "layout": {
                 "symbol-placement": "line",
                 "text-font": [
-                    "Montserrat Regular",
-                    "Open Sans Regular",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": {
                     "stops": [
@@ -5712,11 +5638,8 @@
             "layout": {
                 "symbol-placement": "line",
                 "text-font": [
-                    "Montserrat Regular",
-                    "Open Sans Regular",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": {
                     "stops": [
@@ -5792,11 +5715,8 @@
             "layout": {
                 "symbol-placement": "line",
                 "text-font": [
-                    "Montserrat Regular",
-                    "Open Sans Regular",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ],
                 "text-size": {
                     "stops": [
@@ -5876,11 +5796,8 @@
                     ]
                 },
                 "text-font": [
-                    "Montserrat Regular",
-                    "Open Sans Regular",
-                    "Noto Sans Regular",
-                    "HanWangHeiLight Regular",
-                    "NanumBarunGothic Regular"
+                    "Quicksand Medium",
+                    "Quicksand Regular"
                 ]
             },
             "paint": {
