@@ -2,8 +2,6 @@ import { Store } from '@/lib/api/types';
 import { LngLat, Map, MapEvent, MapRef, Marker } from '@vis.gl/react-maplibre';
 import { createRef, useCallback, useState } from 'react';
 import { StorePin } from './storePin';
-import { StoreMapCard } from './storeMapCard';
-import { AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { MdMyLocation, MdExplore } from 'react-icons/md';
 import { Plus, Minus } from 'lucide-react';
@@ -17,14 +15,15 @@ import { useDebouncedCallback } from 'use-debounce';
 export function StoreMap({
   startingLocation = DEFAULT_MAP_LOCATION,
   onClickStore = () => {},
+  onStoreSelect,
 }: {
   startingLocation?: LngLat;
   onClickStore?: (store: Store) => void;
+  onStoreSelect?: (store: Store | null) => void;
 }) {
   const mapRef = createRef<MapRef>();
 
   const [stores, setStores] = useState<Store[] | undefined>();
-  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
 
   const { mutate: getStores } = useMutation({
     mutationFn: getStoresInBoundingBox,
@@ -75,7 +74,7 @@ export function StoreMap({
       anchor="bottom"
       onClick={(e) => {
         e.originalEvent.stopPropagation();
-        setSelectedStore(store);
+        onStoreSelect?.(store);
         onClickStore(store);
       }}
     >
@@ -96,7 +95,7 @@ export function StoreMap({
         mapStyle={DEFAULT_MAP_STYLE}
         onLoad={fetchStores}
         onMoveEnd={debouncedFetchStores}
-        onClick={() => setSelectedStore(null)}
+        onClick={() => onStoreSelect?.(null)}
       >
         {pins}
       </Map>
@@ -120,10 +119,6 @@ export function StoreMap({
           </Button>
         </div>
       </div>
-
-      <AnimatePresence>
-        {selectedStore && <StoreMapCard key={selectedStore.name} store={selectedStore} />}
-      </AnimatePresence>
     </div>
   );
 }
