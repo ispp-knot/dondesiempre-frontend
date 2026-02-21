@@ -46,7 +46,7 @@ export function StoreMapCard({ store }: { store: Store }) {
               </h3>
 
               {/* Address */}
-              <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
+              <p className="text-sm sm:text-base text-secondary font-semibold line-clamp-2">
                 {store.address}
               </p>
 
