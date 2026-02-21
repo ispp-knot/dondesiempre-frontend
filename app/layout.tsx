@@ -56,7 +56,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="es" dir="ltr">
+    <html lang="es" dir="ltr" className={quicksand.variable}>
       <head />
       <body className={quicksand.className}>
         <Providers>{children}</Providers>
