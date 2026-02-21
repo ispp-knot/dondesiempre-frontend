@@ -1,0 +1,41 @@
+name: Discord PR Notification
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Discord Embed
+        run: |
+          curl -X POST \
+          -H "Content-Type: application/json" \
+          -d "{
+            \"embeds\": [{
+              \"title\": \"🚀 New Pull Request\",
+              \"url\": \"${{ github.event.pull_request.html_url }}\",
+              \"color\": 5763719,
+              \"author\": {
+                \"name\": \"${{ github.event.pull_request.user.login }}\",
+                \"icon_url\": \"${{ github.event.pull_request.user.avatar_url }}\"
+              },
+              \"description\": \"**${{ github.event.pull_request.title }}**\",
+              \"fields\": [
+                {
+                  \"name\": \"Repository\",
+                  \"value\": \"${{ github.repository }}\",
+                  \"inline\": true
+                },
+                {
+                  \"name\": \"Branch\",
+                  \"value\": \"${{ github.event.pull_request.head.ref }} → ${{ github.event.pull_request.base.ref }}\",
+                  \"inline\": true
+                }
+              ],
+              \"timestamp\": \"${{ github.event.pull_request.created_at }}\"
+            }]
+          }" \
+          ${{ secrets.DISCORD_WEBHOOK }}

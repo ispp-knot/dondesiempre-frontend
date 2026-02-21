@@ -50,7 +50,7 @@
 :root {
   --primary: #c65a3a;
   --secondary: #19756a;
-  --accent: oklch(0.94 0 0);
+  --accent: #e9c46a;
   --dark-blue: #031926;
   --beige: #f2e8cf;
   --radius: 0.625rem;
@@ -61,10 +61,10 @@
   --popover: oklch(1 0 0);
   --popover-foreground: #c65a3a;
   --primary-foreground: #c65a3a;
-  --secondary-foreground: oklch(1 0 0);
-  --muted: oklch(0.97 0 0);
+  --secondary-foreground: #2a9d8f;
+  --muted: oklch(0.95 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent-foreground: oklch(0.556 0 0);
+  --accent-foreground: #ffce59;
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
@@ -121,10 +121,8 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
     @apply bg-background text-foreground;
   }
 }
