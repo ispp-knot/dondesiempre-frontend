@@ -8,12 +8,12 @@
     "start": "next start",
     "lint": "eslint",
     "autolint": "eslint --fix",
-    "prepare": "node -e \"try { require('child_process').execSync('husky', {stdio: 'inherit'}) } catch(e) {}\""
+    "prepare-husky": "husky",
+    "lint-staged": "lint-staged"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
+      "eslint --fix"
     ]
   },
   "dependencies": {
