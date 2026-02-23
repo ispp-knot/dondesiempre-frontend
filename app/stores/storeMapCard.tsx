@@ -29,10 +29,10 @@ export function StoreMapCard({ store }: { store: Store }) {
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: '100%', opacity: 0 }}
       transition={{ duration: 0.2, ease: 'easeInOut' }}
-      className="fixed bottom-0 md:bottom-4 left-0 right-0 z-50"
+      className="fixed bottom-0 md:bottom-4 left-0 right-0 z-50 pointer-events-none"
     >
       <Card className="rounded-t-xl rounded-b-none md:rounded-b-xl shadow-lg md:shadow-2xl border-t md:border md:w-[90%] md:max-w-2xl mx-auto py-3 sm:py-6 md:py-8">
-        <div className="flex flex-col gap-4 sm:gap-6 px-5 sm:px-6">
+        <div className="flex flex-col gap-4 sm:gap-6 px-5 sm:px-6 pointer-events-auto">
           {/* Top section: Text + Image */}
           <div className="flex gap-8 sm:gap-12 mx-auto">
             {/* Store Info */}

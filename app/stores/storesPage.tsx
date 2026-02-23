@@ -11,7 +11,7 @@ export function StoresPage() {
 
   return (
     <>
-      <StoreMap selectedStore={selectedStore} onStoreSelect={setSelectedStore} />
+      <StoreMap onStoreSelect={setSelectedStore} />
       <AnimatePresence>
         {selectedStore && <StoreMapCard key={selectedStore.name} store={selectedStore} />}
       </AnimatePresence>

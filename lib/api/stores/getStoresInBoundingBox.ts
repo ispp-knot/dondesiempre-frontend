@@ -14,6 +14,29 @@ const STORE_COLORS = [
   '#52C48A', // Green
 ];
 
+const STORE_NAMES = [
+  'Boutique Elegancia',
+  'Moda María',
+  'El Armario',
+  'Vestidos Luna',
+  'Boutique Chic',
+  'Moda Isabel',
+  'La Percha',
+  'Estilo Propio',
+  'Boutique del Sol',
+  'El Vestidor',
+  'Moda y Clase',
+  'Tendencias',
+  'Boutique Ana',
+  'Ropa Linda',
+  'Moda Urbana',
+  'La Boutique Carmen',
+  'Estilo y Moda',
+  'Boutique Moderna',
+  'Ropa y Estilo',
+  'Moda Express',
+];
+
 export async function getStoresInBoundingBox(boundingBox: LngLatBounds): Promise<Store[]> {
   const sw = boundingBox.getSouthWest();
   const ne = boundingBox.getNorthEast();
@@ -30,7 +53,7 @@ export async function getStoresInBoundingBox(boundingBox: LngLatBounds): Promise
     const randomLat = minLat + Math.random() * (maxLat - minLat);
 
     stores.push({
-      name: `Store ${i + 1}`,
+      name: STORE_NAMES[i % STORE_NAMES.length],
       location: new LngLat(randomLng, randomLat),
       color: STORE_COLORS[i % STORE_COLORS.length],
       address: `${Math.floor(Math.random() * 1000) + 1} Main Street, City`,
