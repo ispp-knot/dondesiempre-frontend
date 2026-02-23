@@ -1,6 +1,9 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -118,10 +121,30 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+.storefront-listing::-webkit-scrollbar {
+  padding: 5px;
+  height: 8px;
+}
+
+.storefront-listing::-webkit-scrollbar-track {
+  background: white;
+  border-radius: 10px;
+}
+
+.storefront-listing::-webkit-scrollbar-thumb {
+  background: var(--secondary);
+  border-radius: 10px;
+}
+
+.storefront-listing::-webkit-scrollbar-thumb:hover {
+  transform: scale(1.2)
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }

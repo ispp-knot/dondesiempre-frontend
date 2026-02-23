@@ -4,11 +4,7 @@ import { MdAccessTimeFilled } from 'react-icons/md';
 import { FaFacebook, FaInstagram } from 'react-icons/fa';
 import StoreTabs from './store-tabs';
 
-export default async function StorefrontPage({
-  params: _params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function StorefrontPage(/*{ params }: { params: Promise<{ id: string }> }*/) {
   {
     /* TODO: Add request using store id */
   }
@@ -39,15 +35,37 @@ export default async function StorefrontPage({
         name: 'Invierno',
         image: '',
       },
+      {
+        id: 4,
+        name: 'Feria',
+        image: '',
+      },
+      {
+        id: 5,
+        name: 'Semana Santa',
+        image: '',
+      },
+      {
+        id: 6,
+        name: 'Joyería',
+        image: '',
+      },
+      {
+        id: 7,
+        name: 'Ropa interior',
+        image: '',
+      },
     ],
-    popularOutfits: [
+    outfits: [
       {
         id: 1,
         name: 'Feria',
+        image: '',
       },
       {
         id: 2,
         name: 'Frio',
+        image: '',
       },
     ],
   };
@@ -109,7 +127,11 @@ export default async function StorefrontPage({
           <></>
         )}
       </div>
-      <StoreTabs collections={store.collections} description={store.description} />
+      <StoreTabs
+        collections={store.collections}
+        description={store.description}
+        outfits={store.outfits}
+      />
     </div>
   );
 }
