@@ -43,12 +43,7 @@ export default function StoreTabs({
           {/* Background Image Container */}
           <div className="absolute inset-0 z-0 w-full h-full">
             {promoOutfit.image && (
-              <Image
-                src={promoOutfit.image}
-                alt={promoOutfit.name}
-                fill
-                className="object-cover"
-              />
+              <Image src={promoOutfit.image} alt={promoOutfit.name} fill className="object-cover" />
             )}
             <div className="absolute inset-0 bg-white/85"></div>
           </div>
@@ -58,9 +53,7 @@ export default function StoreTabs({
             <h2 className="text-secondary font-bold text-4xl md:text-5xl mt-1">
               {promoOutfit.name}
             </h2>
-            <p className="text-primary font-semibold mt-1">
-              12/04/2026 - 26/04/2026
-            </p>
+            <p className="text-primary font-semibold mt-1">12/04/2026 - 26/04/2026</p>
             <button className="bg-secondary text-white font-medium py-2 px-4 rounded mt-4 w-[95%] shadow-sm hover:bg-secondary/90 hover:cursor-pointer transition">
               Ver promoción
             </button>
@@ -71,9 +64,7 @@ export default function StoreTabs({
         <button
           onClick={() => setActiveTab('catalogo')}
           className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
-            activeTab === 'catalogo'
-              ? 'bg-secondary text-white'
-              : 'bg-white text-secondary'
+            activeTab === 'catalogo' ? 'bg-secondary text-white' : 'bg-white text-secondary'
           }`}
         >
           Catálogo
@@ -81,9 +72,7 @@ export default function StoreTabs({
         <button
           onClick={() => setActiveTab('sobre')}
           className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
-            activeTab === 'sobre'
-              ? 'bg-secondary text-white'
-              : 'bg-white text-secondary'
+            activeTab === 'sobre' ? 'bg-secondary text-white' : 'bg-white text-secondary'
           }`}
         >
           Sobre nosotros

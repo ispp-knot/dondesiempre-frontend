@@ -35,9 +35,7 @@ export default function Collections({ outfits = [] }: Props) {
                 <Percent className="w-4 h-4 md:w-5 md:h-5 text-white stroke-[3]" />
               </div>
             )}
-            <div
-              className="flex flex-row items-center justify-center gap-1.5 w-full h-4/12 md:h-1/4 self-end bg-white text-sm md:text-lg px-2 text-center"
-            >
+            <div className="flex flex-row items-center justify-center gap-1.5 w-full h-4/12 md:h-1/4 self-end bg-white text-sm md:text-lg px-2 text-center">
               <span className="truncate">{out.name}</span>
               {out.discount && (
                 <span className="text-primary font-bold bg-primary/10 px-1.5 py-0.5 rounded-md text-xs md:text-sm">
