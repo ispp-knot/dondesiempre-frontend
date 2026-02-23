@@ -32,6 +32,7 @@
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
+  --color-dark-secondary: var(--dark-secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
   --color-popover-foreground: var(--popover-foreground);
@@ -50,6 +51,7 @@
 :root {
   --primary: #c65a3a;
   --secondary: #19756a;
+  --dark-secondary: #0e463f;
   --accent: #e9c46a;
   --dark-blue: #031926;
   --beige: #f2e8cf;
