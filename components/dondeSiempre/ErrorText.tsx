@@ -2,26 +2,12 @@
 
 import { Card } from '@/components/ui/card';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 
 export type ErrorTextProps = {
   error: Error | null;
 };
 
 export default function ErrorText(props: ErrorTextProps) {
-  const [numDots, setNumDots] = useState(0);
-
-  const updateNumDots = () => {
-    if (numDots === 3) {
-      return;
-    } else {
-      setNumDots(numDots + 1);
-    }
-  };
-
-  useEffect(() => {
-    setTimeout(updateNumDots, 250);
-  });
   return (
     <>
       <Card className="p-4 m-4">

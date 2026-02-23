@@ -10,3 +10,13 @@ export async function getOutfitsOfStore(storeId: number): Promise<Outfit[]> {
     throw error;
   }
 }
+
+export async function getOutfit(outfitId: number): Promise<Outfit> {
+  try {
+    return await authorizedOfetch(
+      /* process.env.NEXT_PUBLIC_BACKEND_URL + */ '/api/v1/outfits/' + outfitId
+    );
+  } catch (error) {
+    throw error;
+  }
+}

@@ -1,10 +1,11 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { getOutfitsOfStore } from '@/lib/api/getOutfitsOfStore';
+import { getOutfitsOfStore } from '@/lib/api/outfitEndpoints';
 import { Outfit } from '@/lib/types/outfits';
+import { convertPrice } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
+import Link from 'next/link';
 import { RiDiscountPercentFill } from 'react-icons/ri';
 import ErrorText from '../../components/dondeSiempre/ErrorText';
 import LoadingText from '../../components/dondeSiempre/LoadingText';
@@ -33,7 +34,7 @@ export default function OutfitsPage() {
           index: 0,
           name: 'Zapatos',
           description: 'Zapatos de prueba',
-          image: 'static/img/shoes.png',
+          image: '/static/img/shoes.png',
           priceInCents: 1000,
           storeId: 0,
           type: 'zapato',
@@ -43,7 +44,7 @@ export default function OutfitsPage() {
           index: 1,
           name: 'Pantalón',
           description: 'Pantalón de prueba',
-          image: 'static/img/trousers.png',
+          image: '/static/img/trousers.png',
           priceInCents: 1000,
           storeId: 0,
           type: 'pantalones',
@@ -53,7 +54,7 @@ export default function OutfitsPage() {
           index: 2,
           name: 'Camiseta',
           description: 'Camiseta de prueba',
-          image: 'static/img/shirt.png',
+          image: '/static/img/shirt.png',
           priceInCents: 1000,
           storeId: 0,
           type: 'camiseta',
@@ -63,7 +64,7 @@ export default function OutfitsPage() {
           index: 3,
           name: 'Blazer',
           description: 'Blazer de prueba',
-          image: 'static/img/blazer.png',
+          image: '/static/img/blazer.png',
           priceInCents: 500,
           storeId: 0,
           type: 'blazer',
@@ -73,7 +74,7 @@ export default function OutfitsPage() {
           index: 4,
           name: 'Bufanda',
           description: 'Bufanda de prueba',
-          image: 'static/img/bufanda.png',
+          image: '/static/img/bufanda.png',
           priceInCents: 500,
           storeId: 0,
           type: 'bufanda',
@@ -96,7 +97,7 @@ export default function OutfitsPage() {
           index: 0,
           name: 'Zapatos',
           description: 'Zapatos de prueba',
-          image: 'static/img/shoes.png',
+          image: '/static/img/shoes.png',
           priceInCents: 1000,
           storeId: 0,
           type: 'zapato',
@@ -106,7 +107,7 @@ export default function OutfitsPage() {
           index: 1,
           name: 'Pantalón',
           description: 'Pantalón de prueba',
-          image: 'static/img/trousers.png',
+          image: '/static/img/trousers.png',
           priceInCents: 1000,
           storeId: 0,
           type: 'pantalones',
@@ -116,7 +117,7 @@ export default function OutfitsPage() {
           index: 2,
           name: 'Camiseta',
           description: 'Camiseta de prueba',
-          image: 'static/img/shirt.png',
+          image: '/static/img/shirt.png',
           priceInCents: 1000,
           storeId: 0,
           type: 'camiseta',
@@ -139,7 +140,7 @@ export default function OutfitsPage() {
           index: 0,
           name: 'Pantalón',
           description: 'Pantalón de prueba',
-          image: 'static/img/trousers.png',
+          image: '/static/img/trousers.png',
           priceInCents: 1000,
           storeId: 0,
           type: 'pantalones',
@@ -149,7 +150,7 @@ export default function OutfitsPage() {
           index: 1,
           name: 'Camiseta',
           description: 'Camiseta de prueba',
-          image: 'static/img/shirt.png',
+          image: '/static/img/shirt.png',
           priceInCents: 1000,
           storeId: 0,
           type: 'camiseta',
@@ -157,10 +158,6 @@ export default function OutfitsPage() {
       ],
     },
   ];
-
-  const convertPrice = (priceInCents: number): number => {
-    return priceInCents / 100;
-  };
 
   if (outfitsQuery.isLoading) {
     return (
@@ -226,9 +223,12 @@ export default function OutfitsPage() {
                 </h1>
               </div>
             )}
-            <Button className="self-center bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-xl h-12 w-11/12 md:w-1/4">
+            <Link
+              href={`/outfits/${o.id}`}
+              className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-xl h-12 w-11/12 md:w-1/4"
+            >
               Ver más
-            </Button>
+            </Link>
           </Card>
         ))}
       </>
