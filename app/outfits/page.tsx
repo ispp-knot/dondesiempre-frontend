@@ -7,13 +7,157 @@ import { useQuery } from '@tanstack/react-query';
 import { RiDiscountPercentFill } from 'react-icons/ri';
 import ErrorText from './ErrorText';
 import LoadingText from './LoadingText';
+import { Outfit } from '@/lib/types/outfits';
 
 export default function OutfitsPage() {
   const outfitsQuery = useQuery({
     queryKey: ['outfits', 1],
     queryFn: () => getOutfitsOfStore(1),
     retry: 0,
+    enabled: false,
   });
+
+  const testOutfits: Outfit[] = [
+    {
+      id: 0,
+      index: 0,
+      name: 'Outfit de otoño',
+      description: 'Outfit de otoño de prueba',
+      image: null,
+      priceInCents: 4000,
+      discountedPriceInCents: 2500,
+      storefrontId: 0,
+      tags: ['otoño'],
+      products: [
+        {
+          id: 0,
+          index: 0,
+          name: 'Zapatos',
+          description: 'Zapatos de prueba',
+          image: 'static/img/shoes.png',
+          priceInCents: 1000,
+          storeId: 0,
+          type: 'zapato',
+        },
+        {
+          id: 1,
+          index: 1,
+          name: 'Pantalón',
+          description: 'Pantalón de prueba',
+          image: 'static/img/trousers.png',
+          priceInCents: 1000,
+          storeId: 0,
+          type: 'pantalones',
+        },
+        {
+          id: 2,
+          index: 2,
+          name: 'Camiseta',
+          description: 'Camiseta de prueba',
+          image: 'static/img/shirt.png',
+          priceInCents: 1000,
+          storeId: 0,
+          type: 'camiseta',
+        },
+        {
+          id: 3,
+          index: 3,
+          name: 'Blazer',
+          description: 'Blazer de prueba',
+          image: 'static/img/blazer.png',
+          priceInCents: 500,
+          storeId: 0,
+          type: 'blazer',
+        },
+        {
+          id: 4,
+          index: 4,
+          name: 'Bufanda',
+          description: 'Bufanda de prueba',
+          image: 'static/img/bufanda.png',
+          priceInCents: 500,
+          storeId: 0,
+          type: 'bufanda',
+        },
+      ],
+    },
+    {
+      id: 1,
+      index: 1,
+      name: 'Outfit de primavera',
+      description: 'Outfit de primavera de prueba',
+      image: null,
+      priceInCents: 3000,
+      discountedPriceInCents: 3000,
+      storefrontId: 0,
+      tags: ['primavera'],
+      products: [
+        {
+          id: 5,
+          index: 0,
+          name: 'Zapatos',
+          description: 'Zapatos de prueba',
+          image: 'static/img/shoes.png',
+          priceInCents: 1000,
+          storeId: 0,
+          type: 'zapato',
+        },
+        {
+          id: 6,
+          index: 1,
+          name: 'Pantalón',
+          description: 'Pantalón de prueba',
+          image: 'static/img/trousers.png',
+          priceInCents: 1000,
+          storeId: 0,
+          type: 'pantalones',
+        },
+        {
+          id: 7,
+          index: 2,
+          name: 'Camiseta',
+          description: 'Camiseta de prueba',
+          image: 'static/img/shirt.png',
+          priceInCents: 1000,
+          storeId: 0,
+          type: 'camiseta',
+        },
+      ],
+    },
+    {
+      id: 2,
+      index: 2,
+      name: 'Outfit de verano',
+      description: 'Outfit de verano de prueba',
+      image: null,
+      priceInCents: 2000,
+      discountedPriceInCents: 1500,
+      storefrontId: 0,
+      tags: ['primavera'],
+      products: [
+        {
+          id: 8,
+          index: 0,
+          name: 'Pantalón',
+          description: 'Pantalón de prueba',
+          image: 'static/img/trousers.png',
+          priceInCents: 1000,
+          storeId: 0,
+          type: 'pantalones',
+        },
+        {
+          id: 8,
+          index: 1,
+          name: 'Camiseta',
+          description: 'Camiseta de prueba',
+          image: 'static/img/shirt.png',
+          priceInCents: 1000,
+          storeId: 0,
+          type: 'camiseta',
+        },
+      ],
+    },
+  ];
 
   const convertPrice = (priceInCents: number): number => {
     return priceInCents / 100;
@@ -35,12 +179,12 @@ export default function OutfitsPage() {
     );
   }
 
-  if (!outfitsQuery.data) {
+  if (!testOutfits) {
     return <></>;
   } else {
     return (
       <>
-        {outfitsQuery.data.map((o) => (
+        {testOutfits.map((o) => (
           <Card key={o.index} className="p-4 m-4">
             <div>
               {o.discountedPriceInCents === o.priceInCents ? (
