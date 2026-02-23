@@ -61,6 +61,7 @@ export default async function StorefrontPage({ params }: { params: Promise<{ id:
         id: 1,
         name: 'Feria',
         image: '',
+        discount: 20,
       },
       {
         id: 2,

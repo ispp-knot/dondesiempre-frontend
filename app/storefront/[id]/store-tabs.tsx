@@ -17,6 +17,7 @@ type Outfit = {
   id: number;
   name: string;
   image: string;
+  discount?: number;
 };
 
 type Props = {
@@ -37,17 +38,15 @@ export default function StoreTabs({
       <div className="flex mx-4 mt-5 mb-5 self-center rounded-md overflow-hidden border border-gray-200 w-11/12 sm:w-1/2 sm:mx-auto">
         <button
           onClick={() => setActiveTab('catalogo')}
-          className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
-            activeTab === 'catalogo' ? 'bg-secondary text-white' : 'bg-white text-secondary'
-          }`}
+          className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${activeTab === 'catalogo' ? 'bg-secondary text-white' : 'bg-white text-secondary'
+            }`}
         >
           Catálogo
         </button>
         <button
           onClick={() => setActiveTab('sobre')}
-          className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
-            activeTab === 'sobre' ? 'bg-secondary text-white' : 'bg-white text-secondary'
-          }`}
+          className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${activeTab === 'sobre' ? 'bg-secondary text-white' : 'bg-white text-secondary'
+            }`}
         >
           Sobre nosotros
         </button>
