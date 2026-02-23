@@ -4,12 +4,12 @@ import ErrorText from '@/components/dondeSiempre/ErrorText';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { Button } from '@/components/ui/button';
 import { getOutfit } from '@/lib/api/outfitEndpoints';
-import { Outfit } from '@/lib/types/outfits';
 import { convertPrice } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { GoDotFill } from 'react-icons/go';
+import * as testOutfits from '../testOutfits.json';
 
 export default function OutfitDetailsPage() {
   const [selectedProduct, setSelectedProduct] = useState(0);
@@ -22,148 +22,6 @@ export default function OutfitDetailsPage() {
     queryFn: () => getOutfit(outfitId),
     enabled: false,
   });
-
-  const testOutfits: Outfit[] = [
-    {
-      id: 0,
-      index: 0,
-      name: 'Outfit de otoño',
-      description: 'Outfit de otoño de prueba',
-      image: null,
-      priceInCents: 4000,
-      discountedPriceInCents: 2500,
-      storefrontId: 0,
-      tags: ['otoño'],
-      products: [
-        {
-          id: 0,
-          index: 0,
-          name: 'Zapatos',
-          description: 'Zapatos de prueba',
-          image: '/static/img/shoes.png',
-          priceInCents: 1000,
-          storeId: 0,
-          type: 'zapato',
-        },
-        {
-          id: 1,
-          index: 1,
-          name: 'Pantalón',
-          description: 'Pantalón de prueba',
-          image: '/static/img/trousers.png',
-          priceInCents: 1000,
-          storeId: 0,
-          type: 'pantalones',
-        },
-        {
-          id: 2,
-          index: 2,
-          name: 'Camiseta',
-          description: 'Camiseta de prueba',
-          image: '/static/img/shirt.png',
-          priceInCents: 1000,
-          storeId: 0,
-          type: 'camiseta',
-        },
-        {
-          id: 3,
-          index: 3,
-          name: 'Blazer',
-          description: 'Blazer de prueba',
-          image: '/static/img/blazer.png',
-          priceInCents: 500,
-          storeId: 0,
-          type: 'blazer',
-        },
-        {
-          id: 4,
-          index: 4,
-          name: 'Bufanda',
-          description: 'Bufanda de prueba',
-          image: '/static/img/bufanda.png',
-          priceInCents: 500,
-          storeId: 0,
-          type: 'bufanda',
-        },
-      ],
-    },
-    {
-      id: 1,
-      index: 1,
-      name: 'Outfit de primavera',
-      description: 'Outfit de primavera de prueba',
-      image: null,
-      priceInCents: 3000,
-      discountedPriceInCents: 3000,
-      storefrontId: 0,
-      tags: ['primavera'],
-      products: [
-        {
-          id: 5,
-          index: 0,
-          name: 'Zapatos',
-          description: 'Zapatos de prueba',
-          image: '/static/img/shoes.png',
-          priceInCents: 1000,
-          storeId: 0,
-          type: 'zapato',
-        },
-        {
-          id: 6,
-          index: 1,
-          name: 'Pantalón',
-          description: 'Pantalón de prueba',
-          image: '/static/img/trousers.png',
-          priceInCents: 1000,
-          storeId: 0,
-          type: 'pantalones',
-        },
-        {
-          id: 7,
-          index: 2,
-          name: 'Camiseta',
-          description: 'Camiseta de prueba',
-          image: '/static/img/shirt.png',
-          priceInCents: 1000,
-          storeId: 0,
-          type: 'camiseta',
-        },
-      ],
-    },
-    {
-      id: 2,
-      index: 2,
-      name: 'Outfit de verano',
-      description: 'Outfit de verano de prueba',
-      image: null,
-      priceInCents: 2000,
-      discountedPriceInCents: 1500,
-      storefrontId: 0,
-      tags: ['primavera'],
-      products: [
-        {
-          id: 8,
-          index: 0,
-          name: 'Pantalón',
-          description: 'Pantalón de prueba',
-          image: '/static/img/trousers.png',
-          priceInCents: 1000,
-          storeId: 0,
-          type: 'pantalones',
-        },
-        {
-          id: 8,
-          index: 1,
-          name: 'Camiseta',
-          description: 'Camiseta de prueba',
-          image: '/static/img/shirt.png',
-          priceInCents: 1000,
-          storeId: 0,
-          type: 'camiseta',
-        },
-      ],
-    },
-  ];
 
   if (outfitQuery.isLoading) {
     return (
@@ -222,7 +80,7 @@ export default function OutfitDetailsPage() {
             <div>
               <h1 className="text-primary text-2xl">{product.name}</h1>
             </div>
-            <div className="pt-4 pb-6 flex flex-row w-fit max-w-11/12 self-center overflow-x-scroll items-center gap-4">
+            <div className="pt-8 pb-6 flex flex-row w-fit max-w-11/12 self-center overflow-x-scroll items-center gap-4">
               {outfit.products.map((p, i) =>
                 p.image ? (
                   <img
