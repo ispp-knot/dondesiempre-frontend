@@ -60,7 +60,7 @@ export default async function StorefrontPage({ params }: { params: Promise<{ id:
       {
         id: 1,
         name: 'Feria',
-        image: '',
+        image: '/static/img/outfit_placeholder.jpg',
         discount: 20,
       },
       {
