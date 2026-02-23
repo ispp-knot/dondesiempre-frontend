@@ -3,17 +3,16 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { getOutfitsOfStore } from '@/lib/api/getOutfitsOfStore';
+import { Outfit } from '@/lib/types/outfits';
 import { useQuery } from '@tanstack/react-query';
 import { RiDiscountPercentFill } from 'react-icons/ri';
-import ErrorText from './ErrorText';
-import LoadingText from './LoadingText';
-import { Outfit } from '@/lib/types/outfits';
+import ErrorText from '../../components/dondeSiempre/ErrorText';
+import LoadingText from '../../components/dondeSiempre/LoadingText';
 
 export default function OutfitsPage() {
   const outfitsQuery = useQuery({
     queryKey: ['outfits', 1],
     queryFn: () => getOutfitsOfStore(1),
-    retry: 0,
     enabled: false,
   });
 

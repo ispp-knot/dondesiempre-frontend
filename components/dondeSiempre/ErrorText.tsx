@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 export type ErrorTextProps = {
   error: Error | null;
@@ -37,8 +38,14 @@ export default function ErrorText(props: ErrorTextProps) {
           <strong>Traza de la pila: </strong>
         </p>
         <div className="p-4 rounded-lg shadow-lg w-10/12 self-center bg-muted">
-          <p className="pb-4 text-secondary text-md">{props.error?.stack || ''}</p>
+          <pre className="pb-4 text-secondary text-md text-wrap">{props.error?.stack || ''}</pre>
         </div>
+        <Link
+          href="/"
+          className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-xl h-12 w-11/12 md:w-1/4"
+        >
+          Volver al inicio
+        </Link>
       </Card>
     </>
   );
