@@ -1,9 +1,0 @@
-app/stores/storeMapCard.tsx(7,24): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
-app/stores/storesPage.tsx(5,33): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
-components/ui/storeMap.tsx(2,55): error TS2307: Cannot find module '@vis.gl/react-maplibre' or its corresponding type declarations.
-components/ui/storeMap.tsx(13,38): error TS2307: Cannot find module 'use-debounce' or its corresponding type declarations.
-components/ui/storeMap.tsx(75,17): error TS7006: Parameter 'e' implicitly has an 'any' type.
-lib/api/stores/getStoresInBoundingBox.ts(1,38): error TS2307: Cannot find module 'maplibre-gl' or its corresponding type declarations.
-lib/api/types.tsx(1,24): error TS2307: Cannot find module '@vis.gl/react-maplibre' or its corresponding type declarations.
-lib/colorUtils.ts(1,20): error TS2307: Cannot find module 'chroma-js' or its corresponding type declarations.
-lib/mapUtils.ts(1,44): error TS2307: Cannot find module 'maplibre-gl' or its corresponding type declarations.
