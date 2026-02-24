@@ -9,15 +9,17 @@ import { convertPrice } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
+import { FaTag } from 'react-icons/fa6';
 import { GoDotFill } from 'react-icons/go';
 import * as testOutfits from '../testOutfits.json';
 
 export default function OutfitDetailsPage() {
-  const [isAdmin, setIsAdmin] = useState(true);
-  const [selectedProduct, setSelectedProduct] = useState(0);
-
   const params = useParams<{ id: string }>();
   const outfitId = Number.parseInt(params.id);
+
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(0);
+  const [outfitTags, setOutfitTags] = useState(testOutfits[outfitId].tags);
 
   const outfitQuery = useQuery({
     queryKey: ['outfit', outfitId],
@@ -49,7 +51,7 @@ export default function OutfitDetailsPage() {
     return (
       <>
         <LabelledSwitch
-          label="Modo administrador"
+          label="Modo tienda"
           checked={isAdmin}
           onCheckedChange={(checked) => setIsAdmin(checked)}
         />
@@ -78,9 +80,6 @@ export default function OutfitDetailsPage() {
                     name="description"
                     defaultValue={outfit.description}
                     id="form-description"
-                    onChange={() => {
-                      console.log('change');
-                    }}
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                   />
                   <label htmlFor="form-image" className="font-bold text-lg text-secondary">
@@ -122,9 +121,6 @@ export default function OutfitDetailsPage() {
                     min="0.00"
                     step="0.01"
                     defaultValue={`${convertPrice(outfit.discountedPriceInCents)}`}
-                    onChange={() => {
-                      console.log('change');
-                    }}
                     required
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                   />
@@ -138,12 +134,40 @@ export default function OutfitDetailsPage() {
                     min="0"
                     step="1"
                     defaultValue={outfit.index}
-                    onChange={() => {
-                      console.log('change');
-                    }}
                     required
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                   />
+                  <label htmlFor="form-tags" className="font-bold text-lg text-secondary">
+                    Etiquetas:{' '}
+                  </label>
+                  <input
+                    type="text"
+                    name="tags"
+                    id="form-tags"
+                    onChange={() => {
+                      const element = document.getElementById('form-tags') as HTMLInputElement;
+
+                      if (element.value.includes(' ')) {
+                        setOutfitTags([...new Set([...outfitTags, element.value.trim()])]);
+                        element.value = '';
+                      }
+                    }}
+                    className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+                <div className="flex flex-row gap-4 overflow-x-scroll">
+                  {outfitTags.map((t, i) => (
+                    <div
+                      key={i}
+                      onClick={() => {
+                        setOutfitTags(outfitTags.filter((tag) => tag !== t));
+                      }}
+                      className="p-2 rounded-lg bg-secondary hover:bg-dark-secondary flex flex-row gap-1 shrink-0"
+                    >
+                      <FaTag className="text-white"></FaTag>
+                      <p className="font-bold text-white text-center text-xs">{t}</p>
+                    </div>
+                  ))}
                 </div>
                 <div className="flex flex-row justify-center mb-8">
                   <Button

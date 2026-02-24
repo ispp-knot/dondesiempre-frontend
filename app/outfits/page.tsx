@@ -43,7 +43,7 @@ export default function OutfitsPage() {
     return (
       <>
         <LabelledSwitch
-          label="Modo administrador"
+          label="Modo tienda"
           checked={isAdmin}
           onCheckedChange={(checked) => setIsAdmin(checked)}
         />
@@ -64,7 +64,7 @@ export default function OutfitsPage() {
               <></>
             )}
             {testOutfits.map((o) => (
-              <Card key={o.index} className="p-4 m-4 shadow-xl">
+              <Card key={o.index} className="p-4 m-4 pt-8 shadow-xl">
                 <div>
                   {o.discountedPriceInCents === o.priceInCents ? (
                     <></>
@@ -106,12 +106,24 @@ export default function OutfitsPage() {
                     </h1>
                   </div>
                 )}
-                <Link
-                  href={`/outfits/${o.id}`}
-                  className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-xl h-12 w-11/12 md:w-1/4"
-                >
-                  {isAdmin ? 'Editar' : 'Ver más'}
-                </Link>
+                <div className="flex flex-row justify-center gap-4">
+                  <Link
+                    href={`/outfits/${o.id}`}
+                    className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-xl h-12 w-11/12 md:w-1/4"
+                  >
+                    {isAdmin ? 'Editar' : 'Ver más'}
+                  </Link>
+                  {isAdmin ? (
+                    <Link
+                      href={`/outfits/${o.id}/products`}
+                      className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-xl h-12 w-11/12 md:w-1/4"
+                    >
+                      Productos
+                    </Link>
+                  ) : (
+                    <></>
+                  )}
+                </div>
               </Card>
             ))}
           </div>

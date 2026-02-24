@@ -18,7 +18,7 @@
         "name": "Zapatos de deporte",
         "description": "Zapatos de deporte de prueba",
         "image": "/static/img/shoes.jpg",
-        "priceInCents": 1000,
+        "discountedPriceInCents": 1000,
         "storeId": 0,
         "type": "zapato"
       },
@@ -28,7 +28,7 @@
         "name": "Pantalón vaquero",
         "description": "Pantalón vaquero de prueba",
         "image": "/static/img/trousers.jpg",
-        "priceInCents": 1000,
+        "discountedPriceInCents": 1000,
         "storeId": 0,
         "type": "pantalones"
       },
@@ -38,7 +38,7 @@
         "name": "Camiseta sencilla",
         "description": "Camiseta sencilla de prueba",
         "image": "/static/img/shirt.jpg",
-        "priceInCents": 1000,
+        "discountedPriceInCents": 1000,
         "storeId": 0,
         "type": "camiseta"
       },
@@ -48,7 +48,7 @@
         "name": "Blazer ligera",
         "description": "Blazer ligera de prueba",
         "image": "/static/img/blazer.jpg",
-        "priceInCents": 500,
+        "discountedPriceInCents": 500,
         "storeId": 0,
         "type": "blazer"
       },
@@ -58,7 +58,7 @@
         "name": "Bufanda de lana",
         "description": "Bufanda de lana de prueba",
         "image": "/static/img/scarf.jpg",
-        "priceInCents": 500,
+        "discountedPriceInCents": 500,
         "storeId": 0,
         "type": "bufanda"
       }
@@ -83,7 +83,7 @@
         "name": "Zapatos de deporte",
         "description": "Zapatos de deporte de prueba",
         "image": "/static/img/shoes.jpg",
-        "priceInCents": 1000,
+        "discountedPriceInCents": 1000,
         "storeId": 0,
         "type": "zapato"
       },
@@ -93,7 +93,7 @@
         "name": "Pantalón vaquero",
         "description": "Pantalón vaquero de prueba",
         "image": "/static/img/trousers.jpg",
-        "priceInCents": 1000,
+        "discountedPriceInCents": 1000,
         "storeId": 0,
         "type": "pantalones"
       },
@@ -103,7 +103,7 @@
         "name": "Camiseta sencilla",
         "description": "Camiseta sencilla de prueba",
         "image": "/static/img/shirt.jpg",
-        "priceInCents": 1000,
+        "discountedPriceInCents": 1000,
         "storeId": 0,
         "type": "camiseta"
       }
@@ -128,17 +128,17 @@
         "name": "Pantalón vaquero",
         "description": "Pantalón vaquero de prueba",
         "image": "/static/img/trousers.jpg",
-        "priceInCents": 1000,
+        "discountedPriceInCents": 1000,
         "storeId": 0,
         "type": "pantalones"
       },
       {
-        "id": 8,
+        "id": 9,
         "index": 1,
         "name": "Camiseta sencilla",
         "description": "Camiseta sencilla de prueba",
         "image": "/static/img/shirt.jpg",
-        "priceInCents": 1000,
+        "discountedPriceInCents": 1000,
         "storeId": 0,
         "type": "camiseta"
       }
