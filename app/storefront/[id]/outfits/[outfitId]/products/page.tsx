@@ -9,14 +9,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { IoIosCloseCircle } from 'react-icons/io';
-import ErrorText from '../../../../components/dondeSiempre/ErrorText';
-import LoadingText from '../../../../components/dondeSiempre/LoadingText';
-import * as testOutfits from '../../testOutfits.json';
+import ErrorText from '../../../../../../components/dondeSiempre/ErrorText';
+import LoadingText from '../../../../../../components/dondeSiempre/LoadingText';
+import * as testOutfits from '@/lib/sampleData/testOutfits.json';
 import { FaExchangeAlt } from 'react-icons/fa';
 
 export default function OutfitProductsPage() {
-  const params = useParams<{ id: string }>();
-  const outfitId = Number.parseInt(params.id);
+  const params = useParams<{ outfitId: string }>();
+  const outfitId = Number.parseInt(params.outfitId);
   const [outfitProducts, setOutfitProducts] = useState(
     testOutfits[outfitId].products.sort((a, b) => a.index - b.index)
   );

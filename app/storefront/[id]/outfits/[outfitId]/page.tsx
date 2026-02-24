@@ -11,11 +11,11 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { FaTag } from 'react-icons/fa6';
 import { GoDotFill } from 'react-icons/go';
-import * as testOutfits from '../testOutfits.json';
+import * as testOutfits from '@/lib/sampleData/testOutfits.json';
 
 export default function OutfitDetailsPage() {
-  const params = useParams<{ id: string }>();
-  const outfitId = Number.parseInt(params.id);
+  const params = useParams<{ outfitId: string }>();
+  const outfitId = Number.parseInt(params.outfitId);
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(0);

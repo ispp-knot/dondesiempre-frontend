@@ -2,22 +2,26 @@
 
 import LabelledSwitch from '@/components/dondeSiempre/LabelledSwitch';
 import { Card } from '@/components/ui/card';
-import { getOutfitsOfStore } from '@/lib/api/outfitEndpoints';
+import { getOutfitsOfStorefront } from '@/lib/api/outfitEndpoints';
+import * as testOutfits from '@/lib/sampleData/testOutfits.json';
 import { convertPrice } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
-import { RiDiscountPercentFill } from 'react-icons/ri';
-import ErrorText from '../../components/dondeSiempre/ErrorText';
-import LoadingText from '../../components/dondeSiempre/LoadingText';
-import * as testOutfits from './testOutfits.json';
 import { IoMdAddCircleOutline } from 'react-icons/io';
+import { RiDiscountPercentFill } from 'react-icons/ri';
+import ErrorText from '../../../../components/dondeSiempre/ErrorText';
+import LoadingText from '../../../../components/dondeSiempre/LoadingText';
+import { useParams } from 'next/navigation';
 
 export default function OutfitsPage() {
+  const params = useParams<{ id: string }>();
+  const storefrontId = Number.parseInt(params.id);
+
   const [isAdmin, setIsAdmin] = useState(false);
   const outfitsQuery = useQuery({
-    queryKey: ['outfits', 1],
-    queryFn: () => getOutfitsOfStore(1),
+    queryKey: ['outfits', storefrontId],
+    queryFn: () => getOutfitsOfStorefront(storefrontId),
     enabled: false,
   });
 
@@ -50,7 +54,7 @@ export default function OutfitsPage() {
         <div className="flex flex-col items-center bg-beige">
           <div className="w-full md:w-8/12">
             {isAdmin ? (
-              <Link href="outfits">
+              <Link href={`/storefront/${storefrontId}/outfits`}>
                 <Card className="p-4 m-4 shadow-xl hover:bg-muted active:bg-input hover:cursor-pointer">
                   <div className="p-4 border-4 border-dashed border-secondary rounded-lg flex flex-row justify-center gap-4">
                     <IoMdAddCircleOutline className="mt-8 mb-8 text-secondary text-center text-4xl" />
@@ -108,14 +112,14 @@ export default function OutfitsPage() {
                 )}
                 <div className="flex flex-row justify-center gap-4">
                   <Link
-                    href={`/outfits/${o.id}`}
+                    href={`/storefront/${storefrontId}/outfits/${o.id}`}
                     className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-xl h-12 w-11/12 md:w-1/4"
                   >
                     {isAdmin ? 'Editar' : 'Ver más'}
                   </Link>
                   {isAdmin ? (
                     <Link
-                      href={`/outfits/${o.id}/products`}
+                      href={`/storefront/${storefrontId}/outfits/${o.id}/products`}
                       className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-xl h-12 w-11/12 md:w-1/4"
                     >
                       Productos
