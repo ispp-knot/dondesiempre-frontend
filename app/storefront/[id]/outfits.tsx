@@ -14,7 +14,7 @@ type Props = {
 
 export default function Collections({ outfits = [] }: Props) {
   return (
-    <div className="flex flex-col px-5">
+    <div className="flex flex-col px-5 sm:w-10/12">
       <div className="flex flex-row items-center justify-between w-full mb-4">
         <h1 className="text-primary text-xl md:text-2xl font-bold">Nuestros conjuntos</h1>
         <Link href="" className="text-secondary underline">
@@ -25,9 +25,9 @@ export default function Collections({ outfits = [] }: Props) {
         {outfits.map((out) => (
           <div
             key={out.id}
-            className="relative flex flex-col shrink-0 border-2 border-gray-200 w-30 h-40 md:w-70 md:h-80  bg-cover bg-center justify-end rounded-lg shadow-sm"
+            className="relative flex flex-col shrink-0 border-2 border-gray-200 w-[45%] md:w-1/4 h-60 sm:h-80 bg-cover bg-center justify-end rounded-lg shadow-sm"
             style={{
-              backgroundImage: `url(${out.image || '/static/img/outfit_placeholder.jpg'})`,
+              backgroundImage: `url(${out.image || `/static/img/outfit_placeholder_${out.id}.jpg`})`,
             }}
           >
             {out.discount && (

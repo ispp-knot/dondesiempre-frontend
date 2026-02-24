@@ -69,6 +69,16 @@ export default async function StorefrontPage({
       },
       {
         id: 2,
+        name: 'Casual',
+        image: '',
+      },
+      {
+        id: 3,
+        name: 'Semana Santa',
+        image: '',
+      },
+      {
+        id: 4,
         name: 'Frio',
         image: '',
       },
