@@ -44,6 +44,7 @@ export default function OutfitsPage() {
       <>
         <LabelledSwitch
           label="Modo administrador"
+          checked={isAdmin}
           onCheckedChange={(checked) => setIsAdmin(checked)}
         />
         <div className="flex flex-col items-center bg-beige">
@@ -54,7 +55,7 @@ export default function OutfitsPage() {
                   <div className="p-4 border-4 border-dashed border-secondary rounded-lg flex flex-row justify-center gap-4">
                     <IoMdAddCircleOutline className="mt-8 mb-8 text-secondary text-center text-4xl" />
                     <h1 className="mt-8 mb-8 font-bold text-secondary text-center text-3xl">
-                      Crear nuevo outfit
+                      Crear outfit
                     </h1>
                   </div>
                 </Card>
