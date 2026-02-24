@@ -34,7 +34,7 @@ export default function StoreTabs({
 
   return (
     <>
-      <div className="flex mx-4 mt-5 mb-5 self-center rounded-md overflow-hidden border border-gray-200 w-11/12 sm:w-1/2 sm:mx-auto">
+      <div className="flex mx-4 mt-5 mb-5 self-center rounded-md overflow-hidden border border-gray-200 w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5">
         <button
           onClick={() => setActiveTab('catalogo')}
           className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
@@ -52,8 +52,7 @@ export default function StoreTabs({
           Sobre nosotros
         </button>
       </div>
-      <div className={'flex flex-col gap-10'}>
-        {/* TODO: Add outfits */}
+      <div className={'flex flex-col gap-10 sm:items-center'}>
         {activeTab === 'catalogo' ? (
           <>
             <Collections collections={collections} />
