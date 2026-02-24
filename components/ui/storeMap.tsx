@@ -72,7 +72,8 @@ export function StoreMap({
       longitude={store.location.lng}
       latitude={store.location.lat}
       anchor="bottom"
-      onClick={(e) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onClick={(e: any) => {
         e.originalEvent.stopPropagation();
         onStoreSelect?.(store);
         onClickStore(store);
