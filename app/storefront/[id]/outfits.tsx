@@ -1,9 +1,11 @@
 import Link from 'next/link';
+import { Percent } from 'lucide-react';
 
 type Outfit = {
   id: number;
   name: string;
   image: string;
+  discount?: number;
 };
 
 type Props = {
@@ -19,20 +21,27 @@ export default function Collections({ outfits = [] }: Props) {
           Ver más
         </Link>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 storefront-listing">
-        {outfits.slice(0, 4).map((out) => (
+      <div className="flex flex-row items-center gap-2 md:gap-4 overflow-x-auto pb-3 storefront-listing">
+        {outfits.map((out) => (
           <div
             key={out.id}
-            className="flex flex-col border-2 border-gray-200 w-full h-60 sm:h-80 bg-cover bg-center justify-end rounded-lg shadow-sm"
+            className="relative flex flex-col shrink-0 border-2 border-gray-200 w-[45%] md:w-1/4 h-60 sm:h-80 bg-cover bg-center justify-end rounded-lg shadow-sm"
             style={{
               backgroundImage: `url(${out.image || `/static/img/outfit_placeholder_${out.id}.jpg`})`,
             }}
           >
-            <div
-              className="flex flex-col items-center justify-center gap-2 w-full h-1/4 md:h-2/12 self-end bg-white
-            text-sm md:text-lg px-4 text-center"
-            >
-              {out.name}
+            {out.discount && (
+              <div className="absolute top-2 left-2 bg-primary rounded-full p-0.5 md:p-1 flex items-center justify-center shadow-md">
+                <Percent className="w-4 h-4 md:w-5 md:h-5 text-white stroke-[3]" />
+              </div>
+            )}
+            <div className="flex flex-row items-center justify-center gap-1.5 w-full h-4/12 md:h-1/4 self-end bg-white text-sm md:text-lg px-2 text-center">
+              <span className="truncate">{out.name}</span>
+              {out.discount && (
+                <span className="text-primary font-bold bg-primary/10 px-1.5 py-0.5 rounded-md text-xs md:text-sm">
+                  -{out.discount}%
+                </span>
+              )}
             </div>
           </div>
         ))}
