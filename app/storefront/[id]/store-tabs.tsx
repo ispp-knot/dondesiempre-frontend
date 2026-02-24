@@ -40,7 +40,7 @@ export default function StoreTabs({
     <>
       {promoOutfit && (
         <div className="relative mx-4 mt-5 flex flex-col items-center justify-center border-2 border-secondary/50 rounded-md p-4 overflow-hidden w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5">
-          {/* Background Image Container */}
+          {/* Background Images Container */}
           <div className="absolute inset-0 z-0 w-full h-full">
             {promoOutfit.image && (
               <Image src={promoOutfit.image} alt={promoOutfit.name} fill className="object-cover" />
