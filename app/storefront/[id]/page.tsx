@@ -40,21 +40,6 @@ export default async function StorefrontPage(/*{ params }: { params: Promise<{ i
         name: 'Feria',
         image: '',
       },
-      {
-        id: 5,
-        name: 'Semana Santa',
-        image: '',
-      },
-      {
-        id: 6,
-        name: 'Joyería',
-        image: '',
-      },
-      {
-        id: 7,
-        name: 'Ropa interior',
-        image: '',
-      },
     ],
     outfits: [
       {
@@ -64,6 +49,16 @@ export default async function StorefrontPage(/*{ params }: { params: Promise<{ i
       },
       {
         id: 2,
+        name: 'Casual',
+        image: '',
+      },
+      {
+        id: 3,
+        name: 'Semana Santa',
+        image: '',
+      },
+      {
+        id: 4,
         name: 'Frio',
         image: '',
       },
