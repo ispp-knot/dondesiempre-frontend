@@ -4,7 +4,11 @@ import { MdAccessTimeFilled } from 'react-icons/md';
 import { FaFacebook, FaInstagram } from 'react-icons/fa';
 import StoreTabs from './store-tabs';
 
-export default async function StorefrontPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function StorefrontPage({
+  params: _params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   {
     /* TODO: Add request using store id */
   }
