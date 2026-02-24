@@ -10,6 +10,8 @@ const quicksand = Quicksand({
   variable: '--font-quicksand',
 });
 
+import './globals.css';
+
 const APP_NAME = 'PWA App';
 const APP_DEFAULT_TITLE = 'My Awesome PWA App';
 const APP_TITLE_TEMPLATE = '%s - PWA App';
@@ -56,7 +58,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="es" dir="ltr">
+    <html lang="es" dir="ltr" className={quicksand.variable}>
       <head />
       <body className={quicksand.className}>
         <Providers>{children}</Providers>
