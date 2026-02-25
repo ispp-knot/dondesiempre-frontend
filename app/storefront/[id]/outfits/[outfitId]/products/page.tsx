@@ -60,7 +60,7 @@ export default function OutfitProductsPage() {
     const outfit = testOutfits[outfitId];
     return (
       <>
-        <div className="flex flex-col items-center bg-beige">
+        <div className="flex flex-col items-center">
           <div className="w-full md:w-8/12">
             <Card className="p-4 pt-8 m-4 mb-8 shadow-xl">
               <div>

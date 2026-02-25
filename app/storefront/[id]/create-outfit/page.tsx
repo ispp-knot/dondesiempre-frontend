@@ -51,7 +51,7 @@ export default function OutfitProductsPage() {
   } else {
     return (
       <>
-        <div className="flex flex-col items-center bg-beige">
+        <div className="flex flex-col items-center">
           <div className="w-full md:w-8/12">
             <Card className="p-4 pt-8 m-4 mb-8 shadow-xl">
               <h1 className="mb-3 font-bold text-primary text-center text-3xl">Crear outfit</h1>
