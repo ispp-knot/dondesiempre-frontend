@@ -14,10 +14,12 @@ import { useDebouncedCallback } from 'use-debounce';
 
 export function StoreMap({
   startingLocation = DEFAULT_MAP_LOCATION,
+  userLocation,
   onClickStore = () => {},
   onStoreSelect,
 }: {
   startingLocation?: LngLat;
+  userLocation?: { lng: number; lat: number } | null;
   onClickStore?: (store: Store) => void;
   onStoreSelect?: (store: Store | null) => void;
 }) {
@@ -99,6 +101,14 @@ export function StoreMap({
         onClick={() => onStoreSelect?.(null)}
       >
         {pins}
+        {userLocation && (
+          <Marker longitude={userLocation.lng} latitude={userLocation.lat} anchor="center">
+            <div className="relative flex items-center justify-center w-6 h-6">
+              <div className="absolute w-full h-full bg-blue-500 rounded-full opacity-50 animate-ping"></div>
+              <div className="relative w-4 h-4 bg-blue-500 border-2 border-white rounded-full shadow-md"></div>
+            </div>
+          </Marker>
+        )}
       </Map>
 
       {/* Custom Map Controls */}

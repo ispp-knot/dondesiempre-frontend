@@ -1,5 +1,6 @@
 import { LngLat, LngLatBounds } from 'maplibre-gl';
-import { Store } from '../types';
+import { Store, StoreDTO } from '../types';
+import { authorizedOfetch } from '@/lib/api/authorizedOfetch';
 
 const STORE_COLORS = [
   '#FF6B6B', // Red
@@ -14,29 +15,6 @@ const STORE_COLORS = [
   '#52C48A', // Green
 ];
 
-const STORE_NAMES = [
-  'Boutique Elegancia',
-  'Moda María',
-  'El Armario',
-  'Vestidos Luna',
-  'Boutique Chic',
-  'Moda Isabel',
-  'La Percha',
-  'Estilo Propio',
-  'Boutique del Sol',
-  'El Vestidor',
-  'Moda y Clase',
-  'Tendencias',
-  'Boutique Ana',
-  'Ropa Linda',
-  'Moda Urbana',
-  'La Boutique Carmen',
-  'Estilo y Moda',
-  'Boutique Moderna',
-  'Ropa y Estilo',
-  'Moda Express',
-];
-
 export async function getStoresInBoundingBox(boundingBox: LngLatBounds): Promise<Store[]> {
   const sw = boundingBox.getSouthWest();
   const ne = boundingBox.getNorthEast();
@@ -46,20 +24,30 @@ export async function getStoresInBoundingBox(boundingBox: LngLatBounds): Promise
   const minLat = sw.lat;
   const maxLat = ne.lat;
 
-  const stores: Store[] = [];
-
-  for (let i = 0; i < 20; i++) {
-    const randomLng = minLng + Math.random() * (maxLng - minLng);
-    const randomLat = minLat + Math.random() * (maxLat - minLat);
-
-    stores.push({
-      name: STORE_NAMES[i % STORE_NAMES.length],
-      location: new LngLat(randomLng, randomLat),
-      color: STORE_COLORS[i % STORE_COLORS.length],
-      address: `${Math.floor(Math.random() * 1000) + 1} Main Street, City`,
-      rating: Math.round((Math.random() * 4 + 1) * 10) / 10, // Random rating between 1.0 and 5.0
-    });
+  try {
+    console.log(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/stores');
+    const response = (await authorizedOfetch(
+      process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/stores',
+      {
+        method: 'GET',
+        query: {
+          minLon: minLng,
+          minLat: minLat,
+          maxLon: maxLng,
+          maxLat: maxLat,
+        },
+      }
+    )) as StoreDTO[];
+    return response.map((dto: StoreDTO, index: number) => ({
+      name: dto.name,
+      address: dto.address,
+      location: new LngLat(dto.longitude, dto.latitude),
+      color: STORE_COLORS[index % STORE_COLORS.length],
+      rating: 4.5,
+      imageUrl: '/store-placeholder.jpeg',
+    }));
+  } catch (error) {
+    console.error('Error fetching stores: ' + error);
+    return [];
   }
-
-  return stores;
 }
