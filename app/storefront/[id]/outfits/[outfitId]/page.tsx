@@ -14,8 +14,9 @@ import { GoDotFill } from 'react-icons/go';
 import * as testOutfits from '@/lib/sampleData/testOutfits.json';
 
 export default function OutfitDetailsPage() {
-  const params = useParams<{ outfitId: string }>();
+  const params = useParams<{ storefrontId: string; outfitId: string }>();
   const outfitId = Number.parseInt(params.outfitId);
+  const storefrontId = Number.parseInt(params.storefrontId);
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(0);
@@ -59,7 +60,11 @@ export default function OutfitDetailsPage() {
           {isAdmin ? (
             <>
               <h1 className="mb-8 font-bold text-primary text-center text-3xl">Editar outfit</h1>
-              <form action="/outfits" method="GET" className="w-10/12">
+              <form
+                action={`/storefront/${storefrontId}/outfits/${outfitId}`}
+                method="GET"
+                className="w-10/12"
+              >
                 <div className="flex flex-col gap-4">
                   <label htmlFor="form-name" className="font-bold text-lg text-secondary">
                     Nombre:{' '}

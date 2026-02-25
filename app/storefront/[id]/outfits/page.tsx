@@ -54,7 +54,7 @@ export default function OutfitsPage() {
         <div className="flex flex-col items-center bg-beige">
           <div className="w-full md:w-8/12">
             {isAdmin ? (
-              <Link href={`/storefront/${storefrontId}/outfits`}>
+              <Link href={`/storefront/${storefrontId}/create-outfit/`}>
                 <Card className="p-4 m-4 shadow-xl hover:bg-muted active:bg-input hover:cursor-pointer">
                   <div className="p-4 border-4 border-dashed border-secondary rounded-lg flex flex-row justify-center gap-4">
                     <IoMdAddCircleOutline className="mt-8 mb-8 text-secondary text-center text-4xl" />

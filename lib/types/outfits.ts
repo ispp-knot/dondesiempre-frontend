@@ -21,3 +21,18 @@ export type Outfit = {
   tags: string[];
   products: OutfitProduct[];
 };
+
+export function createEmptyOutfit(): Outfit {
+  return {
+    id: 0,
+    name: '',
+    description: null,
+    image: null,
+    priceInCents: 0,
+    discountedPriceInCents: 0,
+    index: 0,
+    storefrontId: 0,
+    tags: [],
+    products: [],
+  };
+}
