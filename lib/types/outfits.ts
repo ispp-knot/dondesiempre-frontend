@@ -1,8 +1,8 @@
 export type OutfitProduct = {
   id: number;
   name: string;
-  image: string | null;
   description: string | null;
+  image: string | null;
   priceInCents: number;
   type: string;
   index: number;

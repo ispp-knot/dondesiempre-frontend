@@ -254,7 +254,7 @@ export default function OutfitDetailsPage() {
                     (p, i) =>
                       p.image && (
                         <img
-                          key={p.index}
+                          key={p.id}
                           src={p.image}
                           onClick={() => setSelectedProduct(i)}
                           alt={'Imagen de producto'}

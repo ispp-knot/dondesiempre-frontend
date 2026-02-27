@@ -4,6 +4,7 @@ export type Product = {
   priceInCents: number;
   discountedPriceInCents: number;
   description: string | null;
+  image: string | null;
   type: string;
   storeId: number;
 };

@@ -66,7 +66,7 @@ export default function OutfitsPage() {
           {outfitsQuery.data && outfitsQuery.data.length > 0 ? (
             <>
               {outfitsQuery.data.map((o) => (
-                <Card key={o.index} className="p-4 m-4 pt-8 shadow-xl">
+                <Card key={o.id} className="p-4 m-4 pt-8 shadow-xl">
                   <div>
                     {o.discountedPriceInCents === o.priceInCents ? (
                       <></>
@@ -85,7 +85,7 @@ export default function OutfitsPage() {
                       (p) =>
                         p.image && (
                           <img
-                            key={p.index}
+                            key={p.id}
                             src={p.image}
                             alt={'Imagen de producto'}
                             className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg"

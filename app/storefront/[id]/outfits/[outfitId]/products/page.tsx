@@ -143,8 +143,7 @@ export default function OutfitProductsPage() {
                     </div>
                     <div className="flex flex-row justify-center">
                       <img
-                        key={p.id}
-                        src={/*p.image*/ undefined}
+                        src={p.image || undefined}
                         alt={'Imagen de producto'}
                         className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg"
                       ></img>
