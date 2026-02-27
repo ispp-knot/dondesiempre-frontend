@@ -4,28 +4,28 @@ import ErrorText from '@/components/dondeSiempre/ErrorText';
 import LabelledSwitch from '@/components/dondeSiempre/LabelledSwitch';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { Button } from '@/components/ui/button';
-import { getOutfit } from '@/lib/api/outfitEndpoints';
+import { addTag, getOutfit, removeTag, updateOutfit } from '@/lib/api/outfitEndpoints';
+import { OutfitUpdate } from '@/lib/types/outfits';
 import { convertPrice } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { FaTag } from 'react-icons/fa6';
 import { GoDotFill } from 'react-icons/go';
-import * as testOutfits from '@/lib/sampleData/testOutfits.json';
+import { redirect } from 'next/navigation';
+import { GrSearch } from 'react-icons/gr';
 
 export default function OutfitDetailsPage() {
-  const params = useParams<{ storefrontId: string; outfitId: string }>();
+  const params = useParams<{ id: string; outfitId: string }>();
   const outfitId = Number.parseInt(params.outfitId);
-  const storefrontId = Number.parseInt(params.storefrontId);
+  const storefrontId = Number.parseInt(params.id);
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(0);
-  const [outfitTags, setOutfitTags] = useState(testOutfits[outfitId].tags);
 
   const outfitQuery = useQuery({
     queryKey: ['outfit', outfitId],
     queryFn: () => getOutfit(outfitId),
-    enabled: false,
   });
 
   if (outfitQuery.isLoading) {
@@ -44,25 +44,43 @@ export default function OutfitDetailsPage() {
     );
   }
 
-  if (!testOutfits) {
-    return <></>;
-  } else {
-    const outfit = testOutfits[outfitId];
-    const product = outfit.products[selectedProduct];
-    return (
-      <>
-        <LabelledSwitch
-          label="Modo tienda"
-          checked={isAdmin}
-          onCheckedChange={(checked) => setIsAdmin(checked)}
-        />
-        <div className="flex flex-col items-center">
-          {isAdmin ? (
+  const submitForm = async (event: React.SyntheticEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!outfitQuery.data) {
+      return;
+    }
+
+    const dto: OutfitUpdate = {
+      name: (document.getElementById('form-name') as HTMLInputElement).value,
+      description: (document.getElementById('form-description') as HTMLInputElement).value || null,
+      image: (document.getElementById('form-image-preview') as HTMLInputElement).src || null,
+      discountedPriceInCents:
+        Number.parseFloat(
+          (document.getElementById('form-discounted-price') as HTMLInputElement).value
+        ) * 100.0,
+      index: Number.parseInt((document.getElementById('form-index') as HTMLInputElement).value),
+    };
+    await updateOutfit(outfitQuery.data.id, dto);
+    redirect(`/storefront/${storefrontId}/outfits`);
+  };
+
+  return (
+    <>
+      <LabelledSwitch
+        label="Modo tienda"
+        checked={isAdmin}
+        onCheckedChange={(checked) => setIsAdmin(checked)}
+      />
+      <div className="flex flex-col items-center">
+        {outfitQuery.data ? (
+          isAdmin ? (
             <>
               <h1 className="mb-8 font-bold text-primary text-center text-3xl">Editar outfit</h1>
               <form
-                action={`/storefront/${storefrontId}/outfits/${outfitId}`}
+                action={`/storefront/${storefrontId}/outfits`}
                 method="GET"
+                onSubmit={submitForm}
                 className="w-10/12"
               >
                 <div className="flex flex-col gap-4">
@@ -73,7 +91,9 @@ export default function OutfitDetailsPage() {
                     type="text"
                     name="name"
                     id="form-name"
-                    defaultValue={outfit.name}
+                    minLength={1}
+                    maxLength={255}
+                    defaultValue={outfitQuery.data.name}
                     required
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                   />
@@ -83,7 +103,9 @@ export default function OutfitDetailsPage() {
                   <input
                     type="text"
                     name="description"
-                    defaultValue={outfit.description}
+                    minLength={0}
+                    maxLength={5000}
+                    defaultValue={outfitQuery.data.description || ''}
                     id="form-description"
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                   />
@@ -93,7 +115,7 @@ export default function OutfitDetailsPage() {
                   <div className="flex flex-col items-center">
                     <img
                       id="form-image-preview"
-                      src={outfit.image || undefined}
+                      src={outfitQuery.data.image || undefined}
                       alt={'Sin imagen'}
                       className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg text-center text-secondary"
                     ></img>
@@ -102,7 +124,7 @@ export default function OutfitDetailsPage() {
                       name="image"
                       id="form-image"
                       accept="image/*"
-                      src={outfit.image || undefined}
+                      src={outfitQuery.data.image || undefined}
                       onChange={() => {
                         const image = document.getElementById(
                           'form-image-preview'
@@ -125,7 +147,7 @@ export default function OutfitDetailsPage() {
                     id="form-discounted-price"
                     min="0.00"
                     step="0.01"
-                    defaultValue={`${convertPrice(outfit.discountedPriceInCents)}`}
+                    defaultValue={`${convertPrice(outfitQuery.data.discountedPriceInCents)}`}
                     required
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                   />
@@ -138,7 +160,7 @@ export default function OutfitDetailsPage() {
                     id="form-index"
                     min="0"
                     step="1"
-                    defaultValue={outfit.index}
+                    defaultValue={outfitQuery.data.index}
                     required
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                   />
@@ -149,23 +171,25 @@ export default function OutfitDetailsPage() {
                     type="text"
                     name="tags"
                     id="form-tags"
-                    onChange={() => {
+                    onChange={async () => {
                       const element = document.getElementById('form-tags') as HTMLInputElement;
 
                       if (element.value.includes(' ')) {
-                        setOutfitTags([...new Set([...outfitTags, element.value.trim()])]);
+                        await addTag(outfitQuery.data.id, element.value.trim());
                         element.value = '';
+                        outfitQuery.refetch();
                       }
                     }}
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                   />
                 </div>
                 <div className="flex flex-row gap-4 overflow-x-scroll">
-                  {outfitTags.map((t, i) => (
+                  {outfitQuery.data.tags.map((t, i) => (
                     <div
                       key={i}
-                      onClick={() => {
-                        setOutfitTags(outfitTags.filter((tag) => tag !== t));
+                      onClick={async () => {
+                        await removeTag(outfitQuery.data.id, t);
+                        outfitQuery.refetch();
                       }}
                       className="p-2 rounded-lg bg-secondary hover:bg-dark-secondary flex flex-row gap-1 shrink-0"
                     >
@@ -189,19 +213,21 @@ export default function OutfitDetailsPage() {
               <div className="pt-8 pl-8 pr-8 pb-4">
                 <div>
                   <h1 className="mb-1 font-bold text-primary text-center text-3xl">
-                    {outfit.name}
+                    {outfitQuery.data.name}
                   </h1>
-                  {outfit.description ? (
-                    <p className="text-secondary text-center text-md">{outfit.description}</p>
+                  {outfitQuery.data.description ? (
+                    <p className="text-secondary text-center text-md">
+                      {outfitQuery.data.description}
+                    </p>
                   ) : (
                     <></>
                   )}
                 </div>
               </div>
               <div className="flex flex-row justify-center relative">
-                {product.image ? (
+                {outfitQuery.data.products[selectedProduct].image ? (
                   <img
-                    src={product.image}
+                    src={outfitQuery.data.products[selectedProduct].image}
                     alt={'Imagen de producto'}
                     className="aspect-square w-full md:w-sm object-cover md:rounded-lg shrink-0 shadow-lg"
                   ></img>
@@ -209,7 +235,7 @@ export default function OutfitDetailsPage() {
                   <></>
                 )}
                 <div className="mb-1 flex flex-row justify-center absolute bottom-0">
-                  {outfit.products.map((p, i) => (
+                  {outfitQuery.data.products.map((p, i) => (
                     <GoDotFill
                       key={i}
                       className={i === selectedProduct ? 'text-secondary' : 'text-ring'}
@@ -219,30 +245,31 @@ export default function OutfitDetailsPage() {
               </div>
               <div className="pt-4 pb-8 pl-8 pr-8 md:w-8/12 flex flex-col items-center">
                 <div>
-                  <h1 className="text-primary text-2xl">{product.name}</h1>
+                  <h1 className="text-primary text-2xl">
+                    {outfitQuery.data.products[selectedProduct].name}
+                  </h1>
                 </div>
                 <div className="pt-8 pb-6 flex flex-row w-fit max-w-11/12 self-center overflow-x-scroll items-center gap-4">
-                  {outfit.products.map((p, i) =>
-                    p.image ? (
-                      <img
-                        key={p.index}
-                        src={p.image}
-                        onClick={() => setSelectedProduct(i)}
-                        alt={'Imagen de producto'}
-                        className={
-                          'w-20 h-20 md:w-40 md:h-40 object-cover shrink-0 rounded-lg shadow-lg ' +
-                          (i === selectedProduct ? 'border-4 border-ring' : '')
-                        }
-                      ></img>
-                    ) : (
-                      <></>
-                    )
+                  {outfitQuery.data.products.map(
+                    (p, i) =>
+                      p.image && (
+                        <img
+                          key={p.index}
+                          src={p.image}
+                          onClick={() => setSelectedProduct(i)}
+                          alt={'Imagen de producto'}
+                          className={
+                            'w-20 h-20 md:w-40 md:h-40 object-cover shrink-0 rounded-lg shadow-lg ' +
+                            (i === selectedProduct ? 'border-4 border-ring' : '')
+                          }
+                        ></img>
+                      )
                   )}
                 </div>
                 <div>
                   <h1 className="mt-4 mb-4 text-primary text-2xl">
                     <strong>Total: </strong>
-                    {`${convertPrice(outfit.discountedPriceInCents).toFixed(2).toString().replace('.', ',')}€ con IVA`}
+                    {`${convertPrice(outfitQuery.data.discountedPriceInCents).toFixed(2).toString().replace('.', ',')}€ con IVA`}
                   </h1>
                 </div>
                 <Button className="self-center bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-xl h-12 w-11/12 md:w-1/3">
@@ -250,9 +277,17 @@ export default function OutfitDetailsPage() {
                 </Button>
               </div>
             </>
-          )}
-        </div>
-      </>
-    );
-  }
+          )
+        ) : (
+          <div className="mt-16 flex flex-col items-center gap-4">
+            <p className="text-secondary font-bold text-center text-4xl">¡Vaya!</p>
+            <GrSearch className="mt-4 ml-4 text-8xl text-secondary"></GrSearch>
+            <p className="mt-4 text-secondary text-center text-lg w-8/12">
+              El producto que buscas no existe...
+            </p>
+          </div>
+        )}
+      </div>
+    </>
+  );
 }

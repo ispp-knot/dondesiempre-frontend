@@ -22,6 +22,29 @@ export type Outfit = {
   products: OutfitProduct[];
 };
 
+export type OutfitCreationProduct = {
+  id: number;
+  index: number;
+};
+
+export type OutfitCreation = {
+  index: number;
+  storefrontId: number;
+  name: string;
+  description: string | null;
+  image: string | null;
+  tags: string[];
+  products: OutfitCreationProduct[];
+};
+
+export type OutfitUpdate = {
+  name: string;
+  description: string | null;
+  image: string | null;
+  discountedPriceInCents: number;
+  index: number;
+};
+
 export function createEmptyOutfit(): Outfit {
   return {
     id: 0,
