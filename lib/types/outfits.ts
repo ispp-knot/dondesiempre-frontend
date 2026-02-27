@@ -3,7 +3,7 @@ export type OutfitProduct = {
   name: string;
   image: string | null;
   description: string | null;
-  discountedPriceInCents: number;
+  priceInCents: number;
   type: string;
   index: number;
   storeId: number;

@@ -283,7 +283,7 @@ export default function OutfitDetailsPage() {
             <p className="text-secondary font-bold text-center text-4xl">¡Vaya!</p>
             <GrSearch className="mt-4 ml-4 text-8xl text-secondary"></GrSearch>
             <p className="mt-4 text-secondary text-center text-lg w-8/12">
-              El producto que buscas no existe...
+              El outfit que buscas no existe...
             </p>
           </div>
         )}
