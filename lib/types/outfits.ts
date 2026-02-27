@@ -1,3 +1,5 @@
+import { Product } from "./products";
+
 export type OutfitProduct = {
   id: number;
   name: string;
@@ -57,5 +59,12 @@ export function createEmptyOutfit(): Outfit {
     storefrontId: 0,
     tags: [],
     products: [],
+  };
+}
+
+export function productToOufitCreationProduct(product: Product, index: number): OutfitCreationProduct {
+  return {
+    id: product.id,
+    index: index
   };
 }

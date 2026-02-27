@@ -1,4 +1,4 @@
-import { Outfit, OutfitCreationProduct, OutfitUpdate } from '../types/outfits';
+import { Outfit, OutfitCreation, OutfitCreationProduct, OutfitUpdate } from '../types/outfits';
 import { authorizedOfetch } from './authorizedOfetch';
 
 export async function getOutfitsOfStorefront(storefrontId: number): Promise<Outfit[]> {
@@ -75,6 +75,17 @@ export async function removeProduct(outfitId: number, productId: number): Promis
         productId,
       { method: 'DELETE' }
     );
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function createOutfit(dto: OutfitCreation): Promise<void> {
+  try {
+    return await authorizedOfetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/outfits', {
+      method: 'POST',
+      body: JSON.stringify(dto),
+    });
   } catch (error) {
     throw error;
   }

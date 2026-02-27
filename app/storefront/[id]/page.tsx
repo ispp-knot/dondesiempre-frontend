@@ -1,19 +1,23 @@
 'use client';
 
 import Image from 'next/image';
+import { useParams } from 'next/navigation';
 import { FaFacebook, FaInstagram } from 'react-icons/fa';
 import { FaLocationDot } from 'react-icons/fa6';
 import { MdAccessTimeFilled } from 'react-icons/md';
 import StoreTabs from './store-tabs';
-import { useParams } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import { getOutfitsOfStorefront } from '@/lib/api/outfitEndpoints';
 
 export default function StorefrontPage() {
   const params = useParams<{ id: string }>();
   const storefrontId = params.id;
-  {
-    /* TODO: Add request using store id */
-  }
-  // const { id } = await params;
+
+  const outfitsQuery = useQuery({
+    queryKey: ['outfits', storefrontId],
+    queryFn: () => getOutfitsOfStorefront(Number.parseInt(storefrontId)),
+  });
+
   const store = {
     name: 'Tu Capricho',
     address: 'Avenida La Palmera, 13',
@@ -61,7 +65,7 @@ export default function StorefrontPage() {
         image: '',
       },
     ],
-    outfits: [],
+    outfits: outfitsQuery.data,
   };
   return (
     <div className="flex flex-col bg-white">

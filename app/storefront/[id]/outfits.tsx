@@ -1,6 +1,5 @@
 'use client';
 
-import * as testOutfits from '@/lib/sampleData/testOutfits.json';
 import { Outfit } from '@/lib/types/outfits';
 import { Percent } from 'lucide-react';
 import Link from 'next/link';
@@ -20,7 +19,7 @@ export default function Outfits({ storefrontId = undefined, outfits = [] }: Prop
         </Link>
       </div>
       <div className="flex flex-row items-center gap-2 md:gap-4 overflow-x-auto pb-3 storefront-listing">
-        {testOutfits.map((out) => (
+        {outfits.map((out) => (
           <Link
             href={`/storefront/${storefrontId}/outfits/${out.id}`}
             key={out.id}
@@ -38,7 +37,12 @@ export default function Outfits({ storefrontId = undefined, outfits = [] }: Prop
               <span className="truncate">{out.name}</span>
               {out.discountedPriceInCents !== out.priceInCents && (
                 <span className="text-primary font-bold bg-primary/10 px-1.5 py-0.5 rounded-md text-xs md:text-sm">
-                  -{((out.priceInCents - out.discountedPriceInCents) / out.priceInCents) * 100.0}%
+                  -
+                  {(
+                    ((out.priceInCents - out.discountedPriceInCents) / out.priceInCents) *
+                    100.0
+                  ).toFixed(0)}
+                  %
                 </span>
               )}
             </div>
