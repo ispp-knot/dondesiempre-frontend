@@ -73,7 +73,7 @@ export default function OutfitsPage() {
                       <></>
                     )}
                   </div>
-                  <div className="flex flex-row w-fit max-w-11/12 self-center overflow-x-scroll items-center gap-4 p-4">
+                  <div className="flex flex-row w-fit max-w-11/12 self-center overflow-x-auto items-center gap-4 p-4">
                     {o.products.map((p) => (
                       <Image
                         key={p.id}
