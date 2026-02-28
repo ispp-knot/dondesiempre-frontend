@@ -10,7 +10,7 @@ export type Store = {
 };
 
 export type StoreDTO = {
-  id: number;
+  id: string;
   name: string;
   email: string;
   storeID: string;
@@ -25,4 +25,26 @@ export type StoreDTO = {
   primaryColor: string;
   secondaryColor: string;
   bannerImageUrl: string;
+};
+
+export type OutfitProductDTO = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  priceInCents: number;
+  type: string;
+  index: number;
+};
+
+export type OutfitDTO = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  priceInCents: number;
+  discountedPriceInCents: number;
+  index: number;
+  tags: string[];
+  products: string[];
 };

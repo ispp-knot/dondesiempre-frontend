@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Collections from './collections';
 import AboutUs from './about-us';
 import Outfits from './outfits';
+import { OutfitDTO } from '@/lib/api/types';
 
 type Tab = 'catalogo' | 'sobre';
 
@@ -14,17 +15,10 @@ type Collection = {
   image: string;
 };
 
-type Outfit = {
-  id: number;
-  name: string;
-  image: string;
-  discount?: number;
-};
-
 type Props = {
   collections?: Collection[];
   description?: string;
-  outfits?: Outfit[];
+  outfits?: OutfitDTO[];
 };
 
 export default function StoreTabs({
@@ -34,7 +28,7 @@ export default function StoreTabs({
 }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
 
-  const promoOutfit = outfits.find((o) => o.discount && o.discount > 0);
+  const promoOutfit = outfits.find((o) => o.discountedPriceInCents && o.discountedPriceInCents > 0);
 
   return (
     <>

@@ -1,15 +1,9 @@
 import Link from 'next/link';
 import { Percent } from 'lucide-react';
-
-type Outfit = {
-  id: number;
-  name: string;
-  image: string;
-  discount?: number;
-};
+import { OutfitDTO } from '@/lib/api/types';
 
 type Props = {
-  outfits?: Outfit[];
+  outfits?: OutfitDTO[];
 };
 
 export default function Collections({ outfits = [] }: Props) {
@@ -30,16 +24,16 @@ export default function Collections({ outfits = [] }: Props) {
               backgroundImage: `url(${out.image || `/static/img/outfit_placeholder_${out.id}.jpg`})`,
             }}
           >
-            {out.discount && (
+            {out.discountedPriceInCents && (
               <div className="absolute top-2 left-2 bg-primary rounded-full p-0.5 md:p-1 flex items-center justify-center shadow-md">
                 <Percent className="w-4 h-4 md:w-5 md:h-5 text-white stroke-[3]" />
               </div>
             )}
             <div className="flex flex-row items-center justify-center gap-1.5 w-full h-4/12 md:h-1/4 self-end bg-white text-sm md:text-lg px-2 text-center">
               <span className="truncate">{out.name}</span>
-              {out.discount && (
+              {out.discountedPriceInCents && (
                 <span className="text-primary font-bold bg-primary/10 px-1.5 py-0.5 rounded-md text-xs md:text-sm">
-                  -{out.discount}%
+                  -{out.discountedPriceInCents}%
                 </span>
               )}
             </div>

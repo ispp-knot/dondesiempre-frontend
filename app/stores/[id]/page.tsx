@@ -4,9 +4,11 @@ import { MdAccessTimeFilled } from 'react-icons/md';
 import { FaFacebook, FaInstagram } from 'react-icons/fa';
 import StoreTabs from './store-tabs';
 import { getStore } from '@/lib/api/stores/getStore';
+import { getOutfitByStoreId } from '@/lib/api/outfits/getOutfitsByStore';
 
 export default async function storePage({ params }: { params: { id: string } }) {
   const storeDto = await getStore(params.id);
+  const outfitsDto = await getOutfitByStoreId(params.id);
 
   const store = {
     name: storeDto.name,
@@ -53,29 +55,7 @@ export default async function storePage({ params }: { params: { id: string } }) 
         image: '',
       },
     ],
-    outfits: [
-      {
-        id: 1,
-        name: 'Feria',
-        image: '/static/img/outfit_placeholder.jpg',
-        discount: 20,
-      },
-      {
-        id: 2,
-        name: 'Casual',
-        image: '',
-      },
-      {
-        id: 3,
-        name: 'Semana Santa',
-        image: '',
-      },
-      {
-        id: 4,
-        name: 'Frio',
-        image: '',
-      },
-    ],
+    outfits: outfitsDto,
   };
   return (
     <div className="flex flex-col bg-white">
