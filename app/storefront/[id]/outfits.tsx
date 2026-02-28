@@ -9,7 +9,7 @@ type Props = {
   outfits?: Outfit[];
 };
 
-export default function Outfits({ storefrontId = undefined, outfits = [] }: Props) {
+export default function Outfits({ storefrontId = undefined, outfits = [] }: Readonly<Props>) {
   return (
     <div className="flex flex-col px-5 sm:w-10/12">
       <div className="flex flex-row items-center justify-between w-full mb-4">
@@ -40,7 +40,7 @@ export default function Outfits({ storefrontId = undefined, outfits = [] }: Prop
                   -
                   {(
                     ((out.priceInCents - out.discountedPriceInCents) / out.priceInCents) *
-                    100.0
+                    100
                   ).toFixed(0)}
                   %
                 </span>

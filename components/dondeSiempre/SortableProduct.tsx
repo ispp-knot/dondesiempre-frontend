@@ -1,20 +1,18 @@
-import { useSortable } from '@dnd-kit/react/sortable';
-import { Card } from '../ui/card';
-import { Product } from '@/lib/types/products';
-import { IoIosCloseCircle } from 'react-icons/io';
-import { Key } from 'react';
 import { OutfitProduct } from '@/lib/types/outfits';
+import { Product } from '@/lib/types/products';
 import { convertPrice } from '@/lib/utils';
+import { useSortable } from '@dnd-kit/react/sortable';
+import { IoIosCloseCircle } from 'react-icons/io';
+import { Card } from '../ui/card';
 
 export type SortableProductProps = {
-  key: Key;
   index: number;
   product: Product | OutfitProduct;
   removable: boolean;
   onClick: () => void;
 };
 
-export default function SortableProduct(props: SortableProductProps) {
+export default function SortableProduct(props: Readonly<SortableProductProps>) {
   const { ref } = useSortable({ id: props.product.id, index: props.index });
 
   return (

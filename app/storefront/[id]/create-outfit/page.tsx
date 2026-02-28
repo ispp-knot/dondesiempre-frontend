@@ -30,19 +30,11 @@ export default function OutfitProductsPage() {
   });
 
   if (productsQuery.isLoading) {
-    return (
-      <>
-        <LoadingText />
-      </>
-    );
+    return <LoadingText />;
   }
 
   if (productsQuery.isError) {
-    return (
-      <>
-        <ErrorText error={productsQuery.error} />
-      </>
-    );
+    return <ErrorText error={productsQuery.error} />;
   }
 
   const submitForm = async (event: React.SyntheticEvent<HTMLFormElement>) => {
@@ -171,7 +163,7 @@ export default function OutfitProductsPage() {
                     </div>
                     <div className="flex flex-row gap-4 overflow-x-scroll">
                       {outfitTags.map((t, i) => (
-                        <div
+                        <Button
                           key={i}
                           onClick={async () => {
                             setOutfitTags(outfitTags.filter((tag, index) => index != i));
@@ -180,7 +172,7 @@ export default function OutfitProductsPage() {
                         >
                           <FaTag className="text-white"></FaTag>
                           <p className="font-bold text-white text-center text-xs">{t}</p>
-                        </div>
+                        </Button>
                       ))}
                     </div>
                     <div className="flex flex-row w-full max-w-11/12 self-center overflow-x-scroll items-center gap-4 p-4">

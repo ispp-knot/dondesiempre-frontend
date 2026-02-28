@@ -8,11 +8,10 @@ import { addTag, getOutfit, removeTag, updateOutfit } from '@/lib/api/outfitEndp
 import { OutfitUpdate } from '@/lib/types/outfits';
 import { convertPrice } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
+import { redirect, useParams } from 'next/navigation';
 import { useState } from 'react';
 import { FaTag } from 'react-icons/fa6';
 import { GoDotFill } from 'react-icons/go';
-import { redirect } from 'next/navigation';
 import { GrSearch } from 'react-icons/gr';
 
 export default function OutfitDetailsPage() {
@@ -29,19 +28,11 @@ export default function OutfitDetailsPage() {
   });
 
   if (outfitQuery.isLoading) {
-    return (
-      <>
-        <LoadingText />
-      </>
-    );
+    return <LoadingText />;
   }
 
   if (outfitQuery.isError) {
-    return (
-      <>
-        <ErrorText error={outfitQuery.error} />
-      </>
-    );
+    return <ErrorText error={outfitQuery.error} />;
   }
 
   const submitForm = async (event: React.SyntheticEvent<HTMLFormElement>) => {
@@ -58,7 +49,7 @@ export default function OutfitDetailsPage() {
       discountedPriceInCents:
         Number.parseFloat(
           (document.getElementById('form-discounted-price') as HTMLInputElement).value
-        ) * 100.0,
+        ) * 100,
       index: Number.parseInt((document.getElementById('form-index') as HTMLInputElement).value),
     };
     await updateOutfit(outfitQuery.data.id, dto);
@@ -185,7 +176,7 @@ export default function OutfitDetailsPage() {
                 </div>
                 <div className="flex flex-row gap-4 overflow-x-scroll">
                   {outfitQuery.data.tags.map((t, i) => (
-                    <div
+                    <Button
                       key={i}
                       onClick={async () => {
                         await removeTag(outfitQuery.data.id, t);
@@ -195,7 +186,7 @@ export default function OutfitDetailsPage() {
                     >
                       <FaTag className="text-white"></FaTag>
                       <p className="font-bold text-white text-center text-xs">{t}</p>
-                    </div>
+                    </Button>
                   ))}
                 </div>
                 <div className="flex flex-row justify-center mb-8">

@@ -27,17 +27,9 @@ export default function OutfitsPage() {
   });
 
   if (outfitsQuery.isLoading) {
-    return (
-      <>
-        <LoadingText />
-      </>
-    );
+    return <LoadingText />;
   } else if (outfitsQuery.isError) {
-    return (
-      <>
-        <ErrorText error={outfitsQuery.error} />
-      </>
-    );
+    return <ErrorText error={outfitsQuery.error} />;
   }
 
   return (
