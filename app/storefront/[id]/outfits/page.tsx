@@ -17,7 +17,7 @@ import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 
 export default function OutfitsPage() {
   const params = useParams<{ id: string }>();
-  const storefrontId = Number.parseInt(params.id);
+  const storefrontId = params.id;
 
   const [isAdmin, setIsAdmin] = useState(false);
 

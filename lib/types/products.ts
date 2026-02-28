@@ -1,10 +1,10 @@
 export type Product = {
-  id: number;
+  id: string;
   name: string;
   priceInCents: number;
   discountedPriceInCents: number;
   description: string | null;
   image: string | null;
   type: string;
-  storeId: number;
+  storeId: string;
 };

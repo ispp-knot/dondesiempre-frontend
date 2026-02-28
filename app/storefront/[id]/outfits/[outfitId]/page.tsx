@@ -16,8 +16,8 @@ import { GoDotFill } from 'react-icons/go';
 
 export default function OutfitDetailsPage() {
   const params = useParams<{ id: string; outfitId: string }>();
-  const outfitId = Number.parseInt(params.outfitId);
-  const storefrontId = Number.parseInt(params.id);
+  const outfitId = params.outfitId;
+  const storefrontId = params.id;
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(0);
@@ -178,6 +178,7 @@ export default function OutfitDetailsPage() {
                   {outfitQuery.data.tags.map((t, i) => (
                     <Button
                       key={i}
+                      type="button"
                       onClick={async () => {
                         await removeTag(outfitQuery.data.id, t);
                         outfitQuery.refetch();

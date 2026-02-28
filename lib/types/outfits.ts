@@ -1,18 +1,19 @@
 import { Product } from './products';
+import { NIL as NIL_UUID } from 'uuid';
 
 export type OutfitProduct = {
-  id: number;
+  id: string;
   name: string;
   description: string | null;
   image: string | null;
   priceInCents: number;
   type: string;
   index: number;
-  storeId: number;
+  storeId: string;
 };
 
 export type Outfit = {
-  id: number;
+  id: string;
   name: string;
   description: string | null;
   image: string | null;
@@ -25,13 +26,13 @@ export type Outfit = {
 };
 
 export type OutfitCreationProduct = {
-  id: number;
+  id: string;
   index: number;
 };
 
 export type OutfitCreation = {
   index: number;
-  storefrontId: number;
+  storefrontId: string;
   name: string;
   description: string | null;
   image: string | null;
@@ -49,7 +50,7 @@ export type OutfitUpdate = {
 
 export function createEmptyOutfit(): Outfit {
   return {
-    id: 0,
+    id: NIL_UUID,
     name: '',
     description: null,
     image: null,

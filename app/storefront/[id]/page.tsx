@@ -15,7 +15,7 @@ export default function StorefrontPage() {
 
   const outfitsQuery = useQuery({
     queryKey: ['outfits', storefrontId],
-    queryFn: () => getOutfitsOfStorefront(Number.parseInt(storefrontId)),
+    queryFn: () => getOutfitsOfStorefront(storefrontId),
   });
 
   const store = {

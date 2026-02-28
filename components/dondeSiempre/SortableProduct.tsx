@@ -26,7 +26,7 @@ export default function SortableProduct(props: Readonly<SortableProductProps>) {
         )}
         <img
           src={props.product.image || undefined}
-          alt={'Imagen de producto'}
+          alt={props.product.name}
           className="w-30 md:w-50 aspect-square object-cover shrink-0 rounded-lg shadow-lg"
         ></img>
         <h1 className="mb-1 font-bold text-center text-md">

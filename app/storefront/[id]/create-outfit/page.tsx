@@ -20,7 +20,7 @@ import { FaTag } from 'react-icons/fa';
 
 export default function OutfitProductsPage() {
   const params = useParams<{ id: string }>();
-  const storefrontId = Number.parseInt(params.id);
+  const storefrontId = params.id;
 
   const [outfitProducts, setOutfitProducts] = useState(new Array<Product>());
   const [outfitTags, setOutfitTags] = useState(new Array<string>());
@@ -231,7 +231,7 @@ export default function OutfitProductsPage() {
                         </div>
                         <div className="flex flex-row justify-center">
                           <img
-                            src={p.image || ''}
+                            src={p.image || undefined}
                             alt={'Imagen de producto'}
                             className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg"
                           ></img>

@@ -18,10 +18,10 @@ import LoadingText from '../../../../../../components/dondeSiempre/LoadingText';
 
 export default function OutfitProductsPage() {
   const params = useParams<{ id: string; outfitId: string }>();
-  const outfitId = Number.parseInt(params.outfitId);
-  const storefrontId = Number.parseInt(params.id);
+  const outfitId = params.outfitId;
+  const storefrontId = params.id;
 
-  const [movedProducts, setMovedProducts] = useState(new Array<number>());
+  const [movedProducts, setMovedProducts] = useState(new Array<string>());
   const productsQuery = useQuery({
     queryKey: ['products', storefrontId],
     queryFn: () => getProductsOfStorefront(storefrontId),
@@ -48,7 +48,7 @@ export default function OutfitProductsPage() {
   return productsQuery.data && outfitQuery.data && outfitProducts ? (
     <DragDropProvider
       onDragEnd={(event) => {
-        let moved: number[] = [];
+        let moved: string[] = [];
 
         if (event.canceled) {
           return;
@@ -132,7 +132,7 @@ export default function OutfitProductsPage() {
                     <div className="flex flex-row justify-center">
                       <img
                         src={p.image || undefined}
-                        alt={'Imagen de producto'}
+                        alt={p.name}
                         className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg"
                       ></img>
                     </div>
