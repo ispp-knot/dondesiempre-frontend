@@ -3,6 +3,7 @@
 import ErrorText from '@/components/dondeSiempre/ErrorText';
 import LabelledSwitch from '@/components/dondeSiempre/LabelledSwitch';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
+import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { Button } from '@/components/ui/button';
 import { addTag, getOutfit, removeTag, updateOutfit } from '@/lib/api/outfitEndpoints';
 import { OutfitUpdate } from '@/lib/types/outfits';
@@ -12,7 +13,6 @@ import { redirect, useParams } from 'next/navigation';
 import { useState } from 'react';
 import { FaTag } from 'react-icons/fa6';
 import { GoDotFill } from 'react-icons/go';
-import { GrSearch } from 'react-icons/gr';
 
 export default function OutfitDetailsPage() {
   const params = useParams<{ id: string; outfitId: string }>();
@@ -216,14 +216,12 @@ export default function OutfitDetailsPage() {
                 </div>
               </div>
               <div className="flex flex-row justify-center relative">
-                {outfitQuery.data.products[selectedProduct].image ? (
+                {outfitQuery.data.products[selectedProduct].image && (
                   <img
                     src={outfitQuery.data.products[selectedProduct].image}
-                    alt={'Imagen de producto'}
+                    alt={outfitQuery.data.products[selectedProduct].name}
                     className="aspect-square w-full md:w-sm object-cover md:rounded-lg shrink-0 shadow-lg"
                   ></img>
-                ) : (
-                  <></>
                 )}
                 <div className="mb-1 flex flex-row justify-center absolute bottom-0">
                   {outfitQuery.data.products.map((p, i) => (
@@ -234,7 +232,7 @@ export default function OutfitDetailsPage() {
                   ))}
                 </div>
               </div>
-              <div className="pt-4 pb-8 pl-8 pr-8 md:w-8/12 flex flex-col items-center">
+              <div className="pt-4 pb-8 pl-8 pr-8 w-full md:w-8/12 flex flex-col items-center">
                 <div>
                   <h1 className="text-primary text-2xl">
                     {outfitQuery.data.products[selectedProduct].name}
@@ -244,16 +242,15 @@ export default function OutfitDetailsPage() {
                   {outfitQuery.data.products.map(
                     (p, i) =>
                       p.image && (
-                        <img
+                        <Button
                           key={p.id}
-                          src={p.image}
                           onClick={() => setSelectedProduct(i)}
-                          alt={'Imagen de producto'}
                           className={
-                            'w-20 h-20 md:w-40 md:h-40 object-cover shrink-0 rounded-lg shadow-lg ' +
+                            'w-20 h-20 md:w-40 md:h-40 object-cover shrink-0 bg-cover bg-center rounded-lg shadow-lg ' +
                             (i === selectedProduct ? 'border-4 border-ring' : '')
                           }
-                        ></img>
+                          style={{ backgroundImage: `url(${p.image})` }}
+                        ></Button>
                       )
                   )}
                 </div>
@@ -270,13 +267,7 @@ export default function OutfitDetailsPage() {
             </>
           )
         ) : (
-          <div className="mt-16 flex flex-col items-center gap-4">
-            <p className="text-secondary font-bold text-center text-4xl">¡Vaya!</p>
-            <GrSearch className="mt-4 ml-4 text-8xl text-secondary"></GrSearch>
-            <p className="mt-4 text-secondary text-center text-lg w-8/12">
-              El outfit que buscas no existe...
-            </p>
-          </div>
+          <NotFoundText message="El outfit que buscas no existe..." />
         )}
       </div>
     </>

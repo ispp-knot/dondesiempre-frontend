@@ -9,11 +9,11 @@ import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
-import { GrSearch } from 'react-icons/gr';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import { RiDiscountPercentFill } from 'react-icons/ri';
 import ErrorText from '../../../../components/dondeSiempre/ErrorText';
 import LoadingText from '../../../../components/dondeSiempre/LoadingText';
+import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 
 export default function OutfitsPage() {
   const params = useParams<{ id: string }>();
@@ -134,16 +134,10 @@ export default function OutfitsPage() {
                 </Card>
               ))}
             </>
-          ) : isAdmin ? (
-            <></>
           ) : (
-            <div className="mt-16 flex flex-col items-center gap-4">
-              <p className="text-secondary font-bold text-center text-4xl">¡Vaya!</p>
-              <GrSearch className="mt-4 ml-4 text-8xl text-secondary"></GrSearch>
-              <p className="mt-4 text-secondary text-center text-lg w-8/12">
-                Esta tienda todavía no tiene outfits disponibles...
-              </p>
-            </div>
+            !isAdmin && (
+              <NotFoundText message="Esta tienda todavía no tiene outfits disponibles..." />
+            )
           )}
         </div>
       </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import SortableProduct from '@/components/dondeSiempre/SortableProduct';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -12,7 +13,6 @@ import { DragDropProvider } from '@dnd-kit/react';
 import { useQuery } from '@tanstack/react-query';
 import { redirect, useParams } from 'next/navigation';
 import { useState } from 'react';
-import { GrSearch } from 'react-icons/gr';
 import ErrorText from '../../../../../../components/dondeSiempre/ErrorText';
 import LoadingText from '../../../../../../components/dondeSiempre/LoadingText';
 
@@ -162,12 +162,6 @@ export default function OutfitProductsPage() {
       </div>
     </DragDropProvider>
   ) : (
-    <div className="mt-16 flex flex-col items-center gap-4">
-      <p className="text-secondary font-bold text-center text-4xl">¡Vaya!</p>
-      <GrSearch className="mt-4 ml-4 text-8xl text-secondary"></GrSearch>
-      <p className="mt-4 text-secondary text-center text-lg w-8/12">
-        El outfit que buscas no existe...
-      </p>
-    </div>
+    <NotFoundText message="El outfit que buscas no existe..." />
   );
 }
