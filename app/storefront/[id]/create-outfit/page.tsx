@@ -179,7 +179,7 @@ export default function OutfitProductsPage() {
                         </Button>
                       ))}
                     </div>
-                    <div className="flex flex-row w-full max-w-11/12 self-center overflow-x-scroll items-center gap-4 p-4">
+                    <div className="flex flex-row w-full self-center overflow-x-scroll items-center gap-4 p-4">
                       {outfitProducts.map((p, i) => (
                         <SortableProduct
                           key={p.id}
