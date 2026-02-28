@@ -6,9 +6,15 @@ import StoreTabs from './store-tabs';
 import { getStore } from '@/lib/api/stores/getStore';
 import { getOutfitByStoreId } from '@/lib/api/outfits/getOutfitsByStore';
 
-export default async function storePage({ params }: { params: { id: string } }) {
-  const storeDto = await getStore(params.id);
-  const outfitsDto = await getOutfitByStoreId(params.id);
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function StorePage({ params }: PageProps) {
+  const { id } = await params;
+
+  const storeDto = await getStore(id);
+  const outfitsDto = await getOutfitByStoreId(id);
 
   const store = {
     name: storeDto.name,
@@ -57,6 +63,7 @@ export default async function storePage({ params }: { params: { id: string } }) 
     ],
     outfits: outfitsDto,
   };
+
   return (
     <div className="flex flex-col bg-white">
       <div className="relative w-full h-52 md:h-80">
