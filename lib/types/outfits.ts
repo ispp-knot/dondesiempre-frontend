@@ -1,4 +1,4 @@
-import { Product } from "./products";
+import { Product } from './products';
 
 export type OutfitProduct = {
   id: number;
@@ -62,9 +62,12 @@ export function createEmptyOutfit(): Outfit {
   };
 }
 
-export function productToOufitCreationProduct(product: Product, index: number): OutfitCreationProduct {
+export function productToOufitCreationProduct(
+  product: Product,
+  index: number
+): OutfitCreationProduct {
   return {
     id: product.id,
-    index: index
+    index: index,
   };
 }

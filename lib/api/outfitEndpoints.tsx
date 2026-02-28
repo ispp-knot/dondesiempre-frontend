@@ -80,6 +80,20 @@ export async function removeProduct(outfitId: number, productId: number): Promis
   }
 }
 
+export async function sortProducts(
+  outfitId: number,
+  products: OutfitCreationProduct[]
+): Promise<void> {
+  try {
+    return await authorizedOfetch(
+      process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/outfits/' + outfitId + '/products/sort',
+      { method: 'PATCH', body: products }
+    );
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function createOutfit(dto: OutfitCreation): Promise<void> {
   try {
     return await authorizedOfetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/outfits', {
