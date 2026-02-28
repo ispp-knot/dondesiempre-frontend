@@ -165,7 +165,7 @@ export default function OutfitProductsPage() {
                         className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                       />
                     </div>
-                    <div className="flex flex-row gap-4 overflow-x-scroll">
+                    <div className="flex flex-row gap-4 flex-wrap">
                       {outfitTags.map((t, i) => (
                         <Button
                           key={i}
@@ -179,7 +179,7 @@ export default function OutfitProductsPage() {
                         </Button>
                       ))}
                     </div>
-                    <div className="flex flex-row w-full self-center overflow-x-scroll items-center gap-4 p-4">
+                    <div className="flex flex-row w-full self-center overflow-x-hidden items-center gap-4 p-4">
                       {outfitProducts.map((p, i) => (
                         <SortableProduct
                           key={p.id}

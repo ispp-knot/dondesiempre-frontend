@@ -178,7 +178,7 @@ export default function OutfitDetailsPage() {
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                   />
                 </div>
-                <div className="flex flex-row gap-4 overflow-x-scroll">
+                <div className="flex flex-row gap-4 flex-wrap">
                   {outfitQuery.data.tags.map((t, i) => (
                     <Button
                       key={i}
