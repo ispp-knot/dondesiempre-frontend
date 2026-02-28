@@ -15,6 +15,7 @@ import { redirect, useParams } from 'next/navigation';
 import { useState } from 'react';
 import ErrorText from '../../../../../../components/dondeSiempre/ErrorText';
 import LoadingText from '../../../../../../components/dondeSiempre/LoadingText';
+import Image from 'next/image';
 
 export default function OutfitProductsPage() {
   const params = useParams<{ id: string; outfitId: string }>();
@@ -130,11 +131,14 @@ export default function OutfitProductsPage() {
                       </h1>
                     </div>
                     <div className="flex flex-row justify-center">
-                      <img
-                        src={p.image || undefined}
+                      <Image
+                        src={p.image || '/static/img/product_placeholder.png'}
                         alt={p.name}
+                        width={512}
+                        height={512}
+                        quality={100}
                         className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg"
-                      ></img>
+                      ></Image>
                     </div>
                     <h1 className="font-bold text-primary text-center text-lg md:text-2xl">
                       {`${convertPrice(p.discountedPriceInCents).toFixed(2).toString().replace('.', ',')}€`}

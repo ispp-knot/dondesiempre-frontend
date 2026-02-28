@@ -17,6 +17,7 @@ import { useQuery } from '@tanstack/react-query';
 import { redirect, useParams } from 'next/navigation';
 import { useState } from 'react';
 import { FaTag } from 'react-icons/fa';
+import Image from 'next/image';
 
 export default function OutfitProductsPage() {
   const params = useParams<{ id: string }>();
@@ -108,12 +109,15 @@ export default function OutfitProductsPage() {
                         Imagen:{' '}
                       </label>
                       <div className="flex flex-col items-center">
-                        <img
+                        <Image
                           id="form-image-preview"
-                          src={undefined}
+                          src={'/static/img/product_placeholder.png'}
                           alt={'Sin imagen'}
+                          width={512}
+                          height={512}
+                          quality={100}
                           className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg text-center text-secondary"
-                        ></img>
+                        ></Image>
                         <input
                           type="file"
                           name="image"
@@ -230,11 +234,14 @@ export default function OutfitProductsPage() {
                           </h1>
                         </div>
                         <div className="flex flex-row justify-center">
-                          <img
-                            src={p.image || undefined}
-                            alt={'Imagen de producto'}
+                          <Image
+                            src={p.image || '/static/img/product_placeholder.png'}
+                            alt={p.name}
+                            width={512}
+                            height={512}
+                            quality={100}
                             className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg"
-                          ></img>
+                          ></Image>
                         </div>
                         <h1 className="font-bold text-primary text-center text-lg md:text-2xl">
                           {`${convertPrice(p.discountedPriceInCents).toFixed(2).toString().replace('.', ',')}€`}

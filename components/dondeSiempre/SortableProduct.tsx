@@ -4,6 +4,7 @@ import { convertPrice } from '@/lib/utils';
 import { useSortable } from '@dnd-kit/react/sortable';
 import { IoIosCloseCircle } from 'react-icons/io';
 import { Card } from '../ui/card';
+import Image from 'next/image';
 
 export type SortableProductProps = {
   index: number;
@@ -24,11 +25,14 @@ export default function SortableProduct(props: Readonly<SortableProductProps>) {
             className="text-2xl text-secondary hover:text-dark-secondary"
           />
         )}
-        <img
-          src={props.product.image || undefined}
+        <Image
+          src={props.product.image || '/static/img/product_placeholder.png'}
           alt={props.product.name}
+          width={1024}
+          height={1024}
+          quality={100}
           className="w-30 md:w-50 aspect-square object-cover shrink-0 rounded-lg shadow-lg"
-        ></img>
+        ></Image>
         <h1 className="mb-1 font-bold text-center text-md">
           {`${convertPrice(props.product.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
         </h1>

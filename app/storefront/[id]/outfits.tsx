@@ -30,7 +30,7 @@ export default function Outfits({ storefrontId = undefined, outfits = [] }: Read
           >
             {out.discountedPriceInCents !== out.priceInCents && (
               <div className="absolute top-2 left-2 bg-primary rounded-full p-0.5 md:p-1 flex items-center justify-center shadow-md">
-                <Percent className="w-4 h-4 md:w-5 md:h-5 text-white stroke-[3]" />
+                <Percent className="w-4 h-4 md:w-5 md:h-5 text-white stroke-3" />
               </div>
             )}
             <div className="flex flex-row items-center justify-center gap-1.5 w-full h-4/12 md:h-1/4 self-end bg-white text-sm md:text-lg px-2 text-center">

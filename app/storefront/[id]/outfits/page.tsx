@@ -14,6 +14,7 @@ import { RiDiscountPercentFill } from 'react-icons/ri';
 import ErrorText from '../../../../components/dondeSiempre/ErrorText';
 import LoadingText from '../../../../components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
+import Image from 'next/image';
 
 export default function OutfitsPage() {
   const params = useParams<{ id: string }>();
@@ -73,17 +74,17 @@ export default function OutfitsPage() {
                     )}
                   </div>
                   <div className="flex flex-row w-fit max-w-11/12 self-center overflow-x-scroll items-center gap-4 p-4">
-                    {o.products.map(
-                      (p) =>
-                        p.image && (
-                          <img
-                            key={p.id}
-                            src={p.image}
-                            alt={'Imagen de producto'}
-                            className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg"
-                          ></img>
-                        )
-                    )}
+                    {o.products.map((p) => (
+                      <Image
+                        key={p.id}
+                        src={p.image || '/static/img/product_placeholder.png'}
+                        alt={p.name}
+                        width={512}
+                        height={512}
+                        quality={100}
+                        className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg"
+                      ></Image>
+                    ))}
                   </div>
                   {o.discountedPriceInCents === o.priceInCents ? (
                     <h1 className="font-bold text-primary text-center text-3xl">

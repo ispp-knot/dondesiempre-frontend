@@ -13,6 +13,7 @@ import { redirect, useParams } from 'next/navigation';
 import { useState } from 'react';
 import { FaTag } from 'react-icons/fa6';
 import { GoDotFill } from 'react-icons/go';
+import Image from 'next/image';
 
 export default function OutfitDetailsPage() {
   const params = useParams<{ id: string; outfitId: string }>();
@@ -104,12 +105,15 @@ export default function OutfitDetailsPage() {
                     Imagen:{' '}
                   </label>
                   <div className="flex flex-col items-center">
-                    <img
+                    <Image
                       id="form-image-preview"
-                      src={outfitQuery.data.image || undefined}
+                      src={outfitQuery.data.image || '/static/img/product_placeholder.png'}
                       alt={'Sin imagen'}
+                      width={512}
+                      height={512}
+                      quality={100}
                       className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg text-center text-secondary"
-                    ></img>
+                    ></Image>
                     <input
                       type="file"
                       name="image"
@@ -217,13 +221,18 @@ export default function OutfitDetailsPage() {
                 </div>
               </div>
               <div className="flex flex-row justify-center relative">
-                {outfitQuery.data.products[selectedProduct].image && (
-                  <img
-                    src={outfitQuery.data.products[selectedProduct].image}
-                    alt={outfitQuery.data.products[selectedProduct].name}
-                    className="aspect-square w-full md:w-sm object-cover md:rounded-lg shrink-0 shadow-lg"
-                  ></img>
-                )}
+                <Image
+                  src={
+                    outfitQuery.data.products[selectedProduct].image ||
+                    '/static/img/product_placeholder.png'
+                  }
+                  alt={outfitQuery.data.products[selectedProduct].name}
+                  width={1024}
+                  height={1024}
+                  quality={100}
+                  loading={'eager'}
+                  className="aspect-square w-full md:w-sm object-cover md:rounded-lg shrink-0 shadow-lg"
+                ></Image>
                 <div className="mb-1 flex flex-row justify-center absolute bottom-0">
                   {outfitQuery.data.products.map((p, i) => (
                     <GoDotFill
