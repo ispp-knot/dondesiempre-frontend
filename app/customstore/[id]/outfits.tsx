@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Percent } from 'lucide-react';
 
 type Outfit = {
@@ -16,7 +17,18 @@ export default function Collections({ outfits = [] }: Props) {
   return (
     <div className="flex flex-col px-5 sm:w-10/12">
       <div className="flex flex-row items-center justify-between w-full mb-4">
-        <h1 className="text-primary text-xl md:text-2xl font-bold">Nuestros conjuntos</h1>
+        <div className="flex flex-row items-center gap-2">
+          <h1 className="text-primary text-xl md:text-2xl font-bold">Nuestros conjuntos</h1>
+          <button className="text-sm text-secondary font-medium hover:underline transition">
+            <Image
+              src="/icons/Edit.png"
+              alt="Cambiar horario"
+              width={20}
+              height={20}
+              className="inline-block"
+            />
+          </button>
+        </div>
         <Link href="" className="text-secondary underline">
           Ver más
         </Link>
