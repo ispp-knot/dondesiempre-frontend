@@ -17,7 +17,12 @@ export type StoreDTO = {
   address: string;
   openingHours: string;
   phone: string;
+  aboutUs: string;
   acceptsShipping: boolean;
   latitude: number;
   longitude: number;
+  isFirstCollections: boolean;
+  primaryColor: string;
+  secondaryColor: string;
+  bannerImageUrl: string;
 };

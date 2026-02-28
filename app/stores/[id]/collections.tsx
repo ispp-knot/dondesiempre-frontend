@@ -19,7 +19,7 @@ export default function Collections({ collections = [] }: Props) {
           Ver más
         </Link>
       </div>
-      <div className="flex flex-row items-center gap-2 md:gap-4 overflow-x-auto pb-3 storefront-listing">
+      <div className="flex flex-row items-center gap-2 md:gap-4 overflow-x-auto pb-3 store-listing">
         {collections.map((col) => (
           <div
             key={col.id}

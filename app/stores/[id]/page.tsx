@@ -3,26 +3,19 @@ import { FaLocationDot } from 'react-icons/fa6';
 import { MdAccessTimeFilled } from 'react-icons/md';
 import { FaFacebook, FaInstagram } from 'react-icons/fa';
 import StoreTabs from './store-tabs';
+import { getStore } from '@/lib/api/stores/getStore';
 
-export default async function StorefrontPage({
-  params: _params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  {
-    /* TODO: Add request using store id */
-  }
-  // const { id } = await params;
+export default async function storePage({ params }: { params: { id: string } }) {
+  const storeDto = await getStore(params.id);
+
   const store = {
-    name: 'Tu Capricho',
-    address: 'Avenida La Palmera, 13',
-    hours: '09:00 - 14:00 | 17:00 - 20:00',
-    instagram: 'tucaprichoinsta',
-    facebook: 'tucaprichofacebook',
-    description:
-      'Nuestra boutique se basa en una fusión del estilo urbano con toques románticos, desde prendas básicas de alta calidad hasta piezas únicas de diseñadores emergentes. \n' +
-      '\n' +
-      'En Tu Capricho creemos que cada pieza debe sentirse personal, por lo que cada semana renovamos nuestro stock, asegurándonos de que encuentres “justo lo que necesitabas”.',
+    name: storeDto.name,
+    address: storeDto.address,
+    hours: storeDto.openingHours,
+    banner: storeDto.bannerImageUrl,
+    instagram: '',
+    facebook: '',
+    description: storeDto.aboutUs,
     collections: [
       {
         id: 1,
@@ -88,8 +81,8 @@ export default async function StorefrontPage({
     <div className="flex flex-col bg-white">
       <div className="relative w-full h-52 md:h-80">
         <Image
-          src="/static/img/banner.jpg"
-          alt="Banner de la tienda"
+          src={store.banner || '/static/img/banner.jpg'}
+          alt={`Banner de la tienda ${store.name}`}
           fill
           className="object-cover"
           priority
