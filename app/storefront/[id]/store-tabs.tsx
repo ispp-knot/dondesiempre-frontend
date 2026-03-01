@@ -1,9 +1,10 @@
 'use client';
 
-import { JSX, useState } from 'react';
+import { Outfit } from '@/lib/types/outfits';
 import Image from 'next/image';
-import Collections from './collections';
+import { JSX, useState } from 'react';
 import AboutUs from './about-us';
+import Collections from './collections';
 import Outfits from './outfits';
 
 type Tab = 'catalogo' | 'sobre';
@@ -14,27 +15,22 @@ type Collection = {
   image: string;
 };
 
-type Outfit = {
-  id: number;
-  name: string;
-  image: string;
-  discount?: number;
-};
-
 type Props = {
+  storefrontId?: string;
   collections?: Collection[];
   description?: string;
   outfits?: Outfit[];
 };
 
 export default function StoreTabs({
+  storefrontId = undefined,
   collections = [],
   description = '',
   outfits = [],
 }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
 
-  const promoOutfit = outfits.find((o) => o.discount && o.discount > 0);
+  const promoOutfit = outfits.find((o) => o.discountedPriceInCents < o.priceInCents);
 
   return (
     <>
@@ -82,7 +78,7 @@ export default function StoreTabs({
         {activeTab === 'catalogo' ? (
           <>
             <Collections collections={collections} />
-            <Outfits outfits={outfits} />
+            <Outfits storefrontId={storefrontId} outfits={outfits} />
           </>
         ) : (
           <div>

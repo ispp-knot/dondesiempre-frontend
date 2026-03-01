@@ -1,18 +1,23 @@
+'use client';
+
 import Image from 'next/image';
+import { useParams } from 'next/navigation';
+import { FaFacebook, FaInstagram } from 'react-icons/fa';
 import { FaLocationDot } from 'react-icons/fa6';
 import { MdAccessTimeFilled } from 'react-icons/md';
-import { FaFacebook, FaInstagram } from 'react-icons/fa';
 import StoreTabs from './store-tabs';
+import { useQuery } from '@tanstack/react-query';
+import { getOutfitsOfStorefront } from '@/lib/api/outfitEndpoints';
 
-export default async function StorefrontPage({
-  params: _params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  {
-    /* TODO: Add request using store id */
-  }
-  // const { id } = await params;
+export default function StorefrontPage() {
+  const params = useParams<{ id: string }>();
+  const storefrontId = params.id;
+
+  const outfitsQuery = useQuery({
+    queryKey: ['outfits', storefrontId],
+    queryFn: () => getOutfitsOfStorefront(storefrontId),
+  });
+
   const store = {
     name: 'Tu Capricho',
     address: 'Avenida La Palmera, 13',
@@ -60,29 +65,7 @@ export default async function StorefrontPage({
         image: '',
       },
     ],
-    outfits: [
-      {
-        id: 1,
-        name: 'Feria',
-        image: '/static/img/outfit_placeholder.jpg',
-        discount: 20,
-      },
-      {
-        id: 2,
-        name: 'Casual',
-        image: '',
-      },
-      {
-        id: 3,
-        name: 'Semana Santa',
-        image: '',
-      },
-      {
-        id: 4,
-        name: 'Frio',
-        image: '',
-      },
-    ],
+    outfits: outfitsQuery.data,
   };
   return (
     <div className="flex flex-col bg-white">
@@ -143,6 +126,7 @@ export default async function StorefrontPage({
         )}
       </div>
       <StoreTabs
+        storefrontId={storefrontId}
         collections={store.collections}
         description={store.description}
         outfits={store.outfits}
