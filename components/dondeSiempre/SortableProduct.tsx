@@ -30,7 +30,6 @@ export default function SortableProduct(props: Readonly<SortableProductProps>) {
           alt={props.product.name}
           width={1024}
           height={1024}
-          quality={100}
           className="w-30 md:w-50 aspect-square object-cover shrink-0 rounded-lg shadow-lg"
         ></Image>
         <h1 className="mb-1 font-bold text-center text-md">

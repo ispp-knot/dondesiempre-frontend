@@ -21,6 +21,7 @@ export default function OutfitDetailsPage() {
   const storefrontId = params.id;
 
   const [isAdmin, setIsAdmin] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
   const [selectedProduct, setSelectedProduct] = useState(0);
 
   const outfitQuery = useQuery({
@@ -46,7 +47,7 @@ export default function OutfitDetailsPage() {
     const dto: OutfitUpdate = {
       name: (document.getElementById('form-name') as HTMLInputElement).value,
       description: (document.getElementById('form-description') as HTMLInputElement).value || null,
-      image: (document.getElementById('form-image-preview') as HTMLInputElement).src || null,
+      image: null,
       discountedPriceInCents:
         Number.parseFloat(
           (document.getElementById('form-discounted-price') as HTMLInputElement).value
@@ -107,11 +108,13 @@ export default function OutfitDetailsPage() {
                   <div className="flex flex-col items-center">
                     <Image
                       id="form-image-preview"
-                      src={outfitQuery.data.image || '/static/img/product_placeholder.png'}
+                      src={
+                        imageSrc || outfitQuery.data.image || '/static/img/product_placeholder.png'
+                      }
                       alt={'Sin imagen'}
                       width={512}
                       height={512}
-                      quality={100}
+                      loading="eager"
                       className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg text-center text-secondary"
                     ></Image>
                     <input
@@ -121,11 +124,8 @@ export default function OutfitDetailsPage() {
                       accept="image/*"
                       src={outfitQuery.data.image || undefined}
                       onChange={() => {
-                        const image = document.getElementById(
-                          'form-image-preview'
-                        ) as HTMLImageElement;
                         const input = document.getElementById('form-image') as HTMLInputElement;
-                        image.src = '/static/img/' + input.files?.item(0)?.name || '';
+                        setImageSrc('/static/img/' + input.files?.item(0)?.name);
                       }}
                       className="cursor-pointer border border-secondary rounded pt-2 pb-2 pl-3 pr-3 mt-4 mb-2 text-heading text-sm text-secondary rounded-base focus:ring-brand focus:border-brand block w-full shadow-xs placeholder:text-body"
                     />
@@ -229,7 +229,6 @@ export default function OutfitDetailsPage() {
                   alt={outfitQuery.data.products[selectedProduct].name}
                   width={1024}
                   height={1024}
-                  quality={100}
                   loading={'eager'}
                   className="aspect-square w-full md:w-sm object-cover md:rounded-lg shrink-0 shadow-lg"
                 ></Image>

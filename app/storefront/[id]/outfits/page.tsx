@@ -81,7 +81,6 @@ export default function OutfitsPage() {
                         alt={p.name}
                         width={512}
                         height={512}
-                        quality={100}
                         className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg"
                       ></Image>
                     ))}
