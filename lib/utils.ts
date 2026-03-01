@@ -4,3 +4,7 @@ import { twMerge } from 'tailwind-merge';
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export function convertPrice(priceInCents: number): number {
+  return priceInCents / 100;
+}
