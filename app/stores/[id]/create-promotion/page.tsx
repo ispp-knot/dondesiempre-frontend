@@ -2,7 +2,14 @@
 
 import React, { useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { FaCalendarAlt, FaPlus, FaTimes, FaImage, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
+import {
+  FaCalendarAlt,
+  FaPlus,
+  FaTimes,
+  FaImage,
+  FaCheckCircle,
+  FaExclamationCircle,
+} from 'react-icons/fa';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -68,7 +75,7 @@ export default function CreatePromotionPage() {
     if (!isNaN(value)) {
       setDiscountPercentage(Math.min(100, Math.max(1, value)));
     } else if (e.target.value === '') {
-        setDiscountPercentage(0);
+      setDiscountPercentage(0);
     }
   };
 
@@ -80,7 +87,7 @@ export default function CreatePromotionPage() {
       name,
       discountPercentage,
       isActive: true, // Assuming default active
-      productIds: products.map(p => p.id),
+      productIds: products.map((p) => p.id),
       storeId: storeId,
       description,
     };
@@ -104,10 +111,14 @@ export default function CreatePromotionPage() {
       <div className="flex flex-col gap-6 max-w-md mx-auto w-full">
         {/* Status Messages */}
         {status && (
-          <div className={cn(
-            "flex items-center gap-2 p-4 rounded-lg animate-in fade-in slide-in-from-top-2",
-            status.type === 'success' ? "bg-secondary/10 text-secondary border border-secondary" : "bg-destructive/10 text-destructive border border-destructive"
-          )}>
+          <div
+            className={cn(
+              'flex items-center gap-2 p-4 rounded-lg animate-in fade-in slide-in-from-top-2',
+              status.type === 'success'
+                ? 'bg-secondary/10 text-secondary border border-secondary'
+                : 'bg-destructive/10 text-destructive border border-destructive'
+            )}
+          >
             {status.type === 'success' ? <FaCheckCircle /> : <FaExclamationCircle />}
             <span className="font-bold">{status.message}</span>
           </div>
@@ -164,7 +175,8 @@ export default function CreatePromotionPage() {
                   {dateRange?.from ? (
                     dateRange.to ? (
                       <>
-                        {format(dateRange.from, 'dd/MM/yyyy')} - {format(dateRange.to, 'dd/MM/yyyy')}
+                        {format(dateRange.from, 'dd/MM/yyyy')} -{' '}
+                        {format(dateRange.to, 'dd/MM/yyyy')}
                       </>
                     ) : (
                       format(dateRange.from, 'dd/MM/yyyy')
@@ -218,12 +230,7 @@ export default function CreatePromotionPage() {
                 className="flex items-center gap-4 border-2 border-secondary rounded-lg p-2"
               >
                 <div className="relative w-16 h-16 rounded overflow-hidden flex-shrink-0">
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                  />
+                  <Image src={product.imageUrl} alt={product.name} fill className="object-cover" />
                 </div>
                 <div className="flex-1 text-secondary font-bold text-lg">{product.name}</div>
                 <button
@@ -243,21 +250,21 @@ export default function CreatePromotionPage() {
           <p className="text-secondary text-xs font-semibold">
             Se usará como imagen de fondo en el banner y stories
           </p>
-          <div 
+          <div
             onClick={handleImageClick}
             className="border-2 border-dashed border-secondary rounded-lg py-12 flex flex-col items-center justify-center gap-2 mt-2 cursor-pointer hover:bg-secondary/5 transition-all relative overflow-hidden"
           >
             {promotionImage ? (
-                <Image src={promotionImage} alt="Preview" fill className="object-cover opacity-30" />
+              <Image src={promotionImage} alt="Preview" fill className="object-cover opacity-30" />
             ) : null}
             <div className="flex items-center gap-2 text-secondary font-bold z-10">
               <FaImage size={24} />
               <span>{promotionImage ? 'Cambiar imagen' : 'Añadir imagen'}</span>
             </div>
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              className="hidden" 
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
               accept="image/*"
               onChange={handleFileChange}
             />
@@ -275,7 +282,7 @@ export default function CreatePromotionPage() {
         </div>
 
         {/* Submit Button */}
-        <Button 
+        <Button
           onClick={handleSubmit}
           disabled={isLoading}
           className="bg-secondary text-white font-bold py-8 rounded-lg text-xl mt-4 cursor-pointer hover:bg-dark-secondary transform transition active:scale-[0.98] w-full disabled:opacity-50"
@@ -283,7 +290,7 @@ export default function CreatePromotionPage() {
           {isLoading ? 'Lanzando...' : 'Lanzar promoción'}
         </Button>
       </div>
-      
+
       <style jsx global>{`
         .font-quicksand {
           font-family: var(--font-quicksand), sans-serif;

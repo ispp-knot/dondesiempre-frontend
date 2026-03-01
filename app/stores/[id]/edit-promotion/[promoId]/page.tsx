@@ -1,19 +1,16 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { FaCalendarAlt, FaPlus, FaTimes, FaImage, FaCheckCircle, FaExclamationCircle, FaLock } from 'react-icons/fa';
+import { FaCalendarAlt, FaImage, FaCheckCircle, FaExclamationCircle, FaLock } from 'react-icons/fa';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
 import Image from 'next/image';
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 import { DateRange } from 'react-day-picker';
 import { cn } from '@/lib/utils';
-import { getPromotionById, updatePromotionDiscount, PromotionDTO } from '@/lib/api/promotionEndpoints';
+import { getPromotionById, updatePromotionDiscount } from '@/lib/api/promotionEndpoints';
 
 interface Product {
   id: string;
@@ -22,19 +19,18 @@ interface Product {
 }
 
 export default function EditPromotionPage() {
-  const params = useParams<{ id: string, promoId: string }>();
+  const params = useParams<{ id: string; promoId: string }>();
   const router = useRouter();
   const storeId = params.id;
   const promoId = params.promoId;
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [name, setName] = useState('');
   const [discountPercentage, setDiscountPercentage] = useState<number>(0);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+  const [dateRange] = useState<DateRange | undefined>(undefined);
   const [description, setDescription] = useState('');
   const [products, setProducts] = useState<Product[]>([]);
-  const [publishToInstagram, setPublishToInstagram] = useState(false);
-  const [promotionImage, setPromotionImage] = useState<string | null>(null);
+  const [publishToInstagram] = useState(false);
+  const [promotionImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -49,11 +45,13 @@ export default function EditPromotionPage() {
         // Note: Dates and Products would need additional fetching if full info isn't in DTO
         // For now using mock/placeholders for read-only display if IDs exist
         if (data.productIds && data.productIds.length > 0) {
-            setProducts(data.productIds.map(id => ({
-                id,
-                name: `Producto ${id.substring(0, 4)}`,
-                imageUrl: '/static/img/outfit_placeholder.jpg'
-            })));
+          setProducts(
+            data.productIds.map((id) => ({
+              id,
+              name: `Producto ${id.substring(0, 4)}`,
+              imageUrl: '/static/img/outfit_placeholder.jpg',
+            }))
+          );
         }
       } catch (error) {
         console.error('Error fetching promotion:', error);
@@ -75,7 +73,7 @@ export default function EditPromotionPage() {
     if (!isNaN(value)) {
       setDiscountPercentage(Math.min(100, Math.max(1, value)));
     } else if (e.target.value === '') {
-        setDiscountPercentage(0);
+      setDiscountPercentage(0);
     }
   };
 
@@ -115,10 +113,14 @@ export default function EditPromotionPage() {
 
         {/* Status Messages */}
         {status && (
-          <div className={cn(
-            "flex items-center gap-2 p-4 rounded-lg animate-in fade-in slide-in-from-top-2",
-            status.type === 'success' ? "bg-secondary/10 text-secondary border border-secondary" : "bg-destructive/10 text-destructive border border-destructive"
-          )}>
+          <div
+            className={cn(
+              'flex items-center gap-2 p-4 rounded-lg animate-in fade-in slide-in-from-top-2',
+              status.type === 'success'
+                ? 'bg-secondary/10 text-secondary border border-secondary'
+                : 'bg-destructive/10 text-destructive border border-destructive'
+            )}
+          >
             {status.type === 'success' ? <FaCheckCircle /> : <FaExclamationCircle />}
             <span className="font-bold">{status.message}</span>
           </div>
@@ -202,28 +204,32 @@ export default function EditPromotionPage() {
         <div className="flex flex-col gap-4 opacity-80">
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-bold flex items-center gap-2">
-                Artículos en promoción <FaLock size={14} className="text-gray-400" />
+              Artículos en promoción <FaLock size={14} className="text-gray-400" />
             </h2>
           </div>
 
           <div className="flex flex-col gap-3">
-            {products.length > 0 ? products.map((product) => (
-              <div
-                key={product.id}
-                className="flex items-center gap-4 border-2 border-gray-100 rounded-lg p-2 bg-gray-50"
-              >
-                <div className="relative w-16 h-16 rounded overflow-hidden flex-shrink-0 grayscale">
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                  />
+            {products.length > 0 ? (
+              products.map((product) => (
+                <div
+                  key={product.id}
+                  className="flex items-center gap-4 border-2 border-gray-100 rounded-lg p-2 bg-gray-50"
+                >
+                  <div className="relative w-16 h-16 rounded overflow-hidden flex-shrink-0 grayscale">
+                    <Image
+                      src={product.imageUrl}
+                      alt={product.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 text-gray-400 font-bold text-lg">{product.name}</div>
                 </div>
-                <div className="flex-1 text-gray-400 font-bold text-lg">{product.name}</div>
-              </div>
-            )) : (
-              <p className="text-gray-400 italic">No hay productos seleccionados o no se pudieron cargar.</p>
+              ))
+            ) : (
+              <p className="text-gray-400 italic">
+                No hay productos seleccionados o no se pudieron cargar.
+              </p>
             )}
           </div>
         </div>
@@ -231,13 +237,16 @@ export default function EditPromotionPage() {
         {/* Promotion Image - READ ONLY */}
         <div className="flex flex-col gap-1 opacity-60">
           <h2 className="text-xl font-bold flex items-center gap-2">
-              Imagen de la promoción <FaLock size={14} className="text-gray-400" />
+            Imagen de la promoción <FaLock size={14} className="text-gray-400" />
           </h2>
-          <div 
-            className="border-2 border-dashed border-gray-200 rounded-lg py-12 flex flex-col items-center justify-center gap-2 mt-2 bg-gray-50 cursor-not-allowed relative overflow-hidden"
-          >
+          <div className="border-2 border-dashed border-gray-200 rounded-lg py-12 flex flex-col items-center justify-center gap-2 mt-2 bg-gray-50 cursor-not-allowed relative overflow-hidden">
             {promotionImage ? (
-                <Image src={promotionImage} alt="Preview" fill className="object-cover opacity-30 grayscale" />
+              <Image
+                src={promotionImage}
+                alt="Preview"
+                fill
+                className="object-cover opacity-30 grayscale"
+              />
             ) : null}
             <div className="flex items-center gap-2 text-gray-300 font-bold z-10">
               <FaImage size={24} />
@@ -249,7 +258,7 @@ export default function EditPromotionPage() {
         {/* Instagram Toggle - READ ONLY */}
         <div className="flex items-center justify-between py-2 opacity-60">
           <span className="text-lg font-bold text-gray-400 flex items-center gap-2">
-              Publicar en Instagram <FaLock size={14} />
+            Publicar en Instagram <FaLock size={14} />
           </span>
           <Switch
             checked={publishToInstagram}
@@ -259,7 +268,7 @@ export default function EditPromotionPage() {
         </div>
 
         {/* Submit Button */}
-        <Button 
+        <Button
           onClick={handleSubmit}
           disabled={isSaving}
           className="bg-secondary text-white font-bold py-8 rounded-lg text-xl mt-4 cursor-pointer hover:bg-dark-secondary transform transition active:scale-[0.98] w-full disabled:opacity-50"
@@ -267,7 +276,7 @@ export default function EditPromotionPage() {
           {isSaving ? 'Guardando...' : 'Guardar cambios'}
         </Button>
       </div>
-      
+
       <style jsx global>{`
         .font-quicksand {
           font-family: var(--font-quicksand), sans-serif;
