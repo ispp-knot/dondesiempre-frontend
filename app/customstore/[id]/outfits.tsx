@@ -2,16 +2,16 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Percent } from 'lucide-react';
 
-type Outfit = {
+interface Outfit {
   id: number;
   name: string;
   image: string;
   discount?: number;
-};
+}
 
-type Props = {
+interface Props {
   outfits?: Outfit[];
-};
+}
 
 export default function Collections({ outfits = [] }: Props) {
   return (

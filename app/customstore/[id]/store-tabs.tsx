@@ -6,33 +6,31 @@ import Collections from './collections';
 import AboutUs from './about-us';
 import Outfits from './outfits';
 
-type Tab = 'catalogo' | 'sobre';
-
-type Collection = {
+interface Collection {
   id: number;
   name: string;
   image: string;
-};
+}
 
-type Outfit = {
+interface Outfit {
   id: number;
   name: string;
   image: string;
   discount?: number;
-};
+}
 
-type Props = {
+interface Props {
   collections?: Collection[];
   description?: string;
   outfits?: Outfit[];
-};
+}
 
 export default function StoreTabs({
   collections = [],
   description = '',
   outfits = [],
 }: Props): JSX.Element {
-  const [activeTab, setActiveTab] = useState<Tab>('catalogo');
+  const [activeTab, setActiveTab] = useState<'catalogo' | 'sobre'>('catalogo');
 
   const promoOutfit = outfits.find((o) => o.discount && o.discount > 0);
 

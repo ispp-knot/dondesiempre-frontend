@@ -6,9 +6,9 @@ type Collection = {
   image: string;
 };
 
-type Props = {
+interface Props {
   collections?: Collection[];
-};
+}
 
 export default function Collections({ collections = [] }: Props) {
   return (
