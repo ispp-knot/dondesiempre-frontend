@@ -6,12 +6,12 @@ type Props = {
   outfits?: OutfitDTO[];
 };
 
-export default function Collections({ outfits = [] }: Props) {
+export default function Outfits({ outfits = [] }: Props) {
   return (
     <div className="flex flex-col px-5 sm:w-10/12">
       <div className="flex flex-row items-center justify-between w-full mb-4">
-        <h1 className="text-primary text-xl md:text-2xl font-bold">Nuestros conjuntos</h1>
-        <Link href="" className="text-secondary underline">
+        <h1 className="text-[var(--primary)] text-xl md:text-2xl font-bold">Nuestros conjuntos</h1>
+        <Link href="" className="text-[var(--secondary)] underline">
           Ver más
         </Link>
       </div>
@@ -25,14 +25,20 @@ export default function Collections({ outfits = [] }: Props) {
             }}
           >
             {out.discountedPriceInCents && (
-              <div className="absolute top-2 left-2 bg-primary rounded-full p-0.5 md:p-1 flex items-center justify-center shadow-md">
+              <div className="absolute top-2 left-2 bg-[var(--primary)] rounded-full p-0.5 md:p-1 flex items-center justify-center shadow-md">
                 <Percent className="w-4 h-4 md:w-5 md:h-5 text-white stroke-[3]" />
               </div>
             )}
             <div className="flex flex-row items-center justify-center gap-1.5 w-full h-4/12 md:h-1/4 self-end bg-white text-sm md:text-lg px-2 text-center">
               <span className="truncate">{out.name}</span>
               {out.discountedPriceInCents && (
-                <span className="text-primary font-bold bg-primary/10 px-1.5 py-0.5 rounded-md text-xs md:text-sm">
+                <span
+                  className="font-bold px-1.5 py-0.5 rounded-md text-xs md:text-sm"
+                  style={{
+                    color: 'var(--primary)',
+                    backgroundColor: 'color-mix(in srgb, var(--primary), transparent 90%)',
+                  }}
+                >
                   -{out.discountedPriceInCents}%
                 </span>
               )}
@@ -40,8 +46,6 @@ export default function Collections({ outfits = [] }: Props) {
           </div>
         ))}
       </div>
-      {/* style={{ backgroundImage: `url(${col.image})` }} */}
-      {/* TODO: Style collections with images */}
     </div>
   );
 }
