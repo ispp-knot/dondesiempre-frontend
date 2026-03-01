@@ -62,6 +62,9 @@ export default async function StorePage({ params }: PageProps) {
       },
     ],
     outfits: outfitsDto,
+    storefrontId: storeDto.storefrontId,
+    primaryColor: storeDto.primaryColor,
+    secondaryColor: storeDto.secondaryColor,
   };
 
   return (
@@ -123,6 +126,7 @@ export default async function StorePage({ params }: PageProps) {
         )}
       </div>
       <StoreTabs
+        store={storeDto}
         collections={store.collections}
         description={store.description}
         outfits={store.outfits}

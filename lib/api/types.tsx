@@ -21,6 +21,7 @@ export type StoreDTO = {
   acceptsShipping: boolean;
   latitude: number;
   longitude: number;
+  storefrontId: string;
   isFirstCollections: boolean;
   primaryColor: string;
   secondaryColor: string;
