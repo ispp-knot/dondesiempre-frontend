@@ -23,16 +23,12 @@ type Props = {
   store: StoreDTO;
 };
 
-export default function StoreTabs({
-  collections = [],
-  outfits = [],
-  store,
-}: Props): JSX.Element {
+export default function StoreTabs({ collections = [], outfits = [], store }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
 
-  const primary = store?.primaryColor || '#c65a3a';
-  const secondary = store?.secondaryColor || '#19756a';
-  const bannerImage = store.bannerImageUrl;
+  // const primary = store?.primaryColor || '#c65a3a';
+  // const secondary = store?.secondaryColor || '#19756a';
+  // const bannerImage = store.bannerImageUrl;
   const promoOutfit = outfits.find((o) => o.discountedPriceInCents && o.discountedPriceInCents > 0);
 
   return (
@@ -41,7 +37,13 @@ export default function StoreTabs({
         <div className="relative mx-4 mt-5 flex flex-col items-center justify-center border-2 border-secondary/50 rounded-md p-4 overflow-hidden w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5">
           <div className="absolute inset-0 z-0 w-full h-full">
             {promoOutfit.image && (
-              <Image src={promoOutfit.image} alt={promoOutfit.name} fill className="object-cover" />
+              <Image
+                src={promoOutfit.image}
+                alt={promoOutfit.name}
+                fill
+                className="object-cover"
+                unoptimized
+              />
             )}
             <div className="absolute inset-0 bg-white/85"></div>
           </div>
@@ -65,8 +67,8 @@ export default function StoreTabs({
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`flex-1 py-2 text-sm font-semibold transition-all rounded-md ${
-              activeTab === tab 
-                ? 'bg-secondary text-white shadow-sm' 
+              activeTab === tab
+                ? 'bg-secondary text-white shadow-sm'
                 : 'text-secondary hover:bg-gray-200/50'
             }`}
           >
@@ -86,10 +88,7 @@ export default function StoreTabs({
         {activeTab === 'sobre' && <AboutUs description={store.aboutUs} />}
 
         {activeTab === 'opciones' && (
-          <StoreOptions 
-            storefrontId={store.storefrontId} 
-            initialData={store} 
-          />
+          <StoreOptions storefrontId={store.storefrontId} initialData={store} />
         )}
       </div>
     </>

@@ -76,6 +76,7 @@ export default async function StorePage({ params }: PageProps) {
           fill
           className="object-cover"
           priority
+          unoptimized
         />
       </div>
       <div className={'w-full mt-5 text-center text-3xl md:text-5xl text-secondary font-bold'}>
