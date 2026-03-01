@@ -11,7 +11,7 @@ export default function Outfits({ outfits = [] }: Props) {
     <div className="flex flex-col px-5 sm:w-10/12">
       <div className="flex flex-row items-center justify-between w-full mb-4">
         <h1 className="text-[var(--primary)] text-xl md:text-2xl font-bold">Nuestros conjuntos</h1>
-        <Link href="" className="text-[var(--secondary)] underline">
+        <Link href="" className="text-[var(--primary)] underline">
           Ver más
         </Link>
       </div>
@@ -25,7 +25,7 @@ export default function Outfits({ outfits = [] }: Props) {
             }}
           >
             {out.discountedPriceInCents && (
-              <div className="absolute top-2 left-2 bg-[var(--primary)] rounded-full p-0.5 md:p-1 flex items-center justify-center shadow-md">
+              <div className="absolute top-2 left-2 bg-[var(--secondary)] rounded-full p-0.5 md:p-1 flex items-center justify-center shadow-md">
                 <Percent className="w-4 h-4 md:w-5 md:h-5 text-white stroke-[3]" />
               </div>
             )}
@@ -39,8 +39,8 @@ export default function Outfits({ outfits = [] }: Props) {
                 <span
                   className="font-bold px-1.5 py-0.5 rounded-md text-xs md:text-sm"
                   style={{
-                    color: 'var(--primary)',
-                    backgroundColor: 'color-mix(in srgb, var(--primary), transparent 90%)',
+                    color: 'var(--secondary)',
+                    backgroundColor: 'color-mix(in srgb, var(--secondary), transparent 90%)',
                   }}
                 >
                   -{out.discountedPriceInCents}%

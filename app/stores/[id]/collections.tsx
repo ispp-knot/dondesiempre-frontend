@@ -17,7 +17,7 @@ export default function Collections({ collections = [] }: Props) {
         <h1 className="text-[var(--primary)] text-xl md:text-2xl font-bold">
           Nuestras colecciones
         </h1>
-        <Link href="" className="text-[var(--secondary)] underline">
+        <Link href="" className="text-[var(--primary)] underline">
           Ver más
         </Link>
       </div>
@@ -32,7 +32,7 @@ export default function Collections({ collections = [] }: Props) {
           >
             <div
               className="flex flex-col items-center justify-center gap-2 w-full h-4/12 md:h-1/4 self-end bg-white text-sm sm:text-lg px-4 text-center"
-              style={{ color: 'var(--primary)' }}
+              style={{ color: 'var(--secondary)' }}
             >
               {col.name}
             </div>

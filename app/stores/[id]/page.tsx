@@ -66,14 +66,14 @@ export default async function StorePage({ params }: PageProps) {
       </div>
 
       <div
-        className={'w-full mt-5 text-center text-3xl md:text-5xl text-[var(--secondary)] font-bold'}
+        className={'w-full mt-5 text-center text-3xl md:text-5xl text-[var(--primary)] font-bold'}
       >
         {store.name}
       </div>
 
       <div
         className={
-          'flex flex-row w-full mt-2 items-center justify-center gap-1 sm:text-lg md:text-xl text-[var(--primary)]'
+          'flex flex-row w-full mt-2 items-center justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]'
         }
       >
         <FaLocationDot />
@@ -82,7 +82,7 @@ export default async function StorePage({ params }: PageProps) {
 
       <div
         className={
-          'flex flex-row w-full mt-2 items-center justify-center gap-1 sm:text-lg md:text-xl text-[var(--primary)]'
+          'flex flex-row w-full mt-2 items-center justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]'
         }
       >
         <MdAccessTimeFilled />
