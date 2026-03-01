@@ -29,7 +29,11 @@ export default function Outfits({ outfits = [] }: Props) {
                 <Percent className="w-4 h-4 md:w-5 md:h-5 text-white stroke-[3]" />
               </div>
             )}
-            <div className="flex flex-row items-center justify-center gap-1.5 w-full h-4/12 md:h-1/4 self-end bg-white text-sm md:text-lg px-2 text-center">
+
+            <div
+              className="flex flex-row items-center justify-center gap-1.5 w-full h-4/12 md:h-1/4 self-end bg-white text-sm md:text-lg px-2 text-center"
+              style={{ color: 'var(--primary)' }}
+            >
               <span className="truncate">{out.name}</span>
               {out.discountedPriceInCents && (
                 <span

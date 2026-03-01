@@ -30,7 +30,10 @@ export default function Collections({ collections = [] }: Props) {
               backgroundImage: `url(${col.image || `/static/img/collection_placeholder_${col.id}.jpg`})`,
             }}
           >
-            <div className="flex flex-col items-center justify-center gap-2 w-full h-4/12 md:h-1/4 self-end bg-white text-sm sm:text-lg px-4 text-center">
+            <div
+              className="flex flex-col items-center justify-center gap-2 w-full h-4/12 md:h-1/4 self-end bg-white text-sm sm:text-lg px-4 text-center"
+              style={{ color: 'var(--primary)' }}
+            >
               {col.name}
             </div>
           </div>
