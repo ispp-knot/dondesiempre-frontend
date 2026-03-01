@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import Image from 'next/image';
 import { FaLocationDot } from 'react-icons/fa6';
 import { MdAccessTimeFilled } from 'react-icons/md';
-import { FaFacebook, FaInstagram } from 'react-icons/fa';
+import { FaFacebook, FaInstagram, FaTwitter, FaTiktok, FaLink } from 'react-icons/fa';
 import StoreTabs from './store-tabs';
 import { getStore } from '@/lib/api/stores/getStore';
 import { getOutfitByStoreId } from '@/lib/api/outfits/getOutfitsByStore';
@@ -12,11 +12,23 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
+const getSocialIcon = (name: string) => {
+  const lowerName = name.toLowerCase();
+  if (lowerName.includes('instagram')) return <FaInstagram className="w-4 h-4" />;
+  if (lowerName.includes('facebook')) return <FaFacebook className="w-4 h-4" />;
+  if (lowerName.includes('twitter') || lowerName.includes('x'))
+    return <FaTwitter className="w-4 h-4" />;
+  if (lowerName.includes('tiktok')) return <FaTiktok className="w-4 h-4" />;
+  return <FaLink className="w-4 h-4" />;
+};
+
 export default async function StorePage({ params }: PageProps) {
   const { id } = await params;
 
   const storeDto = await getStore(id);
   const outfitsDto = await getOutfitByStoreId(id);
+
+  const socialNetworks = storeDto.socialNetworks || [];
 
   const primaryColor = storeDto.primaryColor || '#000000';
   const secondaryColor = storeDto.secondaryColor || '#000000';
@@ -26,8 +38,6 @@ export default async function StorePage({ params }: PageProps) {
     address: storeDto.address,
     hours: storeDto.openingHours,
     banner: storeDto.bannerImageUrl,
-    instagram: '',
-    facebook: '',
     description: storeDto.aboutUs,
     collections: [
       { id: 1, name: 'Veraneo', image: '' },
@@ -90,33 +100,24 @@ export default async function StorePage({ params }: PageProps) {
       </div>
 
       <div className="flex gap-3 mt-3 flex-wrap justify-center mb-2">
-        {store.instagram ? (
-          <a
-            href={`https://instagram.com/${store.instagram}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center w-fit gap-1.5 border border-[var(--primary)] rounded-sm px-3 py-1.5 text-xs text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition"
-          >
-            <FaInstagram className={'w-4 h-4'} />
-            <p>{store.instagram}</p>
-          </a>
-        ) : (
-          <></>
-        )}
-        {store.facebook ? (
-          <a
-            href={`https://facebook.com/${store.facebook}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center w-fit gap-1.5 border border-[var(--primary)] rounded-sm px-2 py-1.5 text-xs sm: text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition"
-          >
-            <FaFacebook className={'w-4 h-4'} />
-            <p>{store.facebook}</p>
-          </a>
+        {socialNetworks.length > 0 ? (
+          socialNetworks.map((social, index) => (
+            <a
+              key={index}
+              href={social.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center w-fit gap-1.5 border border-[var(--primary)] rounded-sm px-3 py-1.5 text-xs text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition"
+            >
+              {getSocialIcon(social.name)}
+              <p>{social.name}</p>
+            </a>
+          ))
         ) : (
           <></>
         )}
       </div>
+
       <StoreTabs
         store={storeDto}
         collections={store.collections}

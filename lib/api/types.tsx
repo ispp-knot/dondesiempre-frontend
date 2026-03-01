@@ -26,6 +26,7 @@ export type StoreDTO = {
   primaryColor: string;
   secondaryColor: string;
   bannerImageUrl: string;
+  socialNetworks?: SocialNetworkDTO[];
 };
 
 export type OutfitProductDTO = {
@@ -48,4 +49,9 @@ export type OutfitDTO = {
   index: number;
   tags: string[];
   products: string[];
+};
+
+export type SocialNetworkDTO = {
+  name: string;
+  link: string;
 };
