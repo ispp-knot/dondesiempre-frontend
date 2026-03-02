@@ -54,7 +54,7 @@ export default function OutfitProductsPage() {
       ),
     };
     await createOutfit(dto, imageFile);
-    redirect(`/storefront/${storefrontId}/outfits`);
+    redirect(`/stores/${storefrontId}/outfits`);
   };
 
   return (
@@ -74,7 +74,7 @@ export default function OutfitProductsPage() {
                 <h1 className="mb-3 font-bold text-primary text-center text-3xl">Crear outfit</h1>
                 <div className="w-full flex flex-col items-center">
                   <form
-                    action={`/storefront/${storefrontId}/outfits`}
+                    action={`/stores/${storefrontId}/outfits`}
                     method="GET"
                     onSubmit={submitForm}
                     className="w-10/12"

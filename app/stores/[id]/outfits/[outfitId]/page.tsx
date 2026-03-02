@@ -55,7 +55,7 @@ export default function OutfitDetailsPage() {
       index: Number.parseInt((document.getElementById('form-index') as HTMLInputElement).value),
     };
     await updateOutfit(outfitQuery.data.id, dto, imageFile);
-    redirect(`/storefront/${storefrontId}/outfits`);
+    redirect(`/stores/${storefrontId}/outfits`);
   };
 
   return (
@@ -71,7 +71,7 @@ export default function OutfitDetailsPage() {
             <>
               <h1 className="mb-8 font-bold text-primary text-center text-3xl">Editar outfit</h1>
               <form
-                action={`/storefront/${storefrontId}/outfits`}
+                action={`/stores/${storefrontId}/outfits`}
                 method="GET"
                 onSubmit={submitForm}
                 className="w-10/12"

@@ -66,7 +66,7 @@ export function StoreMapCard({ store }: { store: StoreDTO }) {
               variant="secondary"
               className="flex-1 flex items-center justify-center gap-2 text-sm sm:text-base h-10 sm:h-11"
             >
-              <Link href={`/storefront/${store.id}`}>
+              <Link href={`/stores/${store.id}`}>
                 <span className="truncate">Ver escaparate</span>
                 <LuStore className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
               </Link>
