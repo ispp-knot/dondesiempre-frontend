@@ -22,6 +22,7 @@ export default function OutfitDetailsPage() {
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [selectedProduct, setSelectedProduct] = useState(0);
 
   const outfitQuery = useQuery({
@@ -47,14 +48,13 @@ export default function OutfitDetailsPage() {
     const dto: OutfitUpdate = {
       name: (document.getElementById('form-name') as HTMLInputElement).value,
       description: (document.getElementById('form-description') as HTMLInputElement).value || null,
-      image: null,
       discountedPriceInCents:
         Number.parseFloat(
           (document.getElementById('form-discounted-price') as HTMLInputElement).value
         ) * 100,
       index: Number.parseInt((document.getElementById('form-index') as HTMLInputElement).value),
     };
-    await updateOutfit(outfitQuery.data.id, dto);
+    await updateOutfit(outfitQuery.data.id, dto, imageFile);
     redirect(`/storefront/${storefrontId}/outfits`);
   };
 
@@ -125,7 +125,11 @@ export default function OutfitDetailsPage() {
                       src={outfitQuery.data.image || undefined}
                       onChange={() => {
                         const input = document.getElementById('form-image') as HTMLInputElement;
-                        setImageSrc('/static/img/' + input.files?.item(0)?.name);
+                        const file = input.files?.item(0) ?? null;
+                        setImageFile(file);
+                        if (file) {
+                          setImageSrc(URL.createObjectURL(file));
+                        }
                       }}
                       className="cursor-pointer border border-secondary rounded pt-2 pb-2 pl-3 pr-3 mt-4 mb-2 text-heading text-sm text-secondary rounded-base focus:ring-brand focus:border-brand block w-full shadow-xs placeholder:text-body"
                     />
