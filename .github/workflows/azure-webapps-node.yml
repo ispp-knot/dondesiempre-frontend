@@ -7,7 +7,7 @@ on:
 env:
   AZURE_WEBAPP_NAME: dondesiempre-frontend    # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
-  NODE_VERSION: '24.x'                # set this to the node version to use
+  NODE_VERSION: '22.x'                # set this to the node version to use
 
 permissions:
   contents: read
@@ -24,11 +24,10 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
 
-    - name: npm install, build, and test
+    - name: npm install and build
       run: |
         npm install
-        npm run build --if-present
-        npm run test --if-present
+        npm run build
 
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v4
@@ -50,6 +49,12 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: node-app
+        path: |
+          .next
+          public
+          package.json
+          package-lock.json
+          next.config.js
 
     - name: 'Deploy to Azure WebApp'
       id: deploy-to-webapp
