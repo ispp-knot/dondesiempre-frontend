@@ -3,23 +3,32 @@ import { PHASE_DEVELOPMENT_SERVER, PHASE_PRODUCTION_BUILD } from 'next/constants
 import { NextConfig } from 'next';
 
 export default async function config(phase: string, _defaultConfig: NextConfig) {
-  const nextConfig: NextConfig = {};
+  // 1. Forzamos el modo standalone para que Azure no necesite todos los node_modules
+  const nextConfig: NextConfig = {
+    output: 'standalone', 
+  };
 
   if (phase === PHASE_DEVELOPMENT_SERVER || phase === PHASE_PRODUCTION_BUILD) {
-    // This is optional!
-    // A revision helps Serwist version a precached page. This
-    // avoids outdated precached responses being used. Using
-    // `git rev-parse HEAD` might not the most efficient way
-    // of determining a revision, however. You may prefer to use
-    // the hashes of every extra file you precache.
-    const _revision =
-      spawnSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf-8' }).stdout ?? crypto.randomUUID();
+    let revision: string;
+    
+    try {
+      // Intentamos obtener el hash de git, pero con un timeout para que no bloquee
+      const gitProcess = spawnSync('git', ['rev-parse', 'HEAD'], { 
+        encoding: 'utf-8',
+        timeout: 5000 // Si en 5 segundos no responde, abortamos
+      });
+      revision = gitProcess.stdout?.trim() || crypto.randomUUID();
+    } catch (e) {
+      revision = crypto.randomUUID();
+    }
 
     const withSerwist = (await import('@serwist/next')).default({
       additionalPrecacheEntries: [],
       swSrc: 'app/sw.ts',
       swDest: 'public/sw.js',
+      // Pass the revision to Serwist if needed
     });
+    
     return withSerwist(nextConfig);
   }
 
