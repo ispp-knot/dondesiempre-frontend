@@ -3,7 +3,9 @@ import { PHASE_DEVELOPMENT_SERVER, PHASE_PRODUCTION_BUILD } from 'next/constants
 import { NextConfig } from 'next';
 
 export default async function config(phase: string, _defaultConfig: NextConfig) {
-  const nextConfig: NextConfig = {};
+  const nextConfig: NextConfig = {
+    output: 'standalone',
+  };
 
   if (phase === PHASE_DEVELOPMENT_SERVER || phase === PHASE_PRODUCTION_BUILD) {
     // This is optional!
