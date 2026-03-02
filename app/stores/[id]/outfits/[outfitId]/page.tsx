@@ -252,19 +252,19 @@ export default function OutfitDetailsPage() {
                   </h1>
                 </div>
                 <div className="pt-8 pb-6 flex flex-row w-fit max-w-11/12 self-center overflow-x-scroll items-center gap-4">
-                  {outfitQuery.data.products.map(
-                    (p, i) => (
-                        <Button
-                          key={p.id}
-                          onClick={() => setSelectedProduct(i)}
-                          className={
-                            'w-20 h-20 md:w-40 md:h-40 object-cover shrink-0 bg-cover bg-center rounded-lg shadow-lg ' +
-                            (i === selectedProduct ? 'border-4 border-ring' : '')
-                          }
-                          style={{ backgroundImage: `url(${p.image || '/static/img/product_placeholder.png'})` }}
-                        ></Button>
-                      )
-                  )}
+                  {outfitQuery.data.products.map((p, i) => (
+                    <Button
+                      key={p.id}
+                      onClick={() => setSelectedProduct(i)}
+                      className={
+                        'w-20 h-20 md:w-40 md:h-40 object-cover shrink-0 bg-cover bg-center rounded-lg shadow-lg ' +
+                        (i === selectedProduct ? 'border-4 border-ring' : '')
+                      }
+                      style={{
+                        backgroundImage: `url(${p.image || '/static/img/product_placeholder.png'})`,
+                      }}
+                    ></Button>
+                  ))}
                 </div>
                 <div>
                   <h1 className="mt-4 mb-4 text-primary text-2xl">
