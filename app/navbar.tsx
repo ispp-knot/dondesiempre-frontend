@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 export default function Navbar() {
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [isAdmin, _setIsAdmin] = useState<boolean>(false);
   return (
     <>
       <div className="hidden sm:flex bg-white text-primary w-full h-0 sm:h-17.5 items-center justify-center z-20 shadow-md">
