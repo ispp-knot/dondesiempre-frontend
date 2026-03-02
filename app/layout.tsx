@@ -71,12 +71,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="es" dir="ltr" className={quicksand.variable}>
       <head />
-      <body className={quicksand.className}>
-        <Navbar></Navbar>
+      <body
+        className={`${quicksand.className} max-sm:[&::-webkit-scrollbar]:hidden`}
+      >
+        <Navbar />
         <Providers>
-          <div className="pb-20 sm:pb-0">{children}</div>
+          <div>{children}</div>
         </Providers>
-        <NavbarBottom></NavbarBottom>
+        <NavbarBottom />
       </body>
     </html>
   );
