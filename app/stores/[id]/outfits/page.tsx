@@ -43,7 +43,7 @@ export default function OutfitsPage() {
       <div className="flex flex-col items-center">
         <div className="w-full md:w-8/12">
           {isAdmin ? (
-            <Link href={`/storefront/${storefrontId}/create-outfit/`}>
+            <Link href={`/stores/${storefrontId}/create-outfit/`}>
               <Card className="p-4 m-4 shadow-xl hover:bg-muted active:bg-input hover:cursor-pointer">
                 <div className="p-4 border-4 border-dashed border-secondary rounded-lg flex flex-row justify-center gap-4">
                   <IoMdAddCircleOutline className="mt-8 mb-8 text-secondary text-center text-4xl" />
@@ -102,13 +102,13 @@ export default function OutfitsPage() {
                   {isAdmin ? (
                     <div className="self-center grid grid-cols-3 w-11/12 gap-2">
                       <Link
-                        href={`/storefront/${storefrontId}/outfits/${o.id}`}
+                        href={`/stores/${storefrontId}/outfits/${o.id}`}
                         className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
                       >
                         Editar
                       </Link>
                       <Link
-                        href={`/storefront/${storefrontId}/outfits/${o.id}/products`}
+                        href={`/stores/${storefrontId}/outfits/${o.id}/products`}
                         className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
                       >
                         Productos
@@ -125,7 +125,7 @@ export default function OutfitsPage() {
                     </div>
                   ) : (
                     <Link
-                      href={`/storefront/${storefrontId}/outfits/${o.id}`}
+                      href={`/stores/${storefrontId}/outfits/${o.id}`}
                       className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-11/12 md:w-1/4 h-12"
                     >
                       Ver más

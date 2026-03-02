@@ -35,7 +35,6 @@ export type OutfitCreation = {
   storefrontId: string;
   name: string;
   description: string | null;
-  image: string | null;
   tags: string[];
   products: OutfitCreationProduct[];
 };
@@ -43,7 +42,6 @@ export type OutfitCreation = {
 export type OutfitUpdate = {
   name: string;
   description: string | null;
-  image: string | null;
   discountedPriceInCents: number;
   index: number;
 };

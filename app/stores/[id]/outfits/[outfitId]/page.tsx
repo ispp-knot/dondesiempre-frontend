@@ -22,6 +22,7 @@ export default function OutfitDetailsPage() {
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [selectedProduct, setSelectedProduct] = useState(0);
 
   const outfitQuery = useQuery({
@@ -47,15 +48,14 @@ export default function OutfitDetailsPage() {
     const dto: OutfitUpdate = {
       name: (document.getElementById('form-name') as HTMLInputElement).value,
       description: (document.getElementById('form-description') as HTMLInputElement).value || null,
-      image: null,
       discountedPriceInCents:
         Number.parseFloat(
           (document.getElementById('form-discounted-price') as HTMLInputElement).value
         ) * 100,
       index: Number.parseInt((document.getElementById('form-index') as HTMLInputElement).value),
     };
-    await updateOutfit(outfitQuery.data.id, dto);
-    redirect(`/storefront/${storefrontId}/outfits`);
+    await updateOutfit(outfitQuery.data.id, dto, imageFile);
+    redirect(`/stores/${storefrontId}/outfits`);
   };
 
   return (
@@ -71,7 +71,7 @@ export default function OutfitDetailsPage() {
             <>
               <h1 className="mb-8 font-bold text-primary text-center text-3xl">Editar outfit</h1>
               <form
-                action={`/storefront/${storefrontId}/outfits`}
+                action={`/stores/${storefrontId}/outfits`}
                 method="GET"
                 onSubmit={submitForm}
                 className="w-10/12"
@@ -125,7 +125,11 @@ export default function OutfitDetailsPage() {
                       src={outfitQuery.data.image || undefined}
                       onChange={() => {
                         const input = document.getElementById('form-image') as HTMLInputElement;
-                        setImageSrc('/static/img/' + input.files?.item(0)?.name);
+                        const file = input.files?.item(0) ?? null;
+                        setImageFile(file);
+                        if (file) {
+                          setImageSrc(URL.createObjectURL(file));
+                        }
                       }}
                       className="cursor-pointer border border-secondary rounded pt-2 pb-2 pl-3 pr-3 mt-4 mb-2 text-heading text-sm text-secondary rounded-base focus:ring-brand focus:border-brand block w-full shadow-xs placeholder:text-body"
                     />
@@ -248,20 +252,19 @@ export default function OutfitDetailsPage() {
                   </h1>
                 </div>
                 <div className="pt-8 pb-6 flex flex-row w-fit max-w-11/12 self-center overflow-x-scroll items-center gap-4">
-                  {outfitQuery.data.products.map(
-                    (p, i) =>
-                      p.image && (
-                        <Button
-                          key={p.id}
-                          onClick={() => setSelectedProduct(i)}
-                          className={
-                            'w-20 h-20 md:w-40 md:h-40 object-cover shrink-0 bg-cover bg-center rounded-lg shadow-lg ' +
-                            (i === selectedProduct ? 'border-4 border-ring' : '')
-                          }
-                          style={{ backgroundImage: `url(${p.image})` }}
-                        ></Button>
-                      )
-                  )}
+                  {outfitQuery.data.products.map((p, i) => (
+                    <Button
+                      key={p.id}
+                      onClick={() => setSelectedProduct(i)}
+                      className={
+                        'w-20 h-20 md:w-40 md:h-40 object-cover shrink-0 bg-cover bg-center rounded-lg shadow-lg ' +
+                        (i === selectedProduct ? 'border-4 border-ring' : '')
+                      }
+                      style={{
+                        backgroundImage: `url(${p.image || '/static/img/product_placeholder.png'})`,
+                      }}
+                    ></Button>
+                  ))}
                 </div>
                 <div>
                   <h1 className="mt-4 mb-4 text-primary text-2xl">

@@ -4,12 +4,12 @@ import { StoreMap } from '@/components/ui/storeMap';
 import { StoreMapCard } from './storeMapCard';
 import { AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { Store } from '@/lib/api/types';
+import { StoreDTO } from '@/lib/api/types';
 import { LngLat } from 'maplibre-gl';
 import { DEFAULT_MAP_LOCATION } from '@/lib/mapUtils';
 
 export function StoresPage() {
-  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [selectedStore, setSelectedStore] = useState<StoreDTO | null>(null);
   const [startingLocation, setStartingLocation] = useState<LngLat | null>(null);
   const [userLocation, setUserLocation] = useState<LngLat | null>(null);
 
@@ -56,7 +56,7 @@ export function StoresPage() {
         onStoreSelect={setSelectedStore}
       />
       <AnimatePresence>
-        {selectedStore && <StoreMapCard key={selectedStore.name} store={selectedStore} />}
+        {selectedStore && <StoreMapCard key={selectedStore.id} store={selectedStore} />}
       </AnimatePresence>
     </>
   );
