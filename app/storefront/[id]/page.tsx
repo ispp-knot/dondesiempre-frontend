@@ -8,10 +8,26 @@ import { MdAccessTimeFilled } from 'react-icons/md';
 import StoreTabs from './store-tabs';
 import { useQuery } from '@tanstack/react-query';
 import { getOutfitsOfStorefront } from '@/lib/api/outfitEndpoints';
+import { useEffect, useState } from 'react';
+
+type Shop = {
+  id: string | number;
+  name: string;
+  email: string;
+  storeID: string | number;
+  openingHours: string;
+  phone: string;
+  acceptsShipping: boolean;
+  latitude: number;
+  longitude: number;
+  address: string;
+  [key: string]: any;
+};
 
 export default function StorefrontPage() {
   const params = useParams<{ id: string }>();
   const storefrontId = params.id;
+  const [followed, setFollowed] = useState<boolean>(false);
 
   const outfitsQuery = useQuery({
     queryKey: ['outfits', storefrontId],
@@ -67,6 +83,27 @@ export default function StorefrontPage() {
     ],
     outfits: outfitsQuery.data,
   };
+
+  function isStoreFollowed() {
+    fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/clients/me/followed-stores')
+      .then(async (res) => {
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : data?.items ?? [];
+        list.forEach((store: Shop) => {
+          if (store.id === storefrontId) {
+            setFollowed(true);
+          }});
+      })
+      .catch((e) => {
+        console.error(e);
+        setFollowed(false);
+      });
+  }
+
+  useEffect(() => {
+    isStoreFollowed();
+  }, [storefrontId]);
+
   return (
     <div className="flex flex-col bg-white">
       <div className="relative w-full h-52 md:h-80">
@@ -77,9 +114,40 @@ export default function StorefrontPage() {
           className="object-cover"
           priority
         />
+        {followed ? (
+          <button
+            onClick={() => fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/stores/' + storefrontId + '/followers/me', { method: 'DELETE' }).then(() => setFollowed(false))}
+            className="absolute top-4 right-4 md:top-6 md:right-8 
+             flex items-center gap-2 
+             bg-gray-100 
+             text-green-800 
+             px-5 py-2 
+             rounded-full 
+             shadow-sm 
+             hover:bg-gray-200 
+             transition"
+        >
+          <span className="font-medium">Dejar de seguir</span>
+        </button>) : (
+          <button
+            onClick={() => fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/stores/' + storefrontId + '/followers', { method: 'POST' }).then(() => setFollowed(true))}
+            className="absolute top-4 right-4 md:top-6 md:right-8 
+             flex items-center gap-2 
+             bg-gray-100 
+             text-green-800 
+             px-5 py-2 
+             rounded-full 
+             shadow-sm 
+             hover:bg-gray-200 
+             transition"
+        >
+          <span className="font-medium">+ Seguir</span>
+        </button>)}
       </div>
-      <div className={'w-full mt-5 text-center text-3xl md:text-5xl text-secondary font-bold'}>
-        {store.name}
+      <div className="w-full mt-5 flex items-center justify-center gap-4">
+        <h1 className="text-3xl md:text-5xl text-secondary font-bold">
+          {store.name}
+        </h1>
       </div>
       <div
         className={
