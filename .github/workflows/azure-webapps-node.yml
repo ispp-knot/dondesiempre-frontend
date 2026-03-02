@@ -1,47 +1,41 @@
-name: Docker Build and Deploy to Azure
+name: DockerHub Build and Deploy
 
 on:
   push:
-    branches:
-      - "**"
+    branches: ['main']
   workflow_dispatch:
 
 env:
   AZURE_WEBAPP_NAME: ispp-dondesiempre
-  # El nombre de la imagen en tu registro
-  IMAGE_NAME: frontend
+  DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/dondesiempre-frontend
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Login to Azure Container Registry (ACR)
-        uses: azure/docker-login@v1
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
         with:
-          login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Docker Image
-        run: |
-          # Construimos la imagen usando el Dockerfile de tu raíz
-          docker build -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest .
-          # La subimos al almacén de Azure
-          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ env.DOCKER_IMAGE }}:latest
 
   deploy:
     runs-on: ubuntu-latest
     needs: build-and-push
-    environment:
-      name: 'Development'
     steps:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          # Le decimos a Azure que use la imagen que acabamos de subir
-          images: '${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest'
+          images: ${{ env.DOCKER_IMAGE }}:latest
