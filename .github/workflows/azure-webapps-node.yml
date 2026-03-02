@@ -48,7 +48,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: node-app
-        # No pongas filtros de path aquí, el filtro se hace en el 'Upload' arriba
+        path: .
 
     - name: 'Deploy to Azure WebApp'
       id: deploy-to-webapp
