@@ -3,6 +3,8 @@ import type { ReactNode } from 'react';
 import { Quicksand } from 'next/font/google';
 import { Providers } from './providers';
 import './globals.css';
+import Navbar from './navbar';
+import NavbarBottom from './navbar-bottom';
 
 const quicksand = Quicksand({
   subsets: ['latin'],
@@ -69,8 +71,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="es" dir="ltr" className={quicksand.variable}>
       <head />
-      <body className={quicksand.className}>
-        <Providers>{children}</Providers>
+      <body className={`${quicksand.className} max-sm:[&::-webkit-scrollbar]:hidden`}>
+        <Navbar />
+        <Providers>
+          <div>{children}</div>
+        </Providers>
+        <NavbarBottom />
       </body>
     </html>
   );
