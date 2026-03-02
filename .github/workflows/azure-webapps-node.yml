@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: ispp-dondesiempre
+  AZURE_WEBAPP_NAME: ispp-dondesiempre-frontend
   DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/dondesiempre-frontend
 
 jobs:
