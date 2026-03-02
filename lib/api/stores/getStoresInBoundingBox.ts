@@ -39,6 +39,7 @@ export async function getStoresInBoundingBox(boundingBox: LngLatBounds): Promise
       }
     )) as StoreDTO[];
     return response.map((dto: StoreDTO, index: number) => ({
+      id: dto.id,
       name: dto.name,
       address: dto.address,
       location: new LngLat(dto.longitude, dto.latitude),

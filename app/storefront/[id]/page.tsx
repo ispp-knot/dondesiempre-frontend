@@ -10,19 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getOutfitsOfStorefront } from '@/lib/api/outfitEndpoints';
 import { useEffect, useState } from 'react';
 
-type Shop = {
-  id: string | number;
-  name: string;
-  email: string;
-  storeID: string | number;
-  openingHours: string;
-  phone: string;
-  acceptsShipping: boolean;
-  latitude: number;
-  longitude: number;
-  address: string;
-  [key: string]: any;
-};
+import { followStore, unfollowStore, isFollowingStore } from '@/lib/api/followEndpoints';
 
 export default function StorefrontPage() {
   const params = useParams<{ id: string }>();
@@ -84,24 +72,8 @@ export default function StorefrontPage() {
     outfits: outfitsQuery.data,
   };
 
-  function isStoreFollowed() {
-    fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/clients/me/followed-stores')
-      .then(async (res) => {
-        const data = await res.json();
-        const list = Array.isArray(data) ? data : data?.items ?? [];
-        list.forEach((store: Shop) => {
-          if (store.id === storefrontId) {
-            setFollowed(true);
-          }});
-      })
-      .catch((e) => {
-        console.error(e);
-        setFollowed(false);
-      });
-  }
-
   useEffect(() => {
-    isStoreFollowed();
+    isFollowingStore(storefrontId).then((data) => setFollowed(data.isFollowing));
   }, [storefrontId]);
 
   return (
@@ -116,7 +88,7 @@ export default function StorefrontPage() {
         />
         {followed ? (
           <button
-            onClick={() => fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/stores/' + storefrontId + '/followers/me', { method: 'DELETE' }).then(() => setFollowed(false))}
+            onClick={() => unfollowStore(storefrontId).then(() => setFollowed(false))}
             className="absolute top-4 right-4 md:top-6 md:right-8 
              flex items-center gap-2 
              bg-gray-100 
@@ -126,11 +98,12 @@ export default function StorefrontPage() {
              shadow-sm 
              hover:bg-gray-200 
              transition"
-        >
-          <span className="font-medium">Dejar de seguir</span>
-        </button>) : (
+          >
+            <span className="font-medium">Dejar de seguir</span>
+          </button>
+        ) : (
           <button
-            onClick={() => fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/stores/' + storefrontId + '/followers', { method: 'POST' }).then(() => setFollowed(true))}
+            onClick={() => followStore(storefrontId).then(() => setFollowed(true))}
             className="absolute top-4 right-4 md:top-6 md:right-8 
              flex items-center gap-2 
              bg-gray-100 
@@ -140,14 +113,13 @@ export default function StorefrontPage() {
              shadow-sm 
              hover:bg-gray-200 
              transition"
-        >
-          <span className="font-medium">+ Seguir</span>
-        </button>)}
+          >
+            <span className="font-medium">+ Seguir</span>
+          </button>
+        )}
       </div>
       <div className="w-full mt-5 flex items-center justify-center gap-4">
-        <h1 className="text-3xl md:text-5xl text-secondary font-bold">
-          {store.name}
-        </h1>
+        <h1 className="text-3xl md:text-5xl text-secondary font-bold">{store.name}</h1>
       </div>
       <div
         className={

@@ -1,6 +1,7 @@
 import { LngLat } from '@vis.gl/react-maplibre';
 
 export type Store = {
+  id: string | number;
   name: string;
   location: LngLat;
   color: string;

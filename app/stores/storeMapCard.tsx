@@ -6,8 +6,13 @@ import { Star } from 'lucide-react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { convertToBrightness } from '@/lib/colorUtils';
+import { followStore, unfollowStore, isFollowingStore } from '@/lib/api/followEndpoints';
+import { useState } from 'react';
 
 export function StoreMapCard({ store }: { store: Store }) {
+  const [isFollowing, setIsFollowing] = useState<boolean>(false);
+  isFollowingStore(store.id).then((data) => setIsFollowing(data.isFollowing));
+
   const renderStars = () => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -52,6 +57,23 @@ export function StoreMapCard({ store }: { store: Store }) {
 
               {/* Stars */}
               <div className="flex gap-1">{renderStars()}</div>
+
+              {/* Follow button */}
+              <button
+                className="w-max mt-2"
+                onClick={async () => {
+                  console.log(store.id);
+                  if (isFollowing) {
+                    await unfollowStore(store.id);
+                    setIsFollowing(false);
+                  } else {
+                    await followStore(store.id);
+                    setIsFollowing(true);
+                  }
+                }}
+              >
+                {isFollowing ? 'Dejar de seguir' : 'Seguir'}
+              </button>
             </div>
 
             {/* Store Image */}
