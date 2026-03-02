@@ -141,7 +141,7 @@
 }
 
 .storefront-listing::-webkit-scrollbar-thumb:hover {
-  transform: scale(1.2)
+  transform: scale(1.2);
 }
 
 @layer base {
@@ -153,5 +153,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-

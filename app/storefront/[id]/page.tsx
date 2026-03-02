@@ -9,7 +9,11 @@ export default function StorefrontPage() {
   const params = useParams<{ id: string }>();
   const storeId = params.id;
 
-  const { data: store, isLoading, isError } = useQuery({
+  const {
+    data: store,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['store', storeId],
     queryFn: () => getStoreById(storeId),
   });

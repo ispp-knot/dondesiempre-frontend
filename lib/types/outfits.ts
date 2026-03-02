@@ -61,7 +61,6 @@ export function createEmptyOutfit(): Outfit {
   };
 }
 
-
 export function productToOufitCreationProduct(
   product: Product,
   index: number
