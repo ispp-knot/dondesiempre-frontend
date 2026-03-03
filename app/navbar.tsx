@@ -22,13 +22,17 @@ export default function Navbar() {
               <div className="flex flex-row items-center gap-6 text-secondary">
                 <a>Búsqueda</a>
                 <Link href="/stores">Mapa</Link>
+                <Link href="/followedstores">Seguidos</Link>
               </div>
             )}
           </div>
           <div className="flex flex-row items-center gap-5 text-2xl font-primary">
             {!isAdmin && (
               <>
-                <FaRegHeart />
+                <FaRegHeart
+                  className="cursor-pointer"
+                  onClick={() => (window.location.href = '/followedstores')}
+                />
                 <LuPackage />
                 <FaRegUser />
               </>
