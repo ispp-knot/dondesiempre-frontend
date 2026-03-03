@@ -29,6 +29,8 @@ jobs:
           context: .
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:latest
+          build-args: |
+            NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
 
   deploy:
     runs-on: ubuntu-latest
