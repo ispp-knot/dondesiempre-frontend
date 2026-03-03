@@ -1,7 +1,7 @@
 import { Store } from '@/lib/api/types';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { LuRoute, LuStore } from 'react-icons/lu';
+import { LuStore } from 'react-icons/lu';
 import { Star } from 'lucide-react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -105,7 +105,7 @@ export function StoreMapCard({ store }: { store: Store }) {
               variant="secondary"
               className="flex-1 flex items-center justify-center gap-2 text-sm sm:text-base h-10 sm:h-11"
               asChild
-              >
+            >
               <Link href={`/storefront/${store.id}`}>
                 <span className="truncate">Ver escaparate</span>
                 <LuStore className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
