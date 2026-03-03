@@ -2,33 +2,17 @@ import { StoreDTO } from '@/lib/api/types';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LuStore } from 'react-icons/lu';
-import { Star } from 'lucide-react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { convertToBrightness } from '@/lib/colorUtils';
+import Link from 'next/link';
 import { followStore, unfollowStore, isFollowingStore } from '@/lib/api/followEndpoints';
 import { useState } from 'react';
-import Link from 'next/link';
 
 export function StoreMapCard({ store }: { store: StoreDTO }) {
   const color = store.storefront?.primaryColor ?? '#c65a3a';
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   isFollowingStore(store.id).then((data) => setIsFollowing(data.isFollowing));
-
-  const renderStars = () => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <Star
-          key={i}
-          className={`w-5 h-5 ${
-            i <= store.rating ? 'fill-primary text-primary' : 'fill-muted text-muted'
-          }`}
-        />
-      );
-    }
-    return stars;
-  };
 
   return (
     <motion.div
@@ -56,10 +40,6 @@ export function StoreMapCard({ store }: { store: StoreDTO }) {
               <p className="text-sm sm:text-base text-secondary font-semibold line-clamp-2">
                 {store.address}
               </p>
-
-              {/* Stars */}
-              <div className="flex gap-1">{renderStars()}</div>
-
               {/* Follow button */}
               <Button
                 variant="outline"
@@ -107,7 +87,7 @@ export function StoreMapCard({ store }: { store: StoreDTO }) {
               variant="secondary"
               className="flex-1 flex items-center justify-center gap-2 text-sm sm:text-base h-10 sm:h-11"
             >
-              <Link href={`/storefront/${store.id}`}>
+              <Link href={`/stores/${store.id}`}>
                 <span className="truncate">Ver escaparate</span>
                 <LuStore className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
               </Link>

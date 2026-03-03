@@ -1,11 +1,11 @@
 'use client';
 
 import { JSX, useEffect, useState } from 'react';
-import { Store } from '@/lib/api/types';
+import { StoreDTO } from '@/lib/api/types';
 import { getFollowedStores, unfollowStore } from '@/lib/api/followEndpoints';
 
 export default function FollowPage(): JSX.Element {
-  const [shops, setShops] = useState<Store[] | null>(null);
+  const [shops, setShops] = useState<StoreDTO[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -13,7 +13,7 @@ export default function FollowPage(): JSX.Element {
     let mounted = true;
 
     getFollowedStores()
-      .then((data: Store[]) => {
+      .then((data: StoreDTO[]) => {
         if (mounted) {
           setShops(data);
           setLoading(false);

@@ -3,12 +3,6 @@ import { FaLocationDot } from 'react-icons/fa6';
 import { MdAccessTimeFilled } from 'react-icons/md';
 import { FaFacebook, FaInstagram } from 'react-icons/fa';
 import StoreTabs from './store-tabs';
-import { useQuery } from '@tanstack/react-query';
-import { getOutfitsOfStorefront } from '@/lib/api/outfitEndpoints';
-import { useEffect, useState } from 'react';
-
-import { followStore, unfollowStore, isFollowingStore } from '@/lib/api/followEndpoints'; 
-import { useParams } from 'next/navigation';
 
 export default async function StorefrontPage({
   params: _params,
@@ -19,14 +13,7 @@ export default async function StorefrontPage({
     /* TODO: Add request using store id */
   }
   // const { id } = await params;
-  const params = useParams<{ id: string }>();
-  const storefrontId = params.id;
-  const [followed, setFollowed] = useState<boolean>(false);
 
-  const outfitsQuery = useQuery({
-    queryKey: ['outfits', storefrontId],
-    queryFn: () => getOutfitsOfStorefront(storefrontId),
-  });
   const store = {
     name: 'Tu Capricho',
     address: 'Avenida La Palmera, 13',
@@ -99,10 +86,6 @@ export default async function StorefrontPage({
     ],
   };
 
-  useEffect(() => {
-    isFollowingStore(storefrontId).then((data) => setFollowed(data.isFollowing));
-  }, [storefrontId]);
-
   return (
     <div className="relative w-full">
       <div className="relative w-full h-52 md:h-80 overflow-hidden">
@@ -113,37 +96,6 @@ export default async function StorefrontPage({
           className="object-cover"
           priority
         />
-        {followed ? (
-          <button
-            onClick={() => unfollowStore(storefrontId).then(() => setFollowed(false))}
-            className="absolute top-4 right-4 md:top-6 md:right-8 
-             flex items-center gap-2 
-             bg-gray-100 
-             text-green-800 
-             px-5 py-2 
-             rounded-full 
-             shadow-sm 
-             hover:bg-gray-200 
-             transition"
-          >
-            <span className="font-medium">Dejar de seguir</span>
-          </button>
-        ) : (
-          <button
-            onClick={() => followStore(storefrontId).then(() => setFollowed(true))}
-            className="absolute top-4 right-4 md:top-6 md:right-8 
-             flex items-center gap-2 
-             bg-gray-100 
-             text-green-800 
-             px-5 py-2 
-             rounded-full 
-             shadow-sm 
-             hover:bg-gray-200 
-             transition"
-          >
-            <span className="font-medium">+ Seguir</span>
-          </button>
-        )}
       </div>
       <div className="absolute top-4 right-4 w-12 h-12 sm:w-8 sm:h-8 md:w-16 md:h-16 lg:w-20 lg:h-20">
         <button className="relative w-full h-full bg-white/90 hover:bg-white rounded-full shadow-md flex items-center justify-center transition">

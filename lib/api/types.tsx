@@ -1,4 +1,3 @@
-import { LngLat } from '@vis.gl/react-maplibre';
 import { NIL as NIL_UUID } from 'uuid';
 
 export type StoreSocialNetworkDTO = {
@@ -14,21 +13,6 @@ export type StorefrontDTO = {
   bannerImageUrl: string | null;
 };
 
-
-export type Store = {
-  id: typeof NIL_UUID;
-  name: string;
-  location: LngLat;
-  color: string;
-  address: string;
-  rating: number;
-  email?: string;
-  openingHours?: string;
-  phone?: string;
-  acceptsShipping?: boolean;
-  imageUrl?: string;
-};
-
 export type StoreDTO = {
   id: typeof NIL_UUID;
   name: string;
@@ -40,4 +24,7 @@ export type StoreDTO = {
   acceptsShipping: boolean;
   latitude: number;
   longitude: number;
+  aboutUs: string | null;
+  storefront: StorefrontDTO;
+  socialNetworks: StoreSocialNetworkDTO[];
 };
