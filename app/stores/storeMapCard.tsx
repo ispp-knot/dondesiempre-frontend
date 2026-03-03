@@ -43,7 +43,7 @@ export function StoreMapCard({ store }: { store: StoreDTO }) {
               {/* Follow button */}
               <Button
                 variant="outline"
-                className="w-max mt-2 px-4 py-1 border-2 border-current rounded-lg"
+                className="flex items-center w-fit gap-1.5 border border-primary rounded-sm px-3 py-1.5 text-xs text-primary hover:bg-primary hover:text-white transition"
                 onClick={async () => {
                   console.log(store.id);
                   if (isFollowing) {
