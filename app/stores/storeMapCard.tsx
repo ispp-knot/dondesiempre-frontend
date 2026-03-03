@@ -1,14 +1,18 @@
 import { StoreDTO } from '@/lib/api/types';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { LuRoute, LuStore } from 'react-icons/lu';
+import { LuStore } from 'react-icons/lu';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { convertToBrightness } from '@/lib/colorUtils';
 import Link from 'next/link';
+import { followStore, unfollowStore, isFollowingStore } from '@/lib/api/followEndpoints';
+import { useState } from 'react';
 
 export function StoreMapCard({ store }: { store: StoreDTO }) {
   const color = store.storefront?.primaryColor ?? '#c65a3a';
+  const [isFollowing, setIsFollowing] = useState<boolean>(false);
+  isFollowingStore(store.id).then((data) => setIsFollowing(data.isFollowing));
 
   return (
     <motion.div
@@ -36,6 +40,23 @@ export function StoreMapCard({ store }: { store: StoreDTO }) {
               <p className="text-sm sm:text-base text-secondary font-semibold line-clamp-2">
                 {store.address}
               </p>
+              {/* Follow button */}
+              <Button
+                variant="outline"
+                className="flex items-center w-fit gap-1.5 border border-primary rounded-sm px-3 py-1.5 text-xs text-primary hover:bg-primary hover:text-white transition"
+                onClick={async () => {
+                  console.log(store.id);
+                  if (isFollowing) {
+                    await unfollowStore(store.id);
+                    setIsFollowing(false);
+                  } else {
+                    await followStore(store.id);
+                    setIsFollowing(true);
+                  }
+                }}
+              >
+                {isFollowing ? 'Dejar de seguir' : '+ Seguir'}
+              </Button>
             </div>
 
             {/* Store Image */}
@@ -51,7 +72,7 @@ export function StoreMapCard({ store }: { store: StoreDTO }) {
 
           {/* Buttons */}
           <div className="flex flex-col gap-2 w-full">
-            <Button
+            {/*<Button
               variant="outline"
               className="flex-1 flex items-center justify-center gap-2 text-sm sm:text-base h-10 sm:h-11"
               onClick={() => {
@@ -60,7 +81,7 @@ export function StoreMapCard({ store }: { store: StoreDTO }) {
             >
               <span className="truncate">Cómo llegar</span>
               <LuRoute className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-            </Button>
+            </Button>*/}
             <Button
               asChild
               variant="secondary"
