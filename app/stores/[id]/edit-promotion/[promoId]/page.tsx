@@ -52,6 +52,7 @@ export default function EditPromotionPage() {
       await updatePromotionDiscount(promoId, formData.discountPercentage);
       setStatus({ type: 'success', message: '¡Promoción actualizada con éxito!' });
       setTimeout(() => {
+        //TODO: no se que es esto y pq manda a storefront, storefront en teoria no existe
         router.push(`/storefront/${storeId}`);
       }, 2000);
     } catch (error) {

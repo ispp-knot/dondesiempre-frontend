@@ -95,13 +95,13 @@ export default function StoreTabs({
           <>
             {store.storefront.isFirstCollections ? (
               <>
-                <Collections collections={collections} />
+                <Collections storefrontId={storefrontId} collections={collections} />
                 <Outfits storefrontId={storefrontId} outfits={outfits} />
               </>
             ) : (
               <>
                 <Outfits storefrontId={storefrontId} outfits={outfits} />
-                <Collections collections={collections} />
+                <Collections storefrontId={storefrontId} collections={collections} />
               </>
             )}
           </>

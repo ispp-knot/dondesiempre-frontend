@@ -74,7 +74,7 @@ export default function FollowPage(): JSX.Element {
               </div>
               <div className="mt-4 flex flex-wrap gap-4">
                 <button
-                  onClick={() => (window.location.href = `/storefront/${shop.id}`)}
+                  onClick={() => (window.location.href = `/stores/${shop.id}`)}
                   className="mt-4 bg-gray-100 hover:bg-gray-200 text-green-800 py-2 px-4 rounded-md"
                 >
                   Ir a la tienda
