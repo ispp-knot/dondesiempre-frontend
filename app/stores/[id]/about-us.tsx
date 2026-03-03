@@ -6,5 +6,5 @@ export default function AboutUs({ description }: { description: string }) {
         {description}
       </div>
     </div>
-  );
+  ); // Comment to solve linter
 }
