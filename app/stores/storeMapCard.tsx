@@ -1,4 +1,4 @@
-import { Store } from '@/lib/api/types';
+import { StoreDTO } from '@/lib/api/types';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LuStore } from 'react-icons/lu';
@@ -10,7 +10,8 @@ import { followStore, unfollowStore, isFollowingStore } from '@/lib/api/followEn
 import { useState } from 'react';
 import Link from 'next/link';
 
-export function StoreMapCard({ store }: { store: Store }) {
+export function StoreMapCard({ store }: { store: StoreDTO }) {
+  const color = store.storefront?.primaryColor ?? '#c65a3a';
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   isFollowingStore(store.id).then((data) => setIsFollowing(data.isFollowing));
 
@@ -46,7 +47,7 @@ export function StoreMapCard({ store }: { store: Store }) {
               {/* Store Name */}
               <h3
                 className="text-lg sm:text-xl font-semibold truncate"
-                style={{ color: convertToBrightness(store.color, 50) }}
+                style={{ color: convertToBrightness(color, 50) }}
               >
                 {store.name}
               </h3>
@@ -81,7 +82,7 @@ export function StoreMapCard({ store }: { store: Store }) {
             {/* Store Image */}
             <div className="w-32 h-32 sm:w-36 sm:h-36 relative flex-shrink-0">
               <Image
-                src={store.imageUrl || '/store-placeholder.jpeg'}
+                src={store.storefront?.bannerImageUrl || '/store-placeholder.jpeg'}
                 alt={store.name}
                 fill
                 className="rounded-lg object-cover"
@@ -102,9 +103,9 @@ export function StoreMapCard({ store }: { store: Store }) {
               <LuRoute className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
             </Button>*/}
             <Button
+              asChild
               variant="secondary"
               className="flex-1 flex items-center justify-center gap-2 text-sm sm:text-base h-10 sm:h-11"
-              asChild
             >
               <Link href={`/storefront/${store.id}`}>
                 <span className="truncate">Ver escaparate</span>

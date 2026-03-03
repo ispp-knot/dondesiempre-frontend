@@ -58,16 +58,30 @@ export async function sortProducts(
   );
 }
 
-export async function createOutfit(dto: OutfitCreation): Promise<void> {
+export async function createOutfit(dto: OutfitCreation, image: File | null): Promise<void> {
+  const formData = new FormData();
+  formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }));
+  if (image) {
+    formData.append('image', image);
+  }
   return await authorizedOfetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/outfits', {
     method: 'POST',
-    body: JSON.stringify(dto),
+    body: formData,
   });
 }
 
-export async function updateOutfit(outfitId: string, dto: OutfitUpdate): Promise<void> {
+export async function updateOutfit(
+  outfitId: string,
+  dto: OutfitUpdate,
+  image: File | null
+): Promise<void> {
+  const formData = new FormData();
+  formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }));
+  if (image) {
+    formData.append('image', image);
+  }
   return await authorizedOfetch(
     process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/outfits/' + outfitId,
-    { method: 'PUT', body: JSON.stringify(dto) }
+    { method: 'PUT', body: formData }
   );
 }

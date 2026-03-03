@@ -1,18 +1,24 @@
-'use client';
-
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
-import { FaFacebook, FaInstagram } from 'react-icons/fa';
 import { FaLocationDot } from 'react-icons/fa6';
 import { MdAccessTimeFilled } from 'react-icons/md';
+import { FaFacebook, FaInstagram } from 'react-icons/fa';
 import StoreTabs from './store-tabs';
 import { useQuery } from '@tanstack/react-query';
 import { getOutfitsOfStorefront } from '@/lib/api/outfitEndpoints';
 import { useEffect, useState } from 'react';
 
-import { followStore, unfollowStore, isFollowingStore } from '@/lib/api/followEndpoints';
+import { followStore, unfollowStore, isFollowingStore } from '@/lib/api/followEndpoints'; 
+import { useParams } from 'next/navigation';
 
-export default function StorefrontPage() {
+export default async function StorefrontPage({
+  params: _params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  {
+    /* TODO: Add request using store id */
+  }
+  // const { id } = await params;
   const params = useParams<{ id: string }>();
   const storefrontId = params.id;
   const [followed, setFollowed] = useState<boolean>(false);
@@ -21,7 +27,6 @@ export default function StorefrontPage() {
     queryKey: ['outfits', storefrontId],
     queryFn: () => getOutfitsOfStorefront(storefrontId),
   });
-
   const store = {
     name: 'Tu Capricho',
     address: 'Avenida La Palmera, 13',
@@ -69,7 +74,29 @@ export default function StorefrontPage() {
         image: '',
       },
     ],
-    outfits: outfitsQuery.data,
+    outfits: [
+      {
+        id: 1,
+        name: 'Feria',
+        image: '/static/img/outfit_placeholder.jpg',
+        discount: 20,
+      },
+      {
+        id: 2,
+        name: 'Casual',
+        image: '',
+      },
+      {
+        id: 3,
+        name: 'Semana Santa',
+        image: '',
+      },
+      {
+        id: 4,
+        name: 'Frio',
+        image: '',
+      },
+    ],
   };
 
   useEffect(() => {
@@ -77,8 +104,8 @@ export default function StorefrontPage() {
   }, [storefrontId]);
 
   return (
-    <div className="flex flex-col bg-white">
-      <div className="relative w-full h-52 md:h-80">
+    <div className="relative w-full">
+      <div className="relative w-full h-52 md:h-80 overflow-hidden">
         <Image
           src="/static/img/banner.jpg"
           alt="Banner de la tienda"
@@ -118,8 +145,20 @@ export default function StorefrontPage() {
           </button>
         )}
       </div>
-      <div className="w-full mt-5 flex items-center justify-center gap-4">
-        <h1 className="text-3xl md:text-5xl text-secondary font-bold">{store.name}</h1>
+      <div className="absolute top-4 right-4 w-12 h-12 sm:w-8 sm:h-8 md:w-16 md:h-16 lg:w-20 lg:h-20">
+        <button className="relative w-full h-full bg-white/90 hover:bg-white rounded-full shadow-md flex items-center justify-center transition">
+          <div className="relative w-1/2 h-1/2">
+            <Image
+              src="/icons/ChangeBanner.png"
+              alt="Cambiar banner"
+              fill
+              className="object-contain"
+            />
+          </div>
+        </button>
+      </div>
+      <div className={'w-full mt-5 text-center text-3xl md:text-5xl text-secondary font-bold'}>
+        {store.name}
       </div>
       <div
         className={
@@ -136,6 +175,15 @@ export default function StorefrontPage() {
       >
         <MdAccessTimeFilled />
         {store.hours}
+        <button className="ml-4 text-sm text-secondary font-medium hover:underline transition">
+          <Image
+            src="/icons/Edit.png"
+            alt="Cambiar horario"
+            width={20}
+            height={20}
+            className="inline-block"
+          />
+        </button>
       </div>
       <div className="flex gap-3 mt-3 flex-wrap justify-center mb-2">
         {store.instagram ? (
@@ -147,6 +195,9 @@ export default function StorefrontPage() {
           >
             <FaInstagram className={'w-4 h-4'} />
             <p>{store.instagram}</p>
+            <button className="flex items-center justify-center w-4 h-4 ">
+              <span className="text-xl leading-none hover:text-white">x</span>
+            </button>
           </a>
         ) : (
           <></>
@@ -160,13 +211,18 @@ export default function StorefrontPage() {
           >
             <FaFacebook className={'w-4 h-4'} />
             <p>{store.facebook}</p>
+            <button className="flex items-center justify-center w-4 h-4 ">
+              <span className="text-xl leading-none hover:text-white">x</span>
+            </button>
           </a>
         ) : (
           <></>
         )}
+        <button className="flex items-center justify-center w-9 h-9 border border-secondary rounded-sm text-primary hover:bg-secondary hover:text-white transition">
+          <span className="text-xl leading-none text-secondary hover:text-white">+</span>
+        </button>
       </div>
       <StoreTabs
-        storefrontId={storefrontId}
         collections={store.collections}
         description={store.description}
         outfits={store.outfits}

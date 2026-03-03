@@ -1,6 +1,20 @@
 import { LngLat } from '@vis.gl/react-maplibre';
 import { NIL as NIL_UUID } from 'uuid';
 
+export type StoreSocialNetworkDTO = {
+  name: string;
+  link: string;
+};
+
+export type StorefrontDTO = {
+  id: typeof NIL_UUID;
+  isFirstCollections: boolean;
+  primaryColor: string;
+  secondaryColor: string;
+  bannerImageUrl: string | null;
+};
+
+
 export type Store = {
   id: typeof NIL_UUID;
   name: string;
