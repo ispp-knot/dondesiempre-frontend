@@ -1,27 +1,14 @@
-import { Store } from '@/lib/api/types';
+import { StoreDTO } from '@/lib/api/types';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LuRoute, LuStore } from 'react-icons/lu';
-import { Star } from 'lucide-react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { convertToBrightness } from '@/lib/colorUtils';
+import Link from 'next/link';
 
-export function StoreMapCard({ store }: { store: Store }) {
-  const renderStars = () => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <Star
-          key={i}
-          className={`w-5 h-5 ${
-            i <= store.rating ? 'fill-primary text-primary' : 'fill-muted text-muted'
-          }`}
-        />
-      );
-    }
-    return stars;
-  };
+export function StoreMapCard({ store }: { store: StoreDTO }) {
+  const color = store.storefront?.primaryColor ?? '#c65a3a';
 
   return (
     <motion.div
@@ -40,7 +27,7 @@ export function StoreMapCard({ store }: { store: Store }) {
               {/* Store Name */}
               <h3
                 className="text-lg sm:text-xl font-semibold truncate"
-                style={{ color: convertToBrightness(store.color, 50) }}
+                style={{ color: convertToBrightness(color, 50) }}
               >
                 {store.name}
               </h3>
@@ -49,15 +36,12 @@ export function StoreMapCard({ store }: { store: Store }) {
               <p className="text-sm sm:text-base text-secondary font-semibold line-clamp-2">
                 {store.address}
               </p>
-
-              {/* Stars */}
-              <div className="flex gap-1">{renderStars()}</div>
             </div>
 
             {/* Store Image */}
             <div className="w-32 h-32 sm:w-36 sm:h-36 relative flex-shrink-0">
               <Image
-                src={store.imageUrl || '/store-placeholder.jpeg'}
+                src={store.storefront?.bannerImageUrl || '/store-placeholder.jpeg'}
                 alt={store.name}
                 fill
                 className="rounded-lg object-cover"
@@ -78,14 +62,14 @@ export function StoreMapCard({ store }: { store: Store }) {
               <LuRoute className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
             </Button>
             <Button
+              asChild
               variant="secondary"
               className="flex-1 flex items-center justify-center gap-2 text-sm sm:text-base h-10 sm:h-11"
-              onClick={() => {
-                // TODO
-              }}
             >
-              <span className="truncate">Ver escaparate</span>
-              <LuStore className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+              <Link href={`/stores/${store.id}`}>
+                <span className="truncate">Ver escaparate</span>
+                <LuStore className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+              </Link>
             </Button>
           </div>
         </div>

@@ -140,7 +140,7 @@
   border-radius: 10px;
 }
 
-.store-listing::-webkit-scrollbar-thumb:hover {
+.storefront-listing::-webkit-scrollbar-thumb:hover {
   transform: scale(1.2);
 }
 

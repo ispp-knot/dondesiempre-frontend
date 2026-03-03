@@ -1,4 +1,4 @@
-import { Store } from '@/lib/api/types';
+import { StoreDTO } from '@/lib/api/types';
 import { LngLat, Map, MapEvent, MapRef, Marker } from '@vis.gl/react-maplibre';
 import { createRef, useCallback, useState } from 'react';
 import { StorePin } from './storePin';
@@ -20,12 +20,12 @@ export function StoreMap({
 }: {
   startingLocation?: LngLat;
   userLocation?: { lng: number; lat: number } | null;
-  onClickStore?: (store: Store) => void;
-  onStoreSelect?: (store: Store | null) => void;
+  onClickStore?: (store: StoreDTO) => void;
+  onStoreSelect?: (store: StoreDTO | null) => void;
 }) {
   const mapRef = createRef<MapRef>();
 
-  const [stores, setStores] = useState<Store[] | undefined>();
+  const [stores, setStores] = useState<StoreDTO[] | undefined>();
 
   const { mutate: getStores } = useMutation({
     mutationFn: getStoresInBoundingBox,
@@ -71,8 +71,8 @@ export function StoreMap({
   const pins = stores?.map((store, index) => (
     <Marker
       key={`store-${index}`}
-      longitude={store.location.lng}
-      latitude={store.location.lat}
+      longitude={store.longitude}
+      latitude={store.latitude}
       anchor="bottom"
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onClick={(e: any) => {

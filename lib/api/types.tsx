@@ -1,12 +1,14 @@
-import { LngLat } from '@vis.gl/react-maplibre';
-
-export type Store = {
+export type StoreSocialNetworkDTO = {
   name: string;
-  location: LngLat;
-  color: string;
-  address: string;
-  rating: number;
-  imageUrl?: string;
+  link: string;
+};
+
+export type StorefrontDTO = {
+  id: string;
+  isFirstCollections: boolean;
+  primaryColor: string;
+  secondaryColor: string;
+  bannerImageUrl: string | null;
 };
 
 export type StoreDTO = {

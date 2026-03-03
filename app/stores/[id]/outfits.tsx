@@ -1,63 +1,56 @@
-import Link from 'next/link';
-import Image from 'next/image';
+'use client';
+
+import { Outfit } from '@/lib/types/outfits';
 import { Percent } from 'lucide-react';
-import { OutfitDTO } from '@/lib/api/types';
+import Link from 'next/link';
 
 type Props = {
-  outfits?: OutfitDTO[];
+  storefrontId?: string;
+  outfits?: Outfit[];
 };
 
-export default function Outfits({ outfits = [] }: Props) {
+export default function Outfits({ storefrontId = undefined, outfits = [] }: Readonly<Props>) {
   return (
     <div className="flex flex-col px-5 sm:w-10/12">
       <div className="flex flex-row items-center justify-between w-full mb-4">
-        <h1 className="text-[var(--primary)] text-xl md:text-2xl font-bold">Nuestros conjuntos</h1>
-        <Link href="" className="text-[var(--primary)] underline">
+        <h1 className="text-primary text-xl md:text-2xl font-bold">Nuestros outfits</h1>
+        <Link href={`/stores/${storefrontId}/outfits`} className="text-secondary underline">
           Ver más
         </Link>
       </div>
-
-      <div className="flex flex-row items-center gap-2 md:gap-4 overflow-x-auto pb-3 store-listing">
+      <div className="flex flex-row items-center gap-2 md:gap-4 overflow-x-auto pb-3 storefront-listing">
         {outfits.map((out) => (
-          <div
+          <Link
+            href={`/stores/${storefrontId}/outfits/${out.id}`}
             key={out.id}
-            className="relative flex flex-col shrink-0 border-2 border-gray-200 w-[45%] md:w-1/4 h-60 sm:h-80 justify-end rounded-lg shadow-sm overflow-hidden bg-gray-100"
+            className="relative flex flex-col shrink-0 border-2 border-gray-200 w-[45%] md:w-1/4 h-60 sm:h-80 bg-cover bg-center justify-end rounded-lg shadow-sm"
+            style={{
+              backgroundImage: `url(${out.image || `/static/img/outfit_placeholder_${out.id}.jpg`})`,
+            }}
           >
-            <Image
-              src={out.image || '/static/img/banner.jpg'}
-              alt={out.name}
-              fill
-              className="object-cover -z-0"
-              unoptimized
-            />
-
-            {(out.discountedPriceInCents || 0) > 0 && (
-              <div className="absolute top-2 left-2 bg-[var(--secondary)] rounded-full p-0.5 md:p-1 flex items-center justify-center shadow-md z-10">
-                <Percent className="w-4 h-4 md:w-5 md:h-5 text-white stroke-[3]" />
+            {out.discountedPriceInCents !== out.priceInCents && (
+              <div className="absolute top-2 left-2 bg-primary rounded-full p-0.5 md:p-1 flex items-center justify-center shadow-md">
+                <Percent className="w-4 h-4 md:w-5 md:h-5 text-white stroke-3" />
               </div>
             )}
-
-            <div
-              className="relative z-10 flex flex-row items-center justify-center gap-1.5 w-full h-4/12 md:h-1/4 self-end bg-white text-sm md:text-lg px-2 text-center"
-              style={{ color: 'var(--primary)' }}
-            >
+            <div className="flex flex-row items-center justify-center gap-1.5 w-full h-4/12 md:h-1/4 self-end bg-white text-sm md:text-lg px-2 text-center">
               <span className="truncate">{out.name}</span>
-
-              {(out.discountedPriceInCents || 0) > 0 && (
-                <span
-                  className="font-bold px-1.5 py-0.5 rounded-md text-xs md:text-sm"
-                  style={{
-                    color: 'var(--secondary)',
-                    backgroundColor: 'color-mix(in srgb, var(--secondary), transparent 90%)',
-                  }}
-                >
-                  -{out.discountedPriceInCents}%
+              {out.discountedPriceInCents !== out.priceInCents && (
+                <span className="text-primary font-bold bg-primary/10 px-1.5 py-0.5 rounded-md text-xs md:text-sm">
+                  -
+                  {(
+                    ((out.priceInCents - out.discountedPriceInCents) / out.priceInCents) *
+                    100
+                  ).toFixed(0)}
+                  %
                 </span>
               )}
             </div>
-          </div>
+          </Link>
         ))}
       </div>
+      {/* style={{ backgroundImage: `url(${col.image})` }} */}
+      {/* TODO: Style collections with images */}
     </div>
   );
 }

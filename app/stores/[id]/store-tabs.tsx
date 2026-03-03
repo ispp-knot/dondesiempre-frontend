@@ -17,75 +17,86 @@ type Collection = {
 };
 
 type Props = {
+  storefrontId?: string;
   collections?: Collection[];
   description?: string;
-  outfits?: OutfitDTO[];
+  outfits?: Outfit[];
   store: StoreDTO;
 };
 
-export default function StoreTabs({ collections = [], outfits = [], store }: Props): JSX.Element {
+export default function StoreTabs({
+  storefrontId = undefined,
+  collections = [],
+  description = '',
+  outfits = [],
+  store
+}: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
 
-  const promoOutfit = outfits.find((o) => o.discountedPriceInCents && o.discountedPriceInCents > 0);
+  const promoOutfit = outfits.find((o) => o.discountedPriceInCents < o.priceInCents);
 
   return (
     <>
-      {activeTab !== 'opciones' && promoOutfit && (
-        <div className="relative mx-4 mt-5 flex flex-col items-center justify-center border-2 border-[var(--secondary)]/50 rounded-md p-4 overflow-hidden w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5">
+      {promoOutfit && (
+        <div className="relative mx-4 mt-5 flex flex-col items-center justify-center border-2 border-secondary/50 rounded-md p-4 overflow-hidden w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5">
+          {/* Background Images Container */}
           <div className="absolute inset-0 z-0 w-full h-full">
             {promoOutfit.image && (
-              <Image
-                src={promoOutfit.image}
-                alt={promoOutfit.name}
-                fill
-                className="object-cover"
-                unoptimized
-              />
+              <Image src={promoOutfit.image} alt={promoOutfit.name} fill className="object-cover" />
             )}
             <div className="absolute inset-0 bg-white/85"></div>
           </div>
 
           <div className="relative z-10 flex flex-col items-center w-full">
-            <h3 className="text-[var(--primary)] font-bold text-lg md:text-xl">¡En promoción!</h3>
-            <h2 className="text-[var(--secondary)] font-bold text-4xl md:text-5xl mt-1 text-center">
+            <h3 className="text-primary font-bold text-lg md:text-xl">¡En promoción!</h3>
+            <h2 className="text-secondary font-bold text-4xl md:text-5xl mt-1">
               {promoOutfit.name}
             </h2>
-            <p className="text-[var(--primary)] font-semibold mt-1">12/04/2026 - 26/04/2026</p>
-            <button className="bg-[var(--secondary)] text-white font-medium py-2 px-4 rounded mt-4 w-[95%] shadow-sm hover:brightness-90 transition">
+            <p className="text-primary font-semibold mt-1">12/04/2026 - 26/04/2026</p>
+            <button className="bg-secondary text-white font-medium py-2 px-4 rounded mt-4 w-[95%] shadow-sm hover:bg-secondary/90 hover:cursor-pointer transition">
               Ver promoción
             </button>
           </div>
         </div>
       )}
-
-      <div className="flex mx-4 mt-5 mb-5 self-center rounded-md overflow-hidden border border-gray-200 w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5 bg-gray-100 p-1">
-        {(['catalogo', 'sobre', 'opciones'] as Tab[]).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-2 text-sm font-semibold transition-all rounded-md ${
-              activeTab === tab
-                ? 'bg-[var(--secondary)] text-white shadow-sm'
-                : 'text-[var(--secondary)] hover:bg-gray-200/50'
-            }`}
-          >
-            {tab === 'catalogo' ? 'Catálogo' : tab === 'sobre' ? 'Sobre nosotros' : 'Opciones'}
-          </button>
-        ))}
+      <div className="flex mx-4 mt-5 mb-5 self-center rounded-md overflow-hidden border border-gray-200 w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5">
+        <button
+          onClick={() => setActiveTab('catalogo')}
+          className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
+            activeTab === 'catalogo' ? 'bg-secondary text-white' : 'bg-white text-secondary'
+          }`}
+        >
+          Catálogo
+        </button>
+        <button
+          onClick={() => setActiveTab('sobre')}
+          className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
+            activeTab === 'sobre' ? 'bg-secondary text-white' : 'bg-white text-secondary'
+          }`}
+        >
+          Sobre nosotros
+        </button>
       </div>
-
-      <div className="flex flex-col gap-10 sm:items-center px-5 mb-10">
-        {activeTab === 'catalogo' && (
+      <div className={'flex flex-col gap-10 sm:items-center'}>
+        {activeTab === 'catalogo' ? (
           <>
             <Collections collections={collections} />
-            <Outfits outfits={outfits} />
+            <Outfits storefrontId={storefrontId} outfits={outfits} />
           </>
-        )}
-
-        {activeTab === 'sobre' && <AboutUs description={store.aboutUs} />}
-
-        {activeTab === 'opciones' && (
-          <StoreOptions storefrontId={store.storefrontId} initialData={store} />
+        ) : (
+          <div>
+            <AboutUs description={description} />
+          </div>
+         <button
+          onClick={() => setActiveTab('opciones')}
+          className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
+            activeTab === 'opciones' ? 'bg-secondary text-white' : 'bg-white text-secondary'
+          }`}
+        >
+          Opciones
+        </button>     
+         {activeTab === 'opciones' && (
+            <StoreOptions storefrontId={store.storefrontId} initialData={store} />
         )}
       </div>
     </>
