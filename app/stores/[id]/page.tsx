@@ -7,6 +7,7 @@ import { FaFacebook, FaInstagram, FaTwitter, FaTiktok, FaLink } from 'react-icon
 import StoreTabs from './store-tabs';
 import { getStore } from '@/lib/api/stores/getStore';
 import { getOutfitByStoreId } from '@/lib/api/outfits/getOutfitsByStore';
+import { StoreSocialNetworkDTO } from '@/lib/api/types';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -28,7 +29,7 @@ export default async function StorePage({ params }: PageProps) {
   const storeDto = await getStore(id);
   const outfitsDto = await getOutfitByStoreId(id);
 
-  const socialNetworks = storeDto.socialNetworks || [];
+  const socialNetworks: Array<StoreSocialNetworkDTO> = storeDto.socialNetworks || [];
   const primaryColor = storeDto.storefront?.primaryColor || '#000000';
   const secondaryColor = storeDto.storefront?.secondaryColor || '#000000';
   const banner = storeDto.storefront?.bannerImageUrl;
@@ -79,7 +80,7 @@ export default async function StorePage({ params }: PageProps) {
       </div>
 
       <div className="flex gap-3 mt-3 flex-wrap justify-center mb-2">
-        {socialNetworks.map((social: unknown, index: number) => (
+        {socialNetworks.map((social: StoreSocialNetworkDTO, index: number) => (
           <a
             key={index}
             href={social.link}

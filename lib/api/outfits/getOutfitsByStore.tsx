@@ -1,13 +1,13 @@
-import { OutfitDTO } from '../types';
+import { Outfit } from '@/lib/types/outfits';
 import { authorizedOfetch } from '@/lib/api/authorizedOfetch';
 
-export async function getOutfitByStoreId(id: string): Promise<OutfitDTO[]> {
+export async function getOutfitByStoreId(id: string): Promise<Outfit[]> {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/stores/${id}/outfits`;
 
   try {
     const response = (await authorizedOfetch(url, {
       method: 'GET',
-    })) as OutfitDTO[];
+    })) as Outfit[];
 
     return response;
   } catch (error) {
@@ -16,13 +16,13 @@ export async function getOutfitByStoreId(id: string): Promise<OutfitDTO[]> {
   }
 }
 
-export async function getOutfitById(id: string): Promise<OutfitDTO> {
+export async function getOutfitById(id: string): Promise<Outfit> {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/outfits/${id}`;
 
   try {
     const response = (await authorizedOfetch(url, {
       method: 'GET',
-    })) as OutfitDTO;
+    })) as Outfit;
 
     return response;
   } catch (error) {

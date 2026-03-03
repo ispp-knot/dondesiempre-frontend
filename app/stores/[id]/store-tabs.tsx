@@ -18,6 +18,7 @@ type Collection = {
 };
 
 type Props = {
+  storefrontId?: string;
   collections?: Collection[];
   description?: string;
   outfits?: Outfit[];
