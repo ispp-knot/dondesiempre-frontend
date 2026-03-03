@@ -24,8 +24,10 @@ export default function UnderConstruction() {
                 Estamos en construcción
               </h1>
               <p className="text-base md:text-lg text-muted-foreground max-w-md mx-auto">
-                Nuestro sitio web está siendo mejorado para ofrecerte una mejor experiencia. Muy
-                pronto estaremos de vuelta con novedades increíbles.
+                Nuestro sitio web está siendo mejorado para ofrecerte una mejor experiencia.
+              </p>
+              <p className="text-base md:text-lg text-muted-foreground max-w-md mx-auto">
+                Muy pronto estaremos de vuelta con novedades increíbles.
               </p>
             </div>
           </CardContent>
