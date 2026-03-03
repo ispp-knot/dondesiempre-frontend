@@ -34,6 +34,29 @@ export interface ProductType {
   type: string;
 }
 
+export interface OutfitProductDTO {
+  id: string;
+  name: string;
+  description: string;
+  priceInCents: number;
+  type: ProductType;
+  index: number;
+  storeId: string;
+}
+
+export interface OutfitDTO {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  priceInCents: number;
+  discountedPriceInCents: number;
+  index: number;
+  storefrontId: number;
+  tags: string[];
+  products: OutfitProductDTO[];
+}
+
 export interface ProductDTO {
   name: string;
   priceInCents: number;
