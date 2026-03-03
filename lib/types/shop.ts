@@ -1,18 +1,7 @@
-export type Shop = {
-  id: string | number;
-  name: string;
-  email: string;
-  storeID: string | number;
-  openingHours: string;
-  phone: string;
-  acceptsShipping: boolean;
-  latitude: number;
-  longitude: number;
-  address: string;
-};
+import { NIL as NIL_UUID } from 'uuid';
 
 export type isFollowingResponse = {
-  clientId: string;
-  storeId: string | number;
+  clientId: typeof NIL_UUID;
+  storeId: typeof NIL_UUID;
   isFollowing: boolean;
 };

@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { convertToBrightness } from '@/lib/colorUtils';
 import { followStore, unfollowStore, isFollowingStore } from '@/lib/api/followEndpoints';
 import { useState } from 'react';
+import Link from 'next/link';
 
 export function StoreMapCard({ store }: { store: Store }) {
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
@@ -60,7 +61,7 @@ export function StoreMapCard({ store }: { store: Store }) {
 
               {/* Follow button */}
               <button
-                className="w-max mt-2"
+                className="w-max mt-2 px-4 py-1 border-2 border-current text-orange-600 rounded-lg"
                 onClick={async () => {
                   console.log(store.id);
                   if (isFollowing) {
@@ -102,12 +103,12 @@ export function StoreMapCard({ store }: { store: Store }) {
             <Button
               variant="secondary"
               className="flex-1 flex items-center justify-center gap-2 text-sm sm:text-base h-10 sm:h-11"
-              onClick={() => {
-                // TODO
-              }}
-            >
-              <span className="truncate">Ver escaparate</span>
-              <LuStore className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+              asChild
+              >
+              <Link href={`/storefront/${store.id}`}>
+                <span className="truncate">Ver escaparate</span>
+                <LuStore className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+              </Link>
             </Button>
           </div>
         </div>

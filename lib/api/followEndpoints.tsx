@@ -1,7 +1,8 @@
-import { Shop, isFollowingResponse } from '../types/shop';
+import { isFollowingResponse } from '../types/shop';
+import { Store } from '../api/types';
 import { authorizedOfetch } from './authorizedOfetch';
 
-export async function getFollowedStores(): Promise<Shop[]> {
+export async function getFollowedStores(): Promise<Store[]> {
   return await authorizedOfetch(
     process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/clients/me/followed-stores'
   );
