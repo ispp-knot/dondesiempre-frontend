@@ -20,7 +20,7 @@ export default function CreatePromotionPage() {
     const dto = {
       name: formData.name,
       discountPercentage: formData.discountPercentage,
-      isActive: true,
+      active: true,
       productIds: formData.products.map((p) => p.id),
       storeId: storeId,
       description: formData.description,
@@ -30,7 +30,7 @@ export default function CreatePromotionPage() {
       await createPromotion(dto);
       setStatus({ type: 'success', message: '¡Promoción lanzada con éxito!' });
       setTimeout(() => {
-        router.push(`/storefront/${storeId}`);
+        router.push(`/stores/${storeId}`);
       }, 2000);
     } catch (error) {
       console.error('Error creating promotion:', error);

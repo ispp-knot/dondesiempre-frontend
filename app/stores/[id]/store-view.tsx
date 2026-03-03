@@ -8,6 +8,7 @@ import { MdAccessTimeFilled } from 'react-icons/md';
 import StoreTabs from './store-tabs';
 import { useQuery } from '@tanstack/react-query';
 import { getOutfitsOfStorefront } from '@/lib/api/outfitEndpoints';
+import { getPromotionsByStoreId } from '@/lib/api/promotionEndpoints';
 import { StoreDTO } from '@/lib/api/types';
 
 const SOCIAL_NETWORK_ICONS: Record<string, React.ElementType> = {
@@ -33,6 +34,12 @@ export default function StoreView({ store }: { store: StoreDTO }) {
     queryKey: ['outfits', store.storefront?.id],
     queryFn: () => getOutfitsOfStorefront(store.storefront!.id),
     enabled: !!store.storefront?.id,
+  });
+
+  const promotionsQuery = useQuery({
+    queryKey: ['promotions', store.id],
+    queryFn: () => getPromotionsByStoreId(store.id),
+    enabled: !!store.id,
   });
 
   return (
@@ -88,6 +95,7 @@ export default function StoreView({ store }: { store: StoreDTO }) {
         collections={COLLECTIONS}
         description={store.aboutUs ?? ''}
         outfits={outfitsQuery.data}
+        promotions={promotionsQuery.data}
       />
     </div>
   );

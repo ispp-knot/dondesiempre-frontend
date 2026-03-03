@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getPromotionById, updatePromotionDiscount } from '@/lib/api/promotionEndpoints';
+import { getPromotionById, updatePromotion } from '@/lib/api/promotionEndpoints';
+import { authorizedOfetch } from '@/lib/api/authorizedOfetch';
 import PromotionForm, { PromotionFormData } from '@/components/dondeSiempre/PromotionForm';
 
 export default function EditPromotionPage() {
@@ -17,20 +18,37 @@ export default function EditPromotionPage() {
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   useEffect(() => {
-    const fetchPromotion = async () => {
+    const fetchPromotionAndProducts = async () => {
       try {
-        const data = await getPromotionById(promoId);
+        // Fetch promotion and store details (to get storefront products) simultaneously
+        const [promoData, storeData] = await Promise.all([
+          getPromotionById(promoId),
+          authorizedOfetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/stores/${storeId}`),
+        ]);
+
+        const storefrontId = storeData.storefront?.id;
+        let storeProducts: { id: string; name: string; imageUrl?: string }[] = [];
+
+        if (storefrontId) {
+          storeProducts = await authorizedOfetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/storefronts/${storefrontId}/products`
+          );
+        }
+
         setInitialData({
-          name: data.name,
-          discountPercentage: data.discountPercentage,
-          description: data.description || '',
+          name: promoData.name,
+          description: promoData.description || '',
+          active: promoData.active,
           products:
-            data.productIds && data.productIds.length > 0
-              ? data.productIds.map((id) => ({
-                  id,
-                  name: `Producto ${id.substring(0, 4)}`,
-                  imageUrl: '/static/img/outfit_placeholder.jpg',
-                }))
+            promoData.productIds && promoData.productIds.length > 0
+              ? promoData.productIds.map((id) => {
+                  const realProduct = storeProducts.find((p) => p.id === id);
+                  return {
+                    id,
+                    name: realProduct?.name || `Producto ${id.substring(0, 4)}`,
+                    imageUrl: realProduct?.imageUrl || '/static/img/outfit_placeholder.jpg',
+                  };
+                })
               : [],
         });
       } catch (error) {
@@ -41,18 +59,26 @@ export default function EditPromotionPage() {
       }
     };
 
-    fetchPromotion();
-  }, [promoId]);
+    fetchPromotionAndProducts();
+  }, [promoId, storeId]);
 
   const handleSubmit = async (formData: PromotionFormData) => {
     setIsSaving(true);
     setStatus(null);
 
+    const dto = {
+      name: formData.name,
+      description: formData.description,
+      discountPercentage: formData.discountPercentage,
+      isActive: true,
+      productIds: formData.products.map((p) => p.id),
+    };
+
     try {
-      await updatePromotionDiscount(promoId, formData.discountPercentage);
+      await updatePromotion(promoId, dto);
       setStatus({ type: 'success', message: '¡Promoción actualizada con éxito!' });
       setTimeout(() => {
-        router.push(`/storefront/${storeId}`);
+        router.push(`/stores/${storeId}`);
       }, 2000);
     } catch (error) {
       console.error('Error updating promotion:', error);
@@ -76,6 +102,7 @@ export default function EditPromotionPage() {
   return (
     <div className="flex flex-col min-h-screen bg-white p-6 font-quicksand text-primary pb-24 relative">
       <PromotionForm
+        key={promoId}
         initialData={initialData ?? undefined}
         onSubmit={handleSubmit}
         isEditMode={true}

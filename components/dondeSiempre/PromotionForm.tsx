@@ -8,7 +8,6 @@ import {
   FaImage,
   FaCheckCircle,
   FaExclamationCircle,
-  FaLock,
 } from 'react-icons/fa';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
@@ -18,6 +17,8 @@ import { Slider } from '@/components/ui/slider';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { DateRange } from 'react-day-picker';
+import { useParams } from 'next/navigation';
+import { authorizedOfetch } from '@/lib/api/authorizedOfetch';
 import { cn } from '@/lib/utils';
 
 export interface Product {
@@ -32,7 +33,7 @@ export interface PromotionFormData {
   description: string;
   products: Product[];
   dateRange?: DateRange;
-  publishToInstagram: boolean;
+  active: boolean;
   promotionImage: string | null;
 }
 
@@ -60,9 +61,7 @@ export default function PromotionForm({
   const [dateRange, setDateRange] = useState<DateRange | undefined>(initialData?.dateRange);
   const [description, setDescription] = useState(initialData?.description ?? '');
   const [products, setProducts] = useState<Product[]>(initialData?.products ?? []);
-  const [publishToInstagram, setPublishToInstagram] = useState(
-    initialData?.publishToInstagram ?? true
-  );
+  const [active, setActive] = useState(initialData?.active ?? true);
   const [promotionImage, setPromotionImage] = useState<string | null>(
     initialData?.promotionImage ?? null
   );
@@ -92,9 +91,7 @@ export default function PromotionForm({
   };
 
   const handleImageClick = () => {
-    if (!isEditMode) {
-      fileInputRef.current?.click();
-    }
+    fileInputRef.current?.click();
   };
 
   const handleImageKeyDown = (e: React.KeyboardEvent) => {
@@ -105,9 +102,7 @@ export default function PromotionForm({
   };
 
   const removeProduct = (id: string) => {
-    if (!isEditMode) {
-      setProducts(products.filter((p) => p.id !== id));
-    }
+    setProducts(products.filter((p) => p.id !== id));
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -118,7 +113,7 @@ export default function PromotionForm({
       description,
       products,
       dateRange,
-      publishToInstagram,
+      active,
       promotionImage,
     });
   };
@@ -127,9 +122,7 @@ export default function PromotionForm({
     ? dateRange.to
       ? `${format(dateRange.from, 'dd/MM/yyyy')} - ${format(dateRange.to, 'dd/MM/yyyy')}`
       : format(dateRange.from, 'dd/MM/yyyy')
-    : isEditMode
-      ? 'Fechas no disponibles'
-      : 'Selecciona el rango de fechas';
+    : 'Selecciona el rango de fechas';
 
   return (
     <form onSubmit={handleFormSubmit} className="flex flex-col gap-6 max-w-md mx-auto w-full">
@@ -153,36 +146,20 @@ export default function PromotionForm({
       )}
 
       {/* Promotion Name */}
-      <div
-        className={cn(
-          'relative border-2 rounded-lg p-3 transition-colors',
-          isEditMode
-            ? 'border-gray-200 bg-gray-50 opacity-80'
-            : 'border-secondary group-focus-within:border-dark-secondary'
-        )}
-      >
+      <div className="relative border-2 border-secondary group-focus-within:border-dark-secondary rounded-lg p-3 transition-colors">
         <label
           htmlFor="promo-name"
-          className={cn(
-            'absolute -top-3 left-3 bg-white px-2 text-sm font-semibold flex items-center gap-1',
-            isEditMode ? 'text-gray-400' : 'text-primary'
-          )}
+          className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold flex items-center gap-1 text-primary"
         >
-          {isEditMode && <FaLock size={10} />} Nombre de la promoción
+          Nombre de la promoción
         </label>
         <input
           id="promo-name"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          readOnly={isEditMode}
-          className={cn(
-            'w-full outline-none text-lg font-bold bg-transparent',
-            isEditMode
-              ? 'text-gray-500 cursor-not-allowed'
-              : 'text-primary placeholder:text-gray-300'
-          )}
-          placeholder={isEditMode ? '' : 'Ej. Rebajas de Verano'}
+          className="w-full outline-none text-lg font-bold bg-transparent text-primary placeholder:text-gray-300"
+          placeholder="Ej. Rebajas de Verano"
         />
       </div>
 
@@ -217,96 +194,79 @@ export default function PromotionForm({
       </div>
 
       {/* Duration */}
-      <div
-        className={cn(
-          'relative border-2 rounded-lg p-3 transition-colors',
-          isEditMode ? 'border-gray-200 bg-gray-50 opacity-80' : 'border-secondary'
-        )}
-      >
-        <label
-          className={cn(
-            'absolute -top-3 left-3 bg-white px-2 text-sm font-semibold flex items-center gap-1',
-            isEditMode ? 'text-gray-400' : 'text-primary'
-          )}
-        >
-          {isEditMode && <FaLock size={10} />} Duración de la promoción
+      <div className="relative border-2 border-secondary rounded-lg p-3 transition-colors">
+        <label className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold flex items-center gap-1 text-primary">
+          Duración de la promoción
         </label>
 
-        {isEditMode ? (
-          <div className="flex justify-between items-center w-full cursor-not-allowed">
-            <div className="text-lg text-gray-500 font-bold">{dateDisplay}</div>
-            <FaCalendarAlt className="text-gray-300 text-xl" />
-          </div>
-        ) : (
-          <Popover>
-            <PopoverTrigger asChild>
-              <button className="flex justify-between items-center w-full text-left outline-none">
-                <div
-                  className={cn('text-lg font-bold', dateRange ? 'text-primary' : 'text-gray-300')}
-                >
-                  {dateDisplay}
-                </div>
-                <FaCalendarAlt className="text-secondary text-xl" />
-              </button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                initialFocus
-                mode="range"
-                defaultMonth={dateRange?.from}
-                selected={dateRange}
-                onSelect={setDateRange}
-                numberOfMonths={1}
-              />
-            </PopoverContent>
-          </Popover>
-        )}
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="flex justify-between items-center w-full text-left outline-none">
+              <div
+                className={cn('text-lg font-bold', dateRange ? 'text-primary' : 'text-gray-300')}
+              >
+                {dateDisplay}
+              </div>
+              <FaCalendarAlt className="text-secondary text-xl" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              initialFocus
+              mode="range"
+              defaultMonth={dateRange?.from}
+              selected={dateRange}
+              onSelect={setDateRange}
+              numberOfMonths={1}
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       {/* Description */}
-      <div
-        className={cn(
-          'relative border-2 rounded-lg p-3 transition-colors',
-          isEditMode ? 'border-gray-200 bg-gray-50 opacity-80' : 'border-secondary'
-        )}
-      >
+      <div className="relative border-2 border-secondary rounded-lg p-3 transition-colors">
         <label
           htmlFor="promo-description"
-          className={cn(
-            'absolute -top-3 left-3 bg-white px-2 text-sm font-semibold flex items-center gap-1',
-            isEditMode ? 'text-gray-400' : 'text-primary'
-          )}
+          className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold flex items-center gap-1 text-primary"
         >
-          {isEditMode && <FaLock size={10} />} Descripción
+          Descripción
         </label>
         <textarea
           id="promo-description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          readOnly={isEditMode}
-          placeholder={isEditMode ? '' : 'Escribe una breve descripción de la promoción...'}
-          className={cn(
-            'w-full outline-none text-lg font-bold resize-none h-20 bg-transparent',
-            isEditMode
-              ? 'text-gray-500 cursor-not-allowed'
-              : 'text-primary placeholder:text-gray-300'
-          )}
+          placeholder="Escribe una breve descripción de la promoción..."
+          className="w-full outline-none text-lg font-bold resize-none h-20 bg-transparent text-primary placeholder:text-gray-300"
         />
       </div>
 
       {/* Products Section */}
-      <div className={cn('flex flex-col gap-4', isEditMode && 'opacity-80')}>
+      <div className="flex flex-col gap-4">
         <div className="flex items-center gap-2">
-          <h2 className="text-xl font-bold flex items-center gap-2">
-            Artículos en promoción {isEditMode && <FaLock size={14} className="text-gray-400" />}
-          </h2>
+          <h2 className="text-xl font-bold flex items-center gap-2">Artículos en promoción</h2>
         </div>
 
-        {!isEditMode && (
-          <button className="flex items-center gap-2 text-secondary font-bold text-lg hover:text-dark-secondary transition-colors w-fit">
-            <FaPlus /> Añadir artículos
-          </button>
-        )}
+        <Popover>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              className="flex items-center gap-2 text-secondary font-bold text-lg hover:text-dark-secondary transition-colors w-fit p-2 border-2 border-secondary rounded-md"
+              onClick={() => console.log('Popover Trigger Clicked')}
+            >
+              <FaPlus /> Añadir artículos
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80 p-0 z-[100]" align="start">
+            <ProductSelector
+              onSelect={(product) => {
+                if (!products.some((p) => p.id === product.id)) {
+                  setProducts([...products, product]);
+                }
+              }}
+              excludeIds={products.map((p) => p.id)}
+            />
+          </PopoverContent>
+        </Popover>
 
         <div className="flex flex-col gap-3">
           {products.length > 0 ? (
@@ -314,128 +274,68 @@ export default function PromotionForm({
               <div
                 key={product.id}
                 className={cn(
-                  'flex items-center gap-4 border-2 rounded-lg p-2 transition-colors',
-                  isEditMode ? 'border-gray-100 bg-gray-50' : 'border-secondary'
+                  'flex items-center gap-4 border-2 rounded-lg p-2 transition-colors border-secondary'
                 )}
               >
-                <div
-                  className={cn(
-                    'relative w-16 h-16 rounded overflow-hidden flex-shrink-0',
-                    isEditMode && 'grayscale'
-                  )}
-                >
+                <div className="relative w-16 h-16 rounded overflow-hidden flex-shrink-0">
                   <Image src={product.imageUrl} alt={product.name} fill className="object-cover" />
                 </div>
-                <div
-                  className={cn(
-                    'flex-1 font-bold text-lg',
-                    isEditMode ? 'text-gray-400' : 'text-secondary'
-                  )}
+                <div className="flex-1 font-bold text-lg text-secondary">{product.name}</div>
+                <button
+                  type="button"
+                  onClick={() => removeProduct(product.id)}
+                  className="p-2 text-secondary hover:text-destructive transition-colors"
                 >
-                  {product.name}
-                </div>
-                {!isEditMode && (
-                  <button
-                    type="button"
-                    onClick={() => removeProduct(product.id)}
-                    className="p-2 text-secondary hover:text-destructive transition-colors"
-                  >
-                    <FaTimes size={18} />
-                  </button>
-                )}
+                  <FaTimes size={18} />
+                </button>
               </div>
             ))
           ) : (
-            <p className="text-gray-400 italic">
-              {isEditMode
-                ? 'No hay productos seleccionados o no se pudieron cargar.'
-                : 'No hay productos seleccionados.'}
-            </p>
+            <p className="text-gray-400 italic">No hay productos seleccionados.</p>
           )}
         </div>
       </div>
 
       {/* Promotion Image */}
-      <div className={cn('flex flex-col gap-1', isEditMode && 'opacity-60')}>
-        <h2 className="text-xl font-bold flex items-center gap-2">
-          Imagen de la promoción {isEditMode && <FaLock size={14} className="text-gray-400" />}
-        </h2>
-        {!isEditMode && (
-          <p className="text-secondary text-xs font-semibold">
-            Se usará como imagen de fondo en el banner y stories
-          </p>
-        )}
+      <div className="flex flex-col gap-1">
+        <h2 className="text-xl font-bold flex items-center gap-2">Imagen de la promoción</h2>
+        <p className="text-secondary text-xs font-semibold">
+          Se usará como imagen de fondo en el banner y stories
+        </p>
         <div
-          role={isEditMode ? 'presentation' : 'button'}
-          tabIndex={isEditMode ? -1 : 0}
+          role="button"
+          tabIndex={0}
           onClick={handleImageClick}
           onKeyDown={handleImageKeyDown}
-          className={cn(
-            'border-2 border-dashed rounded-lg py-12 flex flex-col items-center justify-center gap-2 mt-2 transition-all relative overflow-hidden',
-            isEditMode
-              ? 'border-gray-200 bg-gray-50 cursor-not-allowed'
-              : 'border-secondary cursor-pointer hover:bg-secondary/5'
-          )}
+          className="border-2 border-dashed border-secondary rounded-lg py-12 flex flex-col items-center justify-center gap-2 mt-2 transition-all relative overflow-hidden cursor-pointer hover:bg-secondary/5"
         >
           {promotionImage ? (
-            <Image
-              src={promotionImage}
-              alt="Preview"
-              fill
-              className={cn('object-cover', isEditMode ? 'opacity-30 grayscale' : 'opacity-30')}
-            />
+            <Image src={promotionImage} alt="Preview" fill className="object-cover opacity-30" />
           ) : null}
-          <div
-            className={cn(
-              'flex items-center gap-2 font-bold z-10',
-              isEditMode ? 'text-gray-300' : 'text-secondary'
-            )}
-          >
+          <div className="flex items-center gap-2 font-bold z-10 text-secondary">
             <FaImage size={24} />
-            <span>
-              {isEditMode
-                ? 'Carga de imagen bloqueada'
-                : promotionImage
-                  ? 'Cambiar imagen'
-                  : 'Añadir imagen'}
-            </span>
+            <span>{promotionImage ? 'Cambiar imagen' : 'Añadir imagen'}</span>
           </div>
-          {!isEditMode && (
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              accept="image/*"
-              onChange={handleFileChange}
-            />
-          )}
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
         </div>
       </div>
 
       {/* Instagram Toggle */}
-      <div className={cn('flex items-center justify-between py-2', isEditMode && 'opacity-60')}>
-        <span
-          className={cn(
-            'text-lg font-bold flex items-center gap-2',
-            isEditMode ? 'text-gray-400' : 'text-primary'
-          )}
-        >
-          Publicar en Instagram {isEditMode && <FaLock size={14} />}
-        </span>
-        <Switch
-          checked={publishToInstagram}
-          onCheckedChange={isEditMode ? undefined : setPublishToInstagram}
-          disabled={isEditMode}
-          className={cn(
-            isEditMode ? 'cursor-not-allowed data-[state=checked]:bg-gray-300' : 'cursor-pointer'
-          )}
-        />
+      <div className="flex items-center justify-between py-2">
+        <span className="text-lg font-bold flex items-center gap-2 text-primary">Activa</span>
+        <Switch checked={active} onCheckedChange={setActive} className="cursor-pointer" />
       </div>
 
       {/* Submit Button */}
       <Button
         type="submit"
-        disabled={isLoading || (isEditMode && status?.type === 'success')}
+        disabled={isLoading}
         className="bg-secondary text-white font-bold py-8 rounded-lg text-xl mt-4 cursor-pointer hover:bg-dark-secondary transform transition active:scale-[0.98] w-full disabled:opacity-50"
       >
         {isLoading
@@ -447,5 +347,111 @@ export default function PromotionForm({
             : 'Lanzar promoción'}
       </Button>
     </form>
+  );
+}
+
+function ProductSelector({
+  onSelect,
+  excludeIds,
+}: {
+  onSelect: (product: Product) => void;
+  excludeIds: string[];
+}) {
+  const params = useParams<{ id: string }>();
+  const [storeProducts, setStoreProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState('');
+
+  React.useEffect(() => {
+    async function fetchProducts() {
+      if (!params?.id) return;
+      setLoading(true);
+      try {
+        // First, get the store to find the storefront ID
+        const storeResponse = await authorizedOfetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/stores/${params.id}`
+        );
+
+        const storefrontId = storeResponse.storefront?.id;
+
+        if (!storefrontId) {
+          console.error('No storefront ID found for store:', params.id);
+          setStoreProducts([]);
+          return;
+        }
+
+        const response = await authorizedOfetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/storefronts/${storefrontId}/products`
+        );
+
+        // Map backend response to Product interface
+        const mapped: Product[] = response.map(
+          (p: { id: string; name: string; imageUrl?: string }) => ({
+            id: p.id,
+            name: p.name,
+            imageUrl: p.imageUrl || '/static/img/outfit_placeholder.jpg',
+          })
+        );
+
+        setStoreProducts(mapped);
+      } catch (err) {
+        console.error('Error fetching store products:', err);
+        setStoreProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, [params?.id]);
+
+  const filteredProducts = storeProducts.filter(
+    (p) => !excludeIds.includes(p.id) && p.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div className="flex flex-col max-h-[400px]">
+      <div className="p-3 border-b">
+        <input
+          type="text"
+          placeholder="Buscar producto..."
+          className="w-full p-2 border rounded-md text-sm outline-none focus:border-secondary"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+      <div className="flex-1 overflow-y-auto p-2">
+        {loading ? (
+          <div className="text-center py-4 text-gray-400 text-sm animate-pulse">
+            Cargando productos...
+          </div>
+        ) : filteredProducts.length > 0 ? (
+          <div className="flex flex-col gap-1">
+            {filteredProducts.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => onSelect(p)}
+                className="flex items-center gap-3 p-2 hover:bg-secondary/5 rounded-md transition-colors text-left group"
+              >
+                <div className="relative w-10 h-10 rounded overflow-hidden flex-shrink-0">
+                  <Image src={p.imageUrl} alt={p.name} fill className="object-cover" />
+                </div>
+                <div className="flex-1 text-sm font-semibold group-hover:text-secondary truncate">
+                  {p.name}
+                </div>
+                <FaPlus
+                  className="text-secondary opacity-0 group-hover:opacity-100 transition-opacity"
+                  size={12}
+                />
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-4 text-gray-400 text-sm">
+            {search ? 'No se encontraron productos' : 'No hay productos disponibles'}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { Outfit } from '@/lib/types/outfits';
+import { PromotionDTO } from '@/lib/api/promotionEndpoints';
 import Image from 'next/image';
 import { JSX, useState } from 'react';
 import AboutUs from './about-us';
@@ -20,6 +21,7 @@ type Props = {
   collections?: Collection[];
   description?: string;
   outfits?: Outfit[];
+  promotions?: PromotionDTO[];
 };
 
 export default function StoreTabs({
@@ -27,19 +29,36 @@ export default function StoreTabs({
   collections = [],
   description = '',
   outfits = [],
+  promotions = [],
 }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
 
+  // If we have actual active promotions, use the first one for the banner
+  const activePromo = promotions.find((p) => p.active);
   const promoOutfit = outfits.find((o) => o.discountedPriceInCents < o.priceInCents);
+
+  const bannerPromo = activePromo
+    ? {
+        name: activePromo.name,
+        image: activePromo.promotionImageUrl || '/static/img/outfit_placeholder.jpg',
+        dates: '¡Disponible ahora!',
+      }
+    : promoOutfit
+      ? {
+          name: promoOutfit.name,
+          image: promoOutfit.image || '',
+          dates: '12/04/2026 - 26/04/2026',
+        }
+      : null;
 
   return (
     <>
-      {promoOutfit && (
+      {bannerPromo && (
         <div className="relative mx-4 mt-5 flex flex-col items-center justify-center border-2 border-secondary/50 rounded-md p-4 overflow-hidden w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5">
           {/* Background Images Container */}
           <div className="absolute inset-0 z-0 w-full h-full">
-            {promoOutfit.image && (
-              <Image src={promoOutfit.image} alt={promoOutfit.name} fill className="object-cover" />
+            {bannerPromo.image && (
+              <Image src={bannerPromo.image} alt={bannerPromo.name} fill className="object-cover" />
             )}
             <div className="absolute inset-0 bg-white/85"></div>
           </div>
@@ -47,9 +66,9 @@ export default function StoreTabs({
           <div className="relative z-10 flex flex-col items-center w-full">
             <h3 className="text-primary font-bold text-lg md:text-xl">¡En promoción!</h3>
             <h2 className="text-secondary font-bold text-4xl md:text-5xl mt-1">
-              {promoOutfit.name}
+              {bannerPromo.name}
             </h2>
-            <p className="text-primary font-semibold mt-1">12/04/2026 - 26/04/2026</p>
+            <p className="text-primary font-semibold mt-1">{bannerPromo.dates}</p>
             <button className="bg-secondary text-white font-medium py-2 px-4 rounded mt-4 w-[95%] shadow-sm hover:bg-secondary/90 hover:cursor-pointer transition">
               Ver promoción
             </button>
