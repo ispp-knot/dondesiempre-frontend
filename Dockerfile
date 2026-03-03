@@ -10,11 +10,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Declaramos que esperamos un argumento llamado NEXT_PUBLIC_BACKEND_URL
-ARG NEXT_PUBLIC_BACKEND_URL
-
 # Lo convertimos en una variable de entorno interna para el proceso de build
-ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
+ENV NEXT_PUBLIC_BACKEND_URL="https://dondesiempre.azurewebsites.net"
 
 # Obligatorio: Next.js generará la carpeta standalone
 RUN npm run build
