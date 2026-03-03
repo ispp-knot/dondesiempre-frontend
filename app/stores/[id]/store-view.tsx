@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { FaFacebook, FaInstagram, FaTiktok, FaWhatsapp, FaTwitter } from 'react-icons/fa';
 import { FaLocationDot } from 'react-icons/fa6';
@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getOutfitsOfStorefront } from '@/lib/api/outfitEndpoints';
 import { getPromotionsByStoreId } from '@/lib/api/promotionEndpoints';
 import { StoreDTO } from '@/lib/api/types';
+import { followStore, isFollowingStore, unfollowStore } from '@/lib/api/followEndpoints';
 
 const SOCIAL_NETWORK_ICONS: Record<string, React.ElementType> = {
   instagram: FaInstagram,
@@ -30,6 +31,17 @@ const COLLECTIONS = [
 ];
 
 export default function StoreView({ store }: { store: StoreDTO }) {
+  const [followed, setFollowed] = useState<boolean>(false);
+  const outfitsQuery = useQuery({
+    queryKey: ['outfits', store.storefront?.id],
+    queryFn: () => getOutfitsOfStorefront(store.storefront!.id),
+    enabled: !!store.storefront?.id,
+  });
+
+  useEffect(() => {
+    isFollowingStore(store.id).then((data) => setFollowed(data.isFollowing));
+  }, [store.id]);
+
   const outfitsQuery = useQuery({
     queryKey: ['outfits', store.storefront?.id],
     queryFn: () => getOutfitsOfStorefront(store.storefront!.id),
@@ -42,6 +54,7 @@ export default function StoreView({ store }: { store: StoreDTO }) {
     enabled: !!store.id,
   });
 
+
   return (
     <div className="flex flex-col bg-white">
       <div className="relative w-full h-52 md:h-80">
@@ -52,7 +65,39 @@ export default function StoreView({ store }: { store: StoreDTO }) {
           className="object-cover"
           priority
         />
+        {followed ? (
+          <button
+            onClick={() => unfollowStore(store.id).then(() => setFollowed(false))}
+            className="absolute top-4 right-4 md:top-6 md:right-8 
+                     flex items-center gap-2 
+                     bg-gray-100 
+                     text-green-800 
+                     px-5 py-2 
+                     rounded-full 
+                     shadow-sm 
+                     hover:bg-gray-200 
+                     transition"
+          >
+            <span className="font-medium">Dejar de seguir</span>
+          </button>
+        ) : (
+          <button
+            onClick={() => followStore(store.id).then(() => setFollowed(true))}
+            className="absolute top-4 right-4 md:top-6 md:right-8 
+                     flex items-center gap-2 
+                     bg-gray-100 
+                     text-green-800 
+                     px-5 py-2 
+                     rounded-full 
+                     shadow-sm 
+                     hover:bg-gray-200 
+                     transition"
+          >
+            <span className="font-medium">+ Seguir</span>
+          </button>
+        )}
       </div>
+
       <div className={'w-full mt-5 text-center text-3xl md:text-5xl text-secondary font-bold'}>
         {store.name}
       </div>
