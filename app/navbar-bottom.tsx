@@ -19,7 +19,7 @@ export default function NavbarBottom() {
       activeIcon: <FaSearch />,
     },
     {
-      href: '/followedstores',
+      href: '/following',
       icon: <FaRegHeart />,
       activeIcon: <FaHeart />,
     },
