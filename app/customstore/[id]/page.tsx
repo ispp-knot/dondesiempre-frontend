@@ -13,6 +13,7 @@ export default async function StorefrontPage({
     /* TODO: Add request using store id */
   }
   // const { id } = await params;
+
   const store = {
     name: 'Tu Capricho',
     address: 'Avenida La Palmera, 13',
@@ -84,6 +85,7 @@ export default async function StorefrontPage({
       },
     ],
   };
+
   return (
     <div className="relative w-full">
       <div className="relative w-full h-52 md:h-80 overflow-hidden">
