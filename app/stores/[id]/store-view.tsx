@@ -32,11 +32,6 @@ const COLLECTIONS = [
 
 export default function StoreView({ store }: { store: StoreDTO }) {
   const [followed, setFollowed] = useState<boolean>(false);
-  const outfitsQuery = useQuery({
-    queryKey: ['outfits', store.storefront?.id],
-    queryFn: () => getOutfitsOfStorefront(store.storefront!.id),
-    enabled: !!store.storefront?.id,
-  });
 
   useEffect(() => {
     isFollowingStore(store.id).then((data) => setFollowed(data.isFollowing));
@@ -53,7 +48,6 @@ export default function StoreView({ store }: { store: StoreDTO }) {
     queryFn: () => getPromotionsByStoreId(store.id),
     enabled: !!store.id,
   });
-
 
   return (
     <div className="flex flex-col bg-white">

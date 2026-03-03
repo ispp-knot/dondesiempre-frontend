@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from './button';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { Share2, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -58,7 +58,11 @@ function drawStar(
     const angle = (i * Math.PI) / points - Math.PI / 2;
     const x = cx + r * Math.cos(angle);
     const y = cy + r * Math.sin(angle);
-    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    if (i === 0) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
   }
   ctx.closePath();
   ctx.fillStyle = color;
@@ -113,7 +117,7 @@ export function ShareTo({ item, images, className }: Props) {
   const ACCENT = '#c65a3a';
   const padding = 60;
 
-  const drawCanvas = async () => {
+  const drawCanvas = useCallback(async () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -193,7 +197,7 @@ export function ShareTo({ item, images, className }: Props) {
       ctx.fillText(promo.name, canvas.width / 2, badgeY + badgeH + 78);
 
       // ── DISCOUNT STAR ──
-      if (promo.discountPercentage > 0) {
+      if (promo.discountPercentage && promo.discountPercentage > 0) {
         drawStar(ctx, canvas.width - 175, 460, 135, 8, ACCENT);
         ctx.fillStyle = '#fff';
         ctx.font = 'bold 60px Georgia, serif';
@@ -226,7 +230,7 @@ export function ShareTo({ item, images, className }: Props) {
 
     setPreviewUrl(canvas.toDataURL('image/jpeg', 0.92));
     setLoading(false);
-  };
+  }, [backgroundImage, isPromotion, item, padding, ACCENT]);
 
   useEffect(() => {
     if (open) {
@@ -235,7 +239,7 @@ export function ShareTo({ item, images, className }: Props) {
       setPreviewUrl('');
       setLoading(false);
     }
-  }, [open]);
+  }, [open, drawCanvas]);
 
   const handleShare = async () => {
     if (!canvasRef.current) return;
