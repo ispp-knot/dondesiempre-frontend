@@ -90,7 +90,7 @@ export function StoreMapCard({ store }: { store: Store }) {
 
           {/* Buttons */}
           <div className="flex flex-col gap-2 w-full">
-            <Button
+            {/*<Button
               variant="outline"
               className="flex-1 flex items-center justify-center gap-2 text-sm sm:text-base h-10 sm:h-11"
               onClick={() => {
@@ -99,7 +99,7 @@ export function StoreMapCard({ store }: { store: Store }) {
             >
               <span className="truncate">Cómo llegar</span>
               <LuRoute className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-            </Button>
+            </Button>*/}
             <Button
               variant="secondary"
               className="flex-1 flex items-center justify-center gap-2 text-sm sm:text-base h-10 sm:h-11"
