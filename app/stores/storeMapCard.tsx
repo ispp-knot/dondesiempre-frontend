@@ -60,8 +60,9 @@ export function StoreMapCard({ store }: { store: Store }) {
               <div className="flex gap-1">{renderStars()}</div>
 
               {/* Follow button */}
-              <button
-                className="w-max mt-2 px-4 py-1 border-2 border-current text-orange-600 rounded-lg"
+              <Button
+                variant="outline"
+                className="w-max mt-2 px-4 py-1 border-2 border-current rounded-lg"
                 onClick={async () => {
                   console.log(store.id);
                   if (isFollowing) {
@@ -73,8 +74,8 @@ export function StoreMapCard({ store }: { store: Store }) {
                   }
                 }}
               >
-                {isFollowing ? 'Dejar de seguir' : 'Seguir'}
-              </button>
+                {isFollowing ? 'Dejar de seguir' : '+ Seguir'}
+              </Button>
             </div>
 
             {/* Store Image */}
