@@ -89,7 +89,7 @@ export default function StoreOptions({ storefrontId, initialData }: Props) {
 
       <div className="flex justify-between items-center gap-4">
         <p className="text-[#c65a3a] text-lg font-medium leading-tight flex-1">
-          Mostrar colecciones antes que productos
+          Mostrar colecciones antes que outfits
         </p>
         <button
           onClick={() =>

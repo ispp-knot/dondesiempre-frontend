@@ -93,8 +93,17 @@ export default function StoreTabs({
       <div className="flex flex-col gap-10 sm:items-center">
         {activeTab === 'catalogo' && (
           <>
-            <Collections collections={collections} />
-            <Outfits storefrontId={storefrontId} outfits={outfits} />
+            {store.storefront.isFirstCollections ? (
+              <>
+                <Collections collections={collections} />
+                <Outfits storefrontId={storefrontId} outfits={outfits} />
+              </>
+            ) : (
+              <>
+                <Outfits storefrontId={storefrontId} outfits={outfits} />
+                <Collections collections={collections} />
+              </>
+            )}
           </>
         )}
 
