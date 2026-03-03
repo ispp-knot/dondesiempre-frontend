@@ -29,30 +29,19 @@ export default async function StorePage({ params }: PageProps) {
   const outfitsDto = await getOutfitByStoreId(id);
 
   const socialNetworks = storeDto.socialNetworks || [];
+  const primaryColor = storeDto.storefront?.primaryColor || '#000000';
+  const secondaryColor = storeDto.storefront?.secondaryColor || '#000000';
+  const banner = storeDto.storefront?.bannerImageUrl;
 
-  const primaryColor = storeDto.primaryColor || '#000000';
-  const secondaryColor = storeDto.secondaryColor || '#000000';
-
-  const store = {
-    name: storeDto.name,
-    address: storeDto.address,
-    hours: storeDto.openingHours,
-    banner: storeDto.bannerImageUrl,
-    description: storeDto.aboutUs,
-    collections: [
-      { id: 1, name: 'Veraneo', image: '' },
-      { id: 2, name: 'Nuevo', image: '' },
-      { id: 3, name: 'Invierno', image: '' },
-      { id: 4, name: 'Feria', image: '' },
-      { id: 5, name: 'Semana Santa', image: '' },
-      { id: 6, name: 'Joyería', image: '' },
-      { id: 7, name: 'Ropa interior', image: '' },
-    ],
-    outfits: outfitsDto,
-    storefrontId: storeDto.storefrontId,
-    primaryColor: primaryColor,
-    secondaryColor: secondaryColor,
-  };
+  const collections = [
+    { id: 1, name: 'Veraneo', image: '' },
+    { id: 2, name: 'Nuevo', image: '' },
+    { id: 3, name: 'Invierno', image: '' },
+    { id: 4, name: 'Feria', image: '' },
+    { id: 5, name: 'Semana Santa', image: '' },
+    { id: 6, name: 'Joyería', image: '' },
+    { id: 7, name: 'Ropa interior', image: '' },
+  ];
 
   return (
     <div
@@ -66,8 +55,8 @@ export default async function StorePage({ params }: PageProps) {
     >
       <div className="relative w-full h-52 md:h-80">
         <Image
-          src={store.banner || '/static/img/banner.jpg'}
-          alt={`Banner de la tienda ${store.name}`}
+          src={banner || '/static/img/banner.jpg'}
+          alt={`Banner de la tienda ${storeDto.name}`}
           fill
           className="object-cover"
           priority
@@ -75,54 +64,41 @@ export default async function StorePage({ params }: PageProps) {
         />
       </div>
 
-      <div
-        className={'w-full mt-5 text-center text-3xl md:text-5xl text-[var(--primary)] font-bold'}
-      >
-        {store.name}
+      <div className="w-full mt-5 text-center text-3xl md:text-5xl text-[var(--primary)] font-bold">
+        {storeDto.name}
       </div>
 
-      <div
-        className={
-          'flex flex-row w-full mt-2 items-center justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]'
-        }
-      >
+      <div className="flex flex-row w-full mt-2 items-center justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]">
         <FaLocationDot />
-        {store.address}
+        {storeDto.address}
       </div>
 
-      <div
-        className={
-          'flex flex-row w-full mt-2 items-center justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]'
-        }
-      >
+      <div className="flex flex-row w-full mt-2 items-center justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]">
         <MdAccessTimeFilled />
-        {store.hours}
+        {storeDto.openingHours}
       </div>
 
       <div className="flex gap-3 mt-3 flex-wrap justify-center mb-2">
-        {socialNetworks.length > 0 ? (
-          socialNetworks.map((social, index) => (
-            <a
-              key={index}
-              href={social.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center w-fit gap-1.5 border border-[var(--primary)] rounded-sm px-3 py-1.5 text-xs text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition"
-            >
-              {getSocialIcon(social.name)}
-              <p>{social.name}</p>
-            </a>
-          ))
-        ) : (
-          <></>
-        )}
+        {socialNetworks.map((social: unknown, index: number) => (
+          <a
+            key={index}
+            href={social.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center w-fit gap-1.5 border border-[var(--primary)] rounded-sm px-3 py-1.5 text-xs text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition"
+          >
+            {getSocialIcon(social.name)}
+            <p>{social.name}</p>
+          </a>
+        ))}
       </div>
 
       <StoreTabs
         store={storeDto}
-        collections={store.collections}
-        description={store.description}
-        outfits={store.outfits}
+        storefrontId={storeDto.storefront?.id}
+        collections={collections}
+        description={storeDto.aboutUs || ''}
+        outfits={outfitsDto}
       />
     </div>
   );

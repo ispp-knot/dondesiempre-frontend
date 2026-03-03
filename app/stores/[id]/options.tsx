@@ -16,8 +16,14 @@ export default function StoreOptions({ storefrontId, initialData }: Props) {
   const [formData, setFormData] = useState<StoreDTO>(initialData);
   const [hasChanges, setHasChanges] = useState(false);
 
-  const updateLocalState = (updates: Partial<StoreDTO>) => {
-    setFormData((prev) => ({ ...prev, ...updates }));
+  const updateStorefrontState = (updates: Partial<StoreDTO['storefront']>) => {
+    setFormData((prev) => ({
+      ...prev,
+      storefront: {
+        ...prev.storefront,
+        ...updates,
+      },
+    }));
     setHasChanges(true);
   };
 
@@ -31,21 +37,21 @@ export default function StoreOptions({ storefrontId, initialData }: Props) {
       '¿Estás seguro de que deseas confirmar los cambios? Se actualizará la apariencia pública de la tienda.'
     );
 
-    if (confirmed) {
-      setLoading(true);
-      try {
-        await updateStorefront(storefrontId, formData);
-        setHasChanges(false);
-        window.location.reload();
-      } catch (error) {
-        alert(
-          'Error al guardar los cambios. Revisa que el ID del storefront sea correcto.' + error
-        );
-      } finally {
-        setLoading(false);
-      }
+    if (!confirmed) return;
+
+    setLoading(true);
+    try {
+      await updateStorefront(storefrontId, formData.storefront);
+      setHasChanges(false);
+      window.location.reload();
+    } catch (error) {
+      alert('Error al guardar los cambios: ' + error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const storefront = formData.storefront;
 
   return (
     <div className="w-full max-w-142.5 space-y-10 relative pb-10">
@@ -61,14 +67,18 @@ export default function StoreOptions({ storefrontId, initialData }: Props) {
           <Camera
             className="w-5 h-5 text-teal-700 cursor-pointer"
             onClick={() => {
-              const url = prompt('Introduce la URL de la nueva imagen:', formData.bannerImageUrl);
-              if (url) updateLocalState({ bannerImageUrl: url });
+              const url = prompt(
+                'Introduce la URL de la nueva imagen:',
+                storefront.bannerImageUrl || ''
+              );
+              if (url) updateStorefrontState({ bannerImageUrl: url });
             }}
           />
         </div>
+
         <div className="relative w-full h-40 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
           <Image
-            src={formData.bannerImageUrl || '/static/img/banner.jpg'}
+            src={storefront.bannerImageUrl || '/static/img/banner.jpg'}
             alt="Preview"
             fill
             className="object-cover"
@@ -82,14 +92,18 @@ export default function StoreOptions({ storefrontId, initialData }: Props) {
           Mostrar colecciones antes que productos
         </p>
         <button
-          onClick={() => updateLocalState({ isFirstCollections: !formData.isFirstCollections })}
+          onClick={() =>
+            updateStorefrontState({
+              isFirstCollections: !storefront.isFirstCollections,
+            })
+          }
           className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-            formData.isFirstCollections ? 'bg-[#c65a3a]' : 'bg-gray-300'
+            storefront.isFirstCollections ? 'bg-[#c65a3a]' : 'bg-gray-300'
           }`}
         >
           <span
             className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
-              formData.isFirstCollections ? 'translate-x-6' : 'translate-x-1'
+              storefront.isFirstCollections ? 'translate-x-6' : 'translate-x-1'
             }`}
           />
         </button>
@@ -105,17 +119,18 @@ export default function StoreOptions({ storefrontId, initialData }: Props) {
           <div className="flex-1 text-center">
             <input
               type="color"
-              value={formData.primaryColor}
-              onChange={(e) => updateLocalState({ primaryColor: e.target.value })}
+              value={storefront.primaryColor}
+              onChange={(e) => updateStorefrontState({ primaryColor: e.target.value })}
               className="w-full h-16 rounded-xl cursor-pointer border-none p-0 overflow-hidden shadow-sm"
             />
             <p className="text-teal-800 text-sm font-bold mt-2">Primario</p>
           </div>
+
           <div className="flex-1 text-center">
             <input
               type="color"
-              value={formData.secondaryColor}
-              onChange={(e) => updateLocalState({ secondaryColor: e.target.value })}
+              value={storefront.secondaryColor}
+              onChange={(e) => updateStorefrontState({ secondaryColor: e.target.value })}
               className="w-full h-16 rounded-xl cursor-pointer border-none p-0 overflow-hidden shadow-sm"
             />
             <p className="text-teal-800 text-sm font-bold mt-2">Secundario</p>
@@ -129,6 +144,7 @@ export default function StoreOptions({ storefrontId, initialData }: Props) {
             <AlertCircle className="w-5 h-5" />
             <span className="text-sm font-semibold">Tienes cambios pendientes de confirmar</span>
           </div>
+
           <button
             onClick={handleSave}
             className="w-full bg-[#19756a] text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-2 hover:bg-teal-800 transition"
@@ -136,6 +152,7 @@ export default function StoreOptions({ storefrontId, initialData }: Props) {
             <Save className="w-5 h-5" />
             Confirmar cambios
           </button>
+
           <button
             onClick={handleCancel}
             className="w-full bg-gray-100 text-gray-600 font-bold py-3 rounded-xl hover:bg-gray-200 transition flex items-center justify-center gap-2"
