@@ -215,7 +215,7 @@ export function ShareTo({ item, images, className }: Props) {
     ctx.fill();
 
     try {
-      const logo = await loadImage(`${process.env.NEXT_PUBLIC_WEB_URL}/apple-touch-icon.png`);
+      const logo = await loadImage(`${window.location.origin}/apple-touch-icon.png`);
       ctx.drawImage(logo, padding + 24, ctaY + 20, 64, 64);
     } catch {}
 
