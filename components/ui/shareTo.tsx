@@ -108,7 +108,7 @@ export function ShareTo({ item, images, className }: Props) {
       ? (item as ProductDTO).storeId
       : (item as OutfitDTO).storefrontId;
 
-  const storeUrl = `${process.env.NEXT_PUBLIC_WEB_URL}/storefront/${storeId}`;
+  const storeUrl = `${process.env.NEXT_PUBLIC_WEB_URL}/stores/${storeId}`;
 
   const ACCENT = '#c65a3a';
   const padding = 60;
