@@ -6,8 +6,9 @@ import Collections from './collections';
 import AboutUs from './about-us';
 import Outfits from './outfits';
 import StoreOptions from './options';
-import { StoreDTO } from '@/lib/api/types';
+import { StoreDTO, Promotion } from '@/lib/api/types';
 import { Outfit } from '@/lib/types/outfits';
+import { ShareTo } from '@/components/ui/shareTo';
 
 type Tab = 'catalogo' | 'sobre' | 'opciones';
 
@@ -36,7 +37,16 @@ export default function StoreTabs({
   const promoOutfit = outfits.find((o) => o.discountedPriceInCents < o.priceInCents);
 
   const storefrontId = store?.storefront?.id;
-
+  const mockPromotion: Promotion = {
+    id: '1a383fda-5ac8-4f1f-bfba-2dcd4f09dca3',
+    name: 'Look Romántico Atardecer',
+    discountPercentage: 25,
+    isActive: true,
+    description: 'Descuento especial en productos seleccionados por tiempo limitado.',
+    image: null,
+    storeId: '1a383fda-5ac8-4f1f-bfba-2dcd4f09dca3',
+    productIds: ['1a383fda', '5ac8', '4f1f-bfba', '2dcd4f09dca3'],
+  };
   return (
     <>
       {promoOutfit && (
@@ -54,9 +64,10 @@ export default function StoreTabs({
               {promoOutfit.name}
             </h2>
             <p className="text-primary font-semibold mt-1">12/04/2026 - 26/04/2026</p>
-            <button className="bg-secondary text-white font-medium py-2 px-4 rounded mt-4 w-[95%] shadow-sm hover:bg-secondary/90 hover:cursor-pointer transition">
-              Ver promoción
-            </button>
+            <ShareTo
+              item={mockPromotion}
+              className="bg-secondary text-white font-medium py-2 px-4 rounded mt-4 w-[95%] shadow-sm hover:bg-secondary/90 hover:cursor-pointer transition"
+            />
           </div>
         </div>
       )}
