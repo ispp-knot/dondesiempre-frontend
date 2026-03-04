@@ -39,12 +39,14 @@ export default function StoreTabs({
   const storefrontId = store?.storefront?.id;
   const mockPromotion: Promotion = {
     id: '1a383fda-5ac8-4f1f-bfba-2dcd4f09dca3',
-    name: 'Look Romántico Atardecer',
-    discountPercentage: 25,
+    name: promoOutfit?.name || 'Esto es una promoción',
+    discountPercentage: promoOutfit
+      ? 100 - Math.trunc((promoOutfit.discountedPriceInCents / promoOutfit.priceInCents) * 100)
+      : 0,
     isActive: true,
-    description: 'Descuento especial en productos seleccionados por tiempo limitado.',
+    description: promoOutfit?.description || 'Esto es una descripcion',
     image: null,
-    storeId: '1a383fda-5ac8-4f1f-bfba-2dcd4f09dca3',
+    storeId: store.id,
     productIds: ['1a383fda', '5ac8', '4f1f-bfba', '2dcd4f09dca3'],
   };
   return (
