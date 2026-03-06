@@ -1,10 +1,10 @@
 import GlassCenterCard from '@/components/dondeSiempre/GlassCenterCard';
-import RegisterForm from './registerForm';
+import LoginForm from './loginForm';
 
-export default function RegisterPage() {
+export default function LoginPage() {
   return (
     <GlassCenterCard>
-      <RegisterForm />
+      <LoginForm />
     </GlassCenterCard>
   );
 }

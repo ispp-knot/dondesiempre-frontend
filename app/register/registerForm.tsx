@@ -171,6 +171,13 @@ export default function RegisterForm() {
           onSuccess={() => setSuccess(true)}
         />
       )}
+
+      <p className="text-center text-sm text-muted-foreground">
+        ¿Ya tienes cuenta?{' '}
+        <Link href="/login" className="text-primary underline underline-offset-4">
+          Inicia sesión
+        </Link>
+      </p>
     </div>
   );
 }

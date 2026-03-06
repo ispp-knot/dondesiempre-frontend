@@ -46,6 +46,12 @@ export default function Navbar() {
                   <PopoverContent align="end" className="w-44 p-2">
                     <div className="flex flex-col text-sm">
                       <Link
+                        href="/login"
+                        className="rounded-md px-3 py-2 hover:bg-muted text-foreground"
+                      >
+                        Iniciar sesión
+                      </Link>
+                      <Link
                         href="/register"
                         className="rounded-md px-3 py-2 hover:bg-muted text-foreground"
                       >

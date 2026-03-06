@@ -41,3 +41,17 @@ export async function registerStore(dto: RegisterStoreDTO): Promise<void> {
     body: dto,
   });
 }
+
+export interface LoginDTO {
+  email: string;
+  password: string;
+}
+
+export async function login(dto: LoginDTO): Promise<void> {
+  const url = `${getBackendUrl()}/api/v1/auth/login`;
+  await authorizedOfetch(url, {
+    method: 'POST',
+    body: dto,
+    credentials: 'include',
+  });
+}
