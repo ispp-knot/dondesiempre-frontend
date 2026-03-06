@@ -1,3 +1,4 @@
+import { getBackendUrl } from '@/lib/config';
 import { authorizedOfetch } from '@/lib/api/authorizedOfetch';
 
 export interface PromotionCreationDTO {
@@ -20,28 +21,22 @@ export interface PromotionDTO {
 }
 
 export async function createPromotion(dto: PromotionCreationDTO): Promise<PromotionDTO> {
-  const response = await authorizedOfetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/promotions`,
-    {
-      method: 'POST',
-      body: dto,
-    }
-  );
+  const response = await authorizedOfetch(`${getBackendUrl()}/api/v1/promotions`, {
+    method: 'POST',
+    body: dto,
+  });
   return response;
 }
 export async function getPromotionById(id: string): Promise<PromotionDTO> {
-  const response = await authorizedOfetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/promotions/${id}`,
-    {
-      method: 'GET',
-    }
-  );
+  const response = await authorizedOfetch(`${getBackendUrl()}/api/v1/promotions/${id}`, {
+    method: 'GET',
+  });
   return response;
 }
 
 export async function updatePromotionDiscount(id: string, discount: number): Promise<PromotionDTO> {
   const response = await authorizedOfetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/promotions/${id}/discount?discountPercentage=${discount}`,
+    `${getBackendUrl()}/api/v1/promotions/${id}/discount?discountPercentage=${discount}`,
     {
       method: 'PATCH',
     }
