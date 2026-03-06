@@ -1,3 +1,4 @@
+import { getBackendUrl } from '@/lib/config';
 import { LngLatBounds } from 'maplibre-gl';
 import { StoreDTO } from '../types';
 import { authorizedOfetch } from '@/lib/api/authorizedOfetch';
@@ -12,8 +13,7 @@ export async function getStoresInBoundingBox(boundingBox: LngLatBounds): Promise
   const maxLat = ne.lat;
 
   try {
-    console.log(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/stores');
-    return (await authorizedOfetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/stores', {
+    return (await authorizedOfetch(getBackendUrl() + '/api/v1/stores', {
       method: 'GET',
       query: {
         minLon: minLng,

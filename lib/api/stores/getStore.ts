@@ -1,8 +1,9 @@
+import { getBackendUrl } from '@/lib/config';
 import { StoreDTO } from '../types';
 import { authorizedOfetch } from '@/lib/api/authorizedOfetch';
 
 export async function getStore(id: string): Promise<StoreDTO> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/stores/${id}`;
+  const url = `${getBackendUrl()}/api/v1/stores/${id}`;
 
   try {
     const response = (await authorizedOfetch(url, {

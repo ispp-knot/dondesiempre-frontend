@@ -1,8 +1,9 @@
+import { getBackendUrl } from '@/lib/config';
 import { Outfit } from '@/lib/types/outfits';
 import { authorizedOfetch } from '@/lib/api/authorizedOfetch';
 
 export async function getOutfitByStoreId(id: string): Promise<Outfit[]> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/stores/${id}/outfits`;
+  const url = `${getBackendUrl()}/api/v1/stores/${id}/outfits`;
 
   try {
     const response = (await authorizedOfetch(url, {
@@ -17,7 +18,7 @@ export async function getOutfitByStoreId(id: string): Promise<Outfit[]> {
 }
 
 export async function getOutfitById(id: string): Promise<Outfit> {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/outfits/${id}`;
+  const url = `${getBackendUrl()}/api/v1/outfits/${id}`;
 
   try {
     const response = (await authorizedOfetch(url, {
