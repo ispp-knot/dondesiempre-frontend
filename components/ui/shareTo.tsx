@@ -1,5 +1,6 @@
 'use client';
 
+import { getWebUrl } from '@/lib/config';
 import { OutfitDTO, ProductDTO, Promotion } from '@/lib/api/types';
 import {
   Dialog,
@@ -108,7 +109,7 @@ export function ShareTo({ item, images, className }: Props) {
       ? (item as ProductDTO).storeId
       : (item as OutfitDTO).storefrontId;
 
-  const storeUrl = `${process.env.NEXT_PUBLIC_WEB_URL}/stores/${storeId}`;
+  const storeUrl = `${getWebUrl()}/stores/${storeId}`;
 
   const ACCENT = '#c65a3a';
   const padding = 60;
