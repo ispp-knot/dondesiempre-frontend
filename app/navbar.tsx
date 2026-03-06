@@ -6,6 +6,7 @@ import { AiOutlineShop } from 'react-icons/ai';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 
 export default function Navbar() {
   const [isAdmin, _setIsAdmin] = useState<boolean>(false);
@@ -36,10 +37,29 @@ export default function Navbar() {
                   className="cursor-pointer"
                   onClick={() => (window.location.href = '/deliveries')}
                 />
-                <FaRegUser
-                  className="cursor-pointer"
-                  onClick={() => (window.location.href = '/profile')}
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button className="cursor-pointer" aria-label="Usuario">
+                      <FaRegUser />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent align="end" className="w-44 p-2">
+                    <div className="flex flex-col text-sm">
+                      <Link
+                        href="/register"
+                        className="rounded-md px-3 py-2 hover:bg-muted text-foreground"
+                      >
+                        Registrarse
+                      </Link>
+                      <Link
+                        href="/profile"
+                        className="rounded-md px-3 py-2 hover:bg-muted text-foreground"
+                      >
+                        Mi perfil
+                      </Link>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </>
             )}
             {isAdmin && (

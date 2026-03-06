@@ -8,6 +8,7 @@ import { HiOutlineLocationMarker, HiLocationMarker } from 'react-icons/hi';
 import { BsBoxSeam, BsBoxSeamFill } from 'react-icons/bs';
 import { useState } from 'react';
 import { AiOutlineShop, AiFillShop } from 'react-icons/ai';
+import { MdPersonAddAlt1, MdPersonAdd } from 'react-icons/md';
 
 export default function NavbarBottom() {
   const pathname = usePathname();
@@ -37,6 +38,11 @@ export default function NavbarBottom() {
       href: '/profile',
       icon: <FaRegUser />,
       activeIcon: <FaUser />,
+    },
+    {
+      href: '/register',
+      icon: <MdPersonAddAlt1 />,
+      activeIcon: <MdPersonAdd />,
     },
   ];
   const navItemsAdmin = [
