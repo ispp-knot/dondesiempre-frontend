@@ -42,9 +42,7 @@ export default function LoginForm() {
       await login(data);
       router.push('/');
     } catch (err: unknown) {
-      setApiError(
-        err instanceof Error ? err.message : 'Email o contraseña incorrectos.',
-      );
+      setApiError(err instanceof Error ? err.message : 'Email o contraseña incorrectos.');
     }
   }
 
