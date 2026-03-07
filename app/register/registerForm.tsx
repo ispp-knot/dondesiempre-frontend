@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Link from 'next/link';
 
+import { FetchError } from 'ofetch';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -283,7 +284,11 @@ function ClientStep2Form({
       });
       onSuccess();
     } catch (err: unknown) {
-      setApiError(err instanceof Error ? err.message : 'Error al registrarse. Inténtalo de nuevo.');
+      if (err instanceof FetchError && err.response?.status === 409) {
+        setApiError('El correo ya existe.');
+      } else {
+        setApiError('Ha ocurrido un error.');
+      }
     }
   }
 
@@ -366,7 +371,11 @@ function StoreStep2Form({
       });
       onSuccess();
     } catch (err: unknown) {
-      setApiError(err instanceof Error ? err.message : 'Error al registrarse. Inténtalo de nuevo.');
+      if (err instanceof FetchError && err.response?.status === 409) {
+        setApiError('Nombre de usuario ya tomado.');
+      } else {
+        setApiError('Ha ocurrido un error.');
+      }
     }
   }
 
