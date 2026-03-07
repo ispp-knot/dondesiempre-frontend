@@ -6,10 +6,14 @@ import { AiOutlineShop } from 'react-icons/ai';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { useAuth } from '@/lib/auth/AuthContext';
 
 export default function Navbar() {
   const [isAdmin, _setIsAdmin] = useState<boolean>(false);
+  const { getCurrentUser } = useAuth();
+  const user = getCurrentUser();
+  const profileHref = user ? '/profile' : '/login';
+
   return (
     <>
       <div className="hidden sm:flex bg-white text-primary w-full h-0 sm:h-17.5 items-center justify-center z-20 shadow-md">
@@ -37,35 +41,9 @@ export default function Navbar() {
                   className="cursor-pointer"
                   onClick={() => (window.location.href = '/deliveries')}
                 />
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <button className="cursor-pointer" aria-label="Usuario">
-                      <FaRegUser />
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent align="end" className="w-44 p-2">
-                    <div className="flex flex-col text-sm">
-                      <Link
-                        href="/login"
-                        className="rounded-md px-3 py-2 hover:bg-muted text-foreground"
-                      >
-                        Iniciar sesión
-                      </Link>
-                      <Link
-                        href="/register"
-                        className="rounded-md px-3 py-2 hover:bg-muted text-foreground"
-                      >
-                        Registrarse
-                      </Link>
-                      <Link
-                        href="/profile"
-                        className="rounded-md px-3 py-2 hover:bg-muted text-foreground"
-                      >
-                        Mi perfil
-                      </Link>
-                    </div>
-                  </PopoverContent>
-                </Popover>
+                <Link href={profileHref} aria-label="Usuario">
+                  <FaRegUser className="cursor-pointer" />
+                </Link>
               </>
             )}
             {isAdmin && (

@@ -1,5 +1,6 @@
 import { authorizedOfetch } from '@/lib/api/authorizedOfetch';
 import { getBackendUrl } from '../config';
+import { UserInfo } from '../types/auth';
 
 export interface RegisterClientDTO {
   email: string;
@@ -47,11 +48,24 @@ export interface LoginDTO {
   password: string;
 }
 
-export async function login(dto: LoginDTO): Promise<void> {
+export async function login(dto: LoginDTO): Promise<UserInfo> {
   const url = `${getBackendUrl()}/api/v1/auth/login`;
-  await authorizedOfetch(url, {
+  return authorizedOfetch(url, {
     method: 'POST',
     body: dto,
-    credentials: 'include',
+  });
+}
+
+export async function getMe(): Promise<UserInfo> {
+  const url = `${getBackendUrl()}/api/v1/auth/me`;
+  return authorizedOfetch(url, {
+    method: 'GET',
+  });
+}
+
+export async function logOut(): Promise<UserInfo> {
+  const url = `${getBackendUrl()}/api/v1/auth/logout`;
+  return authorizedOfetch(url, {
+    method: 'GET',
   });
 }

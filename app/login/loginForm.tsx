@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { login } from '@/lib/api/authEndpoints';
+import { useAuth } from '@/lib/auth/AuthContext';
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -27,6 +28,7 @@ function FieldError({ message }: { message?: string }) {
 export default function LoginForm() {
   const [apiError, setApiError] = useState<string | null>(null);
   const router = useRouter();
+  const { registerInfo } = useAuth();
 
   const {
     register,
@@ -39,7 +41,8 @@ export default function LoginForm() {
   async function onSubmit(data: LoginValues) {
     setApiError(null);
     try {
-      await login(data);
+      const userInfo = await login(data);
+      registerInfo(userInfo);
       router.push('/');
     } catch (err: unknown) {
       setApiError(err instanceof Error ? err.message : 'Email o contraseña incorrectos.');

@@ -9,10 +9,15 @@ import { HiOutlineLocationMarker, HiLocationMarker } from 'react-icons/hi';
 import { BsBoxSeam, BsBoxSeamFill } from 'react-icons/bs';
 import { useState } from 'react';
 import { AiOutlineShop, AiFillShop } from 'react-icons/ai';
+import { useAuth } from '@/lib/auth/AuthContext';
 
 export default function NavbarBottom() {
   const pathname = usePathname();
   const [isAdmin, _setIsAdmin] = useState<boolean>(false);
+  const { getCurrentUser } = useAuth();
+  const user = getCurrentUser();
+  const profileHref = user ? '/profile' : '/login';
+
   const navItemsClient: {
     href: string;
     icon: React.ReactElement;
@@ -40,7 +45,7 @@ export default function NavbarBottom() {
       activeIcon: <BsBoxSeamFill />,
     },
     {
-      href: '/profile',
+      href: profileHref,
       activeMatches: ['/profile', '/login', '/register'],
       icon: <FaRegUser />,
       activeIcon: <FaUser />,
@@ -63,7 +68,8 @@ export default function NavbarBottom() {
       activeIcon: <BsBoxSeamFill />,
     },
     {
-      href: '/profile',
+      href: profileHref,
+      activeMatches: ['/profile', '/login', '/register'],
       icon: <FaRegUser />,
       activeIcon: <FaUser />,
     },
