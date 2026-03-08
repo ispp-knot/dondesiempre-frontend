@@ -13,7 +13,7 @@ jobs:
     # 1. Clonamos el backend primero para que exista la carpeta y el pom.xml
     - name: Clone Backend
       run: |
-        git clone https://github.com/ispp-knot/dondesiempre-backend.git backend
+        git clone https://github.com/ispp-knot/dondesiempre-backend.git
         cd backend
         cp .env.example .env
         docker compose up -d
@@ -27,7 +27,7 @@ jobs:
         distribution: 'temurin'
         cache: 'maven'
         # Indicamos dónde está el pom.xml para que la caché no falle
-        mvnd-relative-path: 'backend' 
+        mvnd-relative-path: 'dondesiempre-backend' 
 
     - uses: actions/setup-node@v4
       with:
