@@ -17,6 +17,9 @@ jobs:
     - name: Build application
       run: npm run build
 
+    - name: Start Frontend
+      run: npm run start 
+
     - name: Clone Backend
       run: |
         git clone https://github.com/ispp-knot/dondesiempre-backend.git backend
@@ -28,7 +31,9 @@ jobs:
         docker compose up -d
         ./mvnw spring-boot:run "-Dspring-boot.run.profiles=dev-migration,seed"
         ./mvnw spring-boot:run "-Dspring-boot.run.profiles=dev-migration"
+        "backend\mvnw.cmd" install -f "backend\pom.xml"
         npx wait-on http://localhost:8080 # Esperas a que el puerto de la API esté vivo
+
 
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
