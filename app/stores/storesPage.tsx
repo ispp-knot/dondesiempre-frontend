@@ -49,7 +49,7 @@ export function StoresPage() {
   }
 
   return (
-    <div className={'flex-1 overflow-hidden'}>
+    <div>
       <StoreMap
         startingLocation={startingLocation}
         userLocation={userLocation}
