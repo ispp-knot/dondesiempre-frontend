@@ -8,38 +8,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+
+    - name: Set up JDK 25 # Ajustado a tu versión
+      uses: actions/setup-java@v4
+      with:
+        java-version: '25'
+        distribution: 'temurin'
+        cache: 'maven'
+
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
+        cache: 'npm'
 
-    - name: Build application
-      run: npm run build
+    - name: Build Frontend
+      run: |
+        npm ci
+        npm run build
 
-    - name: Start Frontend
-      run: npm run start 
-
-    - name: Clone Backend
+    - name: Setup Backend Environment
       run: |
         git clone https://github.com/ispp-knot/dondesiempre-backend.git backend
-    
-    - name: Install & Start Backend
-      run: |
         cd backend
         cp .env.example .env
-        docker compose up -d
-        ./mvnw spring-boot:run "-Dspring-boot.run.profiles=dev-migration,seed"
-        ./mvnw spring-boot:run "-Dspring-boot.run.profiles=dev-migration"
-        "backend\mvnw.cmd" install -f "backend\pom.xml"
-        npx wait-on http://localhost:8080 # Esperas a que el puerto de la API esté vivo
-
+        docker compose up -d # Levanta la BD
+        chmod +x mvnw        # Importante: permisos para Linux
 
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
 
     - name: Run Playwright tests
       run: npx playwright test
+      env:
+        # Pasa aquí variables de entorno si tus tests las necesitan
+        NODE_ENV: test
+
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:

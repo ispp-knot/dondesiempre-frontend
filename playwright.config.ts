@@ -25,14 +25,21 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
-  webServer: {
-    command: 'npm run start', // El comando para levantar tu front/back
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI, // En local usa el que ya tengas abierto
-    stdout: 'ignore',
-    stderr: 'pipe',
-    timeout: 120 * 1000, // 2 minutos para arrancar
-  },
+  webServer: [
+    {
+      command: 'npm run start',
+      url: 'http://localhost:3000',
+      reuseExistingServer: !process.env.CI,
+      timeout: 180 * 1000,
+    },
+    {
+      // Comando para Spring Boot en Linux
+      command: 'cd dondesiempre-backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev-migration,seed',
+      url: 'http://localhost:8080', // Asumiendo que Spring usa el 8080
+      reuseExistingServer: !process.env.CI,
+      timeout: 300 * 1000, // Spring tarda bastante en arrancar
+    }
+  ],
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
     baseURL: 'http://localhost:3000',
