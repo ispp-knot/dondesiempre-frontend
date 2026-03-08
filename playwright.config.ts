@@ -30,7 +30,7 @@ export default defineConfig({
     // baseURL: 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    
+
     permissions: ['geolocation'],
     geolocation: { latitude: DEFAULT_MAP_LOCATION.lat, longitude: DEFAULT_MAP_LOCATION.lng },
     trace: 'on-first-retry',
@@ -68,10 +68,10 @@ export default defineConfig({
     //   name: 'Microsoft Edge',
     //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
     // },
-     {
+    {
       name: 'Google Chrome',
-      use: { ...devices['Desktop Chrome'], channel: 'chrome', screenshot: "only-on-failure",  },
-     },
+      use: { ...devices['Desktop Chrome'], channel: 'chrome', screenshot: 'only-on-failure' },
+    },
   ],
 
   /* Run your local dev server before starting the tests */
