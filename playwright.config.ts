@@ -37,7 +37,7 @@ export default defineConfig({
     {
       // Comando para Spring Boot en Linux
       command:
-        'cd ..\\dondesiempre-backend && mvnw spring-boot:run -Dspring-boot.run.profiles=dev-migration,seed && mvnw spring-boot:run -Dspring-boot.run.profiles=dev-migration',
+        'cd dondesiempre-backend && mvnw spring-boot:run -Dspring-boot.run.profiles=dev-migration,seed && mvnw spring-boot:run -Dspring-boot.run.profiles=dev-migration',
       url: 'http://localhost:8080/api/v1/health', // Asumiendo que Spring usa el 8080
       reuseExistingServer: !process.env.CI,
       timeout: 300 * 1000, // Spring tarda bastante en arrancar
