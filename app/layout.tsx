@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { Quicksand } from 'next/font/google';
 import { Providers } from './providers';
+import { ConfigProvider } from './config-provider';
 import './globals.css';
 import Navbar from './navbar';
 import NavbarBottom from './navbar-bottom';
@@ -72,11 +73,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="es" dir="ltr" className={quicksand.variable}>
       <head />
       <body className={`${quicksand.className} max-sm:[&::-webkit-scrollbar]:hidden`}>
-        <Navbar />
-        <Providers>
-          <div className="pb-20 sm:pb-0">{children}</div>
-        </Providers>
-        <NavbarBottom />
+        <ConfigProvider
+          backendUrl={process.env.BACKEND_URL ?? ''}
+          webUrl={process.env.WEB_URL ?? ''}
+        >
+          <Navbar />
+          <Providers>
+            <div className="pb-20 sm:pb-0">{children}</div>
+          </Providers>
+          <NavbarBottom />
+        </ConfigProvider>
       </body>
     </html>
   );
