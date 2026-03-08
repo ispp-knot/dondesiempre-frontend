@@ -26,7 +26,7 @@ export default function Navbar() {
             </Link>
             {!isAdmin && (
               <div className="flex flex-row items-center gap-6 text-secondary">
-                <a>Búsqueda</a>
+                <Link href="/search">Búsqueda</Link>
                 <Link href="/stores">Mapa</Link>
               </div>
             )}
@@ -34,14 +34,26 @@ export default function Navbar() {
           <div className="flex flex-row items-center gap-5 text-2xl font-primary">
             {!isAdmin && (
               <>
-                <FaRegHeart />
-                <LuPackage />
-                <FaRegUser />
+                <FaRegHeart
+                  className="cursor-pointer"
+                  onClick={() => (window.location.href = '/following')}
+                />
+                <LuPackage
+                  className="cursor-pointer"
+                  onClick={() => (window.location.href = '/deliveries')}
+                />
+                <FaRegUser
+                  className="cursor-pointer"
+                  onClick={() => (window.location.href = '/profile')}
+                />
               </>
             )}
             {isAdmin && (
               <>
-                <LuPackage />
+                <LuPackage
+                  className="cursor-pointer"
+                  onClick={() => (window.location.href = '/deliveries')}
+                />
                 <AiOutlineShop />
               </>
             )}

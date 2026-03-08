@@ -27,3 +27,7 @@ jobs:
       # Run linter
       - name: Run ESLint
         run: npm run lint
+
+      # Run type check
+      - name: Run type check
+        run: npm run check-types

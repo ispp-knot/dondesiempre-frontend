@@ -110,7 +110,7 @@ export default function OutfitProductsPage() {
                       })
                     );
                   }
-                  redirect(`/storefront/${storefrontId}/outfits`);
+                  redirect(`/stores/${storefrontId}/outfits`);
                 }}
                 className="self-center text-center flex flex-row justify-center items-center rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md h-12 w-1/2 mt-8"
               >
