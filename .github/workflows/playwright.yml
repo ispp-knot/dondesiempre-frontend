@@ -14,7 +14,7 @@ jobs:
     - name: Clone Backend
       run: |
         git clone https://github.com/ispp-knot/dondesiempre-backend.git
-        cd backend
+        cd dondesiempre-backend
         cp .env.example .env
         docker compose up -d
         chmod +x mvnw
