@@ -8,7 +8,7 @@ const isWindows = process.platform === 'win32';
 const backendDir = isCI ? 'dondesiempre-backend' : '..\\dondesiempre-backend';
 
 // 3. Definimos el COMANDO basándonos SOLO en el Sistema Operativo
-const javaCommand = isWindows 
+const javaCommand = isWindows
   ? `mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev-migration,seed" && mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev-migration"`
   : `./mvnw spring-boot:run "-Dspring-boot.run.profiles=dev-migration,seed" && ./mvnw spring-boot:run "-Dspring-boot.run.profiles=dev-migration"`;
 /**
@@ -41,18 +41,18 @@ export default defineConfig({
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 180 * 1000,
-      stdout: 'pipe', // <--- Verás los logs del Frontend
-      stderr: 'pipe',
+      //stdout: 'pipe', // <--- Verás los logs del Frontend
+      //stderr: 'pipe',
     },
     {
       // Fíjate bien en el './' para Linux
       command: `cd ${backendDir} && ${javaCommand}`,
       url: 'http://localhost:8080/api/v1/health',
       reuseExistingServer: !process.env.CI,
-      stdout: 'pipe',
-      stderr: 'pipe',
+      //stdout: 'pipe',
+      //stderr: 'pipe',
       timeout: 300 * 1000,
-    }
+    },
   ],
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
