@@ -13,7 +13,7 @@ jobs:
     # 1. Clonamos el backend primero para que exista la carpeta y el pom.xml
     - name: Clone Backend
       run: |
-        git clone https://github.com/ispp-knot/dondesiempre-backend.git
+        git clone https://github.com/ispp-knot/dondesiempre-backend.git dondesiempre-backend
         cd dondesiempre-backend
         cp .env.example .env
         docker compose up -d
