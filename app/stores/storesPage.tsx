@@ -49,7 +49,7 @@ export function StoresPage() {
   }
 
   return (
-    <>
+    <div className={'flex-1 overflow-hidden'}>
       <StoreMap
         startingLocation={startingLocation}
         userLocation={userLocation}
@@ -58,6 +58,6 @@ export function StoresPage() {
       <AnimatePresence>
         {selectedStore && <StoreMapCard key={selectedStore.name} store={selectedStore} />}
       </AnimatePresence>
-    </>
+    </div>
   );
 }

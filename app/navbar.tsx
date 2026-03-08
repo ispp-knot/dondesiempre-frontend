@@ -6,12 +6,18 @@ import { AiOutlineShop } from 'react-icons/ai';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const [isAdmin, _setIsAdmin] = useState<boolean>(false);
+  const pathname = usePathname();
+  const isAbsolute = pathname === '/stores' ? 'absolute' : 'sticky top-0';
+
   return (
     <>
-      <div className="hidden sm:flex bg-white text-primary w-full h-0 sm:h-17.5 items-center justify-center z-20 shadow-md">
+      <div
+        className={`hidden sm:flex bg-white text-primary w-full h-0 sm:h-17.5 items-center justify-center z-20 shadow-md ${isAbsolute}`}
+      >
         <div className="flex flex-row items-center w-11/12 gap-10 justify-between">
           <div className="flex flex-row items-center gap-10">
             <Link href={'/'} className="flex flex-row items-center gap-2">
