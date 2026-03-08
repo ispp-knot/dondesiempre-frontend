@@ -1,7 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { DEFAULT_MAP_LOCATION } from '@/lib/mapUtils';
-import { browser } from 'process';
-import { use } from 'react';
 
 /*
 test('has title', async ({ page }) => {
@@ -27,7 +24,6 @@ test('test', async ({ page }) => {
   await page.context().grantPermissions(['geolocation']);
 
   await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 10000 });
-  
 
   await page.getByRole('button', { name: 'Map marker' }).nth(4).click();
   await page.getByRole('heading', { name: 'Moda Urbana Sevilla' }).click();
