@@ -27,7 +27,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   webServer: [
     {
-      command: 'npm run start',
+      command: 'node .next/standalone/server.js',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 180 * 1000,
