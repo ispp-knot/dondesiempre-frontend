@@ -2,46 +2,49 @@ name: Playwright Tests
 on:
   pull_request:
     branches: [ main ]
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v4 # Repo Frontend
 
-    - name: Set up JDK 25 # Ajustado a tu versión
+    # 1. Clonamos el backend primero para que exista la carpeta y el pom.xml
+    - name: Clone Backend
+      run: |
+        git clone https://github.com/ispp-knot/dondesiempre-backend.git backend
+        cd backend
+        cp .env.example .env
+        docker compose up -d
+        chmod +x mvnw
+
+    # 2. Ahora instalamos Java 25 apuntando a la carpeta clonada para la caché
+    - name: Set up JDK 25
       uses: actions/setup-java@v4
       with:
         java-version: '25'
         distribution: 'temurin'
         cache: 'maven'
+        # Indicamos dónde está el pom.xml para que la caché no falle
+        mvnd-relative-path: 'backend' 
 
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
         cache: 'npm'
 
-    - name: Build Frontend
+    - name: Install & Build Frontend
       run: |
         npm ci
         npm run build
-
-    - name: Setup Backend Environment
-      run: |
-        git clone https://github.com/ispp-knot/dondesiempre-backend.git backend
-        cd backend
-        cp .env.example .env
-        docker compose up -d # Levanta la BD
-        chmod +x mvnw        # Importante: permisos para Linux
 
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
 
     - name: Run Playwright tests
       run: npx playwright test
-      env:
-        # Pasa aquí variables de entorno si tus tests las necesitan
-        NODE_ENV: test
+      # Los servidores se levantan solos gracias al config de Playwright
 
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
