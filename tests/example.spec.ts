@@ -1,6 +1,7 @@
+import { DEFAULT_MAP_LOCATION } from '@/lib/mapUtils';
 import { test, expect } from '@playwright/test';
 
-/*
+
 test('has title', async ({ page }) => {
   await page.goto('https://playwright.dev/');
 
@@ -18,7 +19,21 @@ test('get started link', async ({ page }) => {
   // Expects page to have a heading with the name of Installation.
   await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
 });
-*/
+/*
+test.beforeEach(async ({ context }) => {
+  // Bloquea el registro del Service Worker antes de cargar la página
+  await context.addInitScript(() => {
+    delete (window.navigator as any).serviceWorker;
+  });
+  await context.grantPermissions(['geolocation']);
+  
+  // 3. (Opcional) Forzamos la posición inicial para que el mapa no flote
+  await context.setGeolocation({ 
+    latitude: DEFAULT_MAP_LOCATION.lat, 
+    longitude: DEFAULT_MAP_LOCATION.lng
+  });
+});
+
 test('test', async ({ page }) => {
   await page.goto('http://localhost:3000/stores');
   await page.context().grantPermissions(['geolocation']);
@@ -28,3 +43,4 @@ test('test', async ({ page }) => {
   await page.getByRole('button', { name: 'Map marker' }).nth(4).click();
   await page.getByRole('heading', { name: 'Moda Urbana Sevilla' }).click();
 });
+*/

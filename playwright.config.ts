@@ -27,18 +27,22 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   webServer: [
     {
-      command: 'node .next/standalone/server.js',
+      command: 'npm run dev',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 180 * 1000,
+      //stdout: 'pipe', // <--- Verás los logs del Frontend
+      //stderr: 'pipe',
     },
     {
       // Comando para Spring Boot en Linux
       command:
-        'cd dondesiempre-backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev-migration,seed',
-      url: 'http://localhost:8080', // Asumiendo que Spring usa el 8080
+        'cd ..\\dondesiempre-backend && mvnw spring-boot:run -Dspring-boot.run.profiles=dev-migration,seed && mvnw spring-boot:run -Dspring-boot.run.profiles=dev-migration',
+      url: 'http://localhost:8080/api/v1/health', // Asumiendo que Spring usa el 8080
       reuseExistingServer: !process.env.CI,
       timeout: 300 * 1000, // Spring tarda bastante en arrancar
+      //stdout: 'pipe', // <--- Verás los logs del Frontend
+      //stderr: 'pipe',
     },
   ],
   use: {
