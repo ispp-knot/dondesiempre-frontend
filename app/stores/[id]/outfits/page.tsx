@@ -1,11 +1,14 @@
 'use client';
 
 import LabelledSwitch from '@/components/dondeSiempre/LabelledSwitch';
+import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { deleteOutfit, getOutfitsOfStorefront } from '@/lib/api/outfitEndpoints';
+import useFetcher from '@/lib/api/fetcher';
+import { deleteOutfit } from '@/lib/api/outfitEndpoints';
+import { Outfit } from '@/lib/types/outfits';
 import { convertPrice } from '@/lib/utils';
-import { useQuery } from '@tanstack/react-query';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
@@ -13,24 +16,17 @@ import { IoMdAddCircleOutline } from 'react-icons/io';
 import { RiDiscountPercentFill } from 'react-icons/ri';
 import ErrorText from '../../../../components/dondeSiempre/ErrorText';
 import LoadingText from '../../../../components/dondeSiempre/LoadingText';
-import NotFoundText from '@/components/dondeSiempre/NotFoundText';
-import Image from 'next/image';
 
 export default function OutfitsPage() {
   const params = useParams<{ id: string }>();
-  const storefrontId = params.id;
-
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const outfitsQuery = useQuery({
-    queryKey: ['outfits', storefrontId],
-    queryFn: () => getOutfitsOfStorefront(storefrontId),
-  });
+  const outfits = useFetcher<Outfit[]>({ url: `stores/${params.id}/outfits` });
 
-  if (outfitsQuery.isLoading) {
+  if (outfits.isLoading) {
     return <LoadingText />;
-  } else if (outfitsQuery.isError) {
-    return <ErrorText error={outfitsQuery.error} />;
+  } else if (outfits.isError) {
+    return <ErrorText error={outfits.error} />;
   }
 
   return (
@@ -43,7 +39,7 @@ export default function OutfitsPage() {
       <div className="flex flex-col items-center">
         <div className="w-full md:w-8/12">
           {isAdmin ? (
-            <Link href={`/stores/${storefrontId}/create-outfit/`}>
+            <Link href={`/stores/${params.id}/create-outfit/`}>
               <Card className="p-4 m-4 shadow-xl hover:bg-muted active:bg-input hover:cursor-pointer">
                 <div className="p-4 border-4 border-dashed border-secondary rounded-lg flex flex-row justify-center gap-4">
                   <IoMdAddCircleOutline className="mt-8 mb-8 text-secondary text-center text-4xl" />
@@ -56,9 +52,9 @@ export default function OutfitsPage() {
           ) : (
             <></>
           )}
-          {outfitsQuery.data && outfitsQuery.data.length > 0 ? (
+          {outfits.data && outfits.data.length > 0 ? (
             <>
-              {outfitsQuery.data.map((o) => (
+              {outfits.data.map((o) => (
                 <Card key={o.id} className="p-4 m-4 pt-8 shadow-xl">
                   <div>
                     {o.discountedPriceInCents === o.priceInCents ? (
@@ -102,13 +98,13 @@ export default function OutfitsPage() {
                   {isAdmin ? (
                     <div className="self-center grid grid-cols-3 w-11/12 gap-2">
                       <Link
-                        href={`/stores/${storefrontId}/outfits/${o.id}`}
+                        href={`/stores/${params.id}/outfits/${o.id}`}
                         className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
                       >
                         Editar
                       </Link>
                       <Link
-                        href={`/stores/${storefrontId}/outfits/${o.id}/products`}
+                        href={`/stores/${params.id}/outfits/${o.id}/products`}
                         className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
                       >
                         Productos
@@ -116,7 +112,7 @@ export default function OutfitsPage() {
                       <Button
                         onClick={async () => {
                           await deleteOutfit(o.id);
-                          outfitsQuery.refetch();
+                          outfits.refetch();
                         }}
                         className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-primary hover:bg-dark-primary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
                       >
@@ -125,7 +121,7 @@ export default function OutfitsPage() {
                     </div>
                   ) : (
                     <Link
-                      href={`/stores/${storefrontId}/outfits/${o.id}`}
+                      href={`/stores/${params.id}/outfits/${o.id}`}
                       className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-11/12 md:w-1/4 h-12"
                     >
                       Ver más

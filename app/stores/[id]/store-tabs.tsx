@@ -19,7 +19,6 @@ type Collection = {
 };
 
 type Props = {
-  storefrontId?: string;
   collections?: Collection[];
   description?: string;
   outfits?: Outfit[];
@@ -108,13 +107,13 @@ export default function StoreTabs({
           <>
             {store.storefront.isFirstCollections ? (
               <>
-                <Collections storefrontId={storefrontId} collections={collections} />
-                <Outfits storefrontId={storefrontId} outfits={outfits} />
+                <Collections storeId={store.id} collections={collections} />
+                <Outfits storeId={store.id} outfits={outfits} />
               </>
             ) : (
               <>
-                <Outfits storefrontId={storefrontId} outfits={outfits} />
-                <Collections storefrontId={storefrontId} collections={collections} />
+                <Outfits storeId={store.id} outfits={outfits} />
+                <Collections storeId={store.id} collections={collections} />
               </>
             )}
           </>

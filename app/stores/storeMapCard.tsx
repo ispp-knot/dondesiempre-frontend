@@ -1,18 +1,19 @@
-import { StoreDTO } from '@/lib/api/types';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { LuStore } from 'react-icons/lu';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { Card } from '@/components/ui/card';
+import useFetcher from '@/lib/api/fetcher';
+import { StoreDTO } from '@/lib/api/types';
 import { convertToBrightness } from '@/lib/colorUtils';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
 import Link from 'next/link';
-import { followStore, unfollowStore, isFollowingStore } from '@/lib/api/followEndpoints';
-import { useState } from 'react';
+import { LuStore } from 'react-icons/lu';
+import { followStore, unfollowStore } from '@/lib/api/followEndpoints';
 
 export function StoreMapCard({ store }: { store: StoreDTO }) {
   const color = store.storefront?.primaryColor ?? '#c65a3a';
-  const [isFollowing, setIsFollowing] = useState<boolean>(false);
-  isFollowingStore(store.id).then((data) => setIsFollowing(data.isFollowing));
+  const isFollowing = useFetcher<boolean>({
+    url: `stores/${store.id}/followers/me`,
+  });
 
   return (
     <motion.div
@@ -46,16 +47,16 @@ export function StoreMapCard({ store }: { store: StoreDTO }) {
                 className="flex items-center w-fit gap-1.5 border border-primary rounded-sm px-3 py-1.5 text-xs text-primary hover:bg-primary hover:text-white transition"
                 onClick={async () => {
                   console.log(store.id);
-                  if (isFollowing) {
+                  if (isFollowing.data) {
                     await unfollowStore(store.id);
-                    setIsFollowing(false);
+                    isFollowing.setData(false);
                   } else {
                     await followStore(store.id);
-                    setIsFollowing(true);
+                    isFollowing.setData(true);
                   }
                 }}
               >
-                {isFollowing ? 'Dejar de seguir' : '+ Seguir'}
+                {isFollowing.data ? 'Dejar de seguir' : '+ Seguir'}
               </Button>
             </div>
 
