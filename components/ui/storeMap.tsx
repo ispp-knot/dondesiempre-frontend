@@ -112,7 +112,7 @@ export function StoreMap({
       </Map>
 
       {/* Custom Map Controls */}
-      <div className="absolute top-4 left-4 flex flex-col gap-2">
+      <div className="absolute top-4 sm:top-20 left-4 flex flex-col gap-2">
         <div className="bg-background/80 backdrop-blur rounded-md p-1 shadow-lg">
           <Button variant="ghost" size="icon" onClick={handleGeolocate}>
             <MdMyLocation size={30} />
