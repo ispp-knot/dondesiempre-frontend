@@ -4,7 +4,7 @@ import { StoreDTO } from '../api/types';
 import { authorizedOfetch } from './authorizedOfetch';
 
 export async function getFollowedStores(): Promise<StoreDTO[]> {
-  return await authorizedOfetch(getBackendUrl() + '/api/v1/clients/me/followed-stores');
+  return await authorizedOfetch(getBackendUrl() + '/api/v1/clients/me/following');
 }
 
 export async function followStore(storeId: string | number): Promise<void> {
@@ -14,11 +14,11 @@ export async function followStore(storeId: string | number): Promise<void> {
 }
 
 export async function unfollowStore(storeId: string | number): Promise<void> {
-  await authorizedOfetch(getBackendUrl() + `/api/v1/stores/${storeId}/followers/me`, {
+  await authorizedOfetch(getBackendUrl() + `/api/v1/stores/${storeId}/follow`, {
     method: 'DELETE',
   });
 }
 
 export async function isFollowingStore(storeId: string | number): Promise<isFollowingResponse> {
-  return await authorizedOfetch(getBackendUrl() + `/api/v1/stores/${storeId}/followers/me`);
+  return await authorizedOfetch(getBackendUrl() + `/api/v1/stores/${storeId}/follow`);
 }
