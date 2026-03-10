@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { LocationPickerMap } from '@/components/ui/locationPickerMap';
 import { registerClient, registerStore } from '@/lib/api/authEndpoints';
 
 // ── Schemas ────────────────────────────────────────────────────────────────────
@@ -41,8 +42,8 @@ const clientStep2Schema = z.object({
 const storeStep2Schema = z.object({
   name: z.string().min(1, 'Requerido').max(255),
   storeID: z.string().min(1, 'Requerido').max(255),
-  latitude: z.number({ error: 'Debe ser un número' }),
-  longitude: z.number({ error: 'Debe ser un número' }),
+  latitude: z.number({ error: 'Selecciona una ubicación en el mapa' }),
+  longitude: z.number({ error: 'Selecciona una ubicación en el mapa' }),
   address: z.string().min(1, 'Requerido').max(255),
   openingHours: z.string().min(1, 'Requerido').max(255),
   acceptsShipping: z.boolean(),
@@ -391,29 +392,19 @@ function StoreStep2Form({
         <Input id="storeID" aria-invalid={!!errors.storeID} {...register('storeID')} />
         <FieldError message={errors.storeID?.message} />
       </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-1">
-          <Label htmlFor="latitude">Latitud</Label>
-          <Input
-            id="latitude"
-            type="number"
-            step="any"
-            aria-invalid={!!errors.latitude}
-            {...register('latitude', { valueAsNumber: true })}
-          />
-          <FieldError message={errors.latitude?.message} />
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor="longitude">Longitud</Label>
-          <Input
-            id="longitude"
-            type="number"
-            step="any"
-            aria-invalid={!!errors.longitude}
-            {...register('longitude', { valueAsNumber: true })}
-          />
-          <FieldError message={errors.longitude?.message} />
-        </div>
+      <div className="space-y-1">
+        <Label>Ubicación</Label>
+        <LocationPickerMap
+          latitude={watch('latitude') || undefined}
+          longitude={watch('longitude') || undefined}
+          onChange={(lat, lng) => {
+            setValue('latitude', lat, { shouldValidate: true });
+            setValue('longitude', lng, { shouldValidate: true });
+          }}
+        />
+        {(errors.latitude || errors.longitude) && (
+          <FieldError message={errors.latitude?.message ?? errors.longitude?.message} />
+        )}
       </div>
       <div className="space-y-1">
         <Label htmlFor="address">Dirección</Label>
