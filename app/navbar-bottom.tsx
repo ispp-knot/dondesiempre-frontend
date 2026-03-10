@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FaRegUser, FaUser, FaRegHeart, FaHeart, FaSearch } from 'react-icons/fa';
@@ -12,7 +13,12 @@ import { AiOutlineShop, AiFillShop } from 'react-icons/ai';
 export default function NavbarBottom() {
   const pathname = usePathname();
   const [isAdmin, _setIsAdmin] = useState<boolean>(false);
-  const navItemsClient = [
+  const navItemsClient: {
+    href: string;
+    icon: React.ReactElement;
+    activeIcon: React.ReactElement;
+    activeMatches?: string[];
+  }[] = [
     {
       href: '/search',
       icon: <IoSearch />,
@@ -35,11 +41,17 @@ export default function NavbarBottom() {
     },
     {
       href: '/profile',
+      activeMatches: ['/profile', '/login', '/register'],
       icon: <FaRegUser />,
       activeIcon: <FaUser />,
     },
   ];
-  const navItemsAdmin = [
+  const navItemsAdmin: {
+    href: string;
+    icon: React.ReactElement;
+    activeIcon: React.ReactElement;
+    activeMatches?: string[];
+  }[] = [
     {
       href: '/search',
       icon: <AiOutlineShop />,
@@ -59,7 +71,8 @@ export default function NavbarBottom() {
   return (
     <div className="flex fixed flex-row items-center justify-around sm:hidden bottom-0 left-0 w-full h-20 bg-primary text-white text-2xl z-20">
       {(isAdmin ? navItemsAdmin : navItemsClient).map((item) => {
-        const isActive = pathname.startsWith(item.href);
+        const matches = item.activeMatches ?? [item.href];
+        const isActive = matches.some((m) => pathname.startsWith(m));
         return (
           <Link key={item.href} href={item.href}>
             {isActive ? item.activeIcon : item.icon}

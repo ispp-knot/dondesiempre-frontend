@@ -6,18 +6,13 @@ import { AiOutlineShop } from 'react-icons/ai';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 
 export default function Navbar() {
   const [isAdmin, _setIsAdmin] = useState<boolean>(false);
-  const pathname = usePathname();
-  const isAbsolute = pathname === '/stores' ? 'absolute' : 'sticky top-0';
-
   return (
     <>
-      <div
-        className={`hidden sm:flex bg-white text-primary w-full h-0 sm:h-17.5 items-center justify-center z-20 shadow-md ${isAbsolute}`}
-      >
+      <div className="hidden sm:flex bg-white text-primary w-full h-0 sm:h-17.5 items-center justify-center z-20 shadow-md">
         <div className="flex flex-row items-center w-11/12 gap-10 justify-between">
           <div className="flex flex-row items-center gap-10">
             <Link href={'/'} className="flex flex-row items-center gap-2">
@@ -42,10 +37,35 @@ export default function Navbar() {
                   className="cursor-pointer"
                   onClick={() => (window.location.href = '/deliveries')}
                 />
-                <FaRegUser
-                  className="cursor-pointer"
-                  onClick={() => (window.location.href = '/profile')}
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button className="cursor-pointer" aria-label="Usuario">
+                      <FaRegUser />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent align="end" className="w-44 p-2">
+                    <div className="flex flex-col text-sm">
+                      <Link
+                        href="/login"
+                        className="rounded-md px-3 py-2 hover:bg-muted text-foreground"
+                      >
+                        Iniciar sesión
+                      </Link>
+                      <Link
+                        href="/register"
+                        className="rounded-md px-3 py-2 hover:bg-muted text-foreground"
+                      >
+                        Registrarse
+                      </Link>
+                      <Link
+                        href="/profile"
+                        className="rounded-md px-3 py-2 hover:bg-muted text-foreground"
+                      >
+                        Mi perfil
+                      </Link>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </>
             )}
             {isAdmin && (
