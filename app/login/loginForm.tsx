@@ -25,7 +25,7 @@ function FieldError({ message }: { message?: string }) {
   return <p className="text-xs text-destructive">{message}</p>;
 }
 
-export default function LoginForm() {
+export function LoginForm() {
   const [apiError, setApiError] = useState<string | null>(null);
   const router = useRouter();
   const { registerInfo } = useAuth();

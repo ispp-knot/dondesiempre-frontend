@@ -1,10 +1,13 @@
-import GlassCenterCard from '@/components/dondeSiempre/GlassCenterCard';
-import LoginForm from './loginForm';
+import { GlassCenterCard } from '@/components/dondeSiempre/GlassCenterCard';
+import { ServerLoggedOutGuard } from '@/components/guards/ServerLoggedOutGuard';
+import { LoginForm } from './loginForm';
 
 export default function LoginPage() {
   return (
-    <GlassCenterCard>
-      <LoginForm />
-    </GlassCenterCard>
+    <ServerLoggedOutGuard>
+      <GlassCenterCard logo>
+        <LoginForm />
+      </GlassCenterCard>
+    </ServerLoggedOutGuard>
   );
 }
