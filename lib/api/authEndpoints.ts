@@ -6,22 +6,21 @@ export interface RegisterClientDTO {
   password: string;
   name: string;
   surname: string;
-  phone: string;
-  address: string;
+  phone: string | null;
+  address: string | null;
 }
 
 export interface RegisterStoreDTO {
   email: string;
   password: string;
   name: string;
-  storeID: string;
   latitude: number;
   longitude: number;
   address: string;
   openingHours: string;
   acceptsShipping: boolean;
-  phone: string;
-  aboutUs: string;
+  phone: string | null;
+  aboutUs: string | null;
   primaryColor: string;
   secondaryColor: string;
 }

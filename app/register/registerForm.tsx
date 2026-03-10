@@ -69,7 +69,9 @@ const storeStep2Schema = z.object({
 });
 
 type Step1Values = z.infer<typeof step1Schema>;
+type ClientStep2InputValues = z.input<typeof clientStep2Schema>;
 type ClientStep2Values = z.infer<typeof clientStep2Schema>;
+type StoreStep2InputValues = z.input<typeof storeStep2Schema>;
 type StoreStep2Values = z.infer<typeof storeStep2Schema>;
 
 // ── Shared helpers ─────────────────────────────────────────────────────────────
@@ -286,7 +288,7 @@ function ClientStep2Form({
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<ClientStep2Values>({
+  } = useForm<ClientStep2InputValues, unknown, ClientStep2Values>({
     resolver: zodResolver(clientStep2Schema),
   });
 
@@ -364,7 +366,7 @@ function StoreStep2Form({
     watch,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<StoreStep2Values>({
+  } = useForm<StoreStep2InputValues, unknown, StoreStep2Values>({
     resolver: zodResolver(storeStep2Schema),
     defaultValues: {
       acceptsShipping: false,
