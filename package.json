@@ -10,7 +10,9 @@
     "check-types": "tsc --noEmit",
     "autolint": "eslint --fix",
     "prepare-husky": "husky",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "test": "npx playwright test",
+    "test headed": "npx playwright test --headed"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

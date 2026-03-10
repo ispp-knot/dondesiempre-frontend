@@ -56,7 +56,7 @@ export default defineConfig({
 
     ignoreHTTPSErrors: true,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-
+    headless: true,
     permissions: ['geolocation'],
     geolocation: { latitude: DEFAULT_MAP_LOCATION.lat, longitude: DEFAULT_MAP_LOCATION.lng },
     trace: 'on-first-retry',
