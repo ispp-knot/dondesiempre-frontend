@@ -112,7 +112,7 @@ export default function useFetcher<T, TBody = undefined>({
     setData(queryResponse.data ?? null);
   }, [queryResponse.data]);
 
-  const { isLoading, isError, error, isPending, isFetching, refetch } = queryResponse;
+  const { isLoading, isError, error, isPending, isFetching } = queryResponse;
 
   const execute = (options?: {
     newBody?: TBody;
