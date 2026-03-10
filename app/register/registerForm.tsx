@@ -6,10 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Link from 'next/link';
 
+import { FetchError } from 'ofetch';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { LocationPickerMap } from '@/components/ui/locationPickerMap';
 import { registerClient, registerStore } from '@/lib/api/authEndpoints';
 
 // ── Schemas ────────────────────────────────────────────────────────────────────
@@ -33,33 +35,50 @@ const step1Schema = z
 const clientStep2Schema = z.object({
   name: z.string().min(1, 'Requerido').max(255),
   surname: z.string().min(1, 'Requerido').max(255),
-  phone: z.string().min(1, 'Requerido'),
-  address: z.string().min(1, 'Requerido').max(255),
+  phone: z
+    .string()
+    .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
+      message: 'Invalid phone number',
+    })
+    .transform((value) => (value === '' ? null : value)),
+  address: z
+    .string()
+    .max(255)
+    .transform((value) => (value === '' ? null : value)),
 });
 
 const storeStep2Schema = z.object({
   name: z.string().min(1, 'Requerido').max(255),
-  storeID: z.string().min(1, 'Requerido').max(255),
-  latitude: z.number({ error: 'Debe ser un número' }),
-  longitude: z.number({ error: 'Debe ser un número' }),
+  latitude: z.number({ error: 'Selecciona una ubicación en el mapa' }),
+  longitude: z.number({ error: 'Selecciona una ubicación en el mapa' }),
   address: z.string().min(1, 'Requerido').max(255),
   openingHours: z.string().min(1, 'Requerido').max(255),
   acceptsShipping: z.boolean(),
-  phone: z.string().min(1, 'Requerido'),
-  aboutUs: z.string().min(1, 'Requerido').max(5000),
+  phone: z
+    .string()
+    .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
+      message: 'Invalid phone number',
+    })
+    .transform((value) => (value === '' ? null : value)),
+  aboutUs: z
+    .string()
+    .max(5000)
+    .transform((value) => (value === '' ? null : value)),
   primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Color inválido (ej: #FF0000)'),
   secondaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Color inválido (ej: #FF0000)'),
 });
 
 type Step1Values = z.infer<typeof step1Schema>;
+type ClientStep2InputValues = z.input<typeof clientStep2Schema>;
 type ClientStep2Values = z.infer<typeof clientStep2Schema>;
+type StoreStep2InputValues = z.input<typeof storeStep2Schema>;
 type StoreStep2Values = z.infer<typeof storeStep2Schema>;
 
 // ── Shared helpers ─────────────────────────────────────────────────────────────
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
-  return <p className="text-xs text-destructive">{message}</p>;
+  return <p className="">{message}</p>;
 }
 
 // ── Root component ─────────────────────────────────────────────────────────────
@@ -269,7 +288,7 @@ function ClientStep2Form({
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<ClientStep2Values>({
+  } = useForm<ClientStep2InputValues, unknown, ClientStep2Values>({
     resolver: zodResolver(clientStep2Schema),
   });
 
@@ -283,7 +302,11 @@ function ClientStep2Form({
       });
       onSuccess();
     } catch (err: unknown) {
-      setApiError(err instanceof Error ? err.message : 'Error al registrarse. Inténtalo de nuevo.');
+      if (err instanceof FetchError && err.response?.status === 409) {
+        setApiError('El correo ya existe.');
+      } else {
+        setApiError('Ha ocurrido un error.');
+      }
     }
   }
 
@@ -343,7 +366,7 @@ function StoreStep2Form({
     watch,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<StoreStep2Values>({
+  } = useForm<StoreStep2InputValues, unknown, StoreStep2Values>({
     resolver: zodResolver(storeStep2Schema),
     defaultValues: {
       acceptsShipping: false,
@@ -366,7 +389,11 @@ function StoreStep2Form({
       });
       onSuccess();
     } catch (err: unknown) {
-      setApiError(err instanceof Error ? err.message : 'Error al registrarse. Inténtalo de nuevo.');
+      if (err instanceof FetchError && err.response?.status === 409) {
+        setApiError('Nombre de usuario ya tomado.');
+      } else {
+        setApiError('Ha ocurrido un error.');
+      }
     }
   }
 
@@ -378,33 +405,18 @@ function StoreStep2Form({
         <FieldError message={errors.name?.message} />
       </div>
       <div className="space-y-1">
-        <Label htmlFor="storeID">ID de tienda</Label>
-        <Input id="storeID" aria-invalid={!!errors.storeID} {...register('storeID')} />
-        <FieldError message={errors.storeID?.message} />
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-1">
-          <Label htmlFor="latitude">Latitud</Label>
-          <Input
-            id="latitude"
-            type="number"
-            step="any"
-            aria-invalid={!!errors.latitude}
-            {...register('latitude', { valueAsNumber: true })}
-          />
-          <FieldError message={errors.latitude?.message} />
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor="longitude">Longitud</Label>
-          <Input
-            id="longitude"
-            type="number"
-            step="any"
-            aria-invalid={!!errors.longitude}
-            {...register('longitude', { valueAsNumber: true })}
-          />
-          <FieldError message={errors.longitude?.message} />
-        </div>
+        <Label>Ubicación</Label>
+        <LocationPickerMap
+          latitude={watch('latitude') || undefined}
+          longitude={watch('longitude') || undefined}
+          onChange={(lat, lng) => {
+            setValue('latitude', lat, { shouldValidate: true });
+            setValue('longitude', lng, { shouldValidate: true });
+          }}
+        />
+        {(errors.latitude || errors.longitude) && (
+          <FieldError message={errors.latitude?.message ?? errors.longitude?.message} />
+        )}
       </div>
       <div className="space-y-1">
         <Label htmlFor="address">Dirección</Label>

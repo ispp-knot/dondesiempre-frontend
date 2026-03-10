@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { FetchError } from 'ofetch';
 import { login } from '@/lib/api/authEndpoints';
 import { useAuth } from '@/lib/auth/AuthContext';
 
@@ -45,7 +46,11 @@ export function LoginForm() {
       registerInfo(userInfo);
       router.push('/');
     } catch (err: unknown) {
-      setApiError(err instanceof Error ? err.message : 'Email o contraseña incorrectos.');
+      if (err instanceof FetchError && err.response?.status === 403) {
+        setApiError('Credenciales incorrectos.');
+      } else {
+        setApiError('Ha ocurrido un error.');
+      }
     }
   }
 
