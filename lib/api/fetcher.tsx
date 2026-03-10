@@ -1,7 +1,7 @@
 import { authorizedOfetch } from './authorizedOfetch';
 import { getBackendUrl } from '../config';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 /*
   formPayload must be of the type:
@@ -14,20 +14,22 @@ import { useEffect, useState } from 'react';
 
 type FormPayload = Record<string, any>;
 
+type QueryKey<TBody> = [
+  string,
+  string,
+  TBody | undefined,
+  FormPayload | undefined,
+  Record<string, string | number | boolean>,
+];
+
 type UseFetcherResult<T, TBody> = ReturnType<typeof useQuery<T>> & {
   data: T | null;
   setData: React.Dispatch<React.SetStateAction<T | null>>;
-  body: TBody | undefined;
-  setBody: React.Dispatch<React.SetStateAction<TBody | undefined>>;
-  formPayload: FormPayload | undefined;
-  setFormPayload: React.Dispatch<React.SetStateAction<FormPayload | undefined>>;
-  queryParams: Record<string, string | number | boolean>;
-  setQueryParams: React.Dispatch<React.SetStateAction<Record<string, string | number | boolean>>>;
   execute: (options?: {
     newBody?: TBody;
     newFormPayload?: FormPayload;
     newQueryParams?: Record<string, string | number | boolean>;
-  }) => ReturnType<ReturnType<typeof useQuery<T>>['refetch']>;
+  }) => void;
 };
 
 type UseFetcherOptions<TBody> = {
@@ -52,33 +54,33 @@ export default function useFetcher<T, TBody = undefined>({
   }
 
   if (method === 'GET' && (initialBody || initialFormPayload)) {
-    throw new Error('1 GET queries should not include a body');
+    throw new Error('GET queries should not include a body');
   }
 
   const [data, setData] = useState<T | null>(null);
-  const [modifiableBody, setModifiableBody] = useState<TBody | undefined>(initialBody);
-  const [modifiableFormPayload, setModifiableFormPayload] = useState<FormPayload | undefined>(
-    initialFormPayload
-  );
-  const [modifiableQueryParams, setModifiableQueryParams] =
-    useState<Record<string, string | number | boolean>>(initialQueryParams);
 
-  const buildUrl = () => {
-    const searchParams = new URLSearchParams(
-      Object.entries(modifiableQueryParams).map(([k, v]) => [k, String(v)])
-    ).toString();
-    return searchParams ? `${url}?${searchParams}` : url;
-  };
+  const formPayloadRef = useRef<FormPayload | undefined>(initialFormPayload);
+  const bodyRef = useRef<TBody | undefined>(initialBody);
+  const queryParamsRef = useRef<Record<string, string | number | boolean>>(initialQueryParams);
 
   const queryFetch = async () => {
     let fetchBody;
+    const payload = formPayloadRef.current;
+    const body = bodyRef.current;
+
+    const buildUrl = () => {
+      const searchParams = new URLSearchParams(
+        Object.entries(queryParamsRef.current).map(([k, v]) => [k, String(v)])
+      ).toString();
+      return searchParams ? `${url}?${searchParams}` : url;
+    };
 
     if (method !== 'GET') {
-      if (!modifiableFormPayload) {
-        fetchBody = JSON.stringify(modifiableBody);
+      if (!payload) {
+        fetchBody = JSON.stringify(body);
       } else {
         const formData = new FormData();
-        Object.entries(modifiableFormPayload).forEach(([k, v]) => {
+        Object.entries(payload).forEach(([k, v]) => {
           if (v !== undefined && v !== null) formData.append(k, v);
         });
         fetchBody = formData;
@@ -91,8 +93,16 @@ export default function useFetcher<T, TBody = undefined>({
     })) as T;
   };
 
+  const [queryKey, setQueryKey] = useState<QueryKey<TBody>>([
+    url,
+    method,
+    initialBody,
+    initialFormPayload,
+    initialQueryParams,
+  ]);
+
   const queryResponse = useQuery<T>({
-    queryKey: [url, method, modifiableBody, modifiableFormPayload, modifiableQueryParams],
+    queryKey,
     queryFn: queryFetch,
     enabled: fetchOnStart,
   });
@@ -104,20 +114,26 @@ export default function useFetcher<T, TBody = undefined>({
 
   const { isLoading, isError, error, isPending, isFetching, refetch } = queryResponse;
 
-  const execute = async (options?: {
+  const execute = (options?: {
     newBody?: TBody;
     newFormPayload?: FormPayload;
     newQueryParams?: Record<string, string | number | boolean>;
-  }) => {
+  }): void => {
     if (method === 'GET' && (options?.newBody || options?.newFormPayload)) {
       throw new Error('GET queries should not include a body');
     }
 
-    if (options?.newFormPayload) setModifiableFormPayload(options.newFormPayload);
-    else if (options?.newBody) setModifiableBody(options.newBody);
+    if (options?.newFormPayload) {
+      formPayloadRef.current = options.newFormPayload;
+    } else if (options?.newBody) {
+      bodyRef.current = options.newBody;
+    }
 
-    if (options?.newQueryParams) setModifiableQueryParams(options.newQueryParams);
-    return refetch();
+    if (options?.newQueryParams) {
+      queryParamsRef.current = options.newQueryParams;
+    }
+
+    setQueryKey([url, method, bodyRef.current, formPayloadRef.current, queryParamsRef.current]);
   };
 
   return {
@@ -129,11 +145,5 @@ export default function useFetcher<T, TBody = undefined>({
     execute,
     data,
     setData,
-    body: modifiableBody,
-    setBody: setModifiableBody,
-    formPayload: modifiableFormPayload,
-    setFormPayload: setModifiableFormPayload,
-    queryParams: modifiableQueryParams,
-    setQueryParams: setModifiableQueryParams,
   } as UseFetcherResult<T, TBody>;
 }

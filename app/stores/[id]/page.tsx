@@ -43,9 +43,9 @@ export default function StorePage() {
   }
 
   const socialNetworks: Array<StoreSocialNetworkDTO> = store.data?.socialNetworks || [];
-  const primaryColor = store.data.storefront?.primaryColor || '#000000';
-  const secondaryColor = store.data.storefront?.secondaryColor || '#000000';
-  const banner = store.data.storefront?.bannerImageUrl;
+  const primaryColor = store.data?.storefront?.primaryColor || '#000000';
+  const secondaryColor = store.data?.storefront?.secondaryColor || '#000000';
+  const banner = store.data?.storefront?.bannerImageUrl;
 
   const collections = [
     { id: 1, name: 'Veraneo', image: '' },
