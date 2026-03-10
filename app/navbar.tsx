@@ -1,18 +1,20 @@
 'use client';
 
-import { FaRegUser, FaRegHeart } from 'react-icons/fa';
+import { FaRegHeart } from 'react-icons/fa';
 import { LuPackage } from 'react-icons/lu';
 import { AiOutlineShop } from 'react-icons/ai';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { useAuth } from '@/lib/auth/AuthContext';
+import { usePathname } from 'next/navigation';
+import { UserNavButton } from '@/components/dondeSiempre/UserNavButton';
 
 export default function Navbar() {
   const [isAdmin, _setIsAdmin] = useState<boolean>(false);
-  const { getCurrentUser } = useAuth();
-  const user = getCurrentUser();
-  const profileHref = user ? '/profile' : '/login';
+  const pathname = usePathname();
+
+  const userActiveMatches = ['/profile', '/login', '/register'];
+  const isUserActive = userActiveMatches.some((m) => pathname.startsWith(m));
 
   return (
     <>
@@ -41,9 +43,7 @@ export default function Navbar() {
                   className="cursor-pointer"
                   onClick={() => (window.location.href = '/deliveries')}
                 />
-                <Link href={profileHref} aria-label="Usuario">
-                  <FaRegUser className="cursor-pointer" />
-                </Link>
+                <UserNavButton isActive={isUserActive} />
               </>
             )}
             {isAdmin && (

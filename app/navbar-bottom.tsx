@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FaRegUser, FaUser, FaRegHeart, FaHeart, FaSearch } from 'react-icons/fa';
+import { RiLoginCircleLine, RiLoginCircleFill } from 'react-icons/ri';
 import { IoSearch } from 'react-icons/io5';
 import { HiOutlineLocationMarker, HiLocationMarker } from 'react-icons/hi';
 import { BsBoxSeam, BsBoxSeamFill } from 'react-icons/bs';
@@ -47,10 +48,11 @@ export default function NavbarBottom() {
     {
       href: profileHref,
       activeMatches: ['/profile', '/login', '/register'],
-      icon: <FaRegUser />,
-      activeIcon: <FaUser />,
+      icon: user ? <FaRegUser /> : <RiLoginCircleLine />,
+      activeIcon: user ? <FaUser /> : <RiLoginCircleFill />,
     },
   ];
+
   const navItemsAdmin: {
     href: string;
     icon: React.ReactElement;
@@ -70,10 +72,11 @@ export default function NavbarBottom() {
     {
       href: profileHref,
       activeMatches: ['/profile', '/login', '/register'],
-      icon: <FaRegUser />,
-      activeIcon: <FaUser />,
+      icon: user ? <FaRegUser /> : <RiLoginCircleLine />,
+      activeIcon: user ? <FaUser /> : <RiLoginCircleFill />,
     },
   ];
+
   return (
     <div className="flex fixed flex-row items-center justify-around sm:hidden bottom-0 left-0 w-full h-20 bg-primary text-white text-2xl z-20">
       {(isAdmin ? navItemsAdmin : navItemsClient).map((item) => {
