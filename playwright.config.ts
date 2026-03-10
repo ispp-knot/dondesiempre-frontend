@@ -2,15 +2,10 @@ import { defineConfig, devices } from '@playwright/test';
 import { DEFAULT_MAP_LOCATION } from './lib/mapUtils';
 
 const isCI = !!process.env.CI;
-const isWindows = process.platform === 'win32';
 
 // 2. Definimos la ruta: en CI está dentro, en local está "al lado" (..)
-const backendDir = isCI ? 'dondesiempre-backend' : '..\\dondesiempre-backend';
 
 // 3. Definimos el COMANDO basándonos SOLO en el Sistema Operativo
-const javaCommand = isWindows
-  ? `mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev-migration,seed" && mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev-migration"`
-  : `./mvnw spring-boot:run "-Dspring-boot.run.profiles=dev-migration,seed" && ./mvnw spring-boot:run "-Dspring-boot.run.profiles=dev-migration"`;
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -41,23 +36,25 @@ export default defineConfig({
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 180 * 1000,
-      //stdout: 'pipe', // <--- Verás los logs del Frontend
-      //stderr: 'pipe',
+      // stdout: 'pipe', // <--- Verás los logs del Frontend
+      // stderr: 'pipe',
     },
-    {
-      // Fíjate bien en el './' para Linux
-      command: `cd ${backendDir} && ${javaCommand}`,
-      url: 'http://localhost:8080/api/v1/health',
-      reuseExistingServer: !process.env.CI,
-      //stdout: 'pipe',
-      //stderr: 'pipe',
-      timeout: 300 * 1000,
-    },
+    ...(isCI
+      ? [
+          {
+            command: `cd dondesiempre-backend && ./mvnw spring-boot:run "-Dspring-boot.run.profiles=dev-migration,seed" && ./mvnw spring-boot:run "-Dspring-boot.run.profiles=dev-migration"`,
+            url: 'http://localhost:8080/api/v1/health',
+            reuseExistingServer: false, // En CI queremos que lo levante siempre de cero
+            timeout: 300 * 1000,
+          },
+        ]
+      : []),
   ],
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
     baseURL: 'http://localhost:3000',
 
+    ignoreHTTPSErrors: true,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
 
     permissions: ['geolocation'],
@@ -71,11 +68,17 @@ export default defineConfig({
     //  name: 'chromium',
     //  use: { ...devices['Desktop Chrome'] },
     //},
-
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
+    /*{
+  name: 'firefox-developer',
+  use: { 
+    ...devices['Desktop Firefox'],
+    // CAMBIO CLAVE: Ruta al ejecutable de tu Developer Edition
+    // En Windows suele ser esta, compruébala en tu PC:
+    launchOptions: {
+      executablePath: '"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Firefox Developer Edition.lnk"',
+    }
+  },
+},*/
 
     //{
     //  name: 'webkit',
