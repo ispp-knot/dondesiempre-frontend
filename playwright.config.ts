@@ -32,12 +32,12 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   webServer: [
     {
-      command: 'npm run dev',
+      command: 'npm run build && npm run dev',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 180 * 1000,
-      // stdout: 'pipe', // <--- Verás los logs del Frontend
-      // stderr: 'pipe',
+      stdout: 'pipe', // <--- Verás los logs del Frontend
+      stderr: 'pipe',
     },
     ...(isCI
       ? [
