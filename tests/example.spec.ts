@@ -22,7 +22,7 @@ test('get started link', async ({ page }) => {
 */
 test.beforeEach(async ({ context }) => {
   // Bloquea el registro del Service Worker antes de cargar la página
-  
+
   await context.grantPermissions(['geolocation']);
 
   // 3. (Opcional) Forzamos la posición inicial para que el mapa no flote
