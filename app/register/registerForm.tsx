@@ -35,20 +35,35 @@ const step1Schema = z
 const clientStep2Schema = z.object({
   name: z.string().min(1, 'Requerido').max(255),
   surname: z.string().min(1, 'Requerido').max(255),
-  phone: z.string().min(1, 'Requerido'),
-  address: z.string().min(1, 'Requerido').max(255),
+  phone: z
+    .string()
+    .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
+      message: 'Invalid phone number',
+    })
+    .transform((value) => (value === '' ? null : value)),
+  address: z
+    .string()
+    .max(255)
+    .transform((value) => (value === '' ? null : value)),
 });
 
 const storeStep2Schema = z.object({
   name: z.string().min(1, 'Requerido').max(255),
-  storeID: z.string().min(1, 'Requerido').max(255),
   latitude: z.number({ error: 'Selecciona una ubicación en el mapa' }),
   longitude: z.number({ error: 'Selecciona una ubicación en el mapa' }),
   address: z.string().min(1, 'Requerido').max(255),
   openingHours: z.string().min(1, 'Requerido').max(255),
   acceptsShipping: z.boolean(),
-  phone: z.string().min(1, 'Requerido'),
-  aboutUs: z.string().min(1, 'Requerido').max(5000),
+  phone: z
+    .string()
+    .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
+      message: 'Invalid phone number',
+    })
+    .transform((value) => (value === '' ? null : value)),
+  aboutUs: z
+    .string()
+    .max(5000)
+    .transform((value) => (value === '' ? null : value)),
   primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Color inválido (ej: #FF0000)'),
   secondaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Color inválido (ej: #FF0000)'),
 });
@@ -61,7 +76,7 @@ type StoreStep2Values = z.infer<typeof storeStep2Schema>;
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
-  return <p className="text-xs text-destructive">{message}</p>;
+  return <p className="">{message}</p>;
 }
 
 // ── Root component ─────────────────────────────────────────────────────────────
@@ -386,11 +401,6 @@ function StoreStep2Form({
         <Label htmlFor="name">Nombre de la tienda</Label>
         <Input id="name" aria-invalid={!!errors.name} {...register('name')} />
         <FieldError message={errors.name?.message} />
-      </div>
-      <div className="space-y-1">
-        <Label htmlFor="storeID">ID de tienda</Label>
-        <Input id="storeID" aria-invalid={!!errors.storeID} {...register('storeID')} />
-        <FieldError message={errors.storeID?.message} />
       </div>
       <div className="space-y-1">
         <Label>Ubicación</Label>
