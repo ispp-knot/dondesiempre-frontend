@@ -75,7 +75,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserInfo | null>(readFromStorage());
 
   const registerInfo = useCallback((newUser: UserInfo) => {
-    debugger;
     setUser(newUser);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newUser));
     setServerSession(newUser);
