@@ -4,7 +4,7 @@ import { RegisterForm } from './registerForm';
 
 export default function RegisterPage() {
   return (
-    <ServerLoggedOutGuard>
+    <ServerLoggedOutGuard redirectTo="/profile">
       <GlassCenterCard logo>
         <RegisterForm />
       </GlassCenterCard>
