@@ -101,8 +101,14 @@ export default defineConfig({
     //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
     // },
     {
-      name: 'Google Chrome',
-      use: { ...devices['Desktop Chrome'], channel: 'chrome', screenshot: 'only-on-failure' },
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        screenshot: 'only-on-failure',
+        ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+          ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
+          : {}),
+      },
     },
   ],
 
