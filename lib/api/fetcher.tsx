@@ -12,52 +12,89 @@ import { useEffect, useState } from 'react';
   };
 */
 
-type UseFetcherResult<T> = ReturnType<typeof useQuery<T>> & {
+type FormPayload = Record<string, any>;
+
+type UseFetcherResult<T, TBody> = ReturnType<typeof useQuery<T>> & {
   data: T | null;
   setData: React.Dispatch<React.SetStateAction<T | null>>;
+  body: TBody | undefined;
+  setBody: React.Dispatch<React.SetStateAction<TBody | undefined>>;
+  formPayload: FormPayload | undefined;
+  setFormPayload: React.Dispatch<React.SetStateAction<FormPayload | undefined>>;
+  queryParams: Record<string, string | number | boolean>;
+  setQueryParams: React.Dispatch<React.SetStateAction<Record<string, string | number | boolean>>>;
+  execute: (options?: {
+    newBody?: TBody;
+    newFormPayload?: FormPayload;
+    newQueryParams?: Record<string, string | number | boolean>;
+  }) => ReturnType<ReturnType<typeof useQuery<T>>['refetch']>;
 };
 
-type UseFetcherOptions = {
+type UseFetcherOptions<TBody> = {
   url: string;
-  method?: string; // defaults to 'GET'
-  body?: any; // optional
-  formPayload?: object; // optional
+  method?: string;
+  body?: TBody;
+  formPayload?: FormPayload;
+  fetchOnStart?: boolean;
+  queryParams?: Record<string, string | number | boolean>;
 };
 
-export default function useFetcher<T>({
+export default function useFetcher<T, TBody = undefined>({
   url,
   method = 'GET',
-  body = undefined,
-  formPayload = undefined,
-}: UseFetcherOptions): UseFetcherResult<T> {
-  const [data, setData] = useState<T | null>(null);
-
-  let fetchBody = undefined;
-
-  if (method === 'POST') {
-    if (!formPayload) {
-      fetchBody = JSON.stringify(body);
-    } else {
-      const formData = new FormData();
-      Object.entries(formPayload).forEach(([k, v]) => v && formData.append(k, v));
-      fetchBody = formData;
-    }
+  body: initialBody = undefined,
+  formPayload: initialFormPayload = undefined,
+  fetchOnStart = true,
+  queryParams: initialQueryParams = {},
+}: UseFetcherOptions<TBody>): UseFetcherResult<T, TBody> {
+  if (url.includes('?')) {
+    throw new Error('You should include query parameters in the queryParams field');
   }
 
+  if (method === 'GET' && (initialBody || initialFormPayload)) {
+    throw new Error('1 GET queries should not include a body');
+  }
+
+  const [data, setData] = useState<T | null>(null);
+  const [modifiableBody, setModifiableBody] = useState<TBody | undefined>(initialBody);
+  const [modifiableFormPayload, setModifiableFormPayload] = useState<FormPayload | undefined>(
+    initialFormPayload
+  );
+  const [modifiableQueryParams, setModifiableQueryParams] =
+    useState<Record<string, string | number | boolean>>(initialQueryParams);
+
+  const buildUrl = () => {
+    const searchParams = new URLSearchParams(
+      Object.entries(modifiableQueryParams).map(([k, v]) => [k, String(v)])
+    ).toString();
+    return searchParams ? `${url}?${searchParams}` : url;
+  };
+
   const queryFetch = async () => {
-    const data = (await authorizedOfetch(getBackendUrl() + '/api/v1/' + url, {
+    let fetchBody;
+
+    if (method !== 'GET') {
+      if (!modifiableFormPayload) {
+        fetchBody = JSON.stringify(modifiableBody);
+      } else {
+        const formData = new FormData();
+        Object.entries(modifiableFormPayload).forEach(([k, v]) => {
+          if (v !== undefined && v !== null) formData.append(k, v);
+        });
+        fetchBody = formData;
+      }
+    }
+
+    return (await authorizedOfetch(getBackendUrl() + '/api/v1/' + buildUrl(), {
       method,
       body: fetchBody,
     })) as T;
-
-    return data;
   };
 
-  const queryCache: Array<string> = url.split('/');
-
   const queryResponse = useQuery<T>({
-    queryKey: queryCache,
-    queryFn: () => queryFetch(),
+    queryKey: [url, method, modifiableBody, modifiableFormPayload, modifiableQueryParams],
+    queryFn: queryFetch,
+    enabled: fetchOnStart,
   });
 
   useEffect(() => {
@@ -67,14 +104,36 @@ export default function useFetcher<T>({
 
   const { isLoading, isError, error, isPending, isFetching, refetch } = queryResponse;
 
+  const execute = async (options?: {
+    newBody?: TBody;
+    newFormPayload?: FormPayload;
+    newQueryParams?: Record<string, string | number | boolean>;
+  }) => {
+    if (method === 'GET' && (options?.newBody || options?.newFormPayload)) {
+      throw new Error('GET queries should not include a body');
+    }
+
+    if (options?.newFormPayload) setModifiableFormPayload(options.newFormPayload);
+    else if (options?.newBody) setModifiableBody(options.newBody);
+
+    if (options?.newQueryParams) setModifiableQueryParams(options.newQueryParams);
+    return refetch();
+  };
+
   return {
     isLoading,
     isError,
     error,
     isPending,
     isFetching,
-    refetch,
+    execute,
     data,
     setData,
-  } as UseFetcherResult<T>;
+    body: modifiableBody,
+    setBody: setModifiableBody,
+    formPayload: modifiableFormPayload,
+    setFormPayload: setModifiableFormPayload,
+    queryParams: modifiableQueryParams,
+    setQueryParams: setModifiableQueryParams,
+  } as UseFetcherResult<T, TBody>;
 }
