@@ -72,14 +72,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="es" dir="ltr" className={quicksand.variable}>
       <head />
-      <body className={`${quicksand.className} max-sm:[&::-webkit-scrollbar]:hidden`}>
+      <body
+        className={`${quicksand.className} max-sm:[&::-webkit-scrollbar]:hidden flex flex-col min-h-screen`}
+      >
         <ConfigProvider
           backendUrl={process.env.BACKEND_URL ?? ''}
           webUrl={process.env.WEB_URL ?? ''}
         >
           <Navbar />
           <Providers>
-            <div className="pb-20 sm:pb-0">{children}</div>
+            <div className="flex flex-1 flex-col">
+              <div className="flex flex-1 flex-col pb-20 sm:pb-0">{children}</div>
+            </div>
           </Providers>
           <NavbarBottom />
         </ConfigProvider>

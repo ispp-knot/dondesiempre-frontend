@@ -49,7 +49,7 @@ export function StoresPage() {
   }
 
   return (
-    <>
+    <div>
       <StoreMap
         startingLocation={startingLocation}
         userLocation={userLocation}
@@ -58,6 +58,6 @@ export function StoresPage() {
       <AnimatePresence>
         {selectedStore && <StoreMapCard key={selectedStore.id} store={selectedStore} />}
       </AnimatePresence>
-    </>
+    </div>
   );
 }
