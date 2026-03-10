@@ -47,13 +47,12 @@ export default function OutfitProductsPage() {
       name: (document.getElementById('form-name') as HTMLInputElement).value,
       description: (document.getElementById('form-description') as HTMLInputElement).value || null,
       index: Number.parseInt((document.getElementById('form-index') as HTMLInputElement).value),
-      storefrontId: storefrontId,
       tags: outfitTags,
       products: outfitProducts.map((product, index) =>
         productToOufitCreationProduct(product, index)
       ),
     };
-    await createOutfit(dto, imageFile);
+    await createOutfit(storefrontId, dto, imageFile);
     redirect(`/stores/${storefrontId}/outfits`);
   };
 

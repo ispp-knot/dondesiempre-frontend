@@ -56,7 +56,11 @@ export async function sortProducts(
   );
 }
 
-export async function createOutfit(dto: OutfitCreation, image: File | null): Promise<void> {
+export async function createOutfit(
+  storefrontId: string,
+  dto: OutfitCreation,
+  image: File | null
+): Promise<void> {
   const formData = new FormData();
   formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }));
   if (image) {
@@ -64,6 +68,9 @@ export async function createOutfit(dto: OutfitCreation, image: File | null): Pro
   }
   return await authorizedOfetch(getBackendUrl() + '/api/v1/outfits', {
     method: 'POST',
+    query: {
+      storefrontId: storefrontId,
+    },
     body: formData,
   });
 }

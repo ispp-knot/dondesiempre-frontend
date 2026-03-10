@@ -32,7 +32,6 @@ export type OutfitCreationProduct = {
 
 export type OutfitCreation = {
   index: number;
-  storefrontId: string;
   name: string;
   description: string | null;
   tags: string[];
