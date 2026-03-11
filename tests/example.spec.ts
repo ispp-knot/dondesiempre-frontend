@@ -32,6 +32,7 @@ test.beforeEach(async ({ context }) => {
   });
 });
 
+/*
 test('test', async ({ page }) => {
   await page.goto('http://localhost:3000/stores');
   await page.context().grantPermissions(['geolocation']);
@@ -41,4 +42,18 @@ test('test', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Map marker' }).nth(4).click();
   await page.getByRole('heading', { name: 'Moda Urbana Sevilla' }).click();
+});
+*/
+
+test('test', async ({ page }) => {
+  await page.goto('http://localhost:3000/stores');
+  await page.context().grantPermissions(['geolocation']);
+
+  await page.waitForLoadState('networkidle');
+  await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 10000 });
+
+  await page.getByRole('link', { name: 'Búsqueda' }).click();
+  await page.getByRole('heading', { name: 'Estamos en construcción' }).click();
+  await page.getByText('Nuestro sitio web está siendo').click();
+  await page.getByText('Muy pronto estaremos de').click();
 });
