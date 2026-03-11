@@ -1,35 +1,23 @@
 'use client';
 
-import { JSX, useEffect, useState } from 'react';
+import ErrorText from '@/components/dondeSiempre/ErrorText';
+import LoadingText from '@/components/dondeSiempre/LoadingText';
+import NotFoundText from '@/components/dondeSiempre/NotFoundText';
+import useFetcher from '@/lib/api/fetcher';
 import { StoreDTO } from '@/lib/api/types';
-import { getFollowedStores, unfollowStore } from '@/lib/api/followEndpoints';
+import { JSX } from 'react';
 
 export default function FollowPage(): JSX.Element {
-  const [shops, setShops] = useState<StoreDTO[] | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const followedStores = useFetcher<StoreDTO[]>({ url: 'clients/me/following' });
+  const unfollowStore = useFetcher<void>({ method: 'DELETE', fetchOnStart: false });
 
-  useEffect(() => {
-    let mounted = true;
+  if (followedStores.isLoading) {
+    return <LoadingText></LoadingText>;
+  }
 
-    getFollowedStores()
-      .then((data: StoreDTO[]) => {
-        if (mounted) {
-          setShops(data);
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (mounted) {
-          setError(err.message || 'Error desconocido');
-          setLoading(false);
-        }
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  if (followedStores.isError) {
+    return <ErrorText error={followedStores.error}></ErrorText>;
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 p-6">
@@ -38,20 +26,12 @@ export default function FollowPage(): JSX.Element {
           <h1 className="text-3xl font-semibold text-gray-800">Catálogo de tiendas</h1>
         </header>
 
-        {loading && <p className="text-gray-600">Cargando tiendas…</p>}
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded">
-            Error al cargar: {error}
-          </div>
-        )}
-
-        {!loading && !error && (!shops || shops.length === 0) && (
-          <p className="text-gray-600">No hay tiendas para mostrar.</p>
+        {(!followedStores.data || followedStores.data.length === 0) && (
+          <NotFoundText message="No hay tiendas que mostrar."></NotFoundText>
         )}
 
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {shops?.map((shop) => (
+          {followedStores.data?.map((shop) => (
             <article key={shop.id} className="bg-white rounded-2xl shadow p-4 flex flex-col">
               <h2 className="text-lg font-medium text-gray-800 mb-1">
                 {shop.name ?? 'Tienda sin nombre'}
@@ -80,11 +60,10 @@ export default function FollowPage(): JSX.Element {
                   Ir a la tienda
                 </button>
                 <button
-                  onClick={() =>
-                    unfollowStore(shop.id).then(() => {
-                      window.location.reload();
-                    })
-                  }
+                  onClick={() => {
+                    unfollowStore.fetch({ newUrl: `stores/${shop.id}/follow` });
+                    window.location.reload();
+                  }}
                   className="mt-4 bg-gray-100 hover:bg-gray-200 text-green-800 py-2 px-4 rounded-md"
                 >
                   Dejar de seguir

@@ -1,17 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import useFetcher from '@/lib/api/fetcher';
 import { FetchError } from 'ofetch';
-import { login } from '@/lib/api/authEndpoints';
+import { LoginDTO } from '@/lib/api/authEndpoints';
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -28,6 +29,11 @@ function FieldError({ message }: { message?: string }) {
 export default function LoginForm() {
   const [apiError, setApiError] = useState<string | null>(null);
   const router = useRouter();
+  const login = useFetcher<void, LoginDTO>({
+    url: 'auth/login',
+    method: 'POST',
+    fetchOnStart: false,
+  });
 
   const {
     register,
@@ -40,7 +46,7 @@ export default function LoginForm() {
   async function onSubmit(data: LoginValues) {
     setApiError(null);
     try {
-      await login(data);
+      login.fetch({ newBody: data });
       router.push('/');
     } catch (err: unknown) {
       if (err instanceof FetchError && err.response?.status === 403) {

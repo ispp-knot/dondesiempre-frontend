@@ -1,25 +1,16 @@
 'use client';
 
-import { getHealth } from '@/lib/api/getHealth';
-import { useQuery } from '@tanstack/react-query';
+import useFetcher from '@/lib/api/fetcher';
 
 export function HealthCheck() {
-  const healthCheckQuery = useQuery({
-    queryKey: ['health'],
-    queryFn: getHealth,
-  });
+  const health = useFetcher<void>({ url: 'health' });
 
-  if (healthCheckQuery.isLoading) {
+  if (health.isLoading) {
     return <>Loading...</>;
   }
 
-  if (healthCheckQuery.error) {
-    return <>Error! {healthCheckQuery.error.message}</>;
-  }
-
-  if (healthCheckQuery.data == false) {
+  if (health.isError) {
     return <>Server is offline :(</>;
-  } else {
-    return <>Server is online! :)</>;
   }
+  return <>Server is online! :)</>;
 }

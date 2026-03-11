@@ -1,18 +1,19 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import Link from 'next/link';
 
-import { FetchError } from 'ofetch';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { LocationPickerMap } from '@/components/ui/locationPickerMap';
-import { registerClient, registerStore } from '@/lib/api/authEndpoints';
+import { Switch } from '@/components/ui/switch';
+import { RegisterClientDTO, RegisterStoreDTO } from '@/lib/api/authEndpoints';
+import useFetcher from '@/lib/api/fetcher';
+import { FetchError } from 'ofetch';
 
 // ── Schemas ────────────────────────────────────────────────────────────────────
 
@@ -283,6 +284,11 @@ function ClientStep2Form({
   onSuccess: () => void;
 }) {
   const [apiError, setApiError] = useState<string | null>(null);
+  const registerClient = useFetcher<void, RegisterClientDTO>({
+    url: 'auth/register/client',
+    method: 'POST',
+    fetchOnStart: false,
+  });
 
   const {
     register,
@@ -295,10 +301,12 @@ function ClientStep2Form({
   async function onSubmit(data: ClientStep2Values) {
     setApiError(null);
     try {
-      await registerClient({
-        email: step1Data.email,
-        password: step1Data.password,
-        ...data,
+      registerClient.fetch({
+        newBody: {
+          email: step1Data.email,
+          password: step1Data.password,
+          ...data,
+        },
       });
       onSuccess();
     } catch (err: unknown) {
@@ -359,6 +367,11 @@ function StoreStep2Form({
   onSuccess: () => void;
 }) {
   const [apiError, setApiError] = useState<string | null>(null);
+  const registerStore = useFetcher<void, RegisterStoreDTO>({
+    url: 'auth/register/store',
+    method: 'POST',
+    fetchOnStart: false,
+  });
 
   const {
     register,
@@ -382,10 +395,12 @@ function StoreStep2Form({
   async function onSubmit(data: StoreStep2Values) {
     setApiError(null);
     try {
-      await registerStore({
-        email: step1Data.email,
-        password: step1Data.password,
-        ...data,
+      registerStore.fetch({
+        newBody: {
+          email: step1Data.email,
+          password: step1Data.password,
+          ...data,
+        },
       });
       onSuccess();
     } catch (err: unknown) {
