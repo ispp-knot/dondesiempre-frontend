@@ -122,7 +122,7 @@ export default function StoreTabs({
         {activeTab === 'sobre' && <AboutUs description={description} />}
 
         {activeTab === 'opciones' && (
-          <StoreOptions storefrontId={storefrontId} initialData={store} />
+          <StoreOptions storefrontId={storefrontId} initialStore={store} />
         )}
       </div>
     </>
