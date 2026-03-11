@@ -15,7 +15,7 @@ import { useEffect, useRef, useState } from 'react';
 type FormPayload = Record<string, any>;
 
 type QueryKey<TBody> = [
-  string,
+  string | undefined,
   string,
   TBody | undefined,
   FormPayload | undefined,
@@ -25,7 +25,7 @@ type QueryKey<TBody> = [
 type UseFetcherResult<T, TBody> = ReturnType<typeof useQuery<T>> & {
   data: T | null;
   setData: React.Dispatch<React.SetStateAction<T | null>>;
-  execute: (options?: {
+  fetch: (options?: {
     newBody?: TBody;
     newFormPayload?: FormPayload;
     newQueryParams?: Record<string, string | number | boolean>;
@@ -33,7 +33,7 @@ type UseFetcherResult<T, TBody> = ReturnType<typeof useQuery<T>> & {
 };
 
 type UseFetcherOptions<TBody> = {
-  url: string;
+  url?: string;
   method?: string;
   body?: TBody;
   formPayload?: FormPayload;
@@ -42,14 +42,14 @@ type UseFetcherOptions<TBody> = {
 };
 
 export default function useFetcher<T, TBody = undefined>({
-  url,
+  url: initialUrl = undefined,
   method = 'GET',
   body: initialBody = undefined,
   formPayload: initialFormPayload = undefined,
   fetchOnStart = true,
   queryParams: initialQueryParams = {},
 }: UseFetcherOptions<TBody>): UseFetcherResult<T, TBody> {
-  if (url.includes('?')) {
+  if (initialUrl?.includes('?')) {
     throw new Error('You should include query parameters in the queryParams field');
   }
 
@@ -59,18 +59,24 @@ export default function useFetcher<T, TBody = undefined>({
 
   const [data, setData] = useState<T | null>(null);
 
+  const urlRef = useRef<string | undefined>(initialUrl);
   const formPayloadRef = useRef<FormPayload | undefined>(initialFormPayload);
   const bodyRef = useRef<TBody | undefined>(initialBody);
   const queryParamsRef = useRef<Record<string, string | number | boolean>>(initialQueryParams);
 
   const queryFetch = async () => {
     let fetchBody;
+    const url = urlRef.current;
+
+    if (!url) throw new Error('You must specify an URL');
+
     const payload = formPayloadRef.current;
     const body = bodyRef.current;
+    const queryParams = queryParamsRef.current;
 
     const buildUrl = () => {
       const searchParams = new URLSearchParams(
-        Object.entries(queryParamsRef.current).map(([k, v]) => [k, String(v)])
+        Object.entries(queryParams).map(([k, v]) => [k, String(v)])
       ).toString();
       return searchParams ? `${url}?${searchParams}` : url;
     };
@@ -94,7 +100,7 @@ export default function useFetcher<T, TBody = undefined>({
   };
 
   const [queryKey, setQueryKey] = useState<QueryKey<TBody>>([
-    url,
+    initialUrl,
     method,
     initialBody,
     initialFormPayload,
@@ -124,13 +130,20 @@ export default function useFetcher<T, TBody = undefined>({
     refetch();
   }, [queryKey, refetch]);
 
-  const execute = (options?: {
+  const fetch = (options?: {
+    newUrl?: string;
     newBody?: TBody;
     newFormPayload?: FormPayload;
     newQueryParams?: Record<string, string | number | boolean>;
   }): void => {
     if (method === 'GET' && (options?.newBody || options?.newFormPayload)) {
       throw new Error('GET queries should not include a body');
+    }
+
+    if (options?.newUrl) {
+      urlRef.current = options.newUrl;
+    } else if (!urlRef.current) {
+      throw new Error('You must specify an URL');
     }
 
     if (options?.newFormPayload) {
@@ -143,7 +156,19 @@ export default function useFetcher<T, TBody = undefined>({
       queryParamsRef.current = options.newQueryParams;
     }
 
-    setQueryKey([url, method, bodyRef.current, formPayloadRef.current, queryParamsRef.current]);
+    const newKey: QueryKey<TBody> = [
+      urlRef.current,
+      method,
+      bodyRef.current,
+      formPayloadRef.current,
+      queryParamsRef.current,
+    ];
+
+    if (JSON.stringify(newKey) === JSON.stringify(queryKey)) {
+      refetch();
+    } else {
+      setQueryKey(newKey);
+    }
   };
 
   return {
@@ -152,7 +177,7 @@ export default function useFetcher<T, TBody = undefined>({
     error,
     isPending,
     isFetching,
-    execute,
+    fetch,
     data,
     setData,
   } as UseFetcherResult<T, TBody>;

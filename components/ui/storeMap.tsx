@@ -35,7 +35,7 @@ export function StoreMap({
       const sw = boundary.getSouthWest();
       const ne = boundary.getNorthEast();
 
-      stores.execute({
+      stores.fetch({
         newQueryParams: { minLon: sw.lng, maxLon: ne.lng, minLat: sw.lat, maxLat: ne.lat },
       });
     },

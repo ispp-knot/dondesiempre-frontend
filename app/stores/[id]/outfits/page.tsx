@@ -112,7 +112,7 @@ export default function OutfitsPage() {
                       <Button
                         onClick={async () => {
                           await deleteOutfit(o.id);
-                          outfits.refetch();
+                          outfits.fetch();
                         }}
                         className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-primary hover:bg-dark-primary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
                       >
