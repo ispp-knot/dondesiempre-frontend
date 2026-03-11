@@ -26,6 +26,7 @@ type UseFetcherResult<T, TBody> = ReturnType<typeof useQuery<T>> & {
   data: T | null;
   setData: React.Dispatch<React.SetStateAction<T | null>>;
   fetch: (options?: {
+    newUrl?: string;
     newBody?: TBody;
     newFormPayload?: FormPayload;
     newQueryParams?: Record<string, string | number | boolean>;

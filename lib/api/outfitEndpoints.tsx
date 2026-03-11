@@ -1,22 +1,6 @@
 import { getBackendUrl } from '@/lib/config';
-import { Outfit, OutfitCreation, OutfitCreationProduct, OutfitUpdate } from '../types/outfits';
+import { OutfitCreation, OutfitCreationProduct, OutfitUpdate } from '../types/outfits';
 import { authorizedOfetch } from './authorizedOfetch';
-
-export async function getOutfitsOfStorefront(storefrontId: string): Promise<Outfit[]> {
-  return await authorizedOfetch(
-    getBackendUrl() + '/api/v1/storefronts/' + storefrontId + '/outfits'
-  );
-}
-
-export async function getOutfit(outfitId: string): Promise<Outfit> {
-  return await authorizedOfetch(getBackendUrl() + '/api/v1/outfits/' + outfitId);
-}
-
-export async function deleteOutfit(outfitId: string): Promise<void> {
-  return await authorizedOfetch(getBackendUrl() + '/api/v1/outfits/' + outfitId, {
-    method: 'DELETE',
-  });
-}
 
 export async function addTag(outfitId: string, tag: string): Promise<void> {
   return await authorizedOfetch(getBackendUrl() + '/api/v1/outfits/' + outfitId + '/tags', {
