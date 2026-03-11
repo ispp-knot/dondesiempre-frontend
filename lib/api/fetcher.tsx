@@ -112,7 +112,17 @@ export default function useFetcher<T, TBody = undefined>({
     setData(queryResponse.data ?? null);
   }, [queryResponse.data]);
 
-  const { isLoading, isError, error, isPending, isFetching } = queryResponse;
+  const isFirstRender = useRef(true);
+
+  const { isLoading, isError, error, isPending, isFetching, refetch } = queryResponse;
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    refetch();
+  }, [queryKey, refetch]);
 
   const execute = (options?: {
     newBody?: TBody;
