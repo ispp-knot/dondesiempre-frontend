@@ -1,15 +1,14 @@
+import { Button } from '@/components/ui/button';
 import { StoreDTO } from '@/lib/api/types';
 import { LngLat, Map, MapEvent, MapRef, Marker } from '@vis.gl/react-maplibre';
-import { createRef, useCallback, useState } from 'react';
+import { Minus, Plus } from 'lucide-react';
+import { createRef, useCallback } from 'react';
+import { MdExplore, MdMyLocation } from 'react-icons/md';
 import { StorePin } from './storePin';
-import { Button } from '@/components/ui/button';
-import { MdMyLocation, MdExplore } from 'react-icons/md';
-import { Plus, Minus } from 'lucide-react';
 
-import 'maplibre-gl/dist/maplibre-gl.css'; // Must be included in every map view
-import { useMutation } from '@tanstack/react-query';
-import { getStoresInBoundingBox } from '@/lib/api/stores/getStoresInBoundingBox';
+import useFetcher from '@/lib/api/fetcher';
 import { DEFAULT_MAP_LOCATION, DEFAULT_MAP_STYLE } from '@/lib/mapUtils';
+import 'maplibre-gl/dist/maplibre-gl.css'; // Must be included in every map view
 import { useDebouncedCallback } from 'use-debounce';
 
 export function StoreMap({
@@ -24,23 +23,23 @@ export function StoreMap({
   onStoreSelect?: (store: StoreDTO | null) => void;
 }) {
   const mapRef = createRef<MapRef>();
-
-  const [stores, setStores] = useState<StoreDTO[] | undefined>();
-
-  const { mutate: getStores } = useMutation({
-    mutationFn: getStoresInBoundingBox,
-  });
+  const stores = useFetcher<StoreDTO[]>({ url: 'stores', fetchOnStart: false });
 
   const fetchStores = useCallback(
     (_: MapEvent) => {
       const boundary = mapRef.current?.getBounds();
-      if (!boundary) return;
-      getStores(boundary, {
-        onSuccess: setStores,
-        onError: () => setStores(undefined),
+
+      if (!boundary) {
+        return;
+      }
+      const sw = boundary.getSouthWest();
+      const ne = boundary.getNorthEast();
+
+      stores.execute({
+        newQueryParams: { minLon: sw.lng, maxLon: ne.lng, minLat: sw.lat, maxLat: ne.lat },
       });
     },
-    [mapRef, getStores]
+    [mapRef, stores]
   );
 
   const debouncedFetchStores = useDebouncedCallback(fetchStores, 100);
@@ -68,7 +67,7 @@ export function StoreMap({
     }
   };
 
-  const pins = stores?.map((store, index) => (
+  const pins = stores.data?.map((store, index) => (
     <Marker
       key={`store-${index}`}
       longitude={store.longitude}
