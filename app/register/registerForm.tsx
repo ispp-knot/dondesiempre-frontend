@@ -84,7 +84,7 @@ function FieldError({ message }: { message?: string }) {
 
 // ── Root component ─────────────────────────────────────────────────────────────
 
-export default function RegisterForm() {
+export function RegisterForm() {
   const [type, setType] = useState<'client' | 'store'>('client');
   const [step, setStep] = useState<1 | 2>(1);
   const [started, setStarted] = useState(false);

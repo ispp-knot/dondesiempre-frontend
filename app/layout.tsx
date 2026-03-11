@@ -79,13 +79,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           backendUrl={process.env.BACKEND_URL ?? ''}
           webUrl={process.env.WEB_URL ?? ''}
         >
-          <Navbar />
           <Providers>
+            <Navbar />
             <div className="flex flex-1 flex-col">
               <div className="flex flex-1 flex-col pb-20 sm:pb-0">{children}</div>
             </div>
+            <NavbarBottom />
           </Providers>
-          <NavbarBottom />
         </ConfigProvider>
       </body>
     </html>

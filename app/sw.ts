@@ -1,5 +1,5 @@
 import type { PrecacheEntry, SerwistGlobalConfig } from 'serwist';
-import { Serwist, StaleWhileRevalidate } from 'serwist';
+import { NetworkFirst, Serwist } from 'serwist';
 
 // This declares the value of `injectionPoint` to TypeScript.
 // `injectionPoint` is the string that will be replaced by the
@@ -32,7 +32,7 @@ const serwist = new Serwist({
         if (!backendUrl) return true; // Cache everything if no backend URL set
         return !request.url.includes(backendUrl);
       },
-      handler: new StaleWhileRevalidate({ cacheName: 'app' }),
+      handler: new NetworkFirst({ cacheName: 'app' }),
     },
   ],
   fallbacks: {
