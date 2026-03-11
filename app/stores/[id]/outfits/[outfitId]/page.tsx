@@ -5,16 +5,15 @@ import LabelledSwitch from '@/components/dondeSiempre/LabelledSwitch';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { Button } from '@/components/ui/button';
-import { addTag, removeTag, updateOutfit } from '@/lib/api/outfitEndpoints';
-import { OutfitUpdate } from '@/lib/types/outfits';
+import useFetcher from '@/lib/api/fetcher';
+import { addTag, removeTag } from '@/lib/api/outfitEndpoints';
+import { Outfit, OutfitUpdate } from '@/lib/types/outfits';
 import { convertPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { redirect, useParams } from 'next/navigation';
 import { useState } from 'react';
 import { FaTag } from 'react-icons/fa6';
 import { GoDotFill } from 'react-icons/go';
-import { Outfit } from '@/lib/types/outfits';
-import useFetcher from '@/lib/api/fetcher';
 
 export default function OutfitDetailsPage() {
   const params = useParams<{ id: string; outfitId: string }>();
@@ -25,6 +24,11 @@ export default function OutfitDetailsPage() {
   const [selectedProduct, setSelectedProduct] = useState(0);
 
   const outfit = useFetcher<Outfit>({ url: `outfits/${params.outfitId}` });
+  const updateOutfit = useFetcher<Outfit>({
+    url: `outfits/${params.outfitId}`,
+    method: 'PUT',
+    fetchOnStart: false,
+  });
 
   if (outfit.isLoading) {
     return <LoadingText />;
@@ -50,7 +54,12 @@ export default function OutfitDetailsPage() {
         ) * 100,
       index: Number.parseInt((document.getElementById('form-index') as HTMLInputElement).value),
     };
-    await updateOutfit(outfit.data.id, dto, imageFile);
+
+    const data = {
+      dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
+      imageFile,
+    };
+    updateOutfit.fetch({ newFormPayload: data });
     redirect(`/stores/${params.id}/outfits`);
   };
 

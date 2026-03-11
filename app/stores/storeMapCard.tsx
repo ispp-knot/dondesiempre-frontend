@@ -7,12 +7,23 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { LuStore } from 'react-icons/lu';
-import { followStore, unfollowStore } from '@/lib/api/followEndpoints';
 
 export function StoreMapCard({ store }: { store: StoreDTO }) {
   const color = store.storefront?.primaryColor ?? '#c65a3a';
   const isFollowing = useFetcher<boolean>({
     url: `stores/${store.id}/followers/me`,
+  });
+
+  const followStore = useFetcher<void>({
+    url: `stores/${store.id}/followers`,
+    method: 'POST',
+    fetchOnStart: false,
+  });
+
+  const unfollowStore = useFetcher<void>({
+    url: `stores/${store.id}/follow`,
+    method: 'DELETE',
+    fetchOnStart: false,
   });
 
   return (
@@ -48,10 +59,10 @@ export function StoreMapCard({ store }: { store: StoreDTO }) {
                 onClick={async () => {
                   console.log(store.id);
                   if (isFollowing.data) {
-                    await unfollowStore(store.id);
+                    unfollowStore.fetch();
                     isFollowing.setData(false);
                   } else {
-                    await followStore(store.id);
+                    followStore.fetch();
                     isFollowing.setData(true);
                   }
                 }}

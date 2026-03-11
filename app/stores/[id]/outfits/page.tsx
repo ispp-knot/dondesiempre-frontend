@@ -21,7 +21,7 @@ export default function OutfitsPage() {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const outfits = useFetcher<Outfit[]>({ url: `stores/${params.id}/outfits` });
-  const outfitDeleter = useFetcher<void>({ method: 'DELETE', fetchOnStart: false });
+  const deleteOutfit = useFetcher<void>({ method: 'DELETE', fetchOnStart: false });
 
   if (outfits.isLoading) {
     return <LoadingText />;
@@ -111,7 +111,7 @@ export default function OutfitsPage() {
                       </Link>
                       <Button
                         onClick={async () => {
-                          outfitDeleter.fetch({ newUrl: `outfits/${o.id}` });
+                          deleteOutfit.fetch({ newUrl: `outfits/${o.id}` });
                           outfits.fetch();
                         }}
                         className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-primary hover:bg-dark-primary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"

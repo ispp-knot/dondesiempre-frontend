@@ -5,7 +5,6 @@ import SortableProduct from '@/components/dondeSiempre/SortableProduct';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import useFetcher from '@/lib/api/fetcher';
-import { addProduct, removeProduct, sortProducts } from '@/lib/api/outfitEndpoints';
 import { Outfit, OutfitCreationProduct } from '@/lib/types/outfits';
 import { Product } from '@/lib/types/products';
 import { convertPrice } from '@/lib/utils';
@@ -23,6 +22,23 @@ export default function OutfitProductsPage() {
   const [movedProducts, setMovedProducts] = useState(new Array<string>());
   const products = useFetcher<Product[]>({ url: `stores/${params.id}/products` });
   const outfit = useFetcher<Outfit>({ url: `outfits/${params.outfitId}` });
+
+  const sortProducts = useFetcher<void, OutfitCreationProduct[]>({
+    url: `outfits/${params.outfitId}/products/sort`,
+    method: 'PATCH',
+    fetchOnStart: false,
+  });
+
+  const addProduct = useFetcher<void, OutfitCreationProduct>({
+    url: `outfits/${params.outfitId}/products`,
+    method: 'POST',
+    fetchOnStart: false,
+  });
+
+  const removeProduct = useFetcher<void>({
+    method: 'DELETE',
+    fetchOnStart: false,
+  });
 
   if (products.isLoading || outfit.isLoading) {
     return <LoadingText />;
@@ -73,7 +89,7 @@ export default function OutfitProductsPage() {
                   product={p}
                   removable={outfitProducts.length > 1}
                   onClick={async () => {
-                    await removeProduct(params.outfitId, p.id);
+                    removeProduct.fetch({ newUrl: `outfits/${params.outfitId}/products/${p.id}` });
                     outfit.refetch();
                   }}
                 />
@@ -93,13 +109,12 @@ export default function OutfitProductsPage() {
             <div className="flex flex-row justify-center mb-8">
               <Button
                 onClick={async () => {
+                  const list = movedProducts.map((id, index) => {
+                    return { id: id, index: index };
+                  });
+
                   if (movedProducts.length > 0) {
-                    await sortProducts(
-                      params.outfitId,
-                      movedProducts.map((id, index) => {
-                        return { id: id, index: index };
-                      })
-                    );
+                    sortProducts.fetch({ newBody: list });
                   }
                   redirect(`/stores/${params.id}/outfits`);
                 }}
@@ -140,7 +155,7 @@ export default function OutfitProductsPage() {
                             id: p.id,
                             index: outfitProducts.length,
                           };
-                          await addProduct(params.outfitId, dto);
+                          addProduct.fetch({ newBody: dto });
                           outfit.refetch();
                         }}
                         className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl h-12 w-11/12 md:w-1/2"

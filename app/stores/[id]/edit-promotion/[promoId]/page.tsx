@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { getPromotionById, updatePromotionDiscount } from '@/lib/api/promotionEndpoints';
 import PromotionForm, { PromotionFormData } from '@/components/dondeSiempre/PromotionForm';
+import useFetcher from '@/lib/api/fetcher';
+import { PromotionDTO } from '@/lib/api/promotionEndpoints';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function EditPromotionPage() {
   const params = useParams<{ id: string; promoId: string }>();
@@ -16,10 +17,17 @@ export default function EditPromotionPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
+  const getPromotionById = useFetcher<PromotionDTO>({ fetchOnStart: false });
+  const updatePromotionDiscount = useFetcher<PromotionDTO>({
+    method: 'PATCH',
+    fetchOnStart: false,
+  });
+
   useEffect(() => {
     const fetchPromotion = async () => {
       try {
-        const data = await getPromotionById(promoId);
+        getPromotionById.fetch({ newUrl: `promotions/${promoId}` });
+        const data = getPromotionById.data;
         setInitialData({
           name: data.name,
           discountPercentage: data.discountPercentage,
@@ -42,14 +50,17 @@ export default function EditPromotionPage() {
     };
 
     fetchPromotion();
-  }, [promoId]);
+  }, [promoId, getPromotionById]);
 
   const handleSubmit = async (formData: PromotionFormData) => {
     setIsSaving(true);
     setStatus(null);
 
     try {
-      await updatePromotionDiscount(promoId, formData.discountPercentage);
+      updatePromotionDiscount.fetch({
+        newUrl: `promotions/${promoId}/discount`,
+        newQueryParams: { discountPercentage: formData.discountPercentage },
+      });
       setStatus({ type: 'success', message: '¡Promoción actualizada con éxito!' });
       setTimeout(() => {
         //TODO: no se que es esto y pq manda a storefront, storefront en teoria no existe

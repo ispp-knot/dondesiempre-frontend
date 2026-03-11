@@ -7,9 +7,8 @@ import SortableProduct from '@/components/dondeSiempre/SortableProduct';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import useFetcher from '@/lib/api/fetcher';
-import { createOutfit } from '@/lib/api/outfitEndpoints';
 import { StoreDTO } from '@/lib/api/types';
-import { OutfitCreation, productToOufitCreationProduct } from '@/lib/types/outfits';
+import { Outfit, OutfitCreation, productToOufitCreationProduct } from '@/lib/types/outfits';
 import { Product } from '@/lib/types/products';
 import { convertPrice } from '@/lib/utils';
 import { move } from '@dnd-kit/helpers';
@@ -29,6 +28,7 @@ export default function OutfitCreationPage() {
 
   const products = useFetcher<Product[]>({ url: `stores/${params.id}/products` });
   const store = useFetcher<StoreDTO>({ url: `stores/${params.id}` });
+  const createOutfit = useFetcher<Outfit>({ url: 'outfits', method: 'POST', fetchOnStart: false });
 
   if (products.isLoading || store.isLoading) {
     return <LoadingText />;
@@ -56,7 +56,11 @@ export default function OutfitCreationPage() {
         productToOufitCreationProduct(product, index)
       ),
     };
-    await createOutfit(dto, imageFile);
+    const data = {
+      dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
+      imageFile,
+    };
+    createOutfit.fetch({ newFormPayload: data });
     redirect(`/stores/${params.id}/outfits`);
   };
 
