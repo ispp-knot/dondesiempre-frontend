@@ -14,6 +14,7 @@ import useFetcher from '@/lib/api/fetcher';
 import { FetchError } from 'ofetch';
 import { LoginDTO } from '@/lib/api/authEndpoints';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { UserInfo } from '@/lib/types/auth';
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -30,6 +31,13 @@ function FieldError({ message }: { message?: string }) {
 export function LoginForm() {
   const [apiError, setApiError] = useState<string | null>(null);
   const router = useRouter();
+  const { registerInfo } = useAuth();
+
+  const login = useFetcher<UserInfo, LoginDTO>({
+    url: 'auth/login',
+    method: 'POST',
+    fetchOnStart: false,
+  });
 
   const {
     register,
@@ -42,7 +50,8 @@ export function LoginForm() {
   async function onSubmit(data: LoginValues) {
     setApiError(null);
     try {
-      await login(data);
+      login.fetch({ newBody: data });
+      registerInfo(login.data);
       router.push('/');
     } catch (err: unknown) {
       if (err instanceof FetchError && err.response?.status === 403) {
