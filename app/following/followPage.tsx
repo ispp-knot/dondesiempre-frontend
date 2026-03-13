@@ -61,8 +61,8 @@ export default function FollowPage(): JSX.Element {
                 </button>
                 <button
                   onClick={async () => {
-                    unfollowStore.fetch({ newUrl: `stores/${shop.id}/follow` });
-                    followedStores.fetch();
+                    await unfollowStore.fetch({ newUrl: `stores/${shop.id}/follow` });
+                    await followedStores.fetch();
                   }}
                   className="mt-4 bg-gray-100 hover:bg-gray-200 text-green-800 py-2 px-4 rounded-md"
                 >

@@ -81,11 +81,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setServerSession(newUser);
   }, []);
 
-  const deleteInfo = useCallback(() => {
+  const deleteInfo = useCallback(async () => {
     setUser(null);
     localStorage.removeItem(LOCAL_STORAGE_KEY);
     clearServerSession();
-    logOut.fetch();
+    await logOut.fetch();
   }, [logOut]);
 
   const getCurrentUser = useCallback((): UserInfo | null => {

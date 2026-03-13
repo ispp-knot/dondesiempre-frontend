@@ -90,7 +90,7 @@ export default function OutfitProductsPage() {
                   removable={outfitProducts.length > 1}
                   onClick={async () => {
                     removeProduct.fetch({ newUrl: `outfits/${params.outfitId}/products/${p.id}` });
-                    outfit.refetch();
+                    await outfit.fetch();
                   }}
                 />
               ))}
@@ -156,7 +156,7 @@ export default function OutfitProductsPage() {
                             index: outfitProducts.length,
                           };
                           addProduct.fetch({ newBody: dto });
-                          outfit.refetch();
+                          await outfit.fetch();
                         }}
                         className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl h-12 w-11/12 md:w-1/2"
                       >

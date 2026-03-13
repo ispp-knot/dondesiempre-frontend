@@ -59,10 +59,10 @@ export function StoreMapCard({ store }: { store: StoreDTO }) {
                 onClick={async () => {
                   console.log(store.id);
                   if (isFollowing.data) {
-                    unfollowStore.fetch();
+                    await unfollowStore.fetch();
                     isFollowing.setData(false);
                   } else {
-                    followStore.fetch();
+                    await followStore.fetch();
                     isFollowing.setData(true);
                   }
                 }}
