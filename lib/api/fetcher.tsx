@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from 'react';
   };
 */
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FormPayload = Record<string, any>;
 
 type QueryKey<TBody> = [
