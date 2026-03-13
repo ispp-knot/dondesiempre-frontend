@@ -25,7 +25,7 @@ export type StoreDTO = {
   latitude: number;
   longitude: number;
   aboutUs: string | null;
+  // TODO: En Pr Claudia #64: Añadir isFirstCollections, primaryColor, secondaryColor, bannerImageUrl
   storefront: StorefrontDTO;
   socialNetworks: StoreSocialNetworkDTO[];
-  //TODO: En rama Claudia: Añadir isFirstCollections, primaryColor, secondaryColor, bannerImageUrl
 };

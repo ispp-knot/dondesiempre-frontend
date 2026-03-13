@@ -6,7 +6,7 @@ export type OutfitDTO = {
   priceInCents: number;
   discountedPriceInCents: number;
   index: number;
-  storefrontId: number; // TODO: En rama Pepe: storeId
+  storefrontId: number; // TODO: En PR Pepe #129: cambiar a storeId
   tags: string[];
   products: OutfitProductDTO[];
 };
