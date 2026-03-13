@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { StoreDTO } from '@/lib/types/stores';
+import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { LngLat, Map, MapEvent, MapRef, Marker } from '@vis.gl/react-maplibre';
 import { Minus, Plus } from 'lucide-react';
 import { createRef, useCallback } from 'react';

@@ -13,7 +13,8 @@ import { Label } from '@/components/ui/label';
 import useFetcher from '@/lib/api/fetcher';
 import { FetchError } from 'ofetch';
 import { useAuth } from '@/lib/auth/AuthContext';
-import { UserInfo, LoginDTO } from '@/lib/types/auth';
+import { UserResponseDTO } from '@/lib/types/auth/authDto';
+import { LoginDTO } from '@/lib/types/auth/authDto';
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -32,7 +33,7 @@ export function LoginForm() {
   const router = useRouter();
   const { registerInfo } = useAuth();
 
-  const login = useFetcher<UserInfo, LoginDTO>({
+  const login = useFetcher<UserResponseDTO, LoginDTO>({
     url: 'auth/login',
     method: 'POST',
     fetchOnStart: false,

@@ -7,9 +7,10 @@ import SortableProduct from '@/components/dondeSiempre/SortableProduct';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import useFetcher from '@/lib/api/fetcher';
-import { StoreDTO } from '@/lib/types/stores';
-import { Outfit, OutfitCreation, productToOufitCreationProduct } from '@/lib/types/outfits';
-import { Product } from '@/lib/types/products';
+import { StoreDTO } from '@/lib/types/stores/storesDto';
+import { OutfitDTO, OutfitCreationDTO } from '@/lib/types/outfits/outfitsDto';
+import { productDTOToOufitCreationProductDTO } from '@/lib/types/outfits/outfitsHelper';
+import { ProductDTO } from '@/lib/types/products/productsDto';
 import { convertPrice } from '@/lib/utils';
 import { move } from '@dnd-kit/helpers';
 import { DragDropProvider } from '@dnd-kit/react';
@@ -23,12 +24,16 @@ export default function OutfitCreationPage() {
 
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [outfitProducts, setOutfitProducts] = useState(new Array<Product>());
+  const [outfitProducts, setOutfitProducts] = useState(new Array<ProductDTO>());
   const [outfitTags, setOutfitTags] = useState(new Array<string>());
 
-  const products = useFetcher<Product[]>({ url: `stores/${params.id}/products` });
+  const products = useFetcher<ProductDTO[]>({ url: `stores/${params.id}/products` });
   const store = useFetcher<StoreDTO>({ url: `stores/${params.id}` });
-  const createOutfit = useFetcher<Outfit>({ url: 'outfits', method: 'POST', fetchOnStart: false });
+  const createOutfit = useFetcher<OutfitDTO>({
+    url: 'outfits',
+    method: 'POST',
+    fetchOnStart: false,
+  });
 
   if (products.isLoading || store.isLoading) {
     return <LoadingText />;
@@ -46,14 +51,14 @@ export default function OutfitCreationPage() {
   const submitForm = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const dto: OutfitCreation = {
+    const dto: OutfitCreationDTO = {
       name: (document.getElementById('form-name') as HTMLInputElement).value,
       description: (document.getElementById('form-description') as HTMLInputElement).value || null,
       index: Number.parseInt((document.getElementById('form-index') as HTMLInputElement).value),
       storefrontId: store.data.storefront.id,
       tags: outfitTags,
       products: outfitProducts.map((product, index) =>
-        productToOufitCreationProduct(product, index)
+        productDTOToOufitCreationProductDTO(product, index)
       ),
     };
     const data = {

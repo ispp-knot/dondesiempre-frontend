@@ -1,12 +1,12 @@
 'use client';
 
-import { Outfit } from '@/lib/types/outfits';
+import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { Percent } from 'lucide-react';
 import Link from 'next/link';
 
 type Props = {
   storeId?: string;
-  outfits?: Outfit[];
+  outfits?: OutfitDTO[];
 };
 
 export default function Outfits({ storeId = undefined, outfits = [] }: Readonly<Props>) {

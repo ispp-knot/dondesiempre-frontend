@@ -5,7 +5,7 @@ import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import useFetcher from '@/lib/api/fetcher';
-import { Outfit } from '@/lib/types/outfits';
+import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { convertPrice } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -20,7 +20,7 @@ export default function OutfitsPage() {
   const params = useParams<{ id: string }>();
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const outfits = useFetcher<Outfit[]>({ url: `stores/${params.id}/outfits` });
+  const outfits = useFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
   const deleteOutfit = useFetcher<void>({ method: 'DELETE', fetchOnStart: false });
 
   if (outfits.isLoading) {

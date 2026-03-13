@@ -1,10 +1,10 @@
-export type Product = {
+export type ProductDTO = {
   id: string;
   name: string;
   priceInCents: number;
   discountedPriceInCents: number;
   description: string | null;
   image: string | null;
-  type: string;
+  typeId: string;
   storeId: string;
 };
