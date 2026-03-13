@@ -111,8 +111,8 @@ export default function OutfitsPage() {
                       </Link>
                       <Button
                         onClick={async () => {
-                          deleteOutfit.fetch({ newUrl: `outfits/${o.id}` });
-                          outfits.fetch();
+                          await deleteOutfit.fetch({ newUrl: `outfits/${o.id}` });
+                          await outfits.fetch();
                         }}
                         className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-primary hover:bg-dark-primary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
                       >

@@ -50,7 +50,7 @@ export function LoginForm() {
   async function onSubmit(data: LoginValues) {
     setApiError(null);
     try {
-      login.fetch({ newBody: data });
+      await login.fetch({ newBody: data });
       registerInfo(login.data);
       router.push('/');
     } catch (err: unknown) {

@@ -26,7 +26,7 @@ export default function EditPromotionPage() {
   useEffect(() => {
     const fetchPromotion = async () => {
       try {
-        getPromotionById.fetch({ newUrl: `promotions/${promoId}` });
+        await getPromotionById.fetch({ newUrl: `promotions/${promoId}` });
         const data = getPromotionById.data;
         setInitialData({
           name: data.name,
@@ -57,7 +57,7 @@ export default function EditPromotionPage() {
     setStatus(null);
 
     try {
-      updatePromotionDiscount.fetch({
+      await updatePromotionDiscount.fetch({
         newUrl: `promotions/${promoId}/discount`,
         newQueryParams: { discountPercentage: formData.discountPercentage },
       });

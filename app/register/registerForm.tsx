@@ -301,7 +301,7 @@ function ClientStep2Form({
   async function onSubmit(data: ClientStep2Values) {
     setApiError(null);
     try {
-      registerClient.fetch({
+      await registerClient.fetch({
         newBody: {
           email: step1Data.email,
           password: step1Data.password,
@@ -395,7 +395,7 @@ function StoreStep2Form({
   async function onSubmit(data: StoreStep2Values) {
     setApiError(null);
     try {
-      registerStore.fetch({
+      await registerStore.fetch({
         newBody: {
           email: step1Data.email,
           password: step1Data.password,

@@ -30,7 +30,7 @@ type UseFetcherResult<T, TBody> = ReturnType<typeof useQuery<T>> & {
     newBody?: TBody;
     newFormPayload?: FormPayload;
     newQueryParams?: Record<string, string | number | boolean>;
-  }) => void;
+  }) => Promise<void>;
 };
 
 type UseFetcherOptions<TBody> = {
@@ -120,6 +120,7 @@ export default function useFetcher<T, TBody = undefined>({
   }, [queryResponse.data]);
 
   const isFirstRender = useRef(true);
+  const refetchResolverRef = useRef<(() => void) | null>(null);
 
   const { isLoading, isError, error, isPending, isFetching, refetch } = queryResponse;
 
@@ -128,15 +129,18 @@ export default function useFetcher<T, TBody = undefined>({
       isFirstRender.current = false;
       return;
     }
-    refetch();
+    refetch().then(() => {
+      refetchResolverRef.current?.();
+      refetchResolverRef.current = null;
+    });
   }, [queryKey, refetch]);
 
-  const fetch = (options?: {
+  const fetch = async (options?: {
     newUrl?: string;
     newBody?: TBody;
     newFormPayload?: FormPayload;
     newQueryParams?: Record<string, string | number | boolean>;
-  }): void => {
+  }): Promise<void> => {
     if (method === 'GET' && (options?.newBody || options?.newFormPayload)) {
       throw new Error('GET queries should not include a body');
     }
@@ -166,9 +170,12 @@ export default function useFetcher<T, TBody = undefined>({
     ];
 
     if (JSON.stringify(newKey) === JSON.stringify(queryKey)) {
-      refetch();
+      await refetch();
     } else {
-      setQueryKey(newKey);
+      await new Promise<void>((resolve) => {
+        refetchResolverRef.current = resolve;
+        setQueryKey(newKey);
+      });
     }
   };
 

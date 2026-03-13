@@ -44,7 +44,7 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
 
     setLoading(true);
     try {
-      updateStorefront.fetch({ newBody: formData });
+      await updateStorefront.fetch({ newBody: formData });
       setHasChanges(false);
       location.reload();
     } catch (error) {

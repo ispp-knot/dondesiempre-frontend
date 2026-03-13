@@ -70,7 +70,7 @@ export default function OutfitDetailsPage() {
       dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
       imageFile,
     };
-    updateOutfit.fetch({ newFormPayload: data });
+    await updateOutfit.fetch({ newFormPayload: data });
     redirect(`/stores/${params.id}/outfits`);
   };
 
@@ -188,9 +188,9 @@ export default function OutfitDetailsPage() {
                       const element = document.getElementById('form-tags') as HTMLInputElement;
 
                       if (element.value.includes(' ')) {
-                        addTag.fetch({ newBody: element.value.trim() });
+                        await addTag.fetch({ newBody: element.value.trim() });
                         element.value = '';
-                        outfit.fetch();
+                        await outfit.fetch();
                       }
                     }}
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
@@ -202,8 +202,8 @@ export default function OutfitDetailsPage() {
                       key={i}
                       type="button"
                       onClick={async () => {
-                        removeTag.fetch({ newBody: t });
-                        outfit.fetch();
+                        await removeTag.fetch({ newBody: t });
+                        await outfit.fetch();
                       }}
                       className="p-2 rounded-lg bg-secondary hover:bg-dark-secondary flex flex-row gap-1 shrink-0"
                     >
