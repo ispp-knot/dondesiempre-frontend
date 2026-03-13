@@ -7,7 +7,7 @@ import SortableProduct from '@/components/dondeSiempre/SortableProduct';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import useFetcher from '@/lib/api/fetcher';
-import { StoreDTO } from '@/lib/api/types';
+import { StoreDTO } from '@/lib/types/stores';
 import { Outfit, OutfitCreation, productToOufitCreationProduct } from '@/lib/types/outfits';
 import { Product } from '@/lib/types/products';
 import { convertPrice } from '@/lib/utils';

@@ -1,7 +1,7 @@
 'use client';
 
 import { getWebUrl } from '@/lib/config';
-import { OutfitDTO, ProductDTO, Promotion } from '@/lib/api/types';
+import { OutfitDTO, ProductDTO, Promotion } from '@/lib/types/stores';
 import {
   Dialog,
   DialogClose,

@@ -4,7 +4,7 @@ import ErrorText from '@/components/dondeSiempre/ErrorText';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import useFetcher from '@/lib/api/fetcher';
-import { StoreDTO } from '@/lib/api/types';
+import { StoreDTO } from '@/lib/types/stores';
 import { JSX } from 'react';
 
 export default function FollowPage(): JSX.Element {
@@ -60,9 +60,9 @@ export default function FollowPage(): JSX.Element {
                   Ir a la tienda
                 </button>
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     unfollowStore.fetch({ newUrl: `stores/${shop.id}/follow` });
-                    window.location.reload();
+                    followedStores.fetch();
                   }}
                   className="mt-4 bg-gray-100 hover:bg-gray-200 text-green-800 py-2 px-4 rounded-md"
                 >

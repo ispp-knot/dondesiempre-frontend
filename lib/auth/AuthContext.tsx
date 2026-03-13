@@ -1,9 +1,9 @@
 'use client';
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 import type { UserInfo } from '@/lib/types/auth';
 import { pick } from 'lodash';
-import { logOut } from '../api/authEndpoints';
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import useFetcher from '../api/fetcher';
 
 const LOCAL_STORAGE_KEY = 'auth_user';
 
@@ -73,6 +73,7 @@ function readFromStorage(): UserInfo | null {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserInfo | null>(readFromStorage());
+  const logOut = useFetcher<void, void>({ url: 'auth/logout', method: 'GET', fetchOnStart: false });
 
   const registerInfo = useCallback((newUser: UserInfo) => {
     setUser(newUser);
@@ -84,10 +85,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     localStorage.removeItem(LOCAL_STORAGE_KEY);
     clearServerSession();
-    logOut()
-      .then(() => {})
-      .catch(() => {});
-  }, []);
+    logOut.fetch();
+  }, [logOut]);
 
   const getCurrentUser = useCallback((): UserInfo | null => {
     // Re-check expiry on every call so a long-lived session is evicted lazily.

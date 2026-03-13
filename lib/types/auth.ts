@@ -57,3 +57,32 @@ export interface SessionCookiePayload {
   roles: string[];
   expiresAt: string;
 }
+
+export interface RegisterClientDTO {
+  email: string;
+  password: string;
+  name: string;
+  surname: string;
+  phone: string | null;
+  address: string | null;
+}
+
+export interface RegisterStoreDTO {
+  email: string;
+  password: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  address: string;
+  openingHours: string;
+  acceptsShipping: boolean;
+  phone: string | null;
+  aboutUs: string | null;
+  primaryColor: string;
+  secondaryColor: string;
+}
+
+export interface LoginDTO {
+  email: string;
+  password: string;
+}

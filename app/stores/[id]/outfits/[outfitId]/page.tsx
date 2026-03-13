@@ -6,7 +6,6 @@ import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { Button } from '@/components/ui/button';
 import useFetcher from '@/lib/api/fetcher';
-import { addTag, removeTag } from '@/lib/api/outfitEndpoints';
 import { Outfit, OutfitUpdate } from '@/lib/types/outfits';
 import { convertPrice } from '@/lib/utils';
 import Image from 'next/image';
@@ -27,6 +26,18 @@ export default function OutfitDetailsPage() {
   const updateOutfit = useFetcher<Outfit>({
     url: `outfits/${params.outfitId}`,
     method: 'PUT',
+    fetchOnStart: false,
+  });
+
+  const addTag = useFetcher<void, string>({
+    url: `outfits/${params.outfitId}/tags`,
+    method: 'POST',
+    fetchOnStart: false,
+  });
+
+  const removeTag = useFetcher<void, string>({
+    url: `outfits/${params.outfitId}/tags`,
+    method: 'DELETE',
     fetchOnStart: false,
   });
 
@@ -177,9 +188,9 @@ export default function OutfitDetailsPage() {
                       const element = document.getElementById('form-tags') as HTMLInputElement;
 
                       if (element.value.includes(' ')) {
-                        await addTag(outfit.data.id, element.value.trim());
+                        addTag.fetch({ newBody: element.value.trim() });
                         element.value = '';
-                        outfit.refetch();
+                        outfit.fetch();
                       }
                     }}
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
@@ -191,8 +202,8 @@ export default function OutfitDetailsPage() {
                       key={i}
                       type="button"
                       onClick={async () => {
-                        await removeTag(outfit.data.id, t);
-                        outfit.refetch();
+                        removeTag.fetch({ newBody: t });
+                        outfit.fetch();
                       }}
                       className="p-2 rounded-lg bg-secondary hover:bg-dark-secondary flex flex-row gap-1 shrink-0"
                     >

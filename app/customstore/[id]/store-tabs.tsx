@@ -5,7 +5,7 @@ import Collections from './collections';
 import AboutUs from './about-us';
 import Outfits from './outfits';
 import { ShareTo } from '@/components/ui/shareTo';
-import { Promotion } from '@/lib/api/types';
+import { Promotion } from '@/lib/types/stores';
 
 interface Collection {
   id: number;

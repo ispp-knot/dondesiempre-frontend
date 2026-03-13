@@ -6,7 +6,7 @@ import Collections from './collections';
 import AboutUs from './about-us';
 import Outfits from './outfits';
 import StoreOptions from './options';
-import { StoreDTO, Promotion } from '@/lib/api/types';
+import { StoreDTO, Promotion } from '@/lib/types/stores';
 import { Outfit } from '@/lib/types/outfits';
 import { ShareTo } from '@/components/ui/shareTo';
 

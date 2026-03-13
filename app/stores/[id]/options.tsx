@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Edit2, Camera, Loader2, Save, X, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
-import { StoreDTO } from '@/lib/api/types';
+import { StoreDTO } from '@/lib/types/stores';
 import useFetcher from '@/lib/api/fetcher';
 
 type Props = {

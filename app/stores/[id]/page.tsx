@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import useFetcher from '@/lib/api/fetcher';
-import { StoreDTO, StoreSocialNetworkDTO } from '@/lib/api/types';
+import { StoreDTO, StoreSocialNetworkDTO } from '@/lib/types/stores';
 import { Outfit } from '@/lib/types/outfits';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';

@@ -12,9 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import useFetcher from '@/lib/api/fetcher';
 import { FetchError } from 'ofetch';
-import { LoginDTO } from '@/lib/api/authEndpoints';
 import { useAuth } from '@/lib/auth/AuthContext';
-import { UserInfo } from '@/lib/types/auth';
+import { UserInfo, LoginDTO } from '@/lib/types/auth';
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),

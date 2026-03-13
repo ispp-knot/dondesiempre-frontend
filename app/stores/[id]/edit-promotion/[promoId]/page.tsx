@@ -2,7 +2,7 @@
 
 import PromotionForm, { PromotionFormData } from '@/components/dondeSiempre/PromotionForm';
 import useFetcher from '@/lib/api/fetcher';
-import { PromotionDTO } from '@/lib/api/promotionEndpoints';
+import { PromotionDTO } from '@/lib/types/promotions';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
