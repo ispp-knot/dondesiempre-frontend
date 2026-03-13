@@ -70,7 +70,7 @@ export default function OutfitDetailsPage() {
       dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
       imageFile,
     };
-    updateOutfit.fetch({ newFormPayload: data });
+    await updateOutfit.fetch({ newFormPayload: data });
     redirect(`/stores/${params.id}/outfits`);
   };
 
@@ -202,7 +202,7 @@ export default function OutfitDetailsPage() {
                       key={i}
                       type="button"
                       onClick={async () => {
-                        removeTag.fetch({ newBody: t });
+                        await removeTag.fetch({ newBody: t });
                         await outfit.fetch();
                       }}
                       className="p-2 rounded-lg bg-secondary hover:bg-dark-secondary flex flex-row gap-1 shrink-0"

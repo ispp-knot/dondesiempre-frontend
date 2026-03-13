@@ -34,7 +34,7 @@ export default function CreatePromotionPage() {
     };
 
     try {
-      createPromotion.fetch({ newBody: dto });
+      await createPromotion.fetch({ newBody: dto });
       setStatus({ type: 'success', message: '¡Promoción lanzada con éxito!' });
       setTimeout(() => {
         router.push(`/storefront/${storeId}`);

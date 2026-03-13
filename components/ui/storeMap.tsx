@@ -26,7 +26,7 @@ export function StoreMap({
   const stores = useFetcher<StoreDTO[]>({ url: 'stores', fetchOnStart: false });
 
   const fetchStores = useCallback(
-    (_: MapEvent) => {
+    async (_: MapEvent) => {
       const boundary = mapRef.current?.getBounds();
 
       if (!boundary) {
@@ -35,7 +35,7 @@ export function StoreMap({
       const sw = boundary.getSouthWest();
       const ne = boundary.getNorthEast();
 
-      stores.fetch({
+      await stores.fetch({
         newQueryParams: { minLon: sw.lng, maxLon: ne.lng, minLat: sw.lat, maxLat: ne.lat },
       });
     },

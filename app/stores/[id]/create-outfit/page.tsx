@@ -60,7 +60,7 @@ export default function OutfitCreationPage() {
       dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
       imageFile,
     };
-    createOutfit.fetch({ newFormPayload: data });
+    await createOutfit.fetch({ newFormPayload: data });
     redirect(`/stores/${params.id}/outfits`);
   };
 

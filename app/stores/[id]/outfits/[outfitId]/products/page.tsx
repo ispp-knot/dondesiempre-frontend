@@ -89,7 +89,9 @@ export default function OutfitProductsPage() {
                   product={p}
                   removable={outfitProducts.length > 1}
                   onClick={async () => {
-                    removeProduct.fetch({ newUrl: `outfits/${params.outfitId}/products/${p.id}` });
+                    await removeProduct.fetch({
+                      newUrl: `outfits/${params.outfitId}/products/${p.id}`,
+                    });
                     await outfit.fetch();
                   }}
                 />
@@ -114,7 +116,7 @@ export default function OutfitProductsPage() {
                   });
 
                   if (movedProducts.length > 0) {
-                    sortProducts.fetch({ newBody: list });
+                    await sortProducts.fetch({ newBody: list });
                   }
                   redirect(`/stores/${params.id}/outfits`);
                 }}
@@ -155,7 +157,7 @@ export default function OutfitProductsPage() {
                             id: p.id,
                             index: outfitProducts.length,
                           };
-                          addProduct.fetch({ newBody: dto });
+                          await addProduct.fetch({ newBody: dto });
                           await outfit.fetch();
                         }}
                         className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl h-12 w-11/12 md:w-1/2"
