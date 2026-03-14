@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FetchError } from 'ofetch';
 import { login } from '@/lib/api/authEndpoints';
+import { useAuth } from '@/lib/auth/AuthContext';
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -25,9 +26,10 @@ function FieldError({ message }: { message?: string }) {
   return <p className="text-xs text-destructive">{message}</p>;
 }
 
-export default function LoginForm() {
+export function LoginForm() {
   const [apiError, setApiError] = useState<string | null>(null);
   const router = useRouter();
+  const { registerInfo } = useAuth();
 
   const {
     register,
@@ -40,7 +42,8 @@ export default function LoginForm() {
   async function onSubmit(data: LoginValues) {
     setApiError(null);
     try {
-      await login(data);
+      const userInfo = await login(data);
+      registerInfo(userInfo);
       router.push('/');
     } catch (err: unknown) {
       if (err instanceof FetchError && err.response?.status === 403) {
