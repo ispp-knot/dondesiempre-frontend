@@ -5,8 +5,8 @@ import SortableProduct from '@/components/dondeSiempre/SortableProduct';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import useFetcher from '@/lib/api/fetcher';
-import { Outfit, OutfitCreationProduct } from '@/lib/types/outfits';
-import { Product } from '@/lib/types/products';
+import { OutfitDTO, OutfitCreationProductDTO } from '@/lib/types/outfits/outfitsDto';
+import { ProductDTO } from '@/lib/types/products/productsDto';
 import { convertPrice } from '@/lib/utils';
 import { move } from '@dnd-kit/helpers';
 import { DragDropProvider } from '@dnd-kit/react';
@@ -20,16 +20,16 @@ export default function OutfitProductsPage() {
   const params = useParams<{ id: string; outfitId: string }>();
 
   const [movedProducts, setMovedProducts] = useState(new Array<string>());
-  const products = useFetcher<Product[]>({ url: `stores/${params.id}/products` });
-  const outfit = useFetcher<Outfit>({ url: `outfits/${params.outfitId}` });
+  const products = useFetcher<ProductDTO[]>({ url: `stores/${params.id}/products` });
+  const outfit = useFetcher<OutfitDTO>({ url: `outfits/${params.outfitId}` });
 
-  const sortProducts = useFetcher<void, OutfitCreationProduct[]>({
+  const sortProducts = useFetcher<void, OutfitCreationProductDTO[]>({
     url: `outfits/${params.outfitId}/products/sort`,
     method: 'PATCH',
     fetchOnStart: false,
   });
 
-  const addProduct = useFetcher<void, OutfitCreationProduct>({
+  const addProduct = useFetcher<void, OutfitCreationProductDTO>({
     url: `outfits/${params.outfitId}/products`,
     method: 'POST',
     fetchOnStart: false,
@@ -112,7 +112,7 @@ export default function OutfitProductsPage() {
               <Button
                 onClick={async () => {
                   const list = movedProducts.map((id, index) => {
-                    return { id: id, index: index };
+                    return { productId: id, index: index };
                   });
 
                   if (movedProducts.length > 0) {
@@ -153,8 +153,8 @@ export default function OutfitProductsPage() {
                     <div className="flex flex-row justify-center">
                       <Button
                         onClick={async () => {
-                          const dto: OutfitCreationProduct = {
-                            id: p.id,
+                          const dto: OutfitCreationProductDTO = {
+                            productId: p.id,
                             index: outfitProducts.length,
                           };
                           await addProduct.fetch({ newBody: dto });

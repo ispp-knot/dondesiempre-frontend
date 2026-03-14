@@ -3,8 +3,8 @@
 export const dynamic = 'force-dynamic';
 
 import useFetcher from '@/lib/api/fetcher';
-import { StoreDTO, StoreSocialNetworkDTO } from '@/lib/types/stores';
-import { Outfit } from '@/lib/types/outfits';
+import { StoreDTO, StoreSocialNetworkDTO } from '@/lib/types/stores/storesDto';
+import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { FaFacebook, FaInstagram, FaLink, FaTiktok, FaTwitter } from 'react-icons/fa';
@@ -29,7 +29,7 @@ export default function StorePage() {
   const params = useParams<{ id: string }>();
 
   const store = useFetcher<StoreDTO>({ url: `stores/${params.id}` });
-  const outfits = useFetcher<Outfit[]>({ url: `stores/${params.id}/outfits` });
+  const outfits = useFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
 
   if (store.isLoading || outfits.isLoading) {
     return <LoadingText />;

@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LocationPickerMap } from '@/components/ui/locationPickerMap';
 import { Switch } from '@/components/ui/switch';
-import { RegisterClientDTO, RegisterStoreDTO } from '@/lib/types/auth';
+import { RegisterClientDTO, RegisterStoreDTO } from '@/lib/types/auth/authDto';
 import useFetcher from '@/lib/api/fetcher';
 import { FetchError } from 'ofetch';
 

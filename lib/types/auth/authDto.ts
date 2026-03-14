@@ -1,0 +1,46 @@
+import { StoreDTO } from '@/lib/types/stores/storesDto';
+import { ClientDTO } from '@/lib/types/clients/clientsDto';
+
+export interface LoginDTO {
+  email: string;
+  password: string;
+}
+
+export interface RegisterStoreDTO {
+  email: string;
+  password: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  address: string;
+  openingHours: string;
+  acceptsShipping: boolean;
+  phone: string | null;
+  aboutUs: string | null;
+  primaryColor: string;
+  secondaryColor: string;
+}
+
+export interface RegisterClientDTO {
+  email: string;
+  password: string;
+  name: string;
+  surname: string;
+  phone: string | null;
+  address: string | null;
+}
+
+/**
+ * The full user context returned by /login and /me, stored in the AuthContext
+ * and in localStorage under the key "auth_user".
+ */
+export interface UserResponseDTO {
+  id: string;
+  email: string;
+  /** e.g. ["STORE"] or ["CLIENT"] — always a single-element list today */
+  roles: string[];
+  /** ISO-8601 UTC timestamp string for the JWT expiry */
+  expiresAt: string;
+  store: StoreDTO | null;
+  client: ClientDTO | null;
+}

@@ -5,7 +5,7 @@ import Collections from './collections';
 import AboutUs from './about-us';
 import Outfits from './outfits';
 import { ShareTo } from '@/components/ui/shareTo';
-import { Promotion } from '@/lib/types/stores';
+import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 
 interface Collection {
   id: number;
@@ -33,13 +33,12 @@ export default function StoreTabs({
 }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<'catalogo' | 'sobre'>('catalogo');
 
-  const mockPromotion: Promotion = {
+  const mockPromotion: PromotionDTO = {
     id: '1a383fda-5ac8-4f1f-bfba-2dcd4f09dca3',
     name: 'Rebajas de Invierno',
     discountPercentage: 25,
     isActive: true,
     description: 'Descuento especial en productos seleccionados por tiempo limitado.',
-    image: null,
     storeId: '1a383fda-5ac8-4f1f-bfba-2dcd4f09dca3',
     productIds: ['0xF00000', '0xFF00000', '0xFF00FF000', '0xFF000'],
   };

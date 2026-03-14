@@ -6,7 +6,7 @@ import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { Button } from '@/components/ui/button';
 import useFetcher from '@/lib/api/fetcher';
-import { Outfit, OutfitUpdate } from '@/lib/types/outfits';
+import { OutfitDTO, OutfitUpdateDTO } from '@/lib/types/outfits/outfitsDto';
 import { convertPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { redirect, useParams } from 'next/navigation';
@@ -22,8 +22,8 @@ export default function OutfitDetailsPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [selectedProduct, setSelectedProduct] = useState(0);
 
-  const outfit = useFetcher<Outfit>({ url: `outfits/${params.outfitId}` });
-  const updateOutfit = useFetcher<Outfit>({
+  const outfit = useFetcher<OutfitDTO>({ url: `outfits/${params.outfitId}` });
+  const updateOutfit = useFetcher<OutfitDTO>({
     url: `outfits/${params.outfitId}`,
     method: 'PUT',
     fetchOnStart: false,
@@ -56,7 +56,7 @@ export default function OutfitDetailsPage() {
       return;
     }
 
-    const dto: OutfitUpdate = {
+    const dto: OutfitUpdateDTO = {
       name: (document.getElementById('form-name') as HTMLInputElement).value,
       description: (document.getElementById('form-description') as HTMLInputElement).value || null,
       discountedPriceInCents:
