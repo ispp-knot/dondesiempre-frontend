@@ -1,4 +1,4 @@
-export type OutfitDTO = {
+export interface OutfitDTO {
   id: string;
   name: string;
   description: string | null;
@@ -9,9 +9,9 @@ export type OutfitDTO = {
   storeId: number;
   tags: string[];
   products: OutfitProductDTO[];
-};
+}
 
-export type OutfitProductDTO = {
+export interface OutfitProductDTO {
   id: string;
   name: string;
   description: string | null;
@@ -21,7 +21,7 @@ export type OutfitProductDTO = {
   typeId: string;
   index: number;
   storeId: string;
-};
+}
 
 export interface OutfitCreationProductDTO {
   productId: string;
