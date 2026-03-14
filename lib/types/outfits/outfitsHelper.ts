@@ -11,7 +11,7 @@ export function createEmptyOutfitDTO(): OutfitDTO {
     priceInCents: 0,
     discountedPriceInCents: 0,
     index: 0,
-    storefrontId: 0,
+    storeId: 0,
     tags: [],
     products: [],
   };

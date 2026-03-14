@@ -1,4 +1,4 @@
-export type ProductDTO = {
+export interface ProductDTO {
   id: string;
   name: string;
   priceInCents: number;
@@ -7,4 +7,4 @@ export type ProductDTO = {
   image: string | null;
   typeId: string;
   storeId: string;
-};
+}

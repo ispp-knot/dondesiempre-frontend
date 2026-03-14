@@ -111,7 +111,7 @@ export function ShareTo({ item, images, className }: Props) {
     ? (item as PromotionDTO).storeId
     : 'storeId' in item
       ? (item as ProductDTO).storeId
-      : (item as OutfitDTO).storefrontId;
+      : (item as OutfitDTO).storeId;
 
   const storeUrl = `${getWebUrl()}/stores/${storeId}`;
 

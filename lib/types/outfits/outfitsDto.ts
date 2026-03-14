@@ -6,7 +6,7 @@ export type OutfitDTO = {
   priceInCents: number;
   discountedPriceInCents: number;
   index: number;
-  storefrontId: number; // TODO: En PR Pepe #129: cambiar a storeId
+  storeId: number;
   tags: string[];
   products: OutfitProductDTO[];
 };
@@ -23,23 +23,23 @@ export type OutfitProductDTO = {
   storeId: string;
 };
 
-export type OutfitCreationProductDTO = {
+export interface OutfitCreationProductDTO {
   productId: string;
   index: number;
-};
+}
 
-export type OutfitCreationDTO = {
+export interface OutfitCreationDTO {
   index: number;
   storefrontId: string;
   name: string;
   description: string | null;
   tags: string[];
   products: OutfitCreationProductDTO[];
-};
+}
 
-export type OutfitUpdateDTO = {
+export interface OutfitUpdateDTO {
   name: string;
   description: string | null;
   discountedPriceInCents: number;
   index: number;
-};
+}
