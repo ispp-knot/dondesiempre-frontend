@@ -49,6 +49,14 @@ type UsePassiveFetcherResult<T> = ReturnType<typeof useQuery<T>> & {
   setData: (data: T) => void;
 };
 
+/**
+ * To be used for passively fetching data with no side effects.
+ * Fetches immediately upon loading.
+ * Fetches again if the URL is updated or when calling refetch.
+ * Only works with GET.
+ * Data will be re-fetched passively in the background on occasion to get updates.
+ * Requests to the same site will be de-duplicated.
+ */
 export function usePassiveFetcher<T>({
   url,
   enabled = true,
@@ -66,6 +74,8 @@ export function usePassiveFetcher<T>({
     queryClient.setQueryData(queryKey, data);
   };
 
+  // Needed to stop needless duplication of events
+  // according to ESLint
   return Object.assign(query, { setData });
 }
 
@@ -96,6 +106,16 @@ type UseActiveFetcherResult<T> = ReturnType<
   setData: Dispatch<SetStateAction<T | null>>;
 };
 
+/**
+ * To be used for actively fetching data once.
+ * Won't fetch until you call fetch().
+ * Examples: POST, PUT, DELETE.
+ * GET is allowed but should almost never be used.
+ *
+ * You can specify URL and method on creation but are not forced to.
+ * You can update them when calling fetch.
+ * Will throw if you try to DELETE with a body, and this throw is NOT HANDLED by isError.
+ */
 export function useActiveFetcher<T>({
   url: defaultUrl,
   method: defaultMethod,
