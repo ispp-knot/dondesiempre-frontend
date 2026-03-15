@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import useFetcher from '@/lib/api/fetcher';
+import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { convertToBrightness } from '@/lib/colorUtils';
 import { motion } from 'framer-motion';
@@ -10,20 +10,14 @@ import { LuStore } from 'react-icons/lu';
 
 export function StoreMapCard({ store }: { store: StoreDTO }) {
   const color = store.storefront?.primaryColor ?? '#c65a3a';
-  const isFollowing = useFetcher<boolean>({
-    url: `stores/${store.id}/followers/me`,
-  });
-
-  const followStore = useFetcher<void>({
+  const isFollowing = usePassiveFetcher<boolean>({ url: `stores/${store.id}/followers/me` });
+  const followStore = useActiveFetcher<void>({
     url: `stores/${store.id}/followers`,
     method: 'POST',
-    fetchOnStart: false,
   });
-
-  const unfollowStore = useFetcher<void>({
+  const unfollowStore = useActiveFetcher<void>({
     url: `stores/${store.id}/follow`,
     method: 'DELETE',
-    fetchOnStart: false,
   });
 
   return (

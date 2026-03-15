@@ -5,7 +5,7 @@ import LabelledSwitch from '@/components/dondeSiempre/LabelledSwitch';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { Button } from '@/components/ui/button';
-import useFetcher from '@/lib/api/fetcher';
+import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { OutfitDTO, OutfitUpdateDTO } from '@/lib/types/outfits/outfitsDto';
 import { convertPrice } from '@/lib/utils';
 import Image from 'next/image';
@@ -22,23 +22,18 @@ export default function OutfitDetailsPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [selectedProduct, setSelectedProduct] = useState(0);
 
-  const outfit = useFetcher<OutfitDTO>({ url: `outfits/${params.outfitId}` });
-  const updateOutfit = useFetcher<OutfitDTO>({
+  const outfit = usePassiveFetcher<OutfitDTO>({ url: `outfits/${params.outfitId}` });
+  const updateOutfit = useActiveFetcher<OutfitDTO>({
     url: `outfits/${params.outfitId}`,
     method: 'PUT',
-    fetchOnStart: false,
   });
-
-  const addTag = useFetcher<void, string>({
+  const addTag = useActiveFetcher<void>({
     url: `outfits/${params.outfitId}/tags`,
     method: 'POST',
-    fetchOnStart: false,
   });
-
-  const removeTag = useFetcher<void, string>({
+  const removeTag = useActiveFetcher<void>({
     url: `outfits/${params.outfitId}/tags`,
     method: 'DELETE',
-    fetchOnStart: false,
   });
 
   if (outfit.isLoading) {
@@ -66,11 +61,12 @@ export default function OutfitDetailsPage() {
       index: Number.parseInt((document.getElementById('form-index') as HTMLInputElement).value),
     };
 
-    const data = {
-      dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
-      imageFile,
-    };
-    await updateOutfit.fetch({ newFormPayload: data });
+    await updateOutfit.fetch({
+      formPayload: {
+        dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
+        image: imageFile ?? undefined,
+      },
+    });
     redirect(`/stores/${params.id}/outfits`);
   };
 
@@ -188,9 +184,9 @@ export default function OutfitDetailsPage() {
                       const element = document.getElementById('form-tags') as HTMLInputElement;
 
                       if (element.value.includes(' ')) {
-                        await addTag.fetch({ newBody: element.value.trim() });
+                        await addTag.fetch({ body: element.value.trim() });
                         element.value = '';
-                        await outfit.fetch();
+                        outfit.refetch();
                       }
                     }}
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
@@ -202,8 +198,8 @@ export default function OutfitDetailsPage() {
                       key={i}
                       type="button"
                       onClick={async () => {
-                        await removeTag.fetch({ newBody: t });
-                        await outfit.fetch();
+                        await removeTag.fetch({ body: t });
+                        outfit.refetch();
                       }}
                       className="p-2 rounded-lg bg-secondary hover:bg-dark-secondary flex flex-row gap-1 shrink-0"
                     >

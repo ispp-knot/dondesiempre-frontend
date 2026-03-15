@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import useFetcher from '@/lib/api/fetcher';
+import { usePassiveFetcher } from '@/lib/api/fetcher';
 import { StoreDTO, StoreSocialNetworkDTO } from '@/lib/types/stores/storesDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import Image from 'next/image';
@@ -28,8 +28,8 @@ const getSocialIcon = (name: string) => {
 export default function StorePage() {
   const params = useParams<{ id: string }>();
 
-  const store = useFetcher<StoreDTO>({ url: `stores/${params.id}` });
-  const outfits = useFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
+  const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
+  const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
 
   if (store.isLoading || outfits.isLoading) {
     return <LoadingText />;

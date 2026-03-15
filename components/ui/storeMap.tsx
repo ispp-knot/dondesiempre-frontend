@@ -6,7 +6,7 @@ import { createRef, useCallback } from 'react';
 import { MdExplore, MdMyLocation } from 'react-icons/md';
 import { StorePin } from './storePin';
 
-import useFetcher from '@/lib/api/fetcher';
+import { useActiveFetcher } from '@/lib/api/fetcher';
 import { DEFAULT_MAP_LOCATION, DEFAULT_MAP_STYLE } from '@/lib/mapUtils';
 import 'maplibre-gl/dist/maplibre-gl.css'; // Must be included in every map view
 import { useDebouncedCallback } from 'use-debounce';
@@ -23,7 +23,7 @@ export function StoreMap({
   onStoreSelect?: (store: StoreDTO | null) => void;
 }) {
   const mapRef = createRef<MapRef>();
-  const stores = useFetcher<StoreDTO[]>({ url: 'stores', fetchOnStart: false });
+  const stores = useActiveFetcher<StoreDTO[]>({ url: 'stores', method: 'GET' });
 
   const fetchStores = useCallback(
     async (_: MapEvent) => {
@@ -36,7 +36,7 @@ export function StoreMap({
       const ne = boundary.getNorthEast();
 
       await stores.fetch({
-        newQueryParams: { minLon: sw.lng, maxLon: ne.lng, minLat: sw.lat, maxLat: ne.lat },
+        url: `stores?minLon=${sw.lng}&maxLon=${ne.lng}&minLat=${sw.lat}&maxLat=${ne.lat}`,
       });
     },
     [mapRef, stores]
