@@ -19,7 +19,7 @@ test('get started link', async ({ page }) => {
   // Expects page to have a heading with the name of Installation.
   await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
 });
-*/
+
 test.beforeEach(async ({ context }) => {
   // Bloquea el registro del Service Worker antes de cargar la página
 
@@ -32,7 +32,7 @@ test.beforeEach(async ({ context }) => {
   });
 });
 
-/*
+
 test('test', async ({ page }) => {
   await page.goto('http://localhost:3000/stores');
   await page.context().grantPermissions(['geolocation']);
@@ -43,7 +43,7 @@ test('test', async ({ page }) => {
   await page.getByRole('button', { name: 'Map marker' }).nth(4).click();
   await page.getByRole('heading', { name: 'Moda Urbana Sevilla' }).click();
 });
-*/
+
 
 test('test', async ({ page }) => {
   await page.goto('http://localhost:3000/stores');
@@ -57,3 +57,4 @@ test('test', async ({ page }) => {
   await page.getByText('Nuestro sitio web está siendo').click();
   await page.getByText('Muy pronto estaremos de').click();
 });
+*/
