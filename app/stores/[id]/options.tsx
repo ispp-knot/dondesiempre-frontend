@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { Edit2, Camera, Loader2, Save, X, AlertCircle } from 'lucide-react';
-import Image from 'next/image';
+import { useState } from 'react';
+import { Edit2, Loader2, Save, X, AlertCircle } from 'lucide-react';
+import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { useActiveFetcher } from '@/lib/api/fetcher';
 
@@ -16,8 +16,6 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
   const [formData, setFormData] = useState<StoreDTO['storefront']>(initialStore?.storefront);
   const [hasChanges, setHasChanges] = useState(false);
   const [bannerImageFile, setBannerImageFile] = useState<File | null>(null);
-  const [bannerImagePreview, setBannerImagePreview] = useState<string | null>(null);
-  const bannerInputRef = useRef<HTMLInputElement>(null);
 
   const updateStorefront = useActiveFetcher<StoreDTO['storefront']>({
     url: `storefronts/${storefrontId}`,
@@ -32,19 +30,14 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
     setHasChanges(true);
   };
 
-  const handleBannerFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setBannerImageFile(file);
-      setBannerImagePreview(URL.createObjectURL(file));
-      setHasChanges(true);
-    }
+  const handleBannerFileChange = (file: File | null) => {
+    setBannerImageFile(file);
+    setHasChanges(true);
   };
 
   const handleCancel = () => {
     setFormData(initialStore?.storefront);
     setBannerImageFile(null);
-    setBannerImagePreview(null);
     setHasChanges(false);
   };
 
@@ -61,8 +54,6 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
         dto: new Blob([JSON.stringify(formData)], { type: 'application/json' }),
         image: bannerImageFile ?? undefined,
       };
-
-      debugger;
 
       await updateStorefront.fetch({
         formPayload,
@@ -87,30 +78,11 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
       )}
 
       <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <span className="text-[#c65a3a] text-lg font-medium">Imagen de cabecera</span>
-          <Camera
-            className="w-5 h-5 text-teal-700 cursor-pointer"
-            onClick={() => bannerInputRef.current?.click()}
-          />
-          <input
-            ref={bannerInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleBannerFileChange}
-          />
-        </div>
-
-        <div className="relative w-full h-40 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-          <Image
-            src={bannerImagePreview || storefront.bannerImageUrl || '/static/img/banner.jpg'}
-            alt="Preview"
-            fill
-            className="object-cover"
-            unoptimized
-          />
-        </div>
+        <span className="text-[#c65a3a] text-lg font-medium">Imagen de cabecera</span>
+        <ImageUpload
+          onChange={handleBannerFileChange}
+          existingImageUrl={storefront.bannerImageUrl || '/static/img/banner.jpg'}
+        />
       </div>
 
       <div className="flex justify-between items-center gap-4">
