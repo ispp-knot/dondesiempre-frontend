@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { createPromotion } from '@/lib/api/promotionEndpoints';
 import PromotionForm, { PromotionFormData } from '@/components/dondeSiempre/PromotionForm';
+import { useActiveFetcher } from '@/lib/api/fetcher';
+import { useParams, useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function CreatePromotionPage() {
   const params = useParams<{ id: string }>();
@@ -12,6 +12,8 @@ export default function CreatePromotionPage() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  const createPromotion = useActiveFetcher<void>({ url: 'promotions', method: 'POST' });
 
   const handleSubmit = async (formData: PromotionFormData) => {
     setIsLoading(true);
@@ -27,7 +29,7 @@ export default function CreatePromotionPage() {
     };
 
     try {
-      await createPromotion(dto);
+      await createPromotion.fetch({ body: dto });
       setStatus({ type: 'success', message: '¡Promoción lanzada con éxito!' });
       setTimeout(() => {
         router.push(`/storefront/${storeId}`);

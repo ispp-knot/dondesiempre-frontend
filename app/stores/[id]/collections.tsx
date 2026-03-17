@@ -7,16 +7,16 @@ type Collection = {
 };
 
 type Props = {
-  storefrontId?: string;
+  storeId?: string;
   collections?: Collection[];
 };
 
-export default function Collections({ storefrontId = undefined, collections = [] }: Props) {
+export default function Collections({ storeId = undefined, collections = [] }: Props) {
   return (
     <div className="flex flex-col px-5 sm:w-10/12">
       <div className="flex flex-row items-center justify-between w-full mb-4">
         <h1 className="text-primary text-xl md:text-2xl font-bold">Nuestras colecciones</h1>
-        <Link href={`/stores/${storefrontId}/collections`} className="text-secondary underline">
+        <Link href={`/stores/${storeId}/collections`} className="text-secondary underline">
           Ver más
         </Link>
       </div>

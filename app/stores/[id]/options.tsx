@@ -3,32 +3,34 @@
 import { useState } from 'react';
 import { Edit2, Camera, Loader2, Save, X, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
-import { StoreDTO } from '@/lib/api/types';
-import { updateStorefront } from '@/lib/api/storefronts/updateStorefront';
+import { StoreDTO } from '@/lib/types/stores/storesDto';
+import { useActiveFetcher } from '@/lib/api/fetcher';
 
 type Props = {
   storefrontId: string;
-  initialData: StoreDTO;
+  initialStore: StoreDTO;
 };
 
-export default function StoreOptions({ storefrontId, initialData }: Props) {
+export default function StoreOptions({ storefrontId, initialStore }: Props) {
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<StoreDTO>(initialData);
+  const [formData, setFormData] = useState<StoreDTO['storefront']>(initialStore?.storefront);
   const [hasChanges, setHasChanges] = useState(false);
+
+  const updateStorefront = useActiveFetcher<StoreDTO['storefront']>({
+    url: `storefronts/${storefrontId}`,
+    method: 'PUT',
+  });
 
   const updateStorefrontState = (updates: Partial<StoreDTO['storefront']>) => {
     setFormData((prev) => ({
       ...prev,
-      storefront: {
-        ...prev.storefront,
-        ...updates,
-      },
+      ...updates,
     }));
     setHasChanges(true);
   };
 
   const handleCancel = () => {
-    setFormData(initialData);
+    setFormData(initialStore?.storefront);
     setHasChanges(false);
   };
 
@@ -41,9 +43,9 @@ export default function StoreOptions({ storefrontId, initialData }: Props) {
 
     setLoading(true);
     try {
-      await updateStorefront(storefrontId, formData.storefront);
+      await updateStorefront.fetch({ body: formData });
       setHasChanges(false);
-      window.location.reload();
+      location.reload();
     } catch (error) {
       alert('Error al guardar los cambios: ' + error);
     } finally {
@@ -51,7 +53,7 @@ export default function StoreOptions({ storefrontId, initialData }: Props) {
     }
   };
 
-  const storefront = formData.storefront;
+  const storefront = formData;
 
   return (
     <div className="w-full max-w-142.5 space-y-10 relative pb-10">

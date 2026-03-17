@@ -1,17 +1,19 @@
+'use client';
+
 export const dynamic = 'force-dynamic';
 
+import { usePassiveFetcher } from '@/lib/api/fetcher';
+import { StoreDTO, StoreSocialNetworkDTO } from '@/lib/types/stores/storesDto';
+import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import Image from 'next/image';
+import { useParams } from 'next/navigation';
+import { FaFacebook, FaInstagram, FaLink, FaTiktok, FaTwitter } from 'react-icons/fa';
 import { FaLocationDot } from 'react-icons/fa6';
 import { MdAccessTimeFilled } from 'react-icons/md';
-import { FaFacebook, FaInstagram, FaTwitter, FaTiktok, FaLink } from 'react-icons/fa';
 import StoreTabs from './store-tabs';
-import { getStore } from '@/lib/api/stores/getStore';
-import { getOutfitByStoreId } from '@/lib/api/outfits/getOutfitsByStore';
-import { StoreSocialNetworkDTO } from '@/lib/api/types';
-
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
+import LoadingText from '@/components/dondeSiempre/LoadingText';
+import ErrorText from '@/components/dondeSiempre/ErrorText';
+import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 
 const getSocialIcon = (name: string) => {
   const lowerName = name.toLowerCase();
@@ -23,16 +25,27 @@ const getSocialIcon = (name: string) => {
   return <FaLink className="w-4 h-4" />;
 };
 
-export default async function StorePage({ params }: PageProps) {
-  const { id } = await params;
+export default function StorePage() {
+  const params = useParams<{ id: string }>();
 
-  const storeDto = await getStore(id);
-  const outfitsDto = await getOutfitByStoreId(id);
+  const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
+  const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
 
-  const socialNetworks: Array<StoreSocialNetworkDTO> = storeDto.socialNetworks || [];
-  const primaryColor = storeDto.storefront?.primaryColor || '#000000';
-  const secondaryColor = storeDto.storefront?.secondaryColor || '#000000';
-  const banner = storeDto.storefront?.bannerImageUrl;
+  if (store.isLoading || outfits.isLoading) {
+    return <LoadingText />;
+  } else if (store.isError || outfits.isError) {
+    return (
+      <>
+        <ErrorText error={store.error} />
+        <ErrorText error={outfits.error} />
+      </>
+    );
+  }
+
+  const socialNetworks: Array<StoreSocialNetworkDTO> = store.data?.socialNetworks || [];
+  const primaryColor = store.data?.storefront?.primaryColor || '#000000';
+  const secondaryColor = store.data?.storefront?.secondaryColor || '#000000';
+  const banner = store.data?.storefront?.bannerImageUrl;
 
   const collections = [
     { id: 1, name: 'Veraneo', image: '' },
@@ -44,7 +57,7 @@ export default async function StorePage({ params }: PageProps) {
     { id: 7, name: 'Ropa interior', image: '' },
   ];
 
-  return (
+  return store.data && outfits.data ? (
     <div
       className="flex flex-col bg-white"
       style={
@@ -57,7 +70,7 @@ export default async function StorePage({ params }: PageProps) {
       <div className="relative w-full h-52 md:h-80">
         <Image
           src={banner || '/static/img/banner.jpg'}
-          alt={`Banner de la tienda ${storeDto.name}`}
+          alt={`Banner de la tienda ${store.data.name}`}
           fill
           className="object-cover"
           priority
@@ -66,17 +79,17 @@ export default async function StorePage({ params }: PageProps) {
       </div>
 
       <div className="w-full mt-5 text-center text-3xl md:text-5xl text-[var(--primary)] font-bold">
-        {storeDto.name}
+        {store.data.name}
       </div>
 
       <div className="flex flex-row w-full mt-2 items-center justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]">
         <FaLocationDot />
-        {storeDto.address}
+        {store.data.address}
       </div>
 
       <div className="flex flex-row w-full mt-2 items-center justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]">
         <MdAccessTimeFilled />
-        {storeDto.openingHours}
+        {store.data.openingHours}
       </div>
 
       <div className="flex gap-3 mt-3 flex-wrap justify-center mb-2">
@@ -95,12 +108,13 @@ export default async function StorePage({ params }: PageProps) {
       </div>
 
       <StoreTabs
-        store={storeDto}
-        storefrontId={storeDto.storefront?.id}
+        store={store.data}
         collections={collections}
-        description={storeDto.aboutUs || ''}
-        outfits={outfitsDto}
+        description={store.data?.aboutUs || ''}
+        outfits={outfits.data}
       />
     </div>
+  ) : (
+    <NotFoundText message="No se pudo encontrar la tienda que buscabas..." />
   );
 }

@@ -1,18 +1,24 @@
-import { StoreDTO } from '@/lib/api/types';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { LuStore } from 'react-icons/lu';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { Card } from '@/components/ui/card';
+import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
+import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { convertToBrightness } from '@/lib/colorUtils';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
 import Link from 'next/link';
-import { followStore, unfollowStore, isFollowingStore } from '@/lib/api/followEndpoints';
-import { useState } from 'react';
+import { LuStore } from 'react-icons/lu';
 
 export function StoreMapCard({ store }: { store: StoreDTO }) {
   const color = store.storefront?.primaryColor ?? '#c65a3a';
-  const [isFollowing, setIsFollowing] = useState<boolean>(false);
-  isFollowingStore(store.id).then((data) => setIsFollowing(data.isFollowing));
+  const isFollowing = usePassiveFetcher<boolean>({ url: `stores/${store.id}/followers/me` });
+  const followStore = useActiveFetcher<void>({
+    url: `stores/${store.id}/followers`,
+    method: 'POST',
+  });
+  const unfollowStore = useActiveFetcher<void>({
+    url: `stores/${store.id}/follow`,
+    method: 'DELETE',
+  });
 
   return (
     <motion.div
@@ -46,16 +52,16 @@ export function StoreMapCard({ store }: { store: StoreDTO }) {
                 className="flex items-center w-fit gap-1.5 border border-primary rounded-sm px-3 py-1.5 text-xs text-primary hover:bg-primary hover:text-white transition"
                 onClick={async () => {
                   console.log(store.id);
-                  if (isFollowing) {
-                    await unfollowStore(store.id);
-                    setIsFollowing(false);
+                  if (isFollowing.data) {
+                    await unfollowStore.fetch();
+                    isFollowing.setData(false);
                   } else {
-                    await followStore(store.id);
-                    setIsFollowing(true);
+                    await followStore.fetch();
+                    isFollowing.setData(true);
                   }
                 }}
               >
-                {isFollowing ? 'Dejar de seguir' : '+ Seguir'}
+                {isFollowing.data ? 'Dejar de seguir' : '+ Seguir'}
               </Button>
             </div>
 

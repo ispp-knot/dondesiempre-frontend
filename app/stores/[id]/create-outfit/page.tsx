@@ -6,60 +6,72 @@ import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import SortableProduct from '@/components/dondeSiempre/SortableProduct';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { createOutfit } from '@/lib/api/outfitEndpoints';
-import { getProductsOfStorefront } from '@/lib/api/productEndpoints';
-import { OutfitCreation, productToOufitCreationProduct } from '@/lib/types/outfits';
-import { Product } from '@/lib/types/products';
+import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
+import { StoreDTO } from '@/lib/types/stores/storesDto';
+import { OutfitDTO, OutfitCreationDTO } from '@/lib/types/outfits/outfitsDto';
+import { productDTOToOufitCreationProductDTO } from '@/lib/types/outfits/outfitsHelper';
+import { ProductDTO } from '@/lib/types/products/productsDto';
 import { convertPrice } from '@/lib/utils';
 import { move } from '@dnd-kit/helpers';
 import { DragDropProvider } from '@dnd-kit/react';
-import { useQuery } from '@tanstack/react-query';
+import Image from 'next/image';
 import { redirect, useParams } from 'next/navigation';
 import { useState } from 'react';
 import { FaTag } from 'react-icons/fa';
-import Image from 'next/image';
 
-export default function OutfitProductsPage() {
+export default function OutfitCreationPage() {
   const params = useParams<{ id: string }>();
-  const storefrontId = params.id;
 
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [outfitProducts, setOutfitProducts] = useState(new Array<Product>());
+  const [outfitProducts, setOutfitProducts] = useState(new Array<ProductDTO>());
   const [outfitTags, setOutfitTags] = useState(new Array<string>());
-  const productsQuery = useQuery({
-    queryKey: ['products', storefrontId],
-    queryFn: () => getProductsOfStorefront(storefrontId),
+
+  const products = usePassiveFetcher<ProductDTO[]>({ url: `stores/${params.id}/products` });
+  const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
+  const createOutfit = useActiveFetcher<OutfitDTO>({
+    url: `stores/${params.id}/outfits`,
+    method: 'POST',
   });
 
-  if (productsQuery.isLoading) {
+  if (products.isLoading || store.isLoading) {
     return <LoadingText />;
   }
 
-  if (productsQuery.isError) {
-    return <ErrorText error={productsQuery.error} />;
+  if (products.isError || store.isError) {
+    return (
+      <>
+        <ErrorText error={products.error} />
+        <ErrorText error={store.error} />
+      </>
+    );
   }
 
   const submitForm = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const dto: OutfitCreation = {
+    const dto: OutfitCreationDTO = {
       name: (document.getElementById('form-name') as HTMLInputElement).value,
       description: (document.getElementById('form-description') as HTMLInputElement).value || null,
       index: Number.parseInt((document.getElementById('form-index') as HTMLInputElement).value),
-      storefrontId: storefrontId,
+      storefrontId: store.data!.storefront.id,
       tags: outfitTags,
       products: outfitProducts.map((product, index) =>
-        productToOufitCreationProduct(product, index)
+        productDTOToOufitCreationProductDTO(product, index)
       ),
     };
-    await createOutfit(dto, imageFile);
-    redirect(`/stores/${storefrontId}/outfits`);
+    await createOutfit.fetch({
+      formPayload: {
+        dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
+        image: imageFile ?? undefined,
+      },
+    });
+    redirect(`/stores/${params.id}/outfits`);
   };
 
   return (
     <>
-      {productsQuery.data ? (
+      {products.data ? (
         <DragDropProvider
           onDragEnd={(event) => {
             if (event.canceled) {
@@ -74,7 +86,7 @@ export default function OutfitProductsPage() {
                 <h1 className="mb-3 font-bold text-primary text-center text-3xl">Crear outfit</h1>
                 <div className="w-full flex flex-col items-center">
                   <form
-                    action={`/stores/${storefrontId}/outfits`}
+                    action={`/stores/${params.id}/outfits`}
                     method="GET"
                     onSubmit={submitForm}
                     className="w-10/12"
@@ -226,7 +238,7 @@ export default function OutfitProductsPage() {
               <Card className="p-4 m-4 pt-8">
                 <h1 className="md:mb-3 font-bold text-primary text-center text-3xl">Productos</h1>
                 <div className="grid grid-cols-2 md:gap-2">
-                  {productsQuery.data
+                  {products.data
                     .filter((p) => !outfitProducts.map((product) => product.id).includes(p.id))
                     .map((p) => (
                       <Card key={p.id} className="p-2 md:p-4 md:pt-8 m-1 shadow-xl gap-2 md:gap-4">
