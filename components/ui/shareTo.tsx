@@ -107,11 +107,7 @@ export function ShareTo({ item, images, className }: Props) {
   const backgroundImage =
     images && images.length > 0 ? images[0] : itemImage || '/static/img/promotion_placeholder.png';
 
-  const storeId = isPromotion
-    ? (item as PromotionDTO).storeId
-    : 'storeId' in item
-      ? (item as ProductDTO).storeId
-      : (item as OutfitDTO).storeId;
+  const storeId = item.storeId;
 
   const storeUrl = `${getWebUrl()}/stores/${storeId}`;
 
