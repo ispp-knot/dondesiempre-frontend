@@ -6,8 +6,9 @@ import Collections from './collections';
 import AboutUs from './about-us';
 import Outfits from './outfits';
 import StoreOptions from './options';
-import { StoreDTO, Promotion } from '@/lib/api/types';
-import { Outfit } from '@/lib/types/outfits';
+import { StoreDTO } from '@/lib/types/stores/storesDto';
+import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
+import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { ShareTo } from '@/components/ui/shareTo';
 
 type Tab = 'catalogo' | 'sobre' | 'opciones';
@@ -19,10 +20,9 @@ type Collection = {
 };
 
 type Props = {
-  storefrontId?: string;
   collections?: Collection[];
   description?: string;
-  outfits?: Outfit[];
+  outfits?: OutfitDTO[];
   store: StoreDTO;
 };
 
@@ -37,7 +37,7 @@ export default function StoreTabs({
   const promoOutfit = outfits.find((o) => o.discountedPriceInCents < o.priceInCents);
 
   const storefrontId = store?.storefront?.id;
-  const mockPromotion: Promotion = {
+  const mockPromotion: PromotionDTO = {
     id: '1a383fda-5ac8-4f1f-bfba-2dcd4f09dca3',
     name: promoOutfit?.name || 'Esto es una promoción',
     discountPercentage: promoOutfit
@@ -45,7 +45,6 @@ export default function StoreTabs({
       : 0,
     isActive: true,
     description: promoOutfit?.description || 'Esto es una descripcion',
-    image: null,
     storeId: store.id,
     productIds: ['1a383fda', '5ac8', '4f1f-bfba', '2dcd4f09dca3'],
   };
@@ -108,13 +107,13 @@ export default function StoreTabs({
           <>
             {store.storefront.isFirstCollections ? (
               <>
-                <Collections storefrontId={storefrontId} collections={collections} />
-                <Outfits storefrontId={storefrontId} outfits={outfits} />
+                <Collections storeId={store.id} collections={collections} />
+                <Outfits storeId={store.id} outfits={outfits} />
               </>
             ) : (
               <>
-                <Outfits storefrontId={storefrontId} outfits={outfits} />
-                <Collections storefrontId={storefrontId} collections={collections} />
+                <Outfits storeId={store.id} outfits={outfits} />
+                <Collections storeId={store.id} collections={collections} />
               </>
             )}
           </>
@@ -123,7 +122,7 @@ export default function StoreTabs({
         {activeTab === 'sobre' && <AboutUs description={description} />}
 
         {activeTab === 'opciones' && (
-          <StoreOptions storefrontId={storefrontId} initialData={store} />
+          <StoreOptions storefrontId={storefrontId} initialStore={store} />
         )}
       </div>
     </>

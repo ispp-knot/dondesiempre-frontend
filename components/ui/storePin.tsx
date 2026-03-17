@@ -1,4 +1,4 @@
-import { StoreDTO } from '@/lib/api/types';
+import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { convertToBrightness } from '@/lib/colorUtils';
 import { MdLocationPin } from 'react-icons/md';
 

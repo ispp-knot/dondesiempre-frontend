@@ -29,7 +29,7 @@ export function ProfilePage({}) {
           <CardTitle className="text-lg">{name}</CardTitle>
         </div>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3 text-sm">
+      <CardContent className="flex flex-col gap-3 text-sm my-3">
         <div className="flex items-center gap-2 text-muted-foreground">
           <MdOutlineEmail className="text-base shrink-0" />
           <span>{email}</span>
@@ -47,7 +47,18 @@ export function ProfilePage({}) {
           </div>
         )}
       </CardContent>
-      <CardFooter className="border-t pt-6">
+      <CardFooter className="border-t mt-3 flex flex-col gap-3">
+        {user?.store?.id && (
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => {
+              router.push(`/stores/${user.store!.id}`);
+            }}
+          >
+            Mi tienda
+          </Button>
+        )}
         <Button
           variant="outline"
           className="w-full"
