@@ -3,7 +3,7 @@
 import type { UserResponseDTO } from '@/lib/types/auth/authDto';
 import { pick } from 'lodash';
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
-import useFetcher from '../api/fetcher';
+import { useActiveFetcher } from '../api/fetcher';
 
 const LOCAL_STORAGE_KEY = 'auth_user';
 
@@ -73,7 +73,7 @@ function readFromStorage(): UserResponseDTO | null {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserResponseDTO | null>(readFromStorage());
-  const logOut = useFetcher<void, void>({ url: 'auth/logout', method: 'GET', fetchOnStart: false });
+  const logOut = useActiveFetcher<void>({ url: 'auth/logout', method: 'GET' });
 
   const registerInfo = useCallback((newUser: UserResponseDTO) => {
     setUser(newUser);

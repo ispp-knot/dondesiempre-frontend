@@ -3,13 +3,13 @@
 import ErrorText from '@/components/dondeSiempre/ErrorText';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
-import useFetcher from '@/lib/api/fetcher';
+import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { JSX } from 'react';
 
 export default function FollowPage(): JSX.Element {
-  const followedStores = useFetcher<StoreDTO[]>({ url: 'clients/me/following' });
-  const unfollowStore = useFetcher<void>({ method: 'DELETE', fetchOnStart: false });
+  const followedStores = usePassiveFetcher<StoreDTO[]>({ url: 'clients/me/following' });
+  const unfollowStore = useActiveFetcher<void>({ method: 'DELETE' });
 
   if (followedStores.isLoading) {
     return <LoadingText></LoadingText>;
@@ -61,8 +61,8 @@ export default function FollowPage(): JSX.Element {
                 </button>
                 <button
                   onClick={async () => {
-                    await unfollowStore.fetch({ newUrl: `stores/${store.id}/follow` });
-                    await followedStores.fetch();
+                    await unfollowStore.fetch({ url: `stores/${store.id}/follow` });
+                    followedStores.refetch();
                   }}
                   className="mt-4 bg-gray-100 hover:bg-gray-200 text-green-800 py-2 px-4 rounded-md"
                 >

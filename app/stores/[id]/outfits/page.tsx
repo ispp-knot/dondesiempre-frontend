@@ -4,7 +4,7 @@ import LabelledSwitch from '@/components/dondeSiempre/LabelledSwitch';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import useFetcher from '@/lib/api/fetcher';
+import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { convertPrice } from '@/lib/utils';
 import Image from 'next/image';
@@ -20,8 +20,8 @@ export default function OutfitsPage() {
   const params = useParams<{ id: string }>();
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const outfits = useFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
-  const deleteOutfit = useFetcher<void>({ method: 'DELETE', fetchOnStart: false });
+  const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
+  const deleteOutfit = useActiveFetcher<void>({ method: 'DELETE' });
 
   if (outfits.isLoading) {
     return <LoadingText />;
@@ -63,11 +63,6 @@ export default function OutfitsPage() {
                       <RiDiscountPercentFill className="text-4xl" />
                     )}
                     <h1 className="mb-3 font-bold text-primary text-center text-3xl">{o.name}</h1>
-                    {o.description ? (
-                      <p className="text-secondary text-center text-xl">{o.description}</p>
-                    ) : (
-                      <></>
-                    )}
                   </div>
                   <div className="flex flex-row w-fit max-w-11/12 self-center overflow-x-auto items-center gap-4 p-4">
                     {o.products.map((p) => (
@@ -78,7 +73,7 @@ export default function OutfitsPage() {
                         width={512}
                         height={512}
                         className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg"
-                      ></Image>
+                      />
                     ))}
                   </div>
                   {o.discountedPriceInCents === o.priceInCents ? (
@@ -111,8 +106,8 @@ export default function OutfitsPage() {
                       </Link>
                       <Button
                         onClick={async () => {
-                          await deleteOutfit.fetch({ newUrl: `outfits/${o.id}` });
-                          await outfits.fetch();
+                          await deleteOutfit.fetch({ url: `outfits/${o.id}` });
+                          outfits.refetch();
                         }}
                         className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-primary hover:bg-dark-primary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
                       >

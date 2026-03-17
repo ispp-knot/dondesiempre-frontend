@@ -1,193 +1,154 @@
 import { authorizedOfetch } from './authorizedOfetch';
 import { getBackendUrl } from '../config';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useRef, useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, Dispatch, SetStateAction } from 'react';
 
-/*
-  formPayload must be of the type:
-  
-  const data = {
-    dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
-    image,
-  };
-*/
+function buildQueryKey(url: string): string[] {
+  return url.split('/');
+}
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type FormPayload = Record<string, any>;
-
-type QueryKey<TBody> = [
-  string | undefined,
-  string,
-  TBody | undefined,
-  FormPayload | undefined,
-  Record<string, string | number | boolean>,
-];
-
-type UseFetcherResult<T, TBody> = ReturnType<typeof useQuery<T>> & {
-  data: T | null;
-  setData: React.Dispatch<React.SetStateAction<T | null>>;
-  fetch: (options?: {
-    newUrl?: string;
-    newBody?: TBody;
-    newFormPayload?: FormPayload;
-    newQueryParams?: Record<string, string | number | boolean>;
-  }) => Promise<void>;
-};
-
-type UseFetcherOptions<TBody> = {
-  url?: string;
-  method?: string;
-  body?: TBody;
-  formPayload?: FormPayload;
-  fetchOnStart?: boolean;
-  queryParams?: Record<string, string | number | boolean>;
-};
-
-export default function useFetcher<T, TBody = undefined>({
-  url: initialUrl = undefined,
+async function executeFetch<T>({
+  url,
   method = 'GET',
-  body: initialBody = undefined,
-  formPayload: initialFormPayload = undefined,
-  fetchOnStart = true,
-  queryParams: initialQueryParams = {},
-}: UseFetcherOptions<TBody>): UseFetcherResult<T, TBody> {
-  if (initialUrl?.includes('?')) {
-    throw new Error('You should include query parameters in the queryParams field');
-  }
+  body,
+  formPayload,
+}: {
+  url: string;
+  method?: string;
+  body?: unknown;
+  formPayload?: Record<string, string | Blob | undefined>;
+}): Promise<T> {
+  let fetchBody: BodyInit | undefined;
 
-  if (method === 'GET' && (initialBody || initialFormPayload)) {
-    throw new Error('GET queries should not include a body');
-  }
-
-  const [data, setData] = useState<T | null>(null);
-
-  const urlRef = useRef<string | undefined>(initialUrl);
-  const formPayloadRef = useRef<FormPayload | undefined>(initialFormPayload);
-  const bodyRef = useRef<TBody | undefined>(initialBody);
-  const queryParamsRef = useRef<Record<string, string | number | boolean>>(initialQueryParams);
-
-  const queryFetch = async () => {
-    let fetchBody;
-    const url = urlRef.current;
-
-    if (!url) throw new Error('You must specify an URL');
-
-    const payload = formPayloadRef.current;
-    const body = bodyRef.current;
-    const queryParams = queryParamsRef.current;
-
-    const buildUrl = () => {
-      const searchParams = new URLSearchParams(
-        Object.entries(queryParams).map(([k, v]) => [k, String(v)])
-      ).toString();
-      return searchParams ? `${url}?${searchParams}` : url;
-    };
-
-    if (method !== 'GET') {
-      if (!payload) {
-        fetchBody = JSON.stringify(body);
-      } else {
-        const formData = new FormData();
-        Object.entries(payload).forEach(([k, v]) => {
-          if (v !== undefined && v !== null) formData.append(k, v);
-        });
-        fetchBody = formData;
-      }
+  if (method !== 'GET') {
+    if (formPayload) {
+      const formData = new FormData();
+      Object.entries(formPayload).forEach(
+        ([k, v]) => v !== undefined && formData.append(k, v as string | Blob)
+      );
+      fetchBody = formData;
+    } else if (body !== undefined) {
+      fetchBody = JSON.stringify(body);
     }
+  }
 
-    return (await authorizedOfetch(getBackendUrl() + '/api/v1/' + buildUrl(), {
-      method,
-      body: fetchBody,
-    })) as T;
-  };
-
-  const [queryKey, setQueryKey] = useState<QueryKey<TBody>>([
-    initialUrl,
+  return (await authorizedOfetch(getBackendUrl() + '/api/v1/' + url, {
     method,
-    initialBody,
-    initialFormPayload,
-    initialQueryParams,
-  ]);
+    body: fetchBody,
+  })) as T;
+}
 
-  const queryResponse = useQuery<T>({
+// --- usePassiveFetcher ---
+
+type UsePassiveFetcherOptions = {
+  url: string;
+  enabled?: boolean;
+};
+
+type UsePassiveFetcherResult<T> = ReturnType<typeof useQuery<T>> & {
+  setData: (data: T) => void;
+};
+
+/**
+ * To be used for passively fetching data with no side effects.
+ * Fetches immediately upon loading.
+ * Fetches again if the URL is updated or when calling refetch.
+ * Only works with GET.
+ * Data will be re-fetched passively in the background on occasion to get updates.
+ * Requests to the same site will be de-duplicated.
+ */
+export function usePassiveFetcher<T>({
+  url,
+  enabled = true,
+}: UsePassiveFetcherOptions): UsePassiveFetcherResult<T> {
+  const queryClient = useQueryClient();
+  const queryKey = buildQueryKey(url);
+
+  const query = useQuery<T>({
     queryKey,
-    queryFn: queryFetch,
-    enabled: fetchOnStart,
+    queryFn: () => executeFetch<T>({ url }),
+    enabled,
   });
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setData(queryResponse.data ?? null);
-  }, [queryResponse.data]);
+  const setData = (data: T) => {
+    queryClient.setQueryData(queryKey, data);
+  };
 
-  const isFirstRender = useRef(true);
-  const refetchResolverRef = useRef<(() => void) | null>(null);
+  // Needed to stop needless duplication of events
+  // according to ESLint
+  return Object.assign(query, { setData });
+}
 
-  const { isLoading, isError, error, isPending, isFetching, refetch } = queryResponse;
+// --- useActiveFetcher ---
 
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    refetch().then(() => {
-      refetchResolverRef.current?.();
-      refetchResolverRef.current = null;
-    });
-  }, [queryKey, refetch]);
+type MutationMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
-  const fetch = async (options?: {
-    newUrl?: string;
-    newBody?: TBody;
-    newFormPayload?: FormPayload;
-    newQueryParams?: Record<string, string | number | boolean>;
-  }): Promise<void> => {
-    if (method === 'GET' && (options?.newBody || options?.newFormPayload)) {
-      throw new Error('GET queries should not include a body');
-    }
+type UseActiveFetcherOptions<T> = {
+  url?: string;
+  method?: MutationMethod;
+  onSuccess?: (data: T) => void;
+  onError?: (error: Error) => void;
+  onSettled?: (data: T | undefined, error: Error | null) => void;
+};
 
-    if (options?.newUrl) {
-      urlRef.current = options.newUrl;
-    } else if (!urlRef.current) {
-      throw new Error('You must specify an URL');
-    }
+type ActiveFetchCallOptions = {
+  url?: string;
+  method?: MutationMethod;
+  body?: unknown;
+  formPayload?: Record<string, string | Blob | undefined>;
+};
 
-    if (options?.newFormPayload) {
-      formPayloadRef.current = options.newFormPayload;
-    } else if (options?.newBody) {
-      bodyRef.current = options.newBody;
-    }
+type UseActiveFetcherResult<T> = ReturnType<
+  typeof useMutation<T, Error, ActiveFetchCallOptions>
+> & {
+  fetch: (opts?: ActiveFetchCallOptions) => Promise<T>;
+  data: T | null;
+  setData: Dispatch<SetStateAction<T | null>>;
+};
 
-    if (options?.newQueryParams) {
-      queryParamsRef.current = options.newQueryParams;
-    }
+/**
+ * To be used for actively fetching data once.
+ * Won't fetch until you call fetch().
+ * Examples: POST, PUT, DELETE.
+ * GET is allowed but should almost never be used.
+ *
+ * You can specify URL and method on creation but are not forced to.
+ * You can update them when calling fetch.
+ * Will throw if you try to DELETE with a body, and this throw is NOT HANDLED by isError.
+ */
+export function useActiveFetcher<T>({
+  url: defaultUrl,
+  method: defaultMethod,
+  onSuccess,
+  onError,
+  onSettled,
+}: UseActiveFetcherOptions<T> = {}): UseActiveFetcherResult<T> {
+  const [data, setData] = useState<T | null>(null);
 
-    const newKey: QueryKey<TBody> = [
-      urlRef.current,
-      method,
-      bodyRef.current,
-      formPayloadRef.current,
-      queryParamsRef.current,
-    ];
+  const mutation = useMutation<T, Error, ActiveFetchCallOptions>({
+    mutationFn: (opts: ActiveFetchCallOptions = {}) => {
+      const url = opts.url ?? defaultUrl;
+      const method = opts.method ?? defaultMethod;
+      if (!url) throw new Error('useActiveFetcher: url is required');
+      if (!method) throw new Error('useActiveFetcher: method is required');
+      return executeFetch<T>({ url, method, body: opts.body, formPayload: opts.formPayload });
+    },
+    onSuccess: (result) => {
+      setData(result);
+      onSuccess?.(result);
+    },
+    onError,
+    onSettled,
+  });
 
-    if (JSON.stringify(newKey) === JSON.stringify(queryKey)) {
-      await refetch();
-    } else {
-      await new Promise<void>((resolve) => {
-        refetchResolverRef.current = resolve;
-        setQueryKey(newKey);
-      });
-    }
+  const fetch = (opts?: ActiveFetchCallOptions): Promise<T> => {
+    return mutation.mutateAsync(opts ?? {});
   };
 
   return {
-    isLoading,
-    isError,
-    error,
-    isPending,
-    isFetching,
+    ...mutation,
     fetch,
     data,
     setData,
-  } as UseFetcherResult<T, TBody>;
+  } as UseActiveFetcherResult<T>;
 }

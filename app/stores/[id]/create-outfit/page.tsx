@@ -6,7 +6,7 @@ import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import SortableProduct from '@/components/dondeSiempre/SortableProduct';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import useFetcher from '@/lib/api/fetcher';
+import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { OutfitDTO, OutfitCreationDTO } from '@/lib/types/outfits/outfitsDto';
 import { productDTOToOufitCreationProductDTO } from '@/lib/types/outfits/outfitsHelper';
@@ -27,12 +27,11 @@ export default function OutfitCreationPage() {
   const [outfitProducts, setOutfitProducts] = useState(new Array<ProductDTO>());
   const [outfitTags, setOutfitTags] = useState(new Array<string>());
 
-  const products = useFetcher<ProductDTO[]>({ url: `stores/${params.id}/products` });
-  const store = useFetcher<StoreDTO>({ url: `stores/${params.id}` });
-  const createOutfit = useFetcher<OutfitDTO>({
-    url: 'outfits',
+  const products = usePassiveFetcher<ProductDTO[]>({ url: `stores/${params.id}/products` });
+  const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
+  const createOutfit = useActiveFetcher<OutfitDTO>({
+    url: `stores/${params.id}/outfits`,
     method: 'POST',
-    fetchOnStart: false,
   });
 
   if (products.isLoading || store.isLoading) {
@@ -55,17 +54,18 @@ export default function OutfitCreationPage() {
       name: (document.getElementById('form-name') as HTMLInputElement).value,
       description: (document.getElementById('form-description') as HTMLInputElement).value || null,
       index: Number.parseInt((document.getElementById('form-index') as HTMLInputElement).value),
-      storefrontId: store.data.storefront.id,
+      storefrontId: store.data!.storefront.id,
       tags: outfitTags,
       products: outfitProducts.map((product, index) =>
         productDTOToOufitCreationProductDTO(product, index)
       ),
     };
-    const data = {
-      dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
-      imageFile,
-    };
-    await createOutfit.fetch({ newFormPayload: data });
+    await createOutfit.fetch({
+      formPayload: {
+        dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
+        image: imageFile ?? undefined,
+      },
+    });
     redirect(`/stores/${params.id}/outfits`);
   };
 

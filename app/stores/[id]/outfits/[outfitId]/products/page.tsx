@@ -4,7 +4,7 @@ import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import SortableProduct from '@/components/dondeSiempre/SortableProduct';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import useFetcher from '@/lib/api/fetcher';
+import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { OutfitDTO, OutfitCreationProductDTO } from '@/lib/types/outfits/outfitsDto';
 import { ProductDTO } from '@/lib/types/products/productsDto';
 import { convertPrice } from '@/lib/utils';
@@ -20,24 +20,18 @@ export default function OutfitProductsPage() {
   const params = useParams<{ id: string; outfitId: string }>();
 
   const [movedProducts, setMovedProducts] = useState(new Array<string>());
-  const products = useFetcher<ProductDTO[]>({ url: `stores/${params.id}/products` });
-  const outfit = useFetcher<OutfitDTO>({ url: `outfits/${params.outfitId}` });
 
-  const sortProducts = useFetcher<void, OutfitCreationProductDTO[]>({
-    url: `outfits/${params.outfitId}/products/sort`,
-    method: 'PATCH',
-    fetchOnStart: false,
-  });
+  const products = usePassiveFetcher<ProductDTO[]>({ url: `stores/${params.id}/products` });
+  const outfit = usePassiveFetcher<OutfitDTO>({ url: `outfits/${params.outfitId}` });
 
-  const addProduct = useFetcher<void, OutfitCreationProductDTO>({
+  const addProduct = useActiveFetcher<void>({
     url: `outfits/${params.outfitId}/products`,
     method: 'POST',
-    fetchOnStart: false,
   });
-
-  const removeProduct = useFetcher<void>({
-    method: 'DELETE',
-    fetchOnStart: false,
+  const removeProduct = useActiveFetcher<void>({ method: 'DELETE' });
+  const sortProducts = useActiveFetcher<void>({
+    url: `outfits/${params.outfitId}/products/sort`,
+    method: 'PATCH',
   });
 
   if (products.isLoading || outfit.isLoading) {
@@ -90,9 +84,9 @@ export default function OutfitProductsPage() {
                   removable={outfitProducts.length > 1}
                   onClick={async () => {
                     await removeProduct.fetch({
-                      newUrl: `outfits/${params.outfitId}/products/${p.id}`,
+                      url: `outfits/${params.outfitId}/products/${p.id}`,
                     });
-                    await outfit.fetch();
+                    outfit.refetch();
                   }}
                 />
               ))}
@@ -116,7 +110,7 @@ export default function OutfitProductsPage() {
                   });
 
                   if (movedProducts.length > 0) {
-                    await sortProducts.fetch({ newBody: list });
+                    await sortProducts.fetch({ body: list });
                   }
                   redirect(`/stores/${params.id}/outfits`);
                 }}
@@ -157,8 +151,8 @@ export default function OutfitProductsPage() {
                             productId: p.id,
                             index: outfitProducts.length,
                           };
-                          await addProduct.fetch({ newBody: dto });
-                          await outfit.fetch();
+                          await addProduct.fetch({ body: dto });
+                          outfit.refetch();
                         }}
                         className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl h-12 w-11/12 md:w-1/2"
                       >

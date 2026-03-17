@@ -1,7 +1,7 @@
 'use client';
 
 import PromotionForm, { PromotionFormData } from '@/components/dondeSiempre/PromotionForm';
-import useFetcher from '@/lib/api/fetcher';
+import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -13,44 +13,33 @@ export default function EditPromotionPage() {
   const promoId = params.promoId;
 
   const [initialData, setInitialData] = useState<Partial<PromotionFormData> | null>(null);
-  const [isLoadingFetch, setIsLoadingFetch] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
-  const getPromotionById = useFetcher<PromotionDTO>({ fetchOnStart: false });
-  const updatePromotionDiscount = useFetcher<PromotionDTO>({
-    method: 'PATCH',
-    fetchOnStart: false,
-  });
+  const promotion = usePassiveFetcher<PromotionDTO>({ url: `promotions/${promoId}` });
+  const updatePromotionDiscount = useActiveFetcher<PromotionDTO>({ method: 'PATCH' });
 
   useEffect(() => {
-    const fetchPromotion = async () => {
-      try {
-        await getPromotionById.fetch({ newUrl: `promotions/${promoId}` });
-        const data = getPromotionById.data;
-        setInitialData({
-          name: data.name,
-          discountPercentage: data.discountPercentage,
-          description: data.description || '',
-          products:
-            data.productIds && data.productIds.length > 0
-              ? data.productIds.map((id) => ({
-                  id,
-                  name: `Producto ${id.substring(0, 4)}`,
-                  imageUrl: '/static/img/outfit_placeholder.jpg',
-                }))
-              : [],
-        });
-      } catch (error) {
-        console.error('Error fetching promotion:', error);
-        setStatus({ type: 'error', message: 'No se pudo cargar la promoción.' });
-      } finally {
-        setIsLoadingFetch(false);
-      }
-    };
-
-    fetchPromotion();
-  }, [promoId, getPromotionById]);
+    if (promotion.data) {
+      const data = promotion.data;
+      setInitialData({
+        name: data.name,
+        discountPercentage: data.discountPercentage,
+        description: data.description || '',
+        products:
+          data.productIds && data.productIds.length > 0
+            ? data.productIds.map((id) => ({
+                id,
+                name: `Producto ${id.substring(0, 4)}`,
+                imageUrl: '/static/img/outfit_placeholder.jpg',
+              }))
+            : [],
+      });
+    } else if (promotion.isError) {
+      console.error('Error fetching promotion:', promotion.error);
+      setStatus({ type: 'error', message: 'No se pudo cargar la promoción.' });
+    }
+  }, [promotion.data, promotion.isError, promotion.error]);
 
   const handleSubmit = async (formData: PromotionFormData) => {
     setIsSaving(true);
@@ -58,8 +47,7 @@ export default function EditPromotionPage() {
 
     try {
       await updatePromotionDiscount.fetch({
-        newUrl: `promotions/${promoId}/discount`,
-        newQueryParams: { discountPercentage: formData.discountPercentage },
+        url: `promotions/${promoId}/discount?discountPercentage=${formData.discountPercentage}`,
       });
       setStatus({ type: 'success', message: '¡Promoción actualizada con éxito!' });
       setTimeout(() => {
@@ -74,7 +62,7 @@ export default function EditPromotionPage() {
     }
   };
 
-  if (isLoadingFetch) {
+  if (promotion.isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white font-quicksand text-primary">
         <div className="flex flex-col items-center gap-4">

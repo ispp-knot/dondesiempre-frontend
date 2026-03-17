@@ -11,8 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LocationPickerMap } from '@/components/ui/locationPickerMap';
 import { Switch } from '@/components/ui/switch';
-import { RegisterClientDTO, RegisterStoreDTO } from '@/lib/types/auth/authDto';
-import useFetcher from '@/lib/api/fetcher';
+import { useActiveFetcher } from '@/lib/api/fetcher';
 import { FetchError } from 'ofetch';
 
 // ── Schemas ────────────────────────────────────────────────────────────────────
@@ -284,11 +283,7 @@ function ClientStep2Form({
   onSuccess: () => void;
 }) {
   const [apiError, setApiError] = useState<string | null>(null);
-  const registerClient = useFetcher<void, RegisterClientDTO>({
-    url: 'auth/register/client',
-    method: 'POST',
-    fetchOnStart: false,
-  });
+  const registerClient = useActiveFetcher<void>({ url: 'auth/register/client', method: 'POST' });
 
   const {
     register,
@@ -302,7 +297,7 @@ function ClientStep2Form({
     setApiError(null);
     try {
       await registerClient.fetch({
-        newBody: {
+        body: {
           email: step1Data.email,
           password: step1Data.password,
           ...data,
@@ -367,11 +362,7 @@ function StoreStep2Form({
   onSuccess: () => void;
 }) {
   const [apiError, setApiError] = useState<string | null>(null);
-  const registerStore = useFetcher<void, RegisterStoreDTO>({
-    url: 'auth/register/store',
-    method: 'POST',
-    fetchOnStart: false,
-  });
+  const registerStore = useActiveFetcher<void>({ url: 'auth/register/store', method: 'POST' });
 
   const {
     register,
@@ -396,7 +387,7 @@ function StoreStep2Form({
     setApiError(null);
     try {
       await registerStore.fetch({
-        newBody: {
+        body: {
           email: step1Data.email,
           password: step1Data.password,
           ...data,

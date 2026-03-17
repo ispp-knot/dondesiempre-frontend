@@ -10,11 +10,10 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import useFetcher from '@/lib/api/fetcher';
+import { useActiveFetcher } from '@/lib/api/fetcher';
 import { FetchError } from 'ofetch';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { UserResponseDTO } from '@/lib/types/auth/authDto';
-import { LoginDTO } from '@/lib/types/auth/authDto';
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -33,11 +32,7 @@ export function LoginForm() {
   const router = useRouter();
   const { registerInfo } = useAuth();
 
-  const login = useFetcher<UserResponseDTO, LoginDTO>({
-    url: 'auth/login',
-    method: 'POST',
-    fetchOnStart: false,
-  });
+  const login = useActiveFetcher<UserResponseDTO>({ url: 'auth/login', method: 'POST' });
 
   const {
     register,
@@ -50,8 +45,8 @@ export function LoginForm() {
   async function onSubmit(data: LoginValues) {
     setApiError(null);
     try {
-      await login.fetch({ newBody: data });
-      registerInfo(login.data);
+      const userData = await login.fetch({ body: data });
+      registerInfo(userData);
       router.push('/');
     } catch (err: unknown) {
       if (err instanceof FetchError && err.response?.status === 403) {

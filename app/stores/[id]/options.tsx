@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Edit2, Camera, Loader2, Save, X, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
-import useFetcher from '@/lib/api/fetcher';
+import { useActiveFetcher } from '@/lib/api/fetcher';
 
 type Props = {
   storefrontId: string;
@@ -16,10 +16,9 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
   const [formData, setFormData] = useState<StoreDTO['storefront']>(initialStore?.storefront);
   const [hasChanges, setHasChanges] = useState(false);
 
-  const updateStorefront = useFetcher<StoreDTO['storefront'], StoreDTO['storefront']>({
+  const updateStorefront = useActiveFetcher<StoreDTO['storefront']>({
     url: `storefronts/${storefrontId}`,
     method: 'PUT',
-    fetchOnStart: false,
   });
 
   const updateStorefrontState = (updates: Partial<StoreDTO['storefront']>) => {
@@ -44,7 +43,7 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
 
     setLoading(true);
     try {
-      await updateStorefront.fetch({ newBody: formData });
+      await updateStorefront.fetch({ body: formData });
       setHasChanges(false);
       location.reload();
     } catch (error) {
