@@ -2,7 +2,7 @@ export interface ProductDTO {
   id: string;
   name: string;
   priceInCents: number;
-  discountedPriceInCents: number;
+  discountPercentage: number;
   description: string | null;
   image: string | null;
   typeId: string;

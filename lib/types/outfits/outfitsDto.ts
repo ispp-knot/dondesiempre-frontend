@@ -6,7 +6,7 @@ export interface OutfitDTO {
   priceInCents: number;
   discountedPriceInCents: number;
   index: number;
-  storeId: number;
+  storeId: string;
   tags: string[];
   products: OutfitProductDTO[];
 }
