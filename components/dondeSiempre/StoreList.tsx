@@ -1,18 +1,18 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { IoSearch } from 'react-icons/io5';
 import { HiOutlineLocationMarker } from 'react-icons/hi';
 import { StoreDTO } from '@/lib/api/types';
-import { getStoresInBoundingBox } from '@/lib/api/stores/getStoresInBoundingBox';
-import { LngLatBounds } from 'maplibre-gl';
+import { searchStores } from '@/lib/api/stores/searchStores';
+import { useDebouncedCallback } from 'use-debounce';
+import { BadgePercent } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
 // Sevilla coords: lat 37.3891, lon -5.9845
 const DEFAULT_LAT = 37.3891;
 const DEFAULT_LON = -5.9845;
-const RADIUS_KM = 50;
 
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371; // Radius of the earth in km
@@ -34,68 +34,48 @@ export default function StoreList() {
   const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
 
-  useEffect(() => {
-    async function fetchData() {
+  const fetchStores = useCallback(
+    async (query: string, location: { lat: number; lon: number } | null) => {
       setLoading(true);
-      let lat = DEFAULT_LAT;
-      let lon = DEFAULT_LON;
+      const data = await searchStores(query, location?.lat, location?.lon);
+      setStores(data);
+      setLoading(false);
+    },
+    []
+  );
+
+  const debouncedFetch = useDebouncedCallback(
+    (query: string, location: { lat: number; lon: number } | null) => {
+      fetchStores(query, location);
+    },
+    300
+  );
+
+  useEffect(() => {
+    async function init() {
+      let loc: { lat: number; lon: number } | null = null;
 
       if (navigator.geolocation) {
         try {
           const position = await new Promise<GeolocationPosition>((resolve, reject) => {
             navigator.geolocation.getCurrentPosition(resolve, reject);
           });
-          lat = position.coords.latitude;
-          lon = position.coords.longitude;
-          setUserLocation({ lat, lon });
+          loc = { lat: position.coords.latitude, lon: position.coords.longitude };
+          setUserLocation(loc);
         } catch (_error) {
-          console.warn('Location access denied or failed, using default Seville coordinates.');
+          console.warn('Location access denied or failed, using backend default sorting.');
         }
       }
-
-      // 1 degree of latitude is ~111km
-      // 1 degree of longitude is ~111km * cos(latitude)
-      const latDelta = RADIUS_KM / 111;
-      const lonDelta = RADIUS_KM / (111 * Math.cos(lat * (Math.PI / 180)));
-
-      const bounds = new LngLatBounds(
-        [lon - lonDelta, lat - latDelta], // SW
-        [lon + lonDelta, lat + latDelta] // NE
-      );
-
-      const data = await getStoresInBoundingBox(bounds);
-      setStores(data);
-      setLoading(false);
+      fetchStores('', loc);
     }
+    init();
+  }, [fetchStores]);
 
-    fetchData();
-  }, []);
+  useEffect(() => {
+    debouncedFetch(searchQuery, userLocation);
+  }, [searchQuery, userLocation, debouncedFetch]);
 
-  const sortedAndFilteredStores = useMemo(() => {
-    let result = [...stores];
-
-    // Filter by name
-    if (searchQuery) {
-      result = result.filter((store) =>
-        store.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    // Sort by distance if user location is available
-    if (userLocation || true) {
-      // Default to Seville distance if no location
-      const originLat = userLocation?.lat ?? DEFAULT_LAT;
-      const originLon = userLocation?.lon ?? DEFAULT_LON;
-
-      result.sort((a, b) => {
-        const distA = calculateDistance(originLat, originLon, a.latitude, a.longitude);
-        const distB = calculateDistance(originLat, originLon, b.latitude, b.longitude);
-        return distA - distB;
-      });
-    }
-
-    return result;
-  }, [stores, searchQuery, userLocation]);
+  const sortedAndFilteredStores = stores;
 
   return (
     <div className="flex flex-col w-full min-h-screen bg-white pb-24 sm:pb-0">
@@ -131,7 +111,7 @@ export default function StoreList() {
                 <Link
                   key={store.id}
                   href={`/stores/${store.id}`}
-                  className="flex flex-row items-center p-4 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group"
+                  className="relative flex flex-row items-center p-4 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group"
                 >
                   <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-gray-100 mr-4 flex-shrink-0">
                     {store.storefront?.bannerImageUrl ? (
@@ -148,20 +128,24 @@ export default function StoreList() {
                     )}
                   </div>
                   <div className="flex flex-col flex-1">
-                    <h3 className="text-lg font-bold text-dark-blue group-hover:text-primary transition-colors">
-                      {store.name}
-                    </h3>
-                    <p className="text-sm text-gray-500 line-clamp-1">{store.address}</p>
-                    <div className="flex items-center mt-1">
-                      <span className="text-xs font-semibold bg-secondary/10 text-secondary px-2 py-0.5 rounded-full">
-                        {distance} km
-                      </span>
-                      {store.acceptsShipping && (
-                        <span className="ml-2 text-[10px] text-primary bg-primary/10 px-2 py-0.5 rounded-full font-bold uppercase">
-                          Envío disponible
-                        </span>
+                    <div className="flex justify-between items-start">
+                      <h3 className="text-lg font-bold text-dark-blue group-hover:text-primary transition-colors pr-8">
+                        {store.name}
+                      </h3>
+                      {store.hasActivePromotions && (
+                        <div className="absolute top-4 right-4 text-primary bg-primary/10 p-1.5 rounded-full shadow-sm">
+                          <BadgePercent size={20} />
+                        </div>
                       )}
                     </div>
+                    <p className="text-sm text-gray-500 line-clamp-1">{store.address}</p>
+                    {userLocation && (
+                      <div className="flex items-center mt-1">
+                        <span className="text-xs font-semibold bg-secondary/10 text-secondary px-2 py-0.5 rounded-full">
+                          {distance} km
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </Link>
               );
