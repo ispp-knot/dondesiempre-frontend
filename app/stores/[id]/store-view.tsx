@@ -135,6 +135,7 @@ export default function StoreView({ store }: { store: StoreDTO }) {
         description={store.aboutUs ?? ''}
         outfits={outfitsQuery.data}
         promotions={promotionsQuery.data}
+        store={store}
       />
     </div>
   );

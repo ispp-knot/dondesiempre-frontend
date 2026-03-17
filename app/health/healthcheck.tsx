@@ -18,8 +18,8 @@ export function HealthCheck() {
   }
 
   if (healthCheckQuery.data == false) {
-    return <>Server is offline :c</>;
+    return <>Server is offline :(</>;
   } else {
-    return <>Server is online! c:</>;
+    return <>Server is online! :)</>;
   }
 }

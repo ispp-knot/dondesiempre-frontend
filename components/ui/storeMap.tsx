@@ -86,7 +86,7 @@ export function StoreMap({
   ));
 
   return (
-    <div className="relative w-full h-screen">
+    <div className="relative flex flex-1">
       <Map
         ref={mapRef}
         initialViewState={{
@@ -94,7 +94,7 @@ export function StoreMap({
           latitude: startingLocation.lat,
           zoom: 13,
         }}
-        style={{ width: '100%', height: '100%' }}
+        style={{ display: 'flex', flex: 'grow' }}
         mapStyle={DEFAULT_MAP_STYLE}
         onLoad={fetchStores}
         onMoveEnd={debouncedFetchStores}

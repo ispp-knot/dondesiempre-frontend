@@ -67,7 +67,7 @@
   --card-foreground: #c65a3a;
   --popover: oklch(1 0 0);
   --popover-foreground: #c65a3a;
-  --primary-foreground: #c65a3a;
+  --primary-foreground: #ffffff;
   --secondary-foreground: white;
   --muted: oklch(0.95 0 0);
   --muted-foreground: oklch(0.556 0 0);
@@ -125,17 +125,17 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-.storefront-listing::-webkit-scrollbar {
+.store-listing::-webkit-scrollbar {
   padding: 5px;
   height: 8px;
 }
 
-.storefront-listing::-webkit-scrollbar-track {
+.store-listing::-webkit-scrollbar-track {
   background: white;
   border-radius: 10px;
 }
 
-.storefront-listing::-webkit-scrollbar-thumb {
+.store-listing::-webkit-scrollbar-thumb {
   background: var(--secondary);
   border-radius: 10px;
 }
