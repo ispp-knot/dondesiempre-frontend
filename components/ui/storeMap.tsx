@@ -3,9 +3,9 @@ import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { LngLat, Map, MapEvent, MapRef, Marker } from '@vis.gl/react-maplibre';
 import { Minus, Plus } from 'lucide-react';
 import { createRef, useCallback } from 'react';
-import { MdExplore, MdMyLocation } from 'react-icons/md';
+import { MdMyLocation } from 'react-icons/md';
+import { TbNavigationNorth } from 'react-icons/tb';
 import { StorePin } from './storePin';
-
 import { useActiveFetcher } from '@/lib/api/fetcher';
 import { DEFAULT_MAP_LOCATION, DEFAULT_MAP_STYLE } from '@/lib/mapUtils';
 import 'maplibre-gl/dist/maplibre-gl.css'; // Must be included in every map view
@@ -57,14 +57,15 @@ export function StoreMap({
   };
 
   const handleGeolocate = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        mapRef.current?.flyTo({
-          center: [position.coords.longitude, position.coords.latitude],
-          zoom: 15,
-        });
-      });
-    }
+    console.log('Geolocating user...');
+    console.log('Requesting user location...');
+
+    userLocation = userLocation || DEFAULT_MAP_LOCATION;
+    console.log('User location obtained:', userLocation);
+    mapRef.current?.flyTo({
+      center: [userLocation.lng, userLocation.lat],
+      zoom: 15,
+    });
   };
 
   const pins = stores.data?.map((store, index) => (
@@ -125,7 +126,7 @@ export function StoreMap({
             <Minus size={30} strokeWidth={3} />
           </Button>
           <Button variant="ghost" size="icon" onClick={handleResetNorth}>
-            <MdExplore size={30} />
+            <TbNavigationNorth size={30} />
           </Button>
         </div>
       </div>
