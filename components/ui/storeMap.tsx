@@ -94,7 +94,7 @@ export function StoreMap({
           latitude: startingLocation.lat,
           zoom: 13,
         }}
-        style={{ display: 'flex', flex: 'grow' }}
+        style={{ display: 'flex', flex: 1, height: 'auto' }}
         mapStyle={DEFAULT_MAP_STYLE}
         onLoad={fetchStores}
         onMoveEnd={debouncedFetchStores}
