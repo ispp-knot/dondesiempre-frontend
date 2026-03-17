@@ -339,11 +339,7 @@ export default function PromotionForm({
             Se usará como imagen de fondo en el banner y stories
           </p>
         )}
-        <ImageUpload
-          onChange={setPromotionImage}
-          disabled={isEditMode}
-          className="mt-2"
-        />
+        <ImageUpload onChange={setPromotionImage} disabled={isEditMode} className="mt-2" />
       </div>
 
       {/* Instagram Toggle */}
