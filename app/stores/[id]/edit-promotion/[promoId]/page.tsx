@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { getPromotionById, updatePromotion } from '@/lib/api/promotionEndpoints';
 import { authorizedOfetch } from '@/lib/api/authorizedOfetch';
 import PromotionForm, { PromotionFormData } from '@/components/dondeSiempre/PromotionForm';
+import { getBackendUrl } from '@/lib/config';
 
 export default function EditPromotionPage() {
   const params = useParams<{ id: string; promoId: string }>();
@@ -23,7 +24,7 @@ export default function EditPromotionPage() {
         // Fetch promotion and store details (to get storefront products) simultaneously
         const [promoData, storeData] = await Promise.all([
           getPromotionById(promoId),
-          authorizedOfetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/stores/${storeId}`),
+          authorizedOfetch(`${getBackendUrl()}/api/v1/stores/${storeId}`),
         ]);
 
         const storefrontId = storeData.storefront?.id;
@@ -31,7 +32,7 @@ export default function EditPromotionPage() {
 
         if (storefrontId) {
           storeProducts = await authorizedOfetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/storefronts/${storefrontId}/products`
+            `${getBackendUrl()}/api/v1/storefronts/${storefrontId}/products`
           );
         }
 

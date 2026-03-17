@@ -28,7 +28,7 @@ const serwist = new Serwist({
     {
       matcher({ request }) {
         // Cache everything except backend API calls
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+        const backendUrl = process.env.BACKEND_URL;
         if (!backendUrl) return true; // Cache everything if no backend URL set
         return !request.url.includes(backendUrl);
       },

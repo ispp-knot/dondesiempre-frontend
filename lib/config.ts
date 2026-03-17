@@ -3,6 +3,7 @@ let _webUrl: string | undefined;
 
 export function initClientConfig(backendUrl: string, webUrl: string) {
   _backendUrl = backendUrl;
+
   _webUrl = webUrl;
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   FaCalendarAlt,
   FaPlus,
@@ -20,6 +20,7 @@ import { DateRange } from 'react-day-picker';
 import { useParams } from 'next/navigation';
 import { authorizedOfetch } from '@/lib/api/authorizedOfetch';
 import { cn } from '@/lib/utils';
+import { getBackendUrl } from '@/lib/config';
 
 export interface Product {
   id: string;
@@ -32,9 +33,11 @@ export interface PromotionFormData {
   discountPercentage: number;
   description: string;
   products: Product[];
-  dateRange?: DateRange;
   active: boolean;
   promotionImage: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  dateRange?: DateRange;
 }
 
 interface PromotionFormProps {
@@ -53,7 +56,7 @@ export default function PromotionForm({
   status,
 }: PromotionFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  console.log('PromotionForm initialData:', initialData);
   const [name, setName] = useState(initialData?.name ?? '');
   const [discountPercentage, setDiscountPercentage] = useState<number>(
     initialData?.discountPercentage ?? 20
@@ -107,15 +110,17 @@ export default function PromotionForm({
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({
+    const formattedData = {
       name,
       discountPercentage,
       description,
-      products,
-      dateRange,
       active,
       promotionImage,
-    });
+      products,
+      startDate: dateRange?.from ? dateRange.from.toISOString() : null,
+      endDate: dateRange?.to ? dateRange.to.toISOString() : null,
+    };
+    onSubmit(formattedData);
   };
 
   const dateDisplay = dateRange?.from
@@ -362,14 +367,14 @@ function ProductSelector({
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     async function fetchProducts() {
       if (!params?.id) return;
       setLoading(true);
       try {
         // First, get the store to find the storefront ID
         const storeResponse = await authorizedOfetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/stores/${params.id}`
+          `${getBackendUrl()}/api/v1/stores/${params.id}`
         );
 
         const storefrontId = storeResponse.storefront?.id;
@@ -381,7 +386,7 @@ function ProductSelector({
         }
 
         const response = await authorizedOfetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/storefronts/${storefrontId}/products`
+          `${getBackendUrl()}/api/v1/stores/${params.id}/products`
         );
 
         // Map backend response to Product interface

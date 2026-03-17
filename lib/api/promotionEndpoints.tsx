@@ -1,10 +1,13 @@
 import { getBackendUrl } from '@/lib/config';
 import { authorizedOfetch } from '@/lib/api/authorizedOfetch';
+import { ProductDTO } from './types';
 
 export interface PromotionCreationDTO {
   name: string;
   discountPercentage: number;
   active: boolean;
+  startDate: string;
+  endDate: string;
   productIds: string[];
   storeId: string;
   description?: string;
@@ -17,11 +20,14 @@ export interface PromotionDTO {
   active: boolean;
   description: string;
   storeId: string;
-  productIds: string[];
+  startDate: string;
+  endDate: string;
+  products: ProductDTO[];
   promotionImageUrl?: string;
 }
 
 export async function createPromotion(dto: PromotionCreationDTO): Promise<PromotionDTO> {
+  console.log('Creating promotion with DTO:', dto);
   const response = await authorizedOfetch(`${getBackendUrl()}/api/v1/promotions`, {
     method: 'POST',
     body: dto,
@@ -40,19 +46,16 @@ export async function updatePromotion(
   id: string,
   dto: Partial<PromotionCreationDTO>
 ): Promise<PromotionDTO> {
-  const response = await authorizedOfetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/promotions/${id}`,
-    {
-      method: 'PUT',
-      body: dto,
-    }
-  );
+  const response = await authorizedOfetch(`${getBackendUrl()}/api/v1/promotions/${id}`, {
+    method: 'PUT',
+    body: dto,
+  });
   return response;
 }
 
 export async function getPromotionsByStoreId(storeId: string): Promise<PromotionDTO[]> {
   const response = await authorizedOfetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/stores/${storeId}/promotions`,
+    `${getBackendUrl()}/api/v1/stores/${storeId}/promotions`,
     {
       method: 'GET',
     }

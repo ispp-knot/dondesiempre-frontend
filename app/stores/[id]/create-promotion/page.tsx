@@ -21,6 +21,8 @@ export default function CreatePromotionPage() {
       name: formData.name,
       discountPercentage: formData.discountPercentage,
       active: true,
+      startDate: formData.startDate || new Date().toISOString(),
+      endDate: formData.endDate || new Date().toISOString(),
       productIds: formData.products.map((p) => p.id),
       storeId: storeId,
       description: formData.description,

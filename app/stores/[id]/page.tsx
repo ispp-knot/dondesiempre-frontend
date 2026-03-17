@@ -8,6 +8,7 @@ import StoreTabs from './store-tabs';
 import { getStore } from '@/lib/api/stores/getStore';
 import { getOutfitByStoreId } from '@/lib/api/outfits/getOutfitsByStore';
 import { StoreSocialNetworkDTO } from '@/lib/api/types';
+import { getPromotionsByStoreId } from '@/lib/api/promotionEndpoints';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -28,7 +29,9 @@ export default async function StorePage({ params }: PageProps) {
 
   const storeDto = await getStore(id);
   const outfitsDto = await getOutfitByStoreId(id);
+  const promotionsDto = await getPromotionsByStoreId(id);
 
+  console.log('promotionsDto:', promotionsDto);
   const socialNetworks: Array<StoreSocialNetworkDTO> = storeDto.socialNetworks || [];
   const primaryColor = storeDto.storefront?.primaryColor || '#000000';
   const secondaryColor = storeDto.storefront?.secondaryColor || '#000000';
@@ -99,6 +102,7 @@ export default async function StorePage({ params }: PageProps) {
         storefrontId={storeDto.storefront?.id}
         collections={collections}
         description={storeDto.aboutUs || ''}
+        promotions={promotionsDto}
         outfits={outfitsDto}
       />
     </div>
