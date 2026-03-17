@@ -1,4 +1,4 @@
-import StoreList from '@/components/dondeSiempre/StoreList';
+import StoreList from './StoreList';
 
 export default function SearchPage() {
   return <StoreList />;
