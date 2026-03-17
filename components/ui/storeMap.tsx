@@ -57,14 +57,15 @@ export function StoreMap({
   };
 
   const handleGeolocate = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        mapRef.current?.flyTo({
-          center: [position.coords.longitude, position.coords.latitude],
-          zoom: 15,
-        });
-      });
-    }
+    console.log('Geolocating user...');
+    console.log('Requesting user location...');
+
+    userLocation = userLocation || DEFAULT_MAP_LOCATION;
+    console.log('User location obtained:', userLocation);
+    mapRef.current?.flyTo({
+      center: [userLocation.lng, userLocation.lat],
+      zoom: 15,
+    });
   };
 
   const pins = stores.data?.map((store, index) => (
