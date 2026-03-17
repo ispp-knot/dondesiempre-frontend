@@ -29,7 +29,10 @@ export default function OutfitCreationPage() {
 
   const products = usePassiveFetcher<ProductDTO[]>({ url: `stores/${params.id}/products` });
   const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
-  const createOutfit = useActiveFetcher<OutfitDTO>({ url: 'outfits', method: 'POST' });
+  const createOutfit = useActiveFetcher<OutfitDTO>({
+    url: `stores/${params.id}/outfits`,
+    method: 'POST',
+  });
 
   if (products.isLoading || store.isLoading) {
     return <LoadingText />;

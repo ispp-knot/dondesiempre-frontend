@@ -33,7 +33,7 @@ export interface PromotionFormData {
   products: Product[];
   dateRange?: DateRange;
   publishToInstagram: boolean;
-  promotionImage: string | null;
+  promotionImage: File | null;
 }
 
 interface PromotionFormProps {
@@ -63,8 +63,11 @@ export default function PromotionForm({
   const [publishToInstagram, setPublishToInstagram] = useState(
     initialData?.publishToInstagram ?? true
   );
-  const [promotionImage, setPromotionImage] = useState<string | null>(
+  const [promotionImage, setPromotionImage] = useState<File | null>(
     initialData?.promotionImage ?? null
+  );
+  const [promotionImagePreview, setPromotionImagePreview] = useState<string | null>(
+    initialData?.promotionImage ? URL.createObjectURL(initialData.promotionImage) : null
   );
 
   const handleDiscountChange = (value: number[]) => {
@@ -83,11 +86,8 @@ export default function PromotionForm({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPromotionImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      setPromotionImage(file);
+      setPromotionImagePreview(URL.createObjectURL(file));
     }
   };
 
@@ -377,9 +377,9 @@ export default function PromotionForm({
               : 'border-secondary cursor-pointer hover:bg-secondary/5'
           )}
         >
-          {promotionImage ? (
+          {promotionImagePreview ? (
             <Image
-              src={promotionImage}
+              src={promotionImagePreview}
               alt="Preview"
               fill
               className={cn('object-cover', isEditMode ? 'opacity-30 grayscale' : 'opacity-30')}
@@ -395,7 +395,7 @@ export default function PromotionForm({
             <span>
               {isEditMode
                 ? 'Carga de imagen bloqueada'
-                : promotionImage
+                : promotionImagePreview
                   ? 'Cambiar imagen'
                   : 'Añadir imagen'}
             </span>

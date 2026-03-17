@@ -23,9 +23,11 @@ async function executeFetch<T>({
   if (method !== 'GET') {
     if (formPayload) {
       const formData = new FormData();
-      Object.entries(formPayload).forEach(
-        ([k, v]) => v !== undefined && formData.append(k, v as string | Blob)
-      );
+      Object.entries(formPayload).forEach(([k, v]) => {
+        if (v !== undefined) {
+          formData.append(k, v as string | Blob);
+        }
+      });
       fetchBody = formData;
     } else if (body !== undefined) {
       fetchBody = JSON.stringify(body);

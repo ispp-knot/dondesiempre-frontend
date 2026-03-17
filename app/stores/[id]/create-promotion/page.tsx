@@ -29,10 +29,15 @@ export default function CreatePromotionPage() {
     };
 
     try {
-      await createPromotion.fetch({ body: dto });
+      await createPromotion.fetch({
+        formPayload: {
+          dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
+          image: formData.promotionImage ?? undefined,
+        },
+      });
       setStatus({ type: 'success', message: '¡Promoción lanzada con éxito!' });
       setTimeout(() => {
-        router.push(`/storefront/${storeId}`);
+        router.push(`/stores/${storeId}`);
       }, 2000);
     } catch (error) {
       console.error('Error creating promotion:', error);
