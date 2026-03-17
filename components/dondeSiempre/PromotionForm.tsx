@@ -1,15 +1,15 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   FaCalendarAlt,
   FaPlus,
   FaTimes,
-  FaImage,
   FaCheckCircle,
   FaExclamationCircle,
   FaLock,
 } from 'react-icons/fa';
+import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -33,7 +33,7 @@ export interface PromotionFormData {
   products: Product[];
   dateRange?: DateRange;
   publishToInstagram: boolean;
-  promotionImage: string | null;
+  promotionImage: File | null;
 }
 
 interface PromotionFormProps {
@@ -51,8 +51,6 @@ export default function PromotionForm({
   isLoading = false,
   status,
 }: PromotionFormProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const [name, setName] = useState(initialData?.name ?? '');
   const [discountPercentage, setDiscountPercentage] = useState<number>(
     initialData?.discountPercentage ?? 20
@@ -63,7 +61,7 @@ export default function PromotionForm({
   const [publishToInstagram, setPublishToInstagram] = useState(
     initialData?.publishToInstagram ?? true
   );
-  const [promotionImage, setPromotionImage] = useState<string | null>(
+  const [promotionImage, setPromotionImage] = useState<File | null>(
     initialData?.promotionImage ?? null
   );
 
@@ -77,30 +75,6 @@ export default function PromotionForm({
       setDiscountPercentage(Math.min(100, Math.max(1, value)));
     } else if (e.target.value === '') {
       setDiscountPercentage(0);
-    }
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPromotionImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleImageClick = () => {
-    if (!isEditMode) {
-      fileInputRef.current?.click();
-    }
-  };
-
-  const handleImageKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleImageClick();
     }
   };
 
@@ -365,51 +339,7 @@ export default function PromotionForm({
             Se usará como imagen de fondo en el banner y stories
           </p>
         )}
-        <div
-          role={isEditMode ? 'presentation' : 'button'}
-          tabIndex={isEditMode ? -1 : 0}
-          onClick={handleImageClick}
-          onKeyDown={handleImageKeyDown}
-          className={cn(
-            'border-2 border-dashed rounded-lg py-12 flex flex-col items-center justify-center gap-2 mt-2 transition-all relative overflow-hidden',
-            isEditMode
-              ? 'border-gray-200 bg-gray-50 cursor-not-allowed'
-              : 'border-secondary cursor-pointer hover:bg-secondary/5'
-          )}
-        >
-          {promotionImage ? (
-            <Image
-              src={promotionImage}
-              alt="Preview"
-              fill
-              className={cn('object-cover', isEditMode ? 'opacity-30 grayscale' : 'opacity-30')}
-            />
-          ) : null}
-          <div
-            className={cn(
-              'flex items-center gap-2 font-bold z-10',
-              isEditMode ? 'text-gray-300' : 'text-secondary'
-            )}
-          >
-            <FaImage size={24} />
-            <span>
-              {isEditMode
-                ? 'Carga de imagen bloqueada'
-                : promotionImage
-                  ? 'Cambiar imagen'
-                  : 'Añadir imagen'}
-            </span>
-          </div>
-          {!isEditMode && (
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              accept="image/*"
-              onChange={handleFileChange}
-            />
-          )}
-        </div>
+        <ImageUpload onChange={setPromotionImage} disabled={isEditMode} className="mt-2" />
       </div>
 
       {/* Instagram Toggle */}

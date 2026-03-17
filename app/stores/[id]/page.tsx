@@ -70,7 +70,7 @@ export default function StorePage() {
       <div className="relative w-full h-52 md:h-80">
         <Image
           src={banner || '/static/img/banner.jpg'}
-          alt={`Banner de la tienda ${store.data.name}`}
+          alt=""
           fill
           className="object-cover"
           priority

@@ -1,6 +1,7 @@
 'use client';
 
 import ErrorText from '@/components/dondeSiempre/ErrorText';
+import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import SortableProduct from '@/components/dondeSiempre/SortableProduct';
@@ -22,7 +23,6 @@ import { FaTag } from 'react-icons/fa';
 export default function OutfitCreationPage() {
   const params = useParams<{ id: string }>();
 
-  const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [outfitProducts, setOutfitProducts] = useState(new Array<ProductDTO>());
   const [outfitTags, setOutfitTags] = useState(new Array<string>());
@@ -118,36 +118,8 @@ export default function OutfitCreationPage() {
                         id="form-description"
                         className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                       />
-                      <label htmlFor="form-image" className="font-bold text-lg text-secondary">
-                        Imagen:{' '}
-                      </label>
-                      <div className="flex flex-col items-center">
-                        <Image
-                          id="form-image-preview"
-                          src={imageSrc || '/static/img/product_placeholder.png'}
-                          alt={'Sin imagen'}
-                          width={512}
-                          height={512}
-                          loading="eager"
-                          className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg text-center text-secondary"
-                        ></Image>
-                        <input
-                          type="file"
-                          name="image"
-                          id="form-image"
-                          accept="image/*"
-                          src={undefined}
-                          onChange={() => {
-                            const input = document.getElementById('form-image') as HTMLInputElement;
-                            const file = input.files?.item(0) ?? null;
-                            setImageFile(file);
-                            if (file) {
-                              setImageSrc(URL.createObjectURL(file));
-                            }
-                          }}
-                          className="cursor-pointer border border-secondary rounded pt-2 pb-2 pl-3 pr-3 mt-4 mb-2 text-heading text-sm text-secondary rounded-base focus:ring-brand focus:border-brand block w-full shadow-xs placeholder:text-body"
-                        />
-                      </div>
+                      <label className="font-bold text-lg text-secondary">Imagen:</label>
+                      <ImageUpload onChange={setImageFile} />
                       <label htmlFor="form-index" className="font-bold text-lg text-secondary">
                         Índice:{' '}
                       </label>

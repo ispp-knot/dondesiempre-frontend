@@ -17,7 +17,7 @@ export default function EditPromotionPage() {
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const promotion = usePassiveFetcher<PromotionDTO>({ url: `promotions/${promoId}` });
-  const updatePromotionDiscount = useActiveFetcher<PromotionDTO>({ method: 'PATCH' });
+  const updatePromotion = useActiveFetcher<PromotionDTO>({ method: 'PUT' });
 
   useEffect(() => {
     if (promotion.data) {
@@ -45,9 +45,21 @@ export default function EditPromotionPage() {
     setIsSaving(true);
     setStatus(null);
 
+    const dto = {
+      name: formData.name,
+      discountPercentage: formData.discountPercentage,
+      isActive: true,
+      productIds: formData.products.map((p) => p.id),
+      description: formData.description,
+    };
+
     try {
-      await updatePromotionDiscount.fetch({
-        url: `promotions/${promoId}/discount?discountPercentage=${formData.discountPercentage}`,
+      await updatePromotion.fetch({
+        url: `promotions/${promoId}`,
+        formPayload: {
+          dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
+          image: formData.promotionImage ?? undefined,
+        },
       });
       setStatus({ type: 'success', message: '¡Promoción actualizada con éxito!' });
       setTimeout(() => {
