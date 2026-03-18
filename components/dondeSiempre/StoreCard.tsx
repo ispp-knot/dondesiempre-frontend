@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { HiOutlineLocationMarker } from 'react-icons/hi';
 import { BadgePercent, Heart } from 'lucide-react';
@@ -14,8 +14,6 @@ import { cn } from '@/lib/utils';
 import { distance } from '@/lib/geoUtils';
 import { Button } from '../ui/button';
 import Link from 'next/link';
-import { FaStore } from 'react-icons/fa';
-import { FaRightToBracket } from 'react-icons/fa6';
 
 export function StoreCard({
   store,
@@ -53,7 +51,7 @@ export function StoreCard({
     });
   };
 
-  const toggleFollow = useCallback(async () => {
+  const toggleFollow = async () => {
     triggerHeartAnimation();
     if (isFollowing.data?.isFollowing) {
       await unfollowStore.fetch();
@@ -62,7 +60,7 @@ export function StoreCard({
       await followStore.fetch();
       isFollowing.setData({ ...isFollowing.data, isFollowing: true });
     }
-  }, [isFollowing, unfollowStore, followStore]);
+  };
 
   const handleCardClick = (e: React.MouseEvent) => {
     e.preventDefault();
