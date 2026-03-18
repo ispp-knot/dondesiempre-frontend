@@ -1,14 +1,12 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
-@import 'tailwindcss';
-@import 'tw-animate-css';
-@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --animate-pulse-subtle: pulse-subtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-heart-pop: heart-pop 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
 
   @keyframes pulse-subtle {
     0%,
@@ -19,6 +17,24 @@
     50% {
       opacity: 0.85;
       transform: scale(0.98);
+    }
+  }
+
+  @keyframes heart-pop {
+    0% {
+      transform: scale(1);
+    }
+    30% {
+      transform: scale(1.6);
+    }
+    60% {
+      transform: scale(0.85);
+    }
+    80% {
+      transform: scale(1.15);
+    }
+    100% {
+      transform: scale(1);
     }
   }
   --color-background: var(--background);
@@ -56,6 +72,12 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-brand-green: var(--brand-green);
+  --color-brand-green-dark: var(--brand-green-dark);
+  --color-brand-green-light: var(--brand-green-light);
+  --color-brand-red: var(--brand-red);
+  --color-brand-red-dark: var(--brand-red-dark);
+  --color-brand-red-light: var(--brand-red-light);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -73,6 +95,12 @@
   --accent: #e9c46a;
   --dark-blue: #031926;
   --beige: #f2e8cf;
+  --brand-green: #166534;
+  --brand-green-dark: #14532d;
+  --brand-green-light: #dcfce7;
+  --brand-red: #ef4444;
+  --brand-red-dark: #dc2626;
+  --brand-red-light: #fee2e2;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: #c65a3a;
