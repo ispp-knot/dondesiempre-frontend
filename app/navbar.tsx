@@ -41,7 +41,7 @@ export default function Navbar() {
                 />
                 <LuPackage
                   className="cursor-pointer"
-                  onClick={() => (window.location.href = '/deliveries')}
+                  onClick={() => (window.location.href = '/orders')}
                 />
                 <UserNavButton isActive={isUserActive} />
               </>
@@ -50,7 +50,7 @@ export default function Navbar() {
               <>
                 <LuPackage
                   className="cursor-pointer"
-                  onClick={() => (window.location.href = '/deliveries')}
+                  onClick={() => (window.location.href = '/orders')}
                 />
                 <AiOutlineShop />
               </>

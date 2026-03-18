@@ -1,9 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
-@import 'tailwindcss';
-@import 'tw-animate-css';
-@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -43,6 +40,12 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-brand-green: var(--brand-green);
+  --color-brand-green-dark: var(--brand-green-dark);
+  --color-brand-green-light: var(--brand-green-light);
+  --color-brand-red: var(--brand-red);
+  --color-brand-red-dark: var(--brand-red-dark);
+  --color-brand-red-light: var(--brand-red-light);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -60,6 +63,12 @@
   --accent: #e9c46a;
   --dark-blue: #031926;
   --beige: #f2e8cf;
+  --brand-green: #166534;
+  --brand-green-dark: #14532d;
+  --brand-green-light: #dcfce7;
+  --brand-red: #ef4444;
+  --brand-red-dark: #dc2626;
+  --brand-red-light: #fee2e2;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: #c65a3a;
