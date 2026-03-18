@@ -6,7 +6,7 @@ import { convertToBrightness } from '@/lib/colorUtils';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { LuStore } from 'react-icons/lu';
+import { LuStore, LuRoute } from 'react-icons/lu';
 
 export function StoreMapCard({ store }: { store: StoreDTO }) {
   const color = store.storefront?.primaryColor ?? '#c65a3a';
@@ -78,16 +78,19 @@ export function StoreMapCard({ store }: { store: StoreDTO }) {
 
           {/* Buttons */}
           <div className="flex flex-col gap-2 w-full">
-            {/*<Button
-              variant="outline"
-              className="flex-1 flex items-center justify-center gap-2 text-sm sm:text-base h-10 sm:h-11"
-              onClick={() => {
-                // TODO
-              }}
-            >
-              <span className="truncate">Cómo llegar</span>
-              <LuRoute className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-            </Button>*/}
+            {
+              <Button
+                variant="outline"
+                className="flex-1 flex items-center justify-center gap-2 text-sm sm:text-base h-10 sm:h-11"
+                onClick={() => {
+                  const url = `https://www.google.com/maps/dir/?api=1&destination=${store.latitude},${store.longitude}`;
+                  window.open(url, '_blank');
+                }}
+              >
+                <span className="truncate">Cómo llegar</span>
+                <LuRoute className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+              </Button>
+            }
             <Button
               asChild
               variant="secondary"
