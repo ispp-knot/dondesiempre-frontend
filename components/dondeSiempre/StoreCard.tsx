@@ -11,8 +11,21 @@ import { convertToBrightness } from '@/lib/colorUtils';
 import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { StoreFollowerDTO } from '@/lib/types/follows/followsDto';
 import { cn } from '@/lib/utils';
+import { distance } from '@/lib/geoUtils';
 
-export function StoreCard({ store, className = '' }: { store: StoreDTO; className?: string }) {
+export function StoreCard({
+  store,
+  userLocation,
+  className = '',
+}: {
+  store: StoreDTO;
+  userLocation?: { lat: number; lng: number } | null;
+  className?: string;
+}) {
+  const distanceToUser =
+    userLocation != null
+      ? distance(userLocation.lat, userLocation.lng, store.latitude, store.longitude)
+      : null;
   const router = useRouter();
 
   const clickCount = useRef(0);
@@ -137,14 +150,14 @@ export function StoreCard({ store, className = '' }: { store: StoreDTO; classNam
           {store.address}
         </p>
 
-        {store.distance !== undefined && store.distance !== null && (
+        {distanceToUser != null && (
           <div className="flex items-center">
             <span className="md:hidden text-xs font-semibold bg-secondary/10 text-secondary px-2 py-0.5 rounded-full">
-              {store.distance.toFixed(1)} km
+              {distanceToUser.toFixed(1)} km
             </span>
             <div className="hidden md:flex items-center text-sm font-bold text-secondary bg-secondary/5 px-2 py-1 rounded-xl border border-secondary/10 shadow-sm">
               <HiOutlineLocationMarker size={17} className="mr-2 text-secondary" />
-              <span>A {store.distance.toFixed(1)} km de distancia</span>
+              <span>A {distanceToUser.toFixed(1)} km de distancia</span>
             </div>
           </div>
         )}

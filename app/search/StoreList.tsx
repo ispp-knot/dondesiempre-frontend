@@ -64,7 +64,11 @@ export default function StoreList() {
         ) : stores && stores.length > 0 ? (
           <div className="flex flex-col gap-4 md:gap-6">
             {stores.map((store) => (
-              <StoreCard key={store.id} store={store} />
+              <StoreCard
+                key={store.id}
+                store={store}
+                userLocation={userLocation ? { lat: userLocation.lat, lng: userLocation.lon } : null}
+              />
             ))}
           </div>
         ) : (
