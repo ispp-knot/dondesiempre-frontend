@@ -62,7 +62,7 @@ export default function StoreList() {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         ) : stores && stores.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-6">
             {stores.map((store) => (
               <StoreListItem key={store.id} store={store} />
             ))}
