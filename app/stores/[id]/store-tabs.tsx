@@ -104,7 +104,7 @@ export default function StoreTabs({
               fill
               className="object-cover transition-opacity duration-500"
             />
-            <div className="absolute inset-0 bg-white/90 backdrop-blur-[2px]"></div>
+            <div className="absolute inset-0 bg-white/50 backdrop-blur-[2px]"></div>
           </div>
 
           {/* Contenido del Banner */}
@@ -116,7 +116,7 @@ export default function StoreTabs({
               {currentPromo.name}
             </h2>
 
-            <p className="text-gray-200 font-medium mt-2 text-sm md:text-base">
+            <p className="text-white-200 font-medium mt-2 text-sm md:text-base">
               {formatDateRange(currentPromo.startDate, currentPromo.endDate)}
             </p>
 
@@ -300,10 +300,10 @@ export default function StoreTabs({
                         </h4>
                         <div className="flex items-center gap-2">
                           <span className="text-primary font-bold text-sm">
-                            {product.discountedPriceInCents / 100}€
+                            {product.discountedPriceInCents}€
                           </span>
                           <span className="text-gray-400 text-xs line-through">
-                            {product.priceInCents / 100}€
+                            {product.priceInCents/100}€
                           </span>
                         </div>
                       </div>

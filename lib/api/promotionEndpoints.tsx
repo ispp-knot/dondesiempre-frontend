@@ -6,8 +6,6 @@ export interface PromotionCreationDTO {
   name: string;
   discountPercentage: number;
   active: boolean;
-  startDate: string;
-  endDate: string;
   productIds: string[];
   storeId: string;
   description?: string;
@@ -27,10 +25,14 @@ export interface PromotionDTO {
 }
 
 export async function createPromotion(dto: PromotionCreationDTO): Promise<PromotionDTO> {
-  console.log('Creating promotion with DTO:', dto);
+  const formData = new FormData();
+
+  const jsonBlob = new Blob([JSON.stringify(dto)], { type: 'application/json' });
+  formData.append('dto', jsonBlob);
+
   const response = await authorizedOfetch(`${getBackendUrl()}/api/v1/promotions`, {
     method: 'POST',
-    body: dto,
+    body: formData,
   });
   return response;
 }

@@ -35,8 +35,6 @@ export interface PromotionFormData {
   products: Product[];
   active: boolean;
   promotionImage: string | null;
-  startDate: string | null;
-  endDate: string | null;
   dateRange?: DateRange;
 }
 
@@ -56,7 +54,6 @@ export default function PromotionForm({
   status,
 }: PromotionFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  console.log('PromotionForm initialData:', initialData);
   const [name, setName] = useState(initialData?.name ?? '');
   const [discountPercentage, setDiscountPercentage] = useState<number>(
     initialData?.discountPercentage ?? 20

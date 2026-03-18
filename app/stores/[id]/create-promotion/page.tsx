@@ -14,6 +14,7 @@ export default function CreatePromotionPage() {
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const handleSubmit = async (formData: PromotionFormData) => {
+    console.log('Form data received in CreatePromotionPage:', formData);
     setIsLoading(true);
     setStatus(null);
 
@@ -21,22 +22,19 @@ export default function CreatePromotionPage() {
       name: formData.name,
       discountPercentage: formData.discountPercentage,
       active: true,
-      startDate: formData.startDate || new Date().toISOString(),
-      endDate: formData.endDate || new Date().toISOString(),
       productIds: formData.products.map((p) => p.id),
       storeId: storeId,
       description: formData.description,
     };
 
+    
     try {
       await createPromotion(dto);
       setStatus({ type: 'success', message: '¡Promoción lanzada con éxito!' });
-      setTimeout(() => {
-        router.push(`/stores/${storeId}`);
-      }, 2000);
+      router.push(`/stores/${storeId}`);
     } catch (error) {
       console.error('Error creating promotion:', error);
-      setStatus({ type: 'error', message: 'Error al crear la promoción. Verifica los datos.' });
+      setStatus({ type: 'error', message: `Error al crear la promoción. Verifica los datos.${dto}` });
     } finally {
       setIsLoading(false);
     }
