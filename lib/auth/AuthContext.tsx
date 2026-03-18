@@ -1,9 +1,9 @@
 'use client';
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
-import type { UserInfo } from '@/lib/types/auth';
+import type { UserResponseDTO } from '@/lib/types/auth/authDto';
 import { pick } from 'lodash';
-import { logOut } from '../api/authEndpoints';
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import { useActiveFetcher } from '../api/fetcher';
 
 const LOCAL_STORAGE_KEY = 'auth_user';
 
@@ -13,7 +13,7 @@ const LOCAL_STORAGE_KEY = 'auth_user';
  * This is intentionally unsigned and not verified — use only for routing
  * decisions (guards), never for security-critical logic.
  */
-export async function setServerSession(user: UserInfo) {
+export async function setServerSession(user: UserResponseDTO) {
   const { expiresAt } = user;
 
   const cookie = btoa(JSON.stringify(pick(user, ['id', 'email', 'roles', 'expiresAt'])));
@@ -35,13 +35,13 @@ interface AuthContextValue {
    * Returns the currently authenticated user, or null if not logged in
    * (or if the stored token has expired).
    */
-  getCurrentUser: () => UserInfo | null;
+  getCurrentUser: () => UserResponseDTO | null;
 
   /**
    * Persists the given UserInfo to state and localStorage.
    * Call this after a successful /login or /me response.
    */
-  registerInfo: (user: UserInfo) => void;
+  registerInfo: (user: UserResponseDTO) => void;
 
   /**
    * Clears the auth state from memory and localStorage.
@@ -52,12 +52,12 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-function readFromStorage(): UserInfo | null {
+function readFromStorage(): UserResponseDTO | null {
   if (typeof window === 'undefined') return null;
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as UserInfo;
+    const parsed = JSON.parse(raw) as UserResponseDTO;
 
     // Drop the stored value if the token has already expired.
     if (new Date(parsed.expiresAt) <= new Date()) {
@@ -72,24 +72,23 @@ function readFromStorage(): UserInfo | null {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserInfo | null>(readFromStorage());
+  const [user, setUser] = useState<UserResponseDTO | null>(readFromStorage());
+  const logOut = useActiveFetcher<void>({ url: 'auth/logout', method: 'GET' });
 
-  const registerInfo = useCallback((newUser: UserInfo) => {
+  const registerInfo = useCallback((newUser: UserResponseDTO) => {
     setUser(newUser);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newUser));
     setServerSession(newUser);
   }, []);
 
-  const deleteInfo = useCallback(() => {
+  const deleteInfo = useCallback(async () => {
     setUser(null);
     localStorage.removeItem(LOCAL_STORAGE_KEY);
     clearServerSession();
-    logOut()
-      .then(() => {})
-      .catch(() => {});
-  }, []);
+    await logOut.fetch();
+  }, [logOut]);
 
-  const getCurrentUser = useCallback((): UserInfo | null => {
+  const getCurrentUser = useCallback((): UserResponseDTO | null => {
     // Re-check expiry on every call so a long-lived session is evicted lazily.
     if (!user) return null;
     if (new Date(user.expiresAt) <= new Date()) {

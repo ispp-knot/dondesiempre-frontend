@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import type { SessionCookiePayload } from '@/lib/types/auth';
+import type { SessionCookiePayload } from '@/lib/types/auth/authHelper';
 
 /**
  * Reads and decodes the non-HttpOnly "session" cookie set by the backend.

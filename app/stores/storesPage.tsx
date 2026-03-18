@@ -4,7 +4,7 @@ import { StoreMap } from '@/components/ui/storeMap';
 import { StoreMapCard } from './storeMapCard';
 import { AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { StoreDTO } from '@/lib/api/types';
+import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { LngLat } from 'maplibre-gl';
 import { DEFAULT_MAP_LOCATION } from '@/lib/mapUtils';
 
@@ -49,14 +49,16 @@ export function StoresPage() {
   }
 
   return (
-    <div>
+    <div className="flex flex-1">
       <StoreMap
         startingLocation={startingLocation}
         userLocation={userLocation}
         onStoreSelect={setSelectedStore}
       />
       <AnimatePresence>
-        {selectedStore && <StoreMapCard key={selectedStore.id} store={selectedStore} />}
+        {selectedStore && (
+          <StoreMapCard key={selectedStore.id} store={selectedStore} userLocation={userLocation} />
+        )}
       </AnimatePresence>
     </div>
   );

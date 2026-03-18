@@ -1,34 +1,43 @@
 'use client';
 
 import { useState } from 'react';
-import { Edit2, Camera, Loader2, Save, X, AlertCircle } from 'lucide-react';
-import Image from 'next/image';
-import { StoreDTO } from '@/lib/api/types';
-import { updateStorefront } from '@/lib/api/storefronts/updateStorefront';
+import { Edit2, Loader2, Save, X, AlertCircle } from 'lucide-react';
+import ImageUpload from '@/components/dondeSiempre/ImageUpload';
+import { StoreDTO } from '@/lib/types/stores/storesDto';
+import { useActiveFetcher } from '@/lib/api/fetcher';
 
 type Props = {
   storefrontId: string;
-  initialData: StoreDTO;
+  initialStore: StoreDTO;
 };
 
-export default function StoreOptions({ storefrontId, initialData }: Props) {
+export default function StoreOptions({ storefrontId, initialStore }: Props) {
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<StoreDTO>(initialData);
+  const [formData, setFormData] = useState<StoreDTO['storefront']>(initialStore?.storefront);
   const [hasChanges, setHasChanges] = useState(false);
+  const [bannerImageFile, setBannerImageFile] = useState<File | null>(null);
+
+  const updateStorefront = useActiveFetcher<StoreDTO['storefront']>({
+    url: `storefronts/${storefrontId}`,
+    method: 'PUT',
+  });
 
   const updateStorefrontState = (updates: Partial<StoreDTO['storefront']>) => {
     setFormData((prev) => ({
       ...prev,
-      storefront: {
-        ...prev.storefront,
-        ...updates,
-      },
+      ...updates,
     }));
     setHasChanges(true);
   };
 
+  const handleBannerFileChange = (file: File | null) => {
+    setBannerImageFile(file);
+    setHasChanges(true);
+  };
+
   const handleCancel = () => {
-    setFormData(initialData);
+    setFormData(initialStore?.storefront);
+    setBannerImageFile(null);
     setHasChanges(false);
   };
 
@@ -41,9 +50,16 @@ export default function StoreOptions({ storefrontId, initialData }: Props) {
 
     setLoading(true);
     try {
-      await updateStorefront(storefrontId, formData.storefront);
+      const formPayload = {
+        dto: new Blob([JSON.stringify(formData)], { type: 'application/json' }),
+        image: bannerImageFile ?? undefined,
+      };
+
+      await updateStorefront.fetch({
+        formPayload,
+      });
       setHasChanges(false);
-      window.location.reload();
+      location.reload();
     } catch (error) {
       alert('Error al guardar los cambios: ' + error);
     } finally {
@@ -51,7 +67,7 @@ export default function StoreOptions({ storefrontId, initialData }: Props) {
     }
   };
 
-  const storefront = formData.storefront;
+  const storefront = formData;
 
   return (
     <div className="w-full max-w-142.5 space-y-10 relative pb-10">
@@ -62,29 +78,11 @@ export default function StoreOptions({ storefrontId, initialData }: Props) {
       )}
 
       <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <span className="text-[#c65a3a] text-lg font-medium">Imagen de cabecera</span>
-          <Camera
-            className="w-5 h-5 text-teal-700 cursor-pointer"
-            onClick={() => {
-              const url = prompt(
-                'Introduce la URL de la nueva imagen:',
-                storefront.bannerImageUrl || ''
-              );
-              if (url) updateStorefrontState({ bannerImageUrl: url });
-            }}
-          />
-        </div>
-
-        <div className="relative w-full h-40 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-          <Image
-            src={storefront.bannerImageUrl || '/static/img/banner.jpg'}
-            alt="Preview"
-            fill
-            className="object-cover"
-            unoptimized
-          />
-        </div>
+        <span className="text-[#c65a3a] text-lg font-medium">Imagen de cabecera</span>
+        <ImageUpload
+          onChange={handleBannerFileChange}
+          existingImageUrl={storefront.bannerImageUrl || '/static/img/banner.jpg'}
+        />
       </div>
 
       <div className="flex justify-between items-center gap-4">

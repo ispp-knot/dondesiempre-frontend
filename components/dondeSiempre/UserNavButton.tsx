@@ -53,6 +53,16 @@ export function UserNavButton({ isActive = false, className }: Props) {
         {displayName && (
           <p className="text-sm font-medium truncate text-center border-b pb-2">{displayName}</p>
         )}
+        {user?.store?.id && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full"
+            onClick={() => router.push(`/stores/${user.store!.id}`)} // Safe because we check that it exists above
+          >
+            Mi tienda
+          </Button>
+        )}
         <Button
           variant="outline"
           size="sm"

@@ -1,18 +1,39 @@
-import { StoreDTO } from '@/lib/api/types';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { LuStore } from 'react-icons/lu';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { Card } from '@/components/ui/card';
+import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
+import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { convertToBrightness } from '@/lib/colorUtils';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
 import Link from 'next/link';
-import { followStore, unfollowStore, isFollowingStore } from '@/lib/api/followEndpoints';
-import { useState } from 'react';
+import { LuStore, LuRoute } from 'react-icons/lu';
+import LoadingText from '@/components/dondeSiempre/LoadingText';
+import { StoreFollowerDTO } from '@/lib/types/follows/followsDto';
+import { DEFAULT_MAP_LOCATION, distance } from '@/lib/mapUtils';
 
-export function StoreMapCard({ store }: { store: StoreDTO }) {
+export function StoreMapCard({
+  store,
+  userLocation,
+}: {
+  store: StoreDTO;
+  userLocation: { lat: number; lng: number } | null;
+}) {
   const color = store.storefront?.primaryColor ?? '#c65a3a';
-  const [isFollowing, setIsFollowing] = useState<boolean>(false);
-  isFollowingStore(store.id).then((data) => setIsFollowing(data.isFollowing));
+  const isFollowing = usePassiveFetcher<StoreFollowerDTO>({ url: `stores/${store.id}/follow` });
+  const followStore = useActiveFetcher<void>({
+    url: `stores/${store.id}/followers`,
+    method: 'POST',
+  });
+  const unfollowStore = useActiveFetcher<void>({
+    url: `stores/${store.id}/follow`,
+    method: 'DELETE',
+  });
+  const distanceToUser = distance(
+    userLocation?.lat ?? DEFAULT_MAP_LOCATION.lat,
+    userLocation?.lng ?? DEFAULT_MAP_LOCATION.lng,
+    store.latitude,
+    store.longitude
+  );
 
   return (
     <motion.div
@@ -40,22 +61,37 @@ export function StoreMapCard({ store }: { store: StoreDTO }) {
               <p className="text-sm sm:text-base text-secondary font-semibold line-clamp-2">
                 {store.address}
               </p>
+              {userLocation && distanceToUser && (
+                <p className="text-sm text-primary">{`A ${distanceToUser.toFixed(2)} km de ti`}</p>
+              )}
               {/* Follow button */}
               <Button
                 variant="outline"
                 className="flex items-center w-fit gap-1.5 border border-primary rounded-sm px-3 py-1.5 text-xs text-primary hover:bg-primary hover:text-white transition"
                 onClick={async () => {
                   console.log(store.id);
-                  if (isFollowing) {
-                    await unfollowStore(store.id);
-                    setIsFollowing(false);
-                  } else {
-                    await followStore(store.id);
-                    setIsFollowing(true);
+                  if (isFollowing.data?.isFollowing) {
+                    await unfollowStore.fetch();
+                    isFollowing.setData({
+                      ...isFollowing.data,
+                      isFollowing: !isFollowing.data['isFollowing'],
+                    });
+                  } else if (isFollowing.data?.isFollowing == false) {
+                    await followStore.fetch();
+                    isFollowing.setData({
+                      ...isFollowing.data,
+                      isFollowing: !isFollowing.data['isFollowing'],
+                    });
                   }
                 }}
               >
-                {isFollowing ? 'Dejar de seguir' : '+ Seguir'}
+                {isFollowing.isLoading ? (
+                  <LoadingText />
+                ) : isFollowing.data?.isFollowing ? (
+                  'Dejar de seguir'
+                ) : (
+                  '+ Seguir'
+                )}
               </Button>
             </div>
 
@@ -72,16 +108,19 @@ export function StoreMapCard({ store }: { store: StoreDTO }) {
 
           {/* Buttons */}
           <div className="flex flex-col gap-2 w-full">
-            {/*<Button
-              variant="outline"
-              className="flex-1 flex items-center justify-center gap-2 text-sm sm:text-base h-10 sm:h-11"
-              onClick={() => {
-                // TODO
-              }}
-            >
-              <span className="truncate">Cómo llegar</span>
-              <LuRoute className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-            </Button>*/}
+            {
+              <Button
+                variant="outline"
+                className="flex-1 flex items-center justify-center gap-2 text-sm sm:text-base h-10 sm:h-11"
+                onClick={() => {
+                  const url = `https://www.google.com/maps/dir/?api=1&destination=${store.latitude},${store.longitude}`;
+                  window.open(url, '_blank');
+                }}
+              >
+                <span className="truncate">Cómo llegar</span>
+                <LuRoute className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+              </Button>
+            }
             <Button
               asChild
               variant="secondary"

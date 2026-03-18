@@ -4,49 +4,50 @@ import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import SortableProduct from '@/components/dondeSiempre/SortableProduct';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { addProduct, getOutfit, removeProduct, sortProducts } from '@/lib/api/outfitEndpoints';
-import { getProductsOfStorefront } from '@/lib/api/productEndpoints';
-import { OutfitCreationProduct } from '@/lib/types/outfits';
+import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
+import { OutfitDTO, OutfitCreationProductDTO } from '@/lib/types/outfits/outfitsDto';
+import { ProductDTO } from '@/lib/types/products/productsDto';
 import { convertPrice } from '@/lib/utils';
 import { move } from '@dnd-kit/helpers';
 import { DragDropProvider } from '@dnd-kit/react';
-import { useQuery } from '@tanstack/react-query';
+import Image from 'next/image';
 import { redirect, useParams } from 'next/navigation';
 import { useState } from 'react';
 import ErrorText from '../../../../../../components/dondeSiempre/ErrorText';
 import LoadingText from '../../../../../../components/dondeSiempre/LoadingText';
-import Image from 'next/image';
 
 export default function OutfitProductsPage() {
   const params = useParams<{ id: string; outfitId: string }>();
-  const outfitId = params.outfitId;
-  const storefrontId = params.id;
 
   const [movedProducts, setMovedProducts] = useState(new Array<string>());
-  const productsQuery = useQuery({
-    queryKey: ['products', storefrontId],
-    queryFn: () => getProductsOfStorefront(storefrontId),
+
+  const products = usePassiveFetcher<ProductDTO[]>({ url: `stores/${params.id}/products` });
+  const outfit = usePassiveFetcher<OutfitDTO>({ url: `outfits/${params.outfitId}` });
+
+  const addProduct = useActiveFetcher<void>({
+    url: `outfits/${params.outfitId}/products`,
+    method: 'POST',
+  });
+  const removeProduct = useActiveFetcher<void>({ method: 'DELETE' });
+  const sortProducts = useActiveFetcher<void>({
+    url: `outfits/${params.outfitId}/products/sort`,
+    method: 'PATCH',
   });
 
-  const outfitQuery = useQuery({
-    queryKey: ['outfit', outfitId],
-    queryFn: () => getOutfit(outfitId),
-  });
-
-  if (productsQuery.isLoading || outfitQuery.isLoading) {
+  if (products.isLoading || outfit.isLoading) {
     return <LoadingText />;
   }
 
-  if (productsQuery.isError || outfitQuery.isError) {
+  if (products.isError || outfit.isError) {
     return (
       <>
-        {productsQuery.isError && <ErrorText error={productsQuery.error} />}
-        {outfitQuery.isError && <ErrorText error={outfitQuery.error} />}
+        {products.isError && <ErrorText error={products.error} />}
+        {outfit.isError && <ErrorText error={outfit.error} />}
       </>
     );
   }
-  const outfitProducts = outfitQuery.data?.products.sort((a, b) => a.index - b.index);
-  return productsQuery.data && outfitQuery.data && outfitProducts ? (
+  const outfitProducts = outfit.data?.products.sort((a, b) => a.index - b.index);
+  return products.data && outfit.data && outfitProducts ? (
     <DragDropProvider
       onDragEnd={(event) => {
         let moved: string[] = [];
@@ -66,10 +67,10 @@ export default function OutfitProductsPage() {
           <Card className="p-4 pt-8 m-4 mb-8 shadow-xl">
             <div>
               <h1 className="mb-3 font-bold text-primary text-center text-3xl">
-                {outfitQuery.data.name}
+                {outfit.data.name}
               </h1>
-              {outfitQuery.data.description ? (
-                <p className="text-secondary text-center text-xl">{outfitQuery.data.description}</p>
+              {outfit.data.description ? (
+                <p className="text-secondary text-center text-xl">{outfit.data.description}</p>
               ) : (
                 <></>
               )}
@@ -82,8 +83,10 @@ export default function OutfitProductsPage() {
                   product={p}
                   removable={outfitProducts.length > 1}
                   onClick={async () => {
-                    await removeProduct(outfitId, p.id);
-                    outfitQuery.refetch();
+                    await removeProduct.fetch({
+                      url: `outfits/${params.outfitId}/products/${p.id}`,
+                    });
+                    outfit.refetch();
                   }}
                 />
               ))}
@@ -102,15 +105,14 @@ export default function OutfitProductsPage() {
             <div className="flex flex-row justify-center mb-8">
               <Button
                 onClick={async () => {
+                  const list = movedProducts.map((id, index) => {
+                    return { productId: id, index: index };
+                  });
+
                   if (movedProducts.length > 0) {
-                    await sortProducts(
-                      outfitId,
-                      movedProducts.map((id, index) => {
-                        return { id: id, index: index };
-                      })
-                    );
+                    await sortProducts.fetch({ body: list });
                   }
-                  redirect(`/stores/${storefrontId}/outfits`);
+                  redirect(`/stores/${params.id}/outfits`);
                 }}
                 className="self-center text-center flex flex-row justify-center items-center rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md h-12 w-1/2 mt-8"
               >
@@ -121,7 +123,7 @@ export default function OutfitProductsPage() {
           <Card className="p-4 m-4 pt-8">
             <h1 className="md:mb-3 font-bold text-primary text-center text-3xl">Productos</h1>
             <div className="grid grid-cols-2 md:gap-2">
-              {productsQuery.data
+              {products.data
                 .filter((product) => !outfitProducts.map((p) => p.id).includes(product.id))
                 .map((p) => (
                   <Card key={p.id} className="p-2 md:p-4 md:pt-8 m-1 shadow-xl gap-2 md:gap-4">
@@ -145,12 +147,12 @@ export default function OutfitProductsPage() {
                     <div className="flex flex-row justify-center">
                       <Button
                         onClick={async () => {
-                          const dto: OutfitCreationProduct = {
-                            id: p.id,
+                          const dto: OutfitCreationProductDTO = {
+                            productId: p.id,
                             index: outfitProducts.length,
                           };
-                          await addProduct(outfitId, dto);
-                          outfitQuery.refetch();
+                          await addProduct.fetch({ body: dto });
+                          outfit.refetch();
                         }}
                         className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl h-12 w-11/12 md:w-1/2"
                       >
