@@ -6,7 +6,9 @@ import { convertToBrightness } from '@/lib/colorUtils';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { LuStore } from 'react-icons/lu';
+import { LuStore, LuRoute } from 'react-icons/lu';
+import LoadingText from '@/components/dondeSiempre/LoadingText';
+import { StoreFollowerDTO } from '@/lib/types/follows/followsDto';
 import { DEFAULT_MAP_LOCATION, distance } from '@/lib/mapUtils';
 
 export function StoreMapCard({
@@ -17,7 +19,7 @@ export function StoreMapCard({
   userLocation: { lat: number; lng: number } | null;
 }) {
   const color = store.storefront?.primaryColor ?? '#c65a3a';
-  const isFollowing = usePassiveFetcher<boolean>({ url: `stores/${store.id}/follow` });
+  const isFollowing = usePassiveFetcher<StoreFollowerDTO>({ url: `stores/${store.id}/follow` });
   const followStore = useActiveFetcher<void>({
     url: `stores/${store.id}/followers`,
     method: 'POST',
@@ -68,16 +70,28 @@ export function StoreMapCard({
                 className="flex items-center w-fit gap-1.5 border border-primary rounded-sm px-3 py-1.5 text-xs text-primary hover:bg-primary hover:text-white transition"
                 onClick={async () => {
                   console.log(store.id);
-                  if (isFollowing.data) {
+                  if (isFollowing.data?.isFollowing) {
                     await unfollowStore.fetch();
-                    isFollowing.setData(false);
-                  } else {
+                    isFollowing.setData({
+                      ...isFollowing.data,
+                      isFollowing: !isFollowing.data['isFollowing'],
+                    });
+                  } else if (isFollowing.data?.isFollowing == false) {
                     await followStore.fetch();
-                    isFollowing.setData(true);
+                    isFollowing.setData({
+                      ...isFollowing.data,
+                      isFollowing: !isFollowing.data['isFollowing'],
+                    });
                   }
                 }}
               >
-                {isFollowing.data ? 'Dejar de seguir' : '+ Seguir'}
+                {isFollowing.isLoading ? (
+                  <LoadingText />
+                ) : isFollowing.data?.isFollowing ? (
+                  'Dejar de seguir'
+                ) : (
+                  '+ Seguir'
+                )}
               </Button>
             </div>
 
@@ -94,16 +108,19 @@ export function StoreMapCard({
 
           {/* Buttons */}
           <div className="flex flex-col gap-2 w-full">
-            {/*<Button
-              variant="outline"
-              className="flex-1 flex items-center justify-center gap-2 text-sm sm:text-base h-10 sm:h-11"
-              onClick={() => {
-                // TODO
-              }}
-            >
-              <span className="truncate">Cómo llegar</span>
-              <LuRoute className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-            </Button>*/}
+            {
+              <Button
+                variant="outline"
+                className="flex-1 flex items-center justify-center gap-2 text-sm sm:text-base h-10 sm:h-11"
+                onClick={() => {
+                  const url = `https://www.google.com/maps/dir/?api=1&destination=${store.latitude},${store.longitude}`;
+                  window.open(url, '_blank');
+                }}
+              >
+                <span className="truncate">Cómo llegar</span>
+                <LuRoute className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+              </Button>
+            }
             <Button
               asChild
               variant="secondary"
