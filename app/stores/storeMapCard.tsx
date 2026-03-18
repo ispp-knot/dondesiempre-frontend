@@ -59,7 +59,7 @@ export function StoreMapCard({
               <p className="text-sm sm:text-base text-secondary font-semibold line-clamp-2">
                 {store.address}
               </p>
-              {userLocation && (
+              {userLocation && distanceToUser && (
                 <p className="text-sm text-primary">{`A ${distanceToUser.toFixed(2)} km de ti`}</p>
               )}
               {/* Follow button */}

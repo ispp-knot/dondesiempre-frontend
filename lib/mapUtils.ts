@@ -7,7 +7,10 @@ export const DEFAULT_MAP_STYLE: StyleSpecification = {
   ...(MAP_STYLE as StyleSpecification),
 };
 
-export function distance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+export function distance(lat1: number, lon1: number, lat2: number, lon2: number): number | null {
+  if (lat1 === DEFAULT_MAP_LOCATION.lat && lon1 === DEFAULT_MAP_LOCATION.lng) {
+    return null;
+  }
   const r = 6371;
   const p = Math.PI / 180;
   const a =
