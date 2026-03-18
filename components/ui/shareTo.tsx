@@ -1,7 +1,7 @@
 'use client';
 
 import { getWebUrl } from '@/lib/config';
-import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
+import { PromotionDTO, PromotionMockDTO } from '@/lib/types/promotions/promotionsDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { ProductDTO } from '@/lib/types/products/productsDto';
 import {
@@ -16,9 +16,10 @@ import { Button } from './button';
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Share2, Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import { PromotionFormData } from '../dondeSiempre/PromotionForm';
 
 interface Props {
-  item: ProductDTO | OutfitDTO | PromotionDTO;
+  item: ProductDTO | OutfitDTO | PromotionDTO | PromotionMockDTO;
   images?: string[];
   className?: string;
 }

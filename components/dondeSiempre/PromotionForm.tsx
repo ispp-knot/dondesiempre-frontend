@@ -34,7 +34,7 @@ export interface PromotionFormData {
   discountPercentage: number;
   description: string;
   products: Product[];
-  active: boolean;
+  isActive: boolean;
   dateRange?: DateRange;
   publishToInstagram: boolean;
   promotionImage: File | null;
@@ -63,7 +63,7 @@ export default function PromotionForm({
   const [dateRange, setDateRange] = useState<DateRange | undefined>(initialData?.dateRange);
   const [description, setDescription] = useState(initialData?.description ?? '');
   const [products, setProducts] = useState<Product[]>(initialData?.products ?? []);
-  const [active, setActive] = useState(initialData?.active ?? true);
+  const [isActive, setIsActive] = useState(initialData?.isActive ?? true);
   const [publishToInstagram, setPublishToInstagram] = useState(
     initialData?.publishToInstagram ?? true
   );
@@ -106,7 +106,7 @@ export default function PromotionForm({
       name,
       discountPercentage,
       description,
-      active,
+      isActive,
       promotionImage,
       publishToInstagram,
       products,
@@ -310,7 +310,7 @@ export default function PromotionForm({
       {/* Instagram Toggle */}
       <div className="flex items-center justify-between py-2">
         <span className="text-lg font-bold flex items-center gap-2 text-primary">Activa</span>
-        <Switch checked={active} onCheckedChange={setActive} className="cursor-pointer" />
+        <Switch checked={isActive} onCheckedChange={setIsActive} className="cursor-pointer" />
       </div>
 
       {/* Submit Button */}

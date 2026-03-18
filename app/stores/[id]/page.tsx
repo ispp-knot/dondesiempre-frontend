@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { usePassiveFetcher } from '@/lib/api/fetcher';
+import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { StoreDTO, StoreSocialNetworkDTO } from '@/lib/types/stores/storesDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import Image from 'next/image';
@@ -11,10 +11,11 @@ import { FaFacebook, FaInstagram, FaLink, FaTiktok, FaTwitter } from 'react-icon
 import { FaLocationDot } from 'react-icons/fa6';
 import { MdAccessTimeFilled } from 'react-icons/md';
 import StoreTabs from './store-tabs';
-import { getPromotionsByStoreId } from '@/lib/api/promotionEndpoints';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import ErrorText from '@/components/dondeSiempre/ErrorText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
+import { use } from 'react';
+import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -30,12 +31,12 @@ const getSocialIcon = (name: string) => {
   return <FaLink className="w-4 h-4" />;
 };
 
-export default async function StorePage() {
+export default function StorePage() {
   const params = useParams<{ id: string }>();
 
   const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
   const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
-  const promotionsDto = await getPromotionsByStoreId(params.id);
+  const promotionsDto = usePassiveFetcher<PromotionDTO[]>({ url: `stores/${params.id}/promotions`});
 
   if (store.isLoading || outfits.isLoading) {
     return <LoadingText />;
@@ -48,6 +49,7 @@ export default async function StorePage() {
     );
   }
 
+  const promotionData: PromotionDTO[] = promotionsDto.data || [];
   const socialNetworks: Array<StoreSocialNetworkDTO> = store.data?.socialNetworks || [];
   const primaryColor = store.data?.storefront?.primaryColor || '#000000';
   const secondaryColor = store.data?.storefront?.secondaryColor || '#000000';
@@ -84,6 +86,7 @@ export default async function StorePage() {
         />
       </div>
 
+
       <div className="w-full mt-5 text-center text-3xl md:text-5xl text-[var(--primary)] font-bold">
         {store.data.name}
       </div>
@@ -117,7 +120,7 @@ export default async function StorePage() {
         store={store.data}
         collections={collections}
         description={store.data?.aboutUs || ''}
-        promotions={promotionsDto}
+        promotions={promotionData}
         outfits={outfits.data}
       />
     </div>

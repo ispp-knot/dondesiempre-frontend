@@ -38,9 +38,11 @@ export default function StoreTabs({
 }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
 
-  const activePromotions = promotions.filter((p) => p.isActive);
+  {/*TODO: Filter active promotions */}
+  const activePromotions = promotions;
   const [currentPromoIndex, setCurrentPromoIndex] = useState(0);
   const [selectedPromo, setSelectedPromo] = useState<PromotionDTO | null>(null);
+
   const formatDateRange = (start?: string, end?: string) => {
     if (!start || !end) return '¡Por tiempo limitado!';
 
