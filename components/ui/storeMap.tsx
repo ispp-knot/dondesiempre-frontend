@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { LngLat, Map, MapEvent, MapRef, Marker } from '@vis.gl/react-maplibre';
 import { Minus, Plus } from 'lucide-react';
-import { createRef, useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { MdMyLocation } from 'react-icons/md';
 import { TbNavigationNorth } from 'react-icons/tb';
 import { StorePin } from './storePin';
@@ -22,13 +22,12 @@ export function StoreMap({
   onClickStore?: (store: StoreDTO) => void;
   onStoreSelect?: (store: StoreDTO | null) => void;
 }) {
-  const mapRef = createRef<MapRef>();
+  const mapRef = useRef<MapRef | null>(null);
   const stores = useActiveFetcher<StoreDTO[]>({ url: 'stores', method: 'GET' });
 
   const fetchStores = useCallback(
     async (_: MapEvent) => {
       const boundary = mapRef.current?.getBounds();
-
       if (!boundary) {
         return;
       }
@@ -57,11 +56,7 @@ export function StoreMap({
   };
 
   const handleGeolocate = () => {
-    console.log('Geolocating user...');
-    console.log('Requesting user location...');
-
     userLocation = userLocation || DEFAULT_MAP_LOCATION;
-    console.log('User location obtained:', userLocation);
     mapRef.current?.flyTo({
       center: [userLocation.lng, userLocation.lat],
       zoom: 15,
