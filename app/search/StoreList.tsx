@@ -5,7 +5,7 @@ import { IoSearch } from 'react-icons/io5';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { usePassiveFetcher } from '@/lib/api/fetcher';
 import { useDebounce } from 'use-debounce';
-import { StoreListItem } from './StoreListItem';
+import { StoreCard } from '@/components/dondeSiempre/StoreCard';
 
 export default function StoreList() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -43,7 +43,7 @@ export default function StoreList() {
 
   return (
     <div className="flex flex-col w-full min-h-screen bg-white pb-24 sm:pb-0">
-      <div className="p-4 sticky top-0 bg-white z-10 shadow-sm">
+      <div className="p-4 sticky top-0 bg-white z-10">
         <div className="relative flex items-center w-full max-w-2xl mx-auto">
           <IoSearch className="absolute left-3 text-secondary text-xl" />
           <input
@@ -64,7 +64,7 @@ export default function StoreList() {
         ) : stores && stores.length > 0 ? (
           <div className="flex flex-col gap-4 md:gap-6">
             {stores.map((store) => (
-              <StoreListItem key={store.id} store={store} />
+              <StoreCard key={store.id} store={store} />
             ))}
           </div>
         ) : (
