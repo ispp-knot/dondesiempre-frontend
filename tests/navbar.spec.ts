@@ -1,37 +1,69 @@
+import { DEFAULT_MAP_LOCATION } from '@/lib/mapUtils';
 import { test, expect } from '@playwright/test';
 
-test('navbar to search page', async ({ page }) => {
-    await page.goto('http://localhost:3000/stores');
-    await page.getByRole('link', { name: 'Búsqueda' }).click();
+test.beforeEach(async ({ context }) => {
+  // Bloquea el registro del Service Worker antes de cargar la página
 
-    await expect(page).toHaveURL('http://localhost:3000/search');
+  await context.grantPermissions(['geolocation']);
+
+  // 3. (Opcional) Forzamos la posición inicial para que el mapa no flote
+  await context.setGeolocation({
+    latitude: DEFAULT_MAP_LOCATION.lat,
+    longitude: DEFAULT_MAP_LOCATION.lng,
+  });
 });
 
-test('navbar to map page', async ({ page }) => {
-    await page.goto('http://localhost:3000/search');
-    await page.getByRole('link', { name: 'Mapa' }).click();
+test.describe('public navbar', () => {
 
-    await expect(page).toHaveURL('http://localhost:3000/stores');
+    test('navbar to search page', async ({ page }) => {
+        await page.goto('http://localhost:3000/stores');
+        await page.getByRole('link', { name: 'Tiendas' }).click();
+
+        await expect(page).toHaveURL('http://localhost:3000/search');
+    });
+
+    test('navbar to map page', async ({ page }) => {
+
+        await page.goto('http://localhost:3000/search');
+        await page.getByRole('link', { name: 'Mapa' }).click();
+        await page.context().grantPermissions(['geolocation']);
+
+        await page.waitForLoadState('networkidle');
+        await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 10000 });
+
+        await expect(page).toHaveURL('http://localhost:3000/stores');
+    });
+
+    test('redirect to map page', async ({ page }) => {
+        await page.goto('http://localhost:3000/search');
+
+        await page.goto('http://localhost:3000/');
+
+        await page.context().grantPermissions(['geolocation']);
+
+        await page.waitForLoadState('networkidle');
+        await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 10000 });
+
+        await expect(page).toHaveURL('http://localhost:3000/stores');
+    });
+
 });
 
-test('navbar to followed stores page', async ({ page }) => {
-    await page.goto('http://localhost:3000/stores');
-    await page.getByRole('img').nth(1).click();
+test.describe('private navbar', () => {
+  test.use({ storageState: 'test-public/auth.client.json' });
 
-    await expect(page).toHaveURL('http://localhost:3000/following');
-});
+    test('navbar to followed stores page', async ({ page }) => {
+        await page.goto('http://localhost:3000/stores');
+        await page.getByRole('img').nth(1).click();
 
-test('navbar to deliveries page', async ({ page }) => {
-    await page.goto('http://localhost:3000/stores');
-    await page.getByRole('img').nth(2).click();
+        await expect(page).toHaveURL('http://localhost:3000/following');
+    });
 
-    await expect(page).toHaveURL('http://localhost:3000/deliveries');
-});
+    test('navbar to deliveries page', async ({ page }) => {
+        await page.goto('http://localhost:3000/stores');
+        await page.getByRole('img').nth(2).click();
 
-test('redirect to map page', async ({ page }) => {
-    await page.goto('http://localhost:3000/search');
+        await expect(page).toHaveURL('http://localhost:3000/deliveries');
+    });
 
-    await page.goto('http://localhost:3000/');
-
-    await expect(page).toHaveURL('http://localhost:3000/stores');
 });

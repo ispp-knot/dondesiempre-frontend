@@ -15,7 +15,7 @@ export default defineConfig({
   retries: 0,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
-  
+
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   webServer: [
     {
@@ -80,10 +80,9 @@ export default defineConfig({
     // },
     {
       name: 'setup-registro',
-        testMatch: /.*\.setup\.ts/, // Ejecutará archivos que terminen en .setup.ts
+      testMatch: /.*\.setup\.ts/, // Ejecutará archivos que terminen en .setup.ts
       use: {
         ...devices['Desktop Chrome'],
-        headless: false,
         screenshot: 'only-on-failure',
         ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
           ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }

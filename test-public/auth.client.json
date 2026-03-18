@@ -1,4 +1,35 @@
 {
-  "cookies": [],
-  "origins": []
+  "cookies": [
+    {
+      "name": "token",
+      "value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJjbGllbnRlQGVqZW1wbG8uY29tIiwiaWF0IjoxNzczODQ5OTA3LCJleHAiOjE3NzY0NDE5MDd9.PiResFVDDjL1VBOgluzkR-ZKavQohLK-XrSqIywT4ZQS86NG7FqDp1-h8TvHOWvK",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1776441907.662211,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "session",
+      "value": "eyJpZCI6IjBlMWVkZGQxLWIzZGItNDkzOC04MTBiLTkzMzI3MzkzYTQ0OSIsImVtYWlsIjoiY2xpZW50ZUBlamVtcGxvLmNvbSIsInJvbGVzIjpbIkNMSUVOVCJdLCJleHBpcmVzQXQiOiIyMDI2LTA0LTE3VDE2OjA1OjA3WiJ9",
+      "domain": "localhost",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "http://localhost:3000",
+      "localStorage": [
+        {
+          "name": "auth_user",
+          "value": "{\"id\":\"0e1eddd1-b3db-4938-810b-93327393a449\",\"email\":\"cliente@ejemplo.com\",\"roles\":[\"CLIENT\"],\"expiresAt\":\"2026-04-17T16:05:07Z\",\"store\":null,\"client\":{\"id\":\"d4b10d75-c11a-45e1-af7e-665df6f3b313\",\"name\":\"Jose\",\"surname\":\"Cliente\",\"email\":\"cliente@ejemplo.com\",\"phone\":\"123456789\",\"address\":\"Avenida del cliente 2\"}}"
+        }
+      ]
+    }
+  ]
 }

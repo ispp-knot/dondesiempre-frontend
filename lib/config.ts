@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _ from 'lodash';
 
 let _backendUrl: string | undefined;
 let _webUrl: string | undefined;
@@ -30,4 +30,3 @@ export function getDirectoryBackend(): string {
   }
   return _directoryBackend ?? '';
 }
-
