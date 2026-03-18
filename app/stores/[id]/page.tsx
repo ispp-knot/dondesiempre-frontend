@@ -47,16 +47,6 @@ export default function StorePage() {
   const secondaryColor = store.data?.storefront?.secondaryColor || '#000000';
   const banner = store.data?.storefront?.bannerImageUrl;
 
-  const collections = [
-    { id: 1, name: 'Veraneo', image: '' },
-    { id: 2, name: 'Nuevo', image: '' },
-    { id: 3, name: 'Invierno', image: '' },
-    { id: 4, name: 'Feria', image: '' },
-    { id: 5, name: 'Semana Santa', image: '' },
-    { id: 6, name: 'Joyería', image: '' },
-    { id: 7, name: 'Ropa interior', image: '' },
-  ];
-
   return store.data && outfits.data ? (
     <div
       className="flex flex-col bg-white"
@@ -109,7 +99,6 @@ export default function StorePage() {
 
       <StoreTabs
         store={store.data}
-        collections={collections}
         description={store.data?.aboutUs || ''}
         outfits={outfits.data}
       />

@@ -1,17 +1,10 @@
 'use client';
 
 import { JSX, useState } from 'react';
-import Collections from './collections';
 import AboutUs from './about-us';
 import Outfits from './outfits';
 import { ShareTo } from '@/components/ui/shareTo';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
-
-interface Collection {
-  id: number;
-  name: string;
-  image: string;
-}
 
 interface Outfit {
   id: number;
@@ -21,16 +14,11 @@ interface Outfit {
 }
 
 interface Props {
-  collections?: Collection[];
   description?: string;
   outfits?: Outfit[];
 }
 
-export default function StoreTabs({
-  collections = [],
-  description = '',
-  outfits = [],
-}: Props): JSX.Element {
+export default function StoreTabs({ description = '', outfits = [] }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<'catalogo' | 'sobre'>('catalogo');
 
   const mockPromotion: PromotionDTO = {
@@ -83,7 +71,6 @@ export default function StoreTabs({
       <div className={'flex flex-col gap-10 sm:items-center'}>
         {activeTab === 'catalogo' ? (
           <>
-            <Collections collections={collections} />
             <Outfits outfits={outfits} />
           </>
         ) : (

@@ -2,7 +2,6 @@
 
 import { JSX, useState } from 'react';
 import Image from 'next/image';
-import Collections from './collections';
 import AboutUs from './about-us';
 import Outfits from './outfits';
 import StoreOptions from './options';
@@ -13,25 +12,13 @@ import { ShareTo } from '@/components/ui/shareTo';
 
 type Tab = 'catalogo' | 'sobre' | 'opciones';
 
-type Collection = {
-  id: number;
-  name: string;
-  image: string;
-};
-
 type Props = {
-  collections?: Collection[];
   description?: string;
   outfits?: OutfitDTO[];
   store: StoreDTO;
 };
 
-export default function StoreTabs({
-  collections = [],
-  description = '',
-  outfits = [],
-  store,
-}: Props): JSX.Element {
+export default function StoreTabs({ description = '', outfits = [], store }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
 
   const promoOutfit = outfits.find((o) => o.discountedPriceInCents < o.priceInCents);
@@ -107,13 +94,11 @@ export default function StoreTabs({
           <>
             {store.storefront.isFirstCollections ? (
               <>
-                <Collections storeId={store.id} collections={collections} />
                 <Outfits storeId={store.id} outfits={outfits} />
               </>
             ) : (
               <>
                 <Outfits storeId={store.id} outfits={outfits} />
-                <Collections storeId={store.id} collections={collections} />
               </>
             )}
           </>

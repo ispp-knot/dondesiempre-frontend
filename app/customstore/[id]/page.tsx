@@ -24,43 +24,7 @@ export default async function StorefrontPage({
       'Nuestra boutique se basa en una fusión del estilo urbano con toques románticos, desde prendas básicas de alta calidad hasta piezas únicas de diseñadores emergentes. \n' +
       '\n' +
       'En Tu Capricho creemos que cada pieza debe sentirse personal, por lo que cada semana renovamos nuestro stock, asegurándonos de que encuentres “justo lo que necesitabas”.',
-    collections: [
-      {
-        id: 1,
-        name: 'Veraneo',
-        image: '',
-      },
-      {
-        id: 2,
-        name: 'Nuevo',
-        image: '',
-      },
-      {
-        id: 3,
-        name: 'Invierno',
-        image: '',
-      },
-      {
-        id: 4,
-        name: 'Feria',
-        image: '',
-      },
-      {
-        id: 5,
-        name: 'Semana Santa',
-        image: '',
-      },
-      {
-        id: 6,
-        name: 'Joyería',
-        image: '',
-      },
-      {
-        id: 7,
-        name: 'Ropa interior',
-        image: '',
-      },
-    ],
+
     outfits: [
       {
         id: 1,
@@ -174,11 +138,7 @@ export default async function StorefrontPage({
           <span className="text-xl leading-none text-secondary hover:text-white">+</span>
         </button>
       </div>
-      <StoreTabs
-        collections={store.collections}
-        description={store.description}
-        outfits={store.outfits}
-      />
+      <StoreTabs description={store.description} outfits={store.outfits} />
     </div>
   );
 }
