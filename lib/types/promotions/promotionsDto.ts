@@ -1,3 +1,5 @@
+import { ProductDTO } from "../products/productsDto";
+
 export interface PromotionCreationDTO {
   name: string;
   discountPercentage: number;
@@ -17,5 +19,5 @@ export interface PromotionDTO {
   isActive: boolean;
   description: string;
   storeId: string;
-  productIds: string[];
+  products: ProductDTO[];
 }
