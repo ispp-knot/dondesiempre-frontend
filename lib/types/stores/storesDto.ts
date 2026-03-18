@@ -22,8 +22,10 @@ export interface StoreDTO {
   openingHours: string;
   phone: string;
   acceptsShipping: boolean;
+  hasActivePromotions: boolean;
   latitude: number;
   longitude: number;
+  distance?: number | null;
   aboutUs: string | null;
   // TODO: En Pr Claudia #64: Añadir isFirstCollections, primaryColor, secondaryColor, bannerImageUrl
   storefront: StorefrontDTO;
