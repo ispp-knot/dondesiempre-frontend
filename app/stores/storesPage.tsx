@@ -56,7 +56,9 @@ export function StoresPage() {
         onStoreSelect={setSelectedStore}
       />
       <AnimatePresence>
-        {selectedStore && <StoreMapCard key={selectedStore.id} store={selectedStore} />}
+        {selectedStore && (
+          <StoreMapCard key={selectedStore.id} store={selectedStore} userLocation={userLocation} />
+        )}
       </AnimatePresence>
     </div>
   );

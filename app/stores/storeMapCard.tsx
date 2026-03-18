@@ -9,8 +9,15 @@ import Link from 'next/link';
 import { LuStore, LuRoute } from 'react-icons/lu';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { StoreFollowerDTO } from '@/lib/types/follows/followsDto';
+import { DEFAULT_MAP_LOCATION, distance } from '@/lib/mapUtils';
 
-export function StoreMapCard({ store }: { store: StoreDTO }) {
+export function StoreMapCard({
+  store,
+  userLocation,
+}: {
+  store: StoreDTO;
+  userLocation: { lat: number; lng: number } | null;
+}) {
   const color = store.storefront?.primaryColor ?? '#c65a3a';
   const isFollowing = usePassiveFetcher<StoreFollowerDTO>({ url: `stores/${store.id}/follow` });
   const followStore = useActiveFetcher<void>({
@@ -21,6 +28,12 @@ export function StoreMapCard({ store }: { store: StoreDTO }) {
     url: `stores/${store.id}/follow`,
     method: 'DELETE',
   });
+  const distanceToUser = distance(
+    userLocation?.lat ?? DEFAULT_MAP_LOCATION.lat,
+    userLocation?.lng ?? DEFAULT_MAP_LOCATION.lng,
+    store.latitude,
+    store.longitude
+  );
 
   return (
     <motion.div
@@ -48,6 +61,9 @@ export function StoreMapCard({ store }: { store: StoreDTO }) {
               <p className="text-sm sm:text-base text-secondary font-semibold line-clamp-2">
                 {store.address}
               </p>
+              {userLocation && distanceToUser && (
+                <p className="text-sm text-primary">{`A ${distanceToUser.toFixed(2)} km de ti`}</p>
+              )}
               {/* Follow button */}
               <Button
                 variant="outline"
