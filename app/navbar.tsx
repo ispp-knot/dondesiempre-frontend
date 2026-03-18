@@ -27,7 +27,7 @@ export default function Navbar() {
             </Link>
             {!isAdmin && (
               <div className="flex flex-row items-center gap-6 text-secondary">
-                <Link href="/search">Buscar</Link>
+                <Link href="/search">Tiendas</Link>
                 <Link href="/stores">Mapa</Link>
               </div>
             )}
