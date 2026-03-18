@@ -6,9 +6,10 @@ interface Props {
   backendUrl: string;
   webUrl: string;
   children: React.ReactNode;
+  dirBack: string;
 }
 
-export function ConfigProvider({ backendUrl, webUrl, children }: Props) {
-  initClientConfig(backendUrl, webUrl);
+export function ConfigProvider({ backendUrl, webUrl, dirBack, children }: Props) {
+  initClientConfig(backendUrl, webUrl, dirBack);
   return <>{children}</>;
 }

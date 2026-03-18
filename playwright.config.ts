@@ -7,6 +7,7 @@ import { DEFAULT_MAP_LOCATION } from './lib/mapUtils';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  /*globalSetup: require.resolve('./tests/global-setup'),*/
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -14,6 +15,7 @@ export default defineConfig({
   retries: 0,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
+  
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   webServer: [
     {
@@ -77,15 +79,28 @@ export default defineConfig({
     //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
     // },
     {
-      name: 'chromium',
+      name: 'setup-registro',
+        testMatch: /.*\.setup\.ts/, // Ejecutará archivos que terminen en .setup.ts
       use: {
         ...devices['Desktop Chrome'],
-        storageState: 'test-public/auth.user.json',
+        headless: false,
         screenshot: 'only-on-failure',
         ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
           ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
           : {}),
       },
+    },
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'test-public/auth.client.json',
+        screenshot: 'only-on-failure',
+        ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+          ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
+          : {}),
+      },
+      dependencies: ['setup-registro'],
     },
   ],
 

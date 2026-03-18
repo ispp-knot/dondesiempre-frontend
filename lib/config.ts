@@ -1,9 +1,13 @@
+import _ from "lodash";
+
 let _backendUrl: string | undefined;
 let _webUrl: string | undefined;
+let _directoryBackend: string | undefined;
 
-export function initClientConfig(backendUrl: string, webUrl: string) {
+export function initClientConfig(backendUrl: string, webUrl: string, directoryBackend: string) {
   _backendUrl = backendUrl;
   _webUrl = webUrl;
+  _directoryBackend = directoryBackend;
 }
 
 export function getBackendUrl(): string {
@@ -19,3 +23,11 @@ export function getWebUrl(): string {
   }
   return _webUrl ?? '';
 }
+
+export function getDirectoryBackend(): string {
+  if (typeof window === 'undefined') {
+    return process.env.DIR_BACKEND ?? '';
+  }
+  return _directoryBackend ?? '';
+}
+
