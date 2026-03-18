@@ -57,11 +57,7 @@ export function StoreMap({
   };
 
   const handleGeolocate = () => {
-    console.log('Geolocating user...');
-    console.log('Requesting user location...');
-
     userLocation = userLocation || DEFAULT_MAP_LOCATION;
-    console.log('User location obtained:', userLocation);
     mapRef.current?.flyTo({
       center: [userLocation.lng, userLocation.lat],
       zoom: 15,
