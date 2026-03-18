@@ -13,57 +13,53 @@ test.beforeEach(async ({ context }) => {
   });
 });
 
-test.describe('public navbar', () => {
+test.describe.serial('public navbar', () => {
+  test('navbar to search page', async ({ page }) => {
+    await page.goto('http://localhost:3000/stores');
+    await page.getByRole('link', { name: 'Tiendas' }).click();
 
-    test('navbar to search page', async ({ page }) => {
-        await page.goto('http://localhost:3000/stores');
-        await page.getByRole('link', { name: 'Tiendas' }).click();
+    await expect(page).toHaveURL('http://localhost:3000/search');
+  });
 
-        await expect(page).toHaveURL('http://localhost:3000/search');
-    });
+  test('navbar to map page', async ({ page }) => {
+    await page.goto('http://localhost:3000/search');
+    await page.getByRole('link', { name: 'Mapa' }).click();
+    await page.context().grantPermissions(['geolocation']);
 
-    test('navbar to map page', async ({ page }) => {
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 10000 });
 
-        await page.goto('http://localhost:3000/search');
-        await page.getByRole('link', { name: 'Mapa' }).click();
-        await page.context().grantPermissions(['geolocation']);
+    await expect(page).toHaveURL('http://localhost:3000/stores');
+  });
 
-        await page.waitForLoadState('networkidle');
-        await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 10000 });
+  test('redirect to map page', async ({ page }) => {
+    await page.goto('http://localhost:3000/search');
 
-        await expect(page).toHaveURL('http://localhost:3000/stores');
-    });
+    await page.goto('http://localhost:3000/');
 
-    test('redirect to map page', async ({ page }) => {
-        await page.goto('http://localhost:3000/search');
+    await page.context().grantPermissions(['geolocation']);
 
-        await page.goto('http://localhost:3000/');
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 10000 });
 
-        await page.context().grantPermissions(['geolocation']);
-
-        await page.waitForLoadState('networkidle');
-        await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 10000 });
-
-        await expect(page).toHaveURL('http://localhost:3000/stores');
-    });
-
+    await expect(page).toHaveURL('http://localhost:3000/stores');
+  });
 });
 
-test.describe('private navbar', () => {
+test.describe.serial('private navbar', () => {
   test.use({ storageState: 'test-public/auth.client.json' });
 
-    test('navbar to followed stores page', async ({ page }) => {
-        await page.goto('http://localhost:3000/stores');
-        await page.getByRole('img').nth(1).click();
+  test('navbar to followed stores page', async ({ page }) => {
+    await page.goto('http://localhost:3000/stores');
+    await page.getByRole('img').nth(1).click();
 
-        await expect(page).toHaveURL('http://localhost:3000/following');
-    });
+    await expect(page).toHaveURL('http://localhost:3000/following');
+  });
 
-    test('navbar to deliveries page', async ({ page }) => {
-        await page.goto('http://localhost:3000/stores');
-        await page.getByRole('img').nth(2).click();
+  test('navbar to deliveries page', async ({ page }) => {
+    await page.goto('http://localhost:3000/stores');
+    await page.getByRole('img').nth(2).click();
 
-        await expect(page).toHaveURL('http://localhost:3000/deliveries');
-    });
-
+    await expect(page).toHaveURL('http://localhost:3000/deliveries');
+  });
 });

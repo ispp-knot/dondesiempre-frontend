@@ -16,7 +16,6 @@ test.beforeEach(async ({ context }) => {
 });
 
 test.describe.serial('client auth setup', () => {
-
   test('register of a client successfully', async ({ page }) => {
     await page.goto('http://localhost:3000/register');
     await page.getByRole('textbox', { name: 'Email' }).click();
@@ -58,5 +57,4 @@ test.describe.serial('client auth setup', () => {
 
     await page.context().storageState({ path: authClientFile });
   });
-
 });
