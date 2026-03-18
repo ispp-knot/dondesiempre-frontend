@@ -17,7 +17,7 @@ export function StoreMapCard({
   userLocation: { lat: number; lng: number } | null;
 }) {
   const color = store.storefront?.primaryColor ?? '#c65a3a';
-  const isFollowing = usePassiveFetcher<boolean>({ url: `stores/${store.id}/followers/me` });
+  const isFollowing = usePassiveFetcher<boolean>({ url: `stores/${store.id}/follow` });
   const followStore = useActiveFetcher<void>({
     url: `stores/${store.id}/followers`,
     method: 'POST',
