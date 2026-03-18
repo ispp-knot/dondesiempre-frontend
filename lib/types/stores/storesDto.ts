@@ -25,7 +25,6 @@ export interface StoreDTO {
   hasActivePromotions: boolean;
   latitude: number;
   longitude: number;
-  distance?: number | null;
   aboutUs: string | null;
   // TODO: En Pr Claudia #64: Añadir isFirstCollections, primaryColor, secondaryColor, bannerImageUrl
   storefront: StorefrontDTO;
