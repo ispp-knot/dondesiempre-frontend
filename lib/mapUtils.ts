@@ -6,5 +6,3 @@ export const DEFAULT_MAP_LOCATION = new LngLat(-5.92265, 37.281534);
 export const DEFAULT_MAP_STYLE: StyleSpecification = {
   ...(MAP_STYLE as StyleSpecification),
 };
-
-

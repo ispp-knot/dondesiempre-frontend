@@ -65,7 +65,11 @@ export function StoresPage() {
             transition={{ duration: 0.2, ease: 'easeInOut' }}
             className="absolute bottom-0 md:bottom-4 left-0 right-0 z-50 md:w-[90%] md:max-w-2xl mx-auto"
           >
-            <StoreCard store={selectedStore} userLocation={userLocation} className="rounded-b-none" />
+            <StoreCard
+              store={selectedStore}
+              userLocation={userLocation}
+              className="rounded-b-none"
+            />
           </motion.div>
         )}
       </AnimatePresence>

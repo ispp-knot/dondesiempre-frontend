@@ -67,7 +67,9 @@ export default function StoreList() {
               <StoreCard
                 key={store.id}
                 store={store}
-                userLocation={userLocation ? { lat: userLocation.lat, lng: userLocation.lon } : null}
+                userLocation={
+                  userLocation ? { lat: userLocation.lat, lng: userLocation.lon } : null
+                }
               />
             ))}
           </div>

@@ -4,7 +4,7 @@ import { useRef, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { HiOutlineLocationMarker } from 'react-icons/hi';
 import { BadgePercent, Heart } from 'lucide-react';
-import { LuRoute } from 'react-icons/lu';
+import { LuArrowRightToLine, LuRoute } from 'react-icons/lu';
 import Image from 'next/image';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { convertToBrightness } from '@/lib/colorUtils';
@@ -12,6 +12,10 @@ import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { StoreFollowerDTO } from '@/lib/types/follows/followsDto';
 import { cn } from '@/lib/utils';
 import { distance } from '@/lib/geoUtils';
+import { Button } from '../ui/button';
+import Link from 'next/link';
+import { FaStore } from 'react-icons/fa';
+import { FaRightToBracket } from 'react-icons/fa6';
 
 export function StoreCard({
   store,
@@ -82,6 +86,12 @@ export function StoreCard({
     window.open(url, '_blank');
   };
 
+  const handleGoToStore = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    router.push(`/stores/${store.id}`);
+  };
+
   const handleFollowClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -89,7 +99,7 @@ export function StoreCard({
   };
 
   return (
-    <a
+    <Link
       href={`/stores/${store.id}`}
       onClick={handleCardClick}
       className={cn(
@@ -165,15 +175,15 @@ export function StoreCard({
 
       {/* Action buttons — bottom right, icon only */}
       <div className="absolute bottom-4 right-4 flex items-center gap-2">
-        <button
+        <Button
           onClick={handleDirections}
           className="p-1.5 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/20 transition-colors"
           title="Cómo llegar"
         >
           <LuRoute size={24} />
-        </button>
+        </Button>
 
-        <button
+        <Button
           onClick={handleFollowClick}
           className="p-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors disabled:opacity-50"
           title={isFollowing.data?.isFollowing ? 'Dejar de seguir' : 'Seguir'}
@@ -186,8 +196,21 @@ export function StoreCard({
               isFollowing.data?.isFollowing ? 'fill-primary text-primary' : 'text-primary'
             } ${heartAnimating ? 'animate-heart-pop' : ''}`}
           />
-        </button>
+        </Button>
+
+        <Button
+          onClick={handleGoToStore}
+          className="p-1.5 rounded-lg transition-colors bg-(--primary-color)/10 hover:bg-(--primary-color)/20 text-(--primary-color)"
+          style={
+            {
+              '--primary-color': convertToBrightness(store.storefront.primaryColor, 30),
+            } as React.CSSProperties
+          }
+          title="Ir a la tienda"
+        >
+          <LuArrowRightToLine size={24} />
+        </Button>
       </div>
-    </a>
+    </Link>
   );
 }
