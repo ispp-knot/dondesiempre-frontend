@@ -1,7 +1,9 @@
 'use client';
 
 import { getWebUrl } from '@/lib/config';
-import { OutfitDTO, ProductDTO, Promotion } from '@/lib/api/types';
+import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
+import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
+import { ProductDTO } from '@/lib/types/products/productsDto';
 import {
   Dialog,
   DialogClose,
@@ -16,7 +18,7 @@ import { Share2, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 
 interface Props {
-  item: ProductDTO | OutfitDTO | Promotion;
+  item: ProductDTO | OutfitDTO | PromotionDTO;
   images?: string[];
   className?: string;
 }
@@ -104,14 +106,16 @@ export function ShareTo({ item, images, className }: Props) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const itemImage = 'image' in item ? item.image : null;
+
   const backgroundImage =
-    images && images.length > 0 ? images[0] : item.image || '/static/img/promotion_placeholder.png';
+    images && images.length > 0 ? images[0] : itemImage || '/static/img/promotion_placeholder.png';
 
   const storeId = isPromotion
-    ? (item as Promotion).storeId
+    ? (item as PromotionDTO).storeId
     : 'storeId' in item
       ? (item as ProductDTO).storeId
-      : (item as OutfitDTO).storefrontId;
+      : (item as OutfitDTO).storeId;
 
   const storeUrl = `${getWebUrl()}/stores/${storeId}`;
 
@@ -171,7 +175,7 @@ export function ShareTo({ item, images, className }: Props) {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     if (isPromotion) {
-      const promo = item as Promotion;
+      const promo = item as PromotionDTO;
 
       // ── TOP BADGE "¡Nueva promoción!" ──
       const badgeH = 110;

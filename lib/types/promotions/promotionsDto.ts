@@ -1,0 +1,21 @@
+export interface PromotionCreationDTO {
+  name: string;
+  discountPercentage: number;
+  isActive: boolean;
+  productIds: string[];
+  storeId: string;
+  description?: string;
+}
+
+export interface PromotionDTO {
+  startDate: string;
+  endDate: string;
+  promotionImageUrl: string;
+  id: string;
+  name: string;
+  discountPercentage: number;
+  isActive: boolean;
+  description: string;
+  storeId: string;
+  productIds: string[];
+}

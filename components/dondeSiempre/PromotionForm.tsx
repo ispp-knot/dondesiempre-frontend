@@ -5,10 +5,11 @@ import {
   FaCalendarAlt,
   FaPlus,
   FaTimes,
-  FaImage,
   FaCheckCircle,
   FaExclamationCircle,
+  FaLock,
 } from 'react-icons/fa';
+import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -34,8 +35,9 @@ export interface PromotionFormData {
   description: string;
   products: Product[];
   active: boolean;
-  promotionImage: string | null;
   dateRange?: DateRange;
+  publishToInstagram: boolean;
+  promotionImage: File | null;
 }
 
 interface PromotionFormProps {
@@ -62,7 +64,10 @@ export default function PromotionForm({
   const [description, setDescription] = useState(initialData?.description ?? '');
   const [products, setProducts] = useState<Product[]>(initialData?.products ?? []);
   const [active, setActive] = useState(initialData?.active ?? true);
-  const [promotionImage, setPromotionImage] = useState<string | null>(
+  const [publishToInstagram, setPublishToInstagram] = useState(
+    initialData?.publishToInstagram ?? true
+  );
+  const [promotionImage, setPromotionImage] = useState<File | null>(
     initialData?.promotionImage ?? null
   );
 
@@ -79,16 +84,6 @@ export default function PromotionForm({
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPromotionImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handleImageClick = () => {
     fileInputRef.current?.click();
@@ -113,6 +108,7 @@ export default function PromotionForm({
       description,
       active,
       promotionImage,
+      publishToInstagram,
       products,
       startDate: dateRange?.from ? dateRange.from.toISOString() : null,
       endDate: dateRange?.to ? dateRange.to.toISOString() : null,
@@ -299,33 +295,16 @@ export default function PromotionForm({
       </div>
 
       {/* Promotion Image */}
-      <div className="flex flex-col gap-1">
-        <h2 className="text-xl font-bold flex items-center gap-2">Imagen de la promoción</h2>
-        <p className="text-secondary text-xs font-semibold">
-          Se usará como imagen de fondo en el banner y stories
-        </p>
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={handleImageClick}
-          onKeyDown={handleImageKeyDown}
-          className="border-2 border-dashed border-secondary rounded-lg py-12 flex flex-col items-center justify-center gap-2 mt-2 transition-all relative overflow-hidden cursor-pointer hover:bg-secondary/5"
-        >
-          {promotionImage ? (
-            <Image src={promotionImage} alt="Preview" fill className="object-cover opacity-30" />
-          ) : null}
-          <div className="flex items-center gap-2 font-bold z-10 text-secondary">
-            <FaImage size={24} />
-            <span>{promotionImage ? 'Cambiar imagen' : 'Añadir imagen'}</span>
-          </div>
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
-        </div>
+      <div className={cn('flex flex-col gap-1', isEditMode && 'opacity-60')}>
+        <h2 className="text-xl font-bold flex items-center gap-2">
+          Imagen de la promoción {isEditMode && <FaLock size={14} className="text-gray-400" />}
+        </h2>
+        {!isEditMode && (
+          <p className="text-secondary text-xs font-semibold">
+            Se usará como imagen de fondo en el banner y stories
+          </p>
+        )}
+        <ImageUpload onChange={setPromotionImage} disabled={isEditMode} className="mt-2" />
       </div>
 
       {/* Instagram Toggle */}

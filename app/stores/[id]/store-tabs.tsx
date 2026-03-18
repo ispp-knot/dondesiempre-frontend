@@ -1,6 +1,5 @@
 'use client';
 
-import { PromotionDTO } from '@/lib/api/promotionEndpoints';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { JSX, useState } from 'react';
@@ -9,8 +8,9 @@ import Collections from './collections';
 import AboutUs from './about-us';
 import Outfits from './outfits';
 import StoreOptions from './options';
-import { StoreDTO, Promotion } from '@/lib/api/types';
-import { Outfit } from '@/lib/types/outfits';
+import { StoreDTO } from '@/lib/types/stores/storesDto';
+import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
+import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { ShareTo } from '@/components/ui/shareTo';
 
 type Tab = 'catalogo' | 'sobre' | 'opciones';
@@ -22,10 +22,9 @@ type Collection = {
 };
 
 type Props = {
-  storefrontId?: string;
   collections?: Collection[];
   description?: string;
-  outfits?: Outfit[];
+  outfits?: OutfitDTO[];
   promotions?: PromotionDTO[];
   store: StoreDTO;
 };
@@ -39,7 +38,7 @@ export default function StoreTabs({
 }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
 
-  const activePromotions = promotions.filter((p) => p.active);
+  const activePromotions = promotions.filter((p) => p.isActive);
   const [currentPromoIndex, setCurrentPromoIndex] = useState(0);
   const [selectedPromo, setSelectedPromo] = useState<PromotionDTO | null>(null);
   const formatDateRange = (start?: string, end?: string) => {
@@ -80,18 +79,6 @@ export default function StoreTabs({
       : null;
   */
   const storefrontId = store?.storefront?.id;
-  const mockPromotion: Promotion = {
-    id: '1a383fda-5ac8-4f1f-bfba-2dcd4f09dca3',
-    name: promoOutfit?.name || 'Esto es una promoción',
-    discountPercentage: promoOutfit
-      ? 100 - Math.trunc((promoOutfit.discountedPriceInCents / promoOutfit.priceInCents) * 100)
-      : 0,
-    isActive: true,
-    description: promoOutfit?.description || 'Esto es una descripcion',
-    image: null,
-    storeId: store.id,
-    productIds: ['1a383fda', '5ac8', '4f1f-bfba', '2dcd4f09dca3'],
-  };
   return (
     <>
       {activePromotions.length > 0 && currentPromo && (
@@ -130,7 +117,7 @@ export default function StoreTabs({
             {/* Compartir (usando el mock o adaptándolo a la promo actual) */}
             <div className="mt-4 w-full">
               <ShareTo
-                item={{ ...mockPromotion, name: currentPromo.name, id: currentPromo.id }}
+                item={{ ...currentPromo, name: currentPromo.name, id: currentPromo.id }}
                 className="bg-secondary text-white font-medium py-2 px-4 rounded mt-4 w-[95%] shadow-sm hover:bg-secondary/90 hover:cursor-pointer transition"
               />
             </div>
@@ -224,13 +211,13 @@ export default function StoreTabs({
           <>
             {store.storefront.isFirstCollections ? (
               <>
-                <Collections storefrontId={storefrontId} collections={collections} />
-                <Outfits storefrontId={storefrontId} outfits={outfits} />
+                <Collections storeId={store.id} collections={collections} />
+                <Outfits storeId={store.id} outfits={outfits} />
               </>
             ) : (
               <>
-                <Outfits storefrontId={storefrontId} outfits={outfits} />
-                <Collections storefrontId={storefrontId} collections={collections} />
+                <Outfits storeId={store.id} outfits={outfits} />
+                <Collections storeId={store.id} collections={collections} />
               </>
             )}
           </>
@@ -239,7 +226,7 @@ export default function StoreTabs({
         {activeTab === 'sobre' && <AboutUs description={description} />}
 
         {activeTab === 'opciones' && (
-          <StoreOptions storefrontId={storefrontId} initialData={store} />
+          <StoreOptions storefrontId={storefrontId} initialStore={store} />
         )}
       </div>
       {/* Modal de Promoción Dinámico */}

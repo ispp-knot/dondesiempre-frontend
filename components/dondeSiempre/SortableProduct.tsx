@@ -1,5 +1,5 @@
-import { OutfitProduct } from '@/lib/types/outfits';
-import { Product } from '@/lib/types/products';
+import { OutfitProductDTO } from '@/lib/types/outfits/outfitsDto';
+import { ProductDTO } from '@/lib/types/products/productsDto';
 import { convertPrice } from '@/lib/utils';
 import { useSortable } from '@dnd-kit/react/sortable';
 import { IoIosCloseCircle } from 'react-icons/io';
@@ -8,7 +8,7 @@ import Image from 'next/image';
 
 export type SortableProductProps = {
   index: number;
-  product: Product | OutfitProduct;
+  product: ProductDTO | OutfitProductDTO;
   removable: boolean;
   onClick: () => void;
 };
