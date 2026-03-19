@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { LngLat, Map, MapEvent, MapRef, Marker } from '@vis.gl/react-maplibre';
 import { Minus, Plus } from 'lucide-react';
-import { useCallback, useRef } from 'react';
+import { useCallback, useReducer, useRef } from 'react';
 import { MdMyLocation } from 'react-icons/md';
 import { TbNavigationNorth } from 'react-icons/tb';
 import { StorePin } from './storePin';
@@ -24,6 +24,9 @@ export function StoreMap({
 }) {
   const mapRef = useRef<MapRef | null>(null);
   const stores = useActiveFetcher<StoreDTO[]>({ url: 'stores', method: 'GET' });
+
+  const [, updateStorePinZ] = useReducer((n: number) => n + 1, 0);
+  const debouncedUpdateStorePinZ = useDebouncedCallback(updateStorePinZ, 50);
 
   const fetchStores = useCallback(
     async (_: MapEvent) => {
@@ -63,22 +66,34 @@ export function StoreMap({
     });
   };
 
-  const pins = stores.data?.map((store, index) => (
-    <Marker
-      key={`store-${index}`}
-      longitude={store.longitude}
-      latitude={store.latitude}
-      anchor="bottom"
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onClick={(e: any) => {
-        e.originalEvent.stopPropagation();
-        onStoreSelect?.(store);
-        onClickStore(store);
-      }}
-    >
-      <StorePin store={store} />
-    </Marker>
-  ));
+  const storeScreenYs = stores.data?.map((store) => ({
+    store,
+    screenY: mapRef.current?.project([store.longitude, store.latitude])?.y ?? 0,
+  }));
+  const minY = storeScreenYs ? Math.min(...storeScreenYs.map((s) => s.screenY)) : 0;
+  const maxY = storeScreenYs ? Math.max(...storeScreenYs.map((s) => s.screenY)) : 1;
+  const yRange = maxY - minY || 1;
+
+  const pins = storeScreenYs?.map(({ store, screenY }, index) => {
+    const zIndex = Math.round(((screenY - minY) / yRange) * 100);
+    return (
+      <Marker
+        key={`store-${index}`}
+        longitude={store.longitude}
+        latitude={store.latitude}
+        anchor="bottom"
+        style={{ zIndex }}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onClick={(e: any) => {
+          e.originalEvent.stopPropagation();
+          onStoreSelect?.(store);
+          onClickStore(store);
+        }}
+      >
+        <StorePin store={store} />
+      </Marker>
+    );
+  });
 
   return (
     <div className="relative flex flex-1">
@@ -92,6 +107,7 @@ export function StoreMap({
         style={{ display: 'flex', flex: 1, height: 'auto' }}
         mapStyle={DEFAULT_MAP_STYLE}
         onLoad={fetchStores}
+        onMove={debouncedUpdateStorePinZ}
         onMoveEnd={debouncedFetchStores}
         onClick={() => onStoreSelect?.(null)}
       >
@@ -107,7 +123,7 @@ export function StoreMap({
       </Map>
 
       {/* Custom Map Controls */}
-      <div className="absolute top-4 left-4 flex flex-col gap-2">
+      <div className="absolute top-4 left-4 flex flex-col gap-2 z-[200]">
         <div className="bg-background/80 backdrop-blur rounded-md p-1 shadow-lg">
           <Button variant="ghost" size="icon" onClick={handleGeolocate}>
             <MdMyLocation size={30} />
