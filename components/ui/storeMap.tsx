@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { LngLat, Map, MapEvent, MapRef, Marker } from '@vis.gl/react-maplibre';
 import { Minus, Plus } from 'lucide-react';
-import { useCallback, useRef } from 'react';
+import { useCallback, useReducer, useRef } from 'react';
 import { MdMyLocation } from 'react-icons/md';
 import { TbNavigationNorth } from 'react-icons/tb';
 import { StorePin } from './storePin';
@@ -24,6 +24,9 @@ export function StoreMap({
 }) {
   const mapRef = useRef<MapRef | null>(null);
   const stores = useActiveFetcher<StoreDTO[]>({ url: 'stores', method: 'GET' });
+
+  const [, updateStorePinZ] = useReducer((n: number) => n + 1, 0);
+  const debouncedUpdateStorePinZ = useDebouncedCallback(updateStorePinZ, 50);
 
   const fetchStores = useCallback(
     async (_: MapEvent) => {
@@ -63,22 +66,28 @@ export function StoreMap({
     });
   };
 
-  const pins = stores.data?.map((store, index) => (
-    <Marker
-      key={`store-${index}`}
-      longitude={store.longitude}
-      latitude={store.latitude}
-      anchor="bottom"
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onClick={(e: any) => {
-        e.originalEvent.stopPropagation();
-        onStoreSelect?.(store);
-        onClickStore(store);
-      }}
-    >
-      <StorePin store={store} />
-    </Marker>
-  ));
+  const pins = stores.data
+    ?.map((store) => ({
+      store,
+      screenY: mapRef.current?.project([store.longitude, store.latitude])?.y ?? 0,
+    }))
+    .sort((a, b) => a.screenY - b.screenY)
+    .map(({ store }, index) => (
+      <Marker
+        key={`store-${index}`}
+        longitude={store.longitude}
+        latitude={store.latitude}
+        anchor="bottom"
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onClick={(e: any) => {
+          e.originalEvent.stopPropagation();
+          onStoreSelect?.(store);
+          onClickStore(store);
+        }}
+      >
+        <StorePin store={store} />
+      </Marker>
+    ));
 
   return (
     <div className="relative flex flex-1">
@@ -92,6 +101,7 @@ export function StoreMap({
         style={{ display: 'flex', flex: 1, height: 'auto' }}
         mapStyle={DEFAULT_MAP_STYLE}
         onLoad={fetchStores}
+        onMove={debouncedUpdateStorePinZ}
         onMoveEnd={debouncedFetchStores}
         onClick={() => onStoreSelect?.(null)}
       >
