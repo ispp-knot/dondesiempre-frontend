@@ -12,7 +12,7 @@ import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { OutfitDTO, OutfitCreationDTO } from '@/lib/types/outfits/outfitsDto';
 import { productDTOToOufitCreationProductDTO } from '@/lib/types/outfits/outfitsHelper';
 import { ProductDTO } from '@/lib/types/products/productsDto';
-import { convertPrice } from '@/lib/utils';
+import { convertPrice, calculatePriceWithPercentageDiscount } from '@/lib/utils';
 import { move } from '@dnd-kit/helpers';
 import { DragDropProvider } from '@dnd-kit/react';
 import Image from 'next/image';
@@ -228,9 +228,28 @@ export default function OutfitCreationPage() {
                             className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg"
                           ></Image>
                         </div>
-                        <h1 className="font-bold text-primary text-center text-lg md:text-2xl">
-                          {`${convertPrice(p.discountedPriceInCents).toFixed(2).toString().replace('.', ',')}€`}
-                        </h1>
+                        {p.discountedPriceInCents !== null && p.discountedPriceInCents !== 0 ? (
+                          <div className="flex flex-row items-center justify-center gap-1.5 w-full h-4/12 md:h-1/4 self-end bg-white text-sm md:text-lg px-2 text-center">
+                            <h1 className="font-bold text-primary text-center text-lg md:text-2xl">
+                              {`${convertPrice(
+                                calculatePriceWithPercentageDiscount(
+                                  p.priceInCents,
+                                  p.discountedPriceInCents
+                                )
+                              )
+                                .toFixed(2)
+                                .toString()
+                                .replace('.', ',')}€`}
+                            </h1>
+                            <span className="text-primary font-bold bg-primary/10 px-1.5 py-0.5 rounded-md text-xs md:text-sm">
+                              -{p.discountedPriceInCents}%
+                            </span>
+                          </div>
+                        ) : (
+                          <h1 className="font-bold text-primary text-center text-lg md:text-2xl">
+                            {`${convertPrice(p.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
+                          </h1>
+                        )}
                         <div className="flex flex-row justify-center">
                           <Button
                             onClick={() => {

@@ -18,7 +18,7 @@ export default function Outfits({ storeId = undefined, outfits = [] }: Readonly<
           key={out.id}
           className="relative flex flex-col shrink-0 border-2 border-gray-200 w-[45%] md:w-1/4 h-60 sm:h-80 bg-cover bg-center justify-end rounded-lg shadow-sm"
           style={{
-            backgroundImage: `url(${out.image || `/static/img/outfit_placeholder_${out.id}.jpg`})`,
+            backgroundImage: `url(${out.image || `/static/img/outfit_placeholder.jpg`})`,
           }}
         >
           {out.discountedPriceInCents !== out.priceInCents && (

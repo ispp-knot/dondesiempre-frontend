@@ -8,3 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export function convertPrice(priceInCents: number): number {
   return priceInCents / 100;
 }
+
+export function calculatePriceWithPercentageDiscount(realPrice: number, discount: number) {
+  return realPrice * (1 - discount / 100);
+}
