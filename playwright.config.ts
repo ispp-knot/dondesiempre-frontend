@@ -90,7 +90,7 @@ export default defineConfig({
       },
     },
     {
-      name: 'chromium',
+      name: 'tests',
       use: {
         ...devices['Desktop Chrome'],
         screenshot: 'on',
@@ -99,6 +99,18 @@ export default defineConfig({
           : {}),
       },
       dependencies: ['setup-registro'],
+    },
+    {
+      name: 'tests failure',
+      testMatch: /.*\.fail\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        screenshot: 'on',
+        ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+          ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
+          : {}),
+      },
+      dependencies: ['tests'],
     },
   ],
 

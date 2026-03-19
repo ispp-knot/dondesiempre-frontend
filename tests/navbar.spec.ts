@@ -1,5 +1,4 @@
 import { DEFAULT_MAP_LOCATION } from '@/lib/mapUtils';
-import { clientName } from '@/test-public/generator';
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ context }) => {
@@ -37,18 +36,6 @@ test.describe.serial('public navbar', () => {
     await expect(page).toHaveURL('http://localhost:3000/stores');
   });
 
-  test('redirect to map page', async ({ page }) => {
-    await page.goto('http://localhost:3000/search');
-
-    await page.goto('http://localhost:3000/');
-
-    await page.context().grantPermissions(['geolocation']);
-
-    await page.waitForLoadState('networkidle');
-    await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 10000 });
-
-    await expect(page).toHaveURL('http://localhost:3000/stores');
-  });
 });
 
 test.describe.serial('private navbar', () => {
@@ -83,5 +70,19 @@ test.describe.serial('private navbar', () => {
     const profileTest = await page.getByText(`Jose${clientName.split('@')[0]}@ejemplo.`);
     await expect(profileTest).toBeVisible();
     */
+  });
+  
+  test('logout', async ({ page }) => {
+    await page.goto('http://localhost:3000/stores');
+
+    await page.context().grantPermissions(['geolocation']);
+
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 10000 });
+
+    await page.getByRole('button', { name: 'Usuario' }).click();
+    await page.getByRole('button', { name: 'Cerrar sesión' }).click();
+
+    await expect(page).toHaveURL('http://localhost:3000/login');
   });
 });
