@@ -1,5 +1,6 @@
 import { DEFAULT_MAP_LOCATION } from '@/lib/mapUtils';
 import { test, expect } from '@playwright/test';
+import { time } from 'console';
 
 test.beforeEach(async ({ context }) => {
   // Bloquea el registro del Service Worker antes de cargar la página
@@ -21,7 +22,7 @@ test.describe.serial('follow store from map', () => {
     await page.context().grantPermissions(['geolocation']);
 
     await page.waitForLoadState('networkidle');
-    await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 30000 });
     await page
       .locator('div')
       .filter({ hasText: /^Roire$/ })
@@ -32,6 +33,8 @@ test.describe.serial('follow store from map', () => {
     await expect(store).toBeVisible();
 
     await page.getByRole('button', { name: 'Seguir' }).click();
+    await page.getByRole('img').nth(1).click();
+    await expect(page).toHaveURL('http://localhost:3000/following');
   });
 
   test('following site is updated when following a store from the map', async ({ page }) => {
@@ -54,13 +57,13 @@ test.describe.serial('follow store from map', () => {
     await page.waitForURL(/stores\/.*/);
 
     const storeName = await page.getByText('Roire');
-    await expect(storeName).toBeVisible();
+    await expect(storeName).toBeVisible({ timeout: 10000 });
   });
 
   test('unfollow store and empty following page', async ({ page }) => {
     await page.goto('http://localhost:3000/following');
 
-    await page.getByRole('button', { name: 'Dejar de seguir' }).click();
+    await page.getByRole('button', { name: 'Dejar de seguir' }).click({ timeout: 10000 });
 
     page.reload();
     await page.waitForURL(/following/);

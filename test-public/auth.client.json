@@ -2,17 +2,17 @@
   "cookies": [
     {
       "name": "token",
-      "value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJjbGllbnRkZmVjYzI5ZWI5NjFhQGV4YW1wbGUuY29tIiwiaWF0IjoxNzczOTIwMzAwLCJleHAiOjE3NzY1MTIzMDB9.AzuZuJQz8I_U8Jrbb9sWKyScwM3CRMRprMsLuzrpRVxp1rAPt75HqqJM3xQ05Kgp",
+      "value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJjbGllbnRmZGFhMTM3MjdmNmM3OEBleGFtcGxlLmNvbSIsImlhdCI6MTc3MzkyMjk0NiwiZXhwIjoxNzc2NTE0OTQ2fQ.bhe1MKKlkdnZ0gkkHF8vhPTArsDe_4tECi2LaB0KIRMxlL0ynWC1-C7FUYB9kxHj",
       "domain": "localhost",
       "path": "/",
-      "expires": 1776512300.179224,
+      "expires": 1776514946.108862,
       "httpOnly": true,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "session",
-      "value": "eyJpZCI6IjNjMWI5NTI5LTJhMzgtNGY1YS05ODY3LTRiYzMwMTIwODEzNiIsImVtYWlsIjoiY2xpZW50ZGZlY2MyOWViOTYxYUBleGFtcGxlLmNvbSIsInJvbGVzIjpbIkNMSUVOVCJdLCJleHBpcmVzQXQiOiIyMDI2LTA0LTE4VDExOjM4OjIwWiJ9",
+      "value": "eyJpZCI6Ijk5MmI4MGNmLTNmNzQtNGEzZS05N2VkLWNjOTYzYjNjZDkyYSIsImVtYWlsIjoiY2xpZW50ZmRhYTEzNzI3ZjZjNzhAZXhhbXBsZS5jb20iLCJyb2xlcyI6WyJDTElFTlQiXSwiZXhwaXJlc0F0IjoiMjAyNi0wNC0xOFQxMjoyMjoyNloifQ==",
       "domain": "localhost",
       "path": "/",
       "expires": -1,
@@ -27,7 +27,7 @@
       "localStorage": [
         {
           "name": "auth_user",
-          "value": "{\"id\":\"3c1b9529-2a38-4f5a-9867-4bc301208136\",\"email\":\"clientdfecc29eb961a@example.com\",\"roles\":[\"CLIENT\"],\"expiresAt\":\"2026-04-18T11:38:20Z\",\"store\":null,\"client\":{\"id\":\"a81b9907-ab0a-40a4-8e0e-448813b4de97\",\"name\":\"Jose\",\"surname\":\"Cliente\",\"email\":\"clientdfecc29eb961a@example.com\",\"phone\":\"123456789\",\"address\":\"Avenida del cliente 2\"}}"
+          "value": "{\"id\":\"992b80cf-3f74-4a3e-97ed-cc963b3cd92a\",\"email\":\"clientfdaa13727f6c78@example.com\",\"roles\":[\"CLIENT\"],\"expiresAt\":\"2026-04-18T12:22:26Z\",\"store\":null,\"client\":{\"id\":\"17ec0699-a110-4160-b60b-798a24a01326\",\"name\":\"Jose\",\"surname\":\"Cliente\",\"email\":\"clientfdaa13727f6c78@example.com\",\"phone\":\"123456789\",\"address\":\"Avenida del cliente 2\"}}"
         }
       ]
     }

@@ -83,7 +83,7 @@ export default defineConfig({
       testMatch: /.*\.setup\.ts/, // Ejecutará archivos que terminen en .setup.ts
       use: {
         ...devices['Desktop Chrome'],
-        screenshot: 'only-on-failure',
+        screenshot: 'on',
         ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
           ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
           : {}),
@@ -93,8 +93,7 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        storageState: 'test-public/auth.client.json',
-        screenshot: 'only-on-failure',
+        screenshot: 'on',
         ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
           ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
           : {}),

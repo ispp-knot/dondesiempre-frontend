@@ -1,4 +1,5 @@
 import { DEFAULT_MAP_LOCATION } from '@/lib/mapUtils';
+import { clientName } from '@/test-public/generator';
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ context }) => {
@@ -13,7 +14,7 @@ test.beforeEach(async ({ context }) => {
   });
 });
 
-test.describe('public navbar', () => {
+test.describe.serial('public navbar', () => {
   test('navbar to search page', async ({ page }) => {
     await page.goto('http://localhost:3000/stores');
     await page.getByRole('link', { name: 'Tiendas' }).click();
@@ -65,5 +66,22 @@ test.describe.serial('private navbar', () => {
     await page.getByRole('img').nth(2).click();
 
     await expect(page).toHaveURL('http://localhost:3000/orders');
+  });
+
+  test('navbar to profile page', async ({ page }) => {
+    await page.goto('http://localhost:3000/stores');
+    await page.getByRole('button', { name: 'Usuario' }).click();
+
+    /*
+    const profileName = await page.locator('#radix-_r_1_').getByText('Jose');
+    await expect(profileName).toBeVisible();
+    */
+    await page.getByRole('button', { name: 'Mi perfil' }).click();
+
+    await expect(page).toHaveURL('http://localhost:3000/profile');
+    /*
+    const profileTest = await page.getByText(`Jose${clientName.split('@')[0]}@ejemplo.`);
+    await expect(profileTest).toBeVisible();
+    */
   });
 });

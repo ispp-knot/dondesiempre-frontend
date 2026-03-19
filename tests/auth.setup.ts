@@ -1,10 +1,10 @@
 import { TEST_MAP_LOCATION } from '@/lib/mapUtils';
+import { clientName, storeName } from '@/test-public/generator';
 import { test, expect } from '@playwright/test';
 
 const authClientFile = 'test-public/auth.client.json';
 const authStoreFile = 'test-public/auth.store.json';
-const clientName = `client${Math.random().toString(16).slice(2)}@example.com`;
-const storeName = `store${Math.random().toString(16).slice(2)}@example.com`;
+
 
 test.beforeEach(async ({ context }) => {
   // Bloquea el registro del Service Worker antes de cargar la página

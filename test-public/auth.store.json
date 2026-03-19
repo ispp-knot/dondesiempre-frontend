@@ -2,17 +2,27 @@
   "cookies": [
     {
       "name": "token",
-      "value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJzdG9yZTljY2ZkNzlkNTc2NzY4QGV4YW1wbGUuY29tIiwiaWF0IjoxNzczOTIwMzAxLCJleHAiOjE3NzY1MTIzMDF9.pqzLIno1cmfOcEIvXGdm-Oj3HbONAfxs6evAB2fDpdIt_4nZYLTSvoqo-5XBiJwR",
+      "value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJzdG9yZTk5OGQ0N2Q5ODNhY2Q4QGV4YW1wbGUuY29tIiwiaWF0IjoxNzczOTIyOTQ5LCJleHAiOjE3NzY1MTQ5NDl9.nge2rRuQqHK8RnIxmpEBJVWfCb9QY_DaH49-ulabPUWo3LQPmVIYXx_wfiXSLc4f",
       "domain": "localhost",
       "path": "/",
-      "expires": 1776512301.223431,
+      "expires": 1776514949.13692,
       "httpOnly": true,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "session",
-      "value": "eyJpZCI6IjNjYzg1MjBkLWIzMDItNGU5Zi04MmYwLTBhZDMyMGE3YzUyZiIsImVtYWlsIjoic3RvcmU5Y2NmZDc5ZDU3Njc2OEBleGFtcGxlLmNvbSIsInJvbGVzIjpbIlNUT1JFIl0sImV4cGlyZXNBdCI6IjIwMjYtMDQtMThUMTE6Mzg6MjFaIn0=",
+      "value": "eyJpZCI6IjlkZjc1YzBkLTg5ODQtNDVjOS1iNTc4LWM2YzFhM2RiZTBmYiIsImVtYWlsIjoic3RvcmU5OThkNDdkOTgzYWNkOEBleGFtcGxlLmNvbSIsInJvbGVzIjpbIlNUT1JFIl0sImV4cGlyZXNBdCI6IjIwMjYtMDQtMThUMTI6MjI6MjlaIn0=",
+      "domain": "localhost",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__next_hmr_refresh_hash__",
+      "value": "ae088802280bed1c8a23fba1137eb8e8633457081244afec",
       "domain": "localhost",
       "path": "/",
       "expires": -1,
@@ -27,7 +37,7 @@
       "localStorage": [
         {
           "name": "auth_user",
-          "value": "{\"id\":\"3cc8520d-b302-4e9f-82f0-0ad320a7c52f\",\"email\":\"store9ccfd79d576768@example.com\",\"roles\":[\"STORE\"],\"expiresAt\":\"2026-04-18T11:38:21Z\",\"store\":{\"id\":\"e4a3e002-6ac8-4062-bb8b-2f4de228b746\",\"name\":\"Un nombre de tienda\",\"email\":\"store9ccfd79d576768@example.com\",\"address\":\"Una dirección de una tienda\",\"openingHours\":\"Lun-Vier 8:00 a 20:00\",\"phone\":\"123456789\",\"acceptsShipping\":true,\"hasActivePromotions\":null,\"latitude\":37.3592086,\"longitude\":-5.9810645,\"aboutUs\":\"Somos una tienda de testing\",\"storefront\":{\"id\":\"89b82e1a-1302-46b6-bd8d-073567f4cf07\",\"isFirstCollections\":true,\"primaryColor\":\"#532508\",\"secondaryColor\":\"#124568\",\"bannerImageUrl\":null},\"socialNetworks\":null},\"client\":null}"
+          "value": "{\"id\":\"9df75c0d-8984-45c9-b578-c6c1a3dbe0fb\",\"email\":\"store998d47d983acd8@example.com\",\"roles\":[\"STORE\"],\"expiresAt\":\"2026-04-18T12:22:29Z\",\"store\":{\"id\":\"a9752fda-6c59-4776-ae0e-12119461f42c\",\"name\":\"Un nombre de tienda\",\"email\":\"store998d47d983acd8@example.com\",\"address\":\"Una dirección de una tienda\",\"openingHours\":\"Lun-Vier 8:00 a 20:00\",\"phone\":\"123456789\",\"acceptsShipping\":true,\"hasActivePromotions\":null,\"latitude\":37.3592086,\"longitude\":-5.9810645,\"aboutUs\":\"Somos una tienda de testing\",\"storefront\":{\"id\":\"0bc3b4ec-a934-4703-8965-b3cfb82288c5\",\"isFirstCollections\":true,\"primaryColor\":\"#532508\",\"secondaryColor\":\"#124568\",\"bannerImageUrl\":null},\"socialNetworks\":null},\"client\":null}"
         }
       ]
     }
