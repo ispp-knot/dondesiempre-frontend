@@ -6,7 +6,7 @@ import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { StoreDTO, StoreSocialNetworkDTO } from '@/lib/types/stores/storesDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import {
   FaFacebook,
   FaHome,
@@ -24,7 +24,6 @@ import ErrorText from '@/components/dondeSiempre/ErrorText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth/AuthContext';
-import { useRouter } from 'next/navigation';
 
 const getSocialIcon = (name: string) => {
   const lowerName = name.toLowerCase();
