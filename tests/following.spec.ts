@@ -1,6 +1,5 @@
 import { DEFAULT_MAP_LOCATION } from '@/lib/mapUtils';
 import { test, expect } from '@playwright/test';
-import { time } from 'console';
 
 test.beforeEach(async ({ context }) => {
   // Bloquea el registro del Service Worker antes de cargar la página

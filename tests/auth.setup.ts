@@ -5,7 +5,6 @@ import { test, expect } from '@playwright/test';
 const authClientFile = 'test-public/auth.client.json';
 const authStoreFile = 'test-public/auth.store.json';
 
-
 test.beforeEach(async ({ context }) => {
   // Bloquea el registro del Service Worker antes de cargar la página
 

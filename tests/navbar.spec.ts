@@ -35,7 +35,6 @@ test.describe.serial('public navbar', () => {
 
     await expect(page).toHaveURL('http://localhost:3000/stores');
   });
-
 });
 
 test.describe.serial('private navbar', () => {
@@ -71,7 +70,7 @@ test.describe.serial('private navbar', () => {
     await expect(profileTest).toBeVisible();
     */
   });
-  
+
   test('logout', async ({ page }) => {
     await page.goto('http://localhost:3000/stores');
 
