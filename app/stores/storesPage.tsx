@@ -1,8 +1,8 @@
 'use client';
 
 import { StoreMap } from '@/components/ui/storeMap';
-import { StoreMapCard } from './storeMapCard';
-import { AnimatePresence } from 'framer-motion';
+import { StoreCard } from '@/components/dondeSiempre/StoreCard';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { LngLat } from 'maplibre-gl';
@@ -49,14 +49,29 @@ export function StoresPage() {
   }
 
   return (
-    <div className="flex flex-1">
+    <div className="relative flex flex-1">
       <StoreMap
         startingLocation={startingLocation}
         userLocation={userLocation}
         onStoreSelect={setSelectedStore}
       />
       <AnimatePresence>
-        {selectedStore && <StoreMapCard key={selectedStore.id} store={selectedStore} />}
+        {selectedStore && (
+          <motion.div
+            key={selectedStore.id}
+            initial={{ y: '100%', opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: '100%', opacity: 0 }}
+            transition={{ duration: 0.2, ease: 'easeInOut' }}
+            className="absolute bottom-0 md:bottom-4 left-0 right-0 md:w-[90%] md:max-w-2xl mx-auto"
+          >
+            <StoreCard
+              store={selectedStore}
+              userLocation={userLocation}
+              className="rounded-b-none"
+            />
+          </motion.div>
+        )}
       </AnimatePresence>
     </div>
   );

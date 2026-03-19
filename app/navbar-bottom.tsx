@@ -41,7 +41,7 @@ export default function NavbarBottom() {
       activeIcon: <HiLocationMarker />,
     },
     {
-      href: '/deliveries',
+      href: '/orders',
       icon: <BsBoxSeam />,
       activeIcon: <BsBoxSeamFill />,
     },
@@ -65,7 +65,7 @@ export default function NavbarBottom() {
       activeIcon: <AiFillShop />,
     },
     {
-      href: '/deliveries',
+      href: '/orders',
       icon: <BsBoxSeam />,
       activeIcon: <BsBoxSeamFill />,
     },

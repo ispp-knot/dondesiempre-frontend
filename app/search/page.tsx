@@ -1,5 +1,5 @@
-import UnderConstruction from '@/components/dondeSiempre/UnderConstruction';
+import StoreList from './StoreList';
 
 export default function SearchPage() {
-  return <UnderConstruction />;
+  return <StoreList />;
 }

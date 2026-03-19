@@ -7,8 +7,16 @@ import { StoreDTO, StoreSocialNetworkDTO } from '@/lib/types/stores/storesDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
-import { FaFacebook, FaInstagram, FaLink, FaTiktok, FaTwitter } from 'react-icons/fa';
-import { FaLocationDot } from 'react-icons/fa6';
+import {
+  FaFacebook,
+  FaHome,
+  FaInstagram,
+  FaLink,
+  FaPhoneAlt,
+  FaTiktok,
+  FaTwitter,
+} from 'react-icons/fa';
+import { FaLocationDot, FaWhatsapp } from 'react-icons/fa6';
 import { MdAccessTimeFilled } from 'react-icons/md';
 import StoreTabs from './store-tabs';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
@@ -22,6 +30,9 @@ const getSocialIcon = (name: string) => {
   if (lowerName.includes('twitter') || lowerName.includes('x'))
     return <FaTwitter className="w-4 h-4" />;
   if (lowerName.includes('tiktok')) return <FaTiktok className="w-4 h-4" />;
+  if (lowerName.includes('web')) return <FaHome className="w-4 h-4" />;
+  if (lowerName.includes('teléfono')) return <FaPhoneAlt className="w-4 h-4" />;
+  if (lowerName.includes('whatsapp')) return <FaWhatsapp className="w-4 h-4" />;
   return <FaLink className="w-4 h-4" />;
 };
 
@@ -46,16 +57,6 @@ export default function StorePage() {
   const primaryColor = store.data?.storefront?.primaryColor || '#000000';
   const secondaryColor = store.data?.storefront?.secondaryColor || '#000000';
   const banner = store.data?.storefront?.bannerImageUrl;
-
-  const collections = [
-    { id: 1, name: 'Veraneo', image: '' },
-    { id: 2, name: 'Nuevo', image: '' },
-    { id: 3, name: 'Invierno', image: '' },
-    { id: 4, name: 'Feria', image: '' },
-    { id: 5, name: 'Semana Santa', image: '' },
-    { id: 6, name: 'Joyería', image: '' },
-    { id: 7, name: 'Ropa interior', image: '' },
-  ];
 
   return store.data && outfits.data ? (
     <div
@@ -109,7 +110,6 @@ export default function StorePage() {
 
       <StoreTabs
         store={store.data}
-        collections={collections}
         description={store.data?.aboutUs || ''}
         outfits={outfits.data}
       />

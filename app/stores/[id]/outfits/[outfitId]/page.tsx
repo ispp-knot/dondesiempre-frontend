@@ -8,19 +8,31 @@ import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { Button } from '@/components/ui/button';
 import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { OutfitDTO, OutfitUpdateDTO } from '@/lib/types/outfits/outfitsDto';
+import { OrderDTO } from '@/lib/types/orders/orderDto';
 import { convertPrice } from '@/lib/utils';
 import Image from 'next/image';
-import { redirect, useParams } from 'next/navigation';
+import { redirect, useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FaTag } from 'react-icons/fa6';
 import { GoDotFill } from 'react-icons/go';
 
+interface FetchError {
+  status?: number;
+  message?: string;
+}
+
 export default function OutfitDetailsPage() {
   const params = useParams<{ id: string; outfitId: string }>();
+  const router = useRouter();
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [selectedProduct, setSelectedProduct] = useState(0);
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const outfit = usePassiveFetcher<OutfitDTO>({ url: `outfits/${params.outfitId}` });
   const updateOutfit = useActiveFetcher<OutfitDTO>({
@@ -35,6 +47,10 @@ export default function OutfitDetailsPage() {
     url: `outfits/${params.outfitId}/tags`,
     method: 'DELETE',
   });
+  const createOrder = useActiveFetcher<OrderDTO>({
+    url: 'orders',
+    method: 'POST',
+  });
 
   if (outfit.isLoading) {
     return <LoadingText />;
@@ -43,6 +59,40 @@ export default function OutfitDetailsPage() {
   if (outfit.isError) {
     return <ErrorText error={outfit.error} />;
   }
+
+  const confirmAndCreateOrder = async () => {
+    if (!outfit.data) return;
+
+    setIsCreatingOrder(true);
+
+    const payload: Record<string, number> = {};
+    outfit.data.products.forEach((product) => {
+      payload[product.id] = 1;
+    });
+
+    try {
+      await createOrder.fetch({ body: payload });
+      setIsConfirmModalOpen(false);
+      setIsSuccessModalOpen(true);
+    } catch (error: unknown) {
+      const err = error as FetchError;
+      console.error('Error al crear el pedido:', err);
+
+      if (
+        err?.status === 401 ||
+        err?.status === 403 ||
+        err?.message?.includes('401') ||
+        err?.message?.includes('403')
+      ) {
+        setIsConfirmModalOpen(false);
+        setIsAuthModalOpen(true);
+      } else {
+        alert('Hubo un problema al crear el pedido.');
+      }
+    } finally {
+      setIsCreatingOrder(false);
+    }
+  };
 
   const submitForm = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -77,7 +127,7 @@ export default function OutfitDetailsPage() {
         checked={isAdmin}
         onCheckedChange={(checked) => setIsAdmin(checked)}
       />
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center relative">
         {outfit.data ? (
           isAdmin ? (
             <>
@@ -220,7 +270,7 @@ export default function OutfitDetailsPage() {
                   className="aspect-square w-full md:w-sm object-cover md:rounded-lg shrink-0 shadow-lg"
                 ></Image>
                 <div className="mb-1 flex flex-row justify-center absolute bottom-0">
-                  {outfit.data.products.map((p, i) => (
+                  {outfit.data.products.map((_, i) => (
                     <GoDotFill
                       key={i}
                       className={i === selectedProduct ? 'text-secondary' : 'text-ring'}
@@ -255,8 +305,11 @@ export default function OutfitDetailsPage() {
                     {`${convertPrice(outfit.data.discountedPriceInCents).toFixed(2).toString().replace('.', ',')}€ con IVA`}
                   </h1>
                 </div>
-                <Button className="self-center bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-xl h-12 w-11/12 md:w-1/3">
-                  Añadir al carrito
+                <Button
+                  onClick={() => setIsConfirmModalOpen(true)}
+                  className="self-center bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-xl h-12 w-11/12 md:w-1/3"
+                >
+                  Hacer pedido
                 </Button>
               </div>
             </>
@@ -265,6 +318,107 @@ export default function OutfitDetailsPage() {
           <NotFoundText message="El outfit que buscas no existe..." />
         )}
       </div>
+
+      {isConfirmModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background p-8 rounded-lg shadow-xl flex flex-col items-center gap-6 max-w-md w-full">
+            <h2 className="text-2xl font-bold text-primary text-center">¿Confirmar pedido?</h2>
+            {outfit.data && (
+              <p className="text-secondary text-center">
+                Vas a realizar un pedido por un total de{' '}
+                <strong>{`${convertPrice(outfit.data.discountedPriceInCents).toFixed(2).toString().replace('.', ',')}€`}</strong>
+                .
+              </p>
+            )}
+            <div className="flex flex-col w-full gap-3">
+              <Button
+                onClick={confirmAndCreateOrder}
+                disabled={isCreatingOrder}
+                className="w-full bg-secondary hover:bg-dark-secondary disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-bold"
+              >
+                {isCreatingOrder ? 'Procesando...' : 'Confirmar pedido'}
+              </Button>
+              <Button
+                onClick={() => setIsConfirmModalOpen(false)}
+                disabled={isCreatingOrder}
+                variant="outline"
+                className="w-full font-bold"
+              >
+                Cancelar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isAuthModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background p-8 rounded-lg shadow-xl flex flex-col items-center gap-6 max-w-md w-full">
+            <h2 className="text-2xl font-bold text-primary text-center">
+              ¡Ups! No estás registrado
+            </h2>
+            <p className="text-secondary text-center">
+              Para poder hacer un pedido necesitas iniciar sesión o crear una cuenta en la
+              plataforma.
+            </p>
+            <div className="flex flex-col w-full gap-3">
+              <Button
+                onClick={() => router.push('/login')}
+                className="w-full bg-secondary hover:bg-dark-secondary text-white font-bold"
+              >
+                Iniciar sesión
+              </Button>
+              <Button
+                onClick={() => router.push('/register')}
+                className="w-full bg-primary hover:bg-dark-primary text-white font-bold"
+              >
+                Registrarme
+              </Button>
+              <Button
+                onClick={() => setIsAuthModalOpen(false)}
+                variant="outline"
+                className="w-full font-bold"
+              >
+                Cancelar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isSuccessModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background p-8 rounded-lg shadow-xl flex flex-col items-center gap-6 max-w-md w-full">
+            <h2 className="text-2xl font-bold text-primary text-center">
+              ¡Pedido creado con éxito!
+            </h2>
+            <p className="text-secondary text-center">¿Qué te gustaría hacer ahora?</p>
+            <div className="flex flex-col w-full gap-3">
+              <Button
+                onClick={() => {
+                  console.log('Abrir chat con la tienda');
+                }}
+                className="w-full bg-primary hover:bg-dark-primary text-white font-bold"
+              >
+                Chatea con la tienda
+              </Button>
+              <Button
+                onClick={() => router.push('/orders')}
+                className="w-full bg-secondary hover:bg-dark-secondary text-white font-bold"
+              >
+                Ver mis pedidos
+              </Button>
+              <Button
+                onClick={() => setIsSuccessModalOpen(false)}
+                variant="outline"
+                className="w-full font-bold"
+              >
+                Seguir explorando
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
