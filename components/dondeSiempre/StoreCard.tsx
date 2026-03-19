@@ -112,7 +112,7 @@ export function StoreCard({
             src={store.storefront.bannerImageUrl}
             alt={store.name}
             fill
-            className="object-cover group-hover:scale-105 md:group-hover:scale-110 transition-transform duration-500 md:duration-700"
+            className="object-cover"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary/30">
