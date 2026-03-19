@@ -13,7 +13,7 @@ test.beforeEach(async ({ context }) => {
   });
 });
 
-test.describe.serial('public navbar', () => {
+test.describe('public navbar', () => {
   test('navbar to search page', async ({ page }) => {
     await page.goto('http://localhost:3000/stores');
     await page.getByRole('link', { name: 'Tiendas' }).click();
@@ -23,6 +23,10 @@ test.describe.serial('public navbar', () => {
 
   test('navbar to map page', async ({ page }) => {
     await page.goto('http://localhost:3000/search');
+
+    const searchBar = await page.getByRole('textbox', { name: 'Buscar tienda por nombre...' });
+    await expect(searchBar).toBeVisible();
+
     await page.getByRole('link', { name: 'Mapa' }).click();
     await page.context().grantPermissions(['geolocation']);
 
@@ -60,6 +64,6 @@ test.describe.serial('private navbar', () => {
     await page.goto('http://localhost:3000/stores');
     await page.getByRole('img').nth(2).click();
 
-    await expect(page).toHaveURL('http://localhost:3000/deliveries');
+    await expect(page).toHaveURL('http://localhost:3000/orders');
   });
 });

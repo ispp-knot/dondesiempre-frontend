@@ -1,0 +1,35 @@
+{
+  "cookies": [
+    {
+      "name": "token",
+      "value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJzdG9yZTljY2ZkNzlkNTc2NzY4QGV4YW1wbGUuY29tIiwiaWF0IjoxNzczOTIwMzAxLCJleHAiOjE3NzY1MTIzMDF9.pqzLIno1cmfOcEIvXGdm-Oj3HbONAfxs6evAB2fDpdIt_4nZYLTSvoqo-5XBiJwR",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1776512301.223431,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "session",
+      "value": "eyJpZCI6IjNjYzg1MjBkLWIzMDItNGU5Zi04MmYwLTBhZDMyMGE3YzUyZiIsImVtYWlsIjoic3RvcmU5Y2NmZDc5ZDU3Njc2OEBleGFtcGxlLmNvbSIsInJvbGVzIjpbIlNUT1JFIl0sImV4cGlyZXNBdCI6IjIwMjYtMDQtMThUMTE6Mzg6MjFaIn0=",
+      "domain": "localhost",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "http://localhost:3000",
+      "localStorage": [
+        {
+          "name": "auth_user",
+          "value": "{\"id\":\"3cc8520d-b302-4e9f-82f0-0ad320a7c52f\",\"email\":\"store9ccfd79d576768@example.com\",\"roles\":[\"STORE\"],\"expiresAt\":\"2026-04-18T11:38:21Z\",\"store\":{\"id\":\"e4a3e002-6ac8-4062-bb8b-2f4de228b746\",\"name\":\"Un nombre de tienda\",\"email\":\"store9ccfd79d576768@example.com\",\"address\":\"Una dirección de una tienda\",\"openingHours\":\"Lun-Vier 8:00 a 20:00\",\"phone\":\"123456789\",\"acceptsShipping\":true,\"hasActivePromotions\":null,\"latitude\":37.3592086,\"longitude\":-5.9810645,\"aboutUs\":\"Somos una tienda de testing\",\"storefront\":{\"id\":\"89b82e1a-1302-46b6-bd8d-073567f4cf07\",\"isFirstCollections\":true,\"primaryColor\":\"#532508\",\"secondaryColor\":\"#124568\",\"bannerImageUrl\":null},\"socialNetworks\":null},\"client\":null}"
+        }
+      ]
+    }
+  ]
+}

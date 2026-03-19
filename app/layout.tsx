@@ -76,7 +76,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <ConfigProvider
           backendUrl={process.env.BACKEND_URL ?? ''}
           webUrl={process.env.WEB_URL ?? ''}
-          dirBack={process.env.DIR_BACKEND ?? ''}
         >
           <Providers>
             <Navbar />

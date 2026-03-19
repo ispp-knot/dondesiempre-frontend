@@ -4,7 +4,7 @@ let _backendUrl: string | undefined;
 let _webUrl: string | undefined;
 let _directoryBackend: string | undefined;
 
-export function initClientConfig(backendUrl: string, webUrl: string, directoryBackend: string) {
+export function initClientConfig(backendUrl: string, webUrl: string) {
   _backendUrl = backendUrl;
   _webUrl = webUrl;
 
