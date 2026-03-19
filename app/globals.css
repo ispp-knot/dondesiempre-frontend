@@ -185,6 +185,10 @@
   transform: scale(1.2);
 }
 
+.maplibregl-ctrl-bottom-right {
+  z-index: auto !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -195,8 +199,4 @@
   }
 }
 
-/* This is needed so the information icon on the bottom right of the map appears in front of the store pins */
-.maplibregl-ctrl-bottom-right {
-  z-index: 200;
-}
 

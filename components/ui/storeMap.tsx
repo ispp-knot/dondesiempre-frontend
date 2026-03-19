@@ -66,23 +66,18 @@ export function StoreMap({
     });
   };
 
-  const storeScreenYs = stores.data?.map((store) => ({
-    store,
-    screenY: mapRef.current?.project([store.longitude, store.latitude])?.y ?? 0,
-  }));
-  const minY = storeScreenYs ? Math.min(...storeScreenYs.map((s) => s.screenY)) : 0;
-  const maxY = storeScreenYs ? Math.max(...storeScreenYs.map((s) => s.screenY)) : 1;
-  const yRange = maxY - minY || 1;
-
-  const pins = storeScreenYs?.map(({ store, screenY }, index) => {
-    const zIndex = Math.round(((screenY - minY) / yRange) * 100);
-    return (
+  const pins = stores.data
+    ?.map((store) => ({
+      store,
+      screenY: mapRef.current?.project([store.longitude, store.latitude])?.y ?? 0,
+    }))
+    .sort((a, b) => a.screenY - b.screenY)
+    .map(({ store }, index) => (
       <Marker
         key={`store-${index}`}
         longitude={store.longitude}
         latitude={store.latitude}
         anchor="bottom"
-        style={{ zIndex }}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onClick={(e: any) => {
           e.originalEvent.stopPropagation();
@@ -92,8 +87,7 @@ export function StoreMap({
       >
         <StorePin store={store} />
       </Marker>
-    );
-  });
+    ));
 
   return (
     <div className="relative flex flex-1">
@@ -123,7 +117,7 @@ export function StoreMap({
       </Map>
 
       {/* Custom Map Controls */}
-      <div className="absolute top-4 left-4 flex flex-col gap-2 z-[200]">
+      <div className="absolute top-4 left-4 flex flex-col gap-2">
         <div className="bg-background/80 backdrop-blur rounded-md p-1 shadow-lg">
           <Button variant="ghost" size="icon" onClick={handleGeolocate}>
             <MdMyLocation size={30} />
