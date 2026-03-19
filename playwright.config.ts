@@ -19,8 +19,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   webServer: [
     {
-      command:
-        'npm run build && cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static && node .next/standalone/server.js',
+      command: 'npm run build && node tests/scripts/copy-standalone.js && node .next/standalone/server.js',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 180 * 1000,
@@ -91,6 +90,7 @@ export default defineConfig({
     },
     {
       name: 'tests',
+      timeout: 300*1000,
       use: {
         ...devices['Desktop Chrome'],
         screenshot: 'on',

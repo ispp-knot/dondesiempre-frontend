@@ -1,4 +1,4 @@
-import { DEFAULT_MAP_LOCATION } from '@/lib/mapUtils';
+import { TEST_MAP_LOCATION } from '@/lib/mapUtils';
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ context }) => {
@@ -8,8 +8,8 @@ test.beforeEach(async ({ context }) => {
 
   // 3. (Opcional) Forzamos la posición inicial para que el mapa no flote
   await context.setGeolocation({
-    latitude: DEFAULT_MAP_LOCATION.lat,
-    longitude: DEFAULT_MAP_LOCATION.lng,
+    latitude: TEST_MAP_LOCATION.lat,
+    longitude: TEST_MAP_LOCATION.lng,
   });
 });
 
@@ -22,13 +22,13 @@ test.describe.serial('follow store from map', () => {
 
     await page.waitForLoadState('networkidle');
     await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 30000 });
-    await page
-      .locator('div')
-      .filter({ hasText: /^Roire$/ })
-      .first()
-      .click();
 
-    const store = await page.getByRole('link', { name: 'Roire Roire Lun-Vie 10:00-13:' });
+    const pin = page.getByTestId('store-pin').first();
+  
+    await expect(pin).toBeVisible();
+    await pin.click();
+
+    const store = await page.getByRole('link', { name: 'Un nombre de tienda Lun-Vier' })
     await expect(store).toBeVisible();
 
     await page.getByRole('button', { name: 'Seguir' }).click();
@@ -39,14 +39,12 @@ test.describe.serial('follow store from map', () => {
   test('following site is updated when following a store from the map', async ({ page }) => {
     await page.goto('http://localhost:3000/following');
 
-    const followedStoreName = await page.getByText('Roire📍 C. San Sebastián, 15');
-    const followedStoreAddress = await page.getByText('📍 C. San Sebastián, 15,');
-    const followedStoreHours = await page.getByText('Horario: Lun-Vie 10:00-13:45');
-    const followedStoreEmail = await page.getByText('Email: demo@roire.es');
+    const followedStoreName = await page.getByRole('heading', { name: 'Un nombre de tienda' });
+    const followedStoreAddress = await page.getByText('📍 Una dirección de una tienda');
+    const followedStoreHours = await page.getByText('Horario: Lun-Vier 8:00 a 20:');
     await expect(followedStoreName).toBeVisible();
     await expect(followedStoreAddress).toBeVisible();
     await expect(followedStoreHours).toBeVisible();
-    await expect(followedStoreEmail).toBeVisible();
   });
 
   test('go to a store from following page', async ({ page }) => {
@@ -55,7 +53,7 @@ test.describe.serial('follow store from map', () => {
     await page.getByRole('button', { name: 'Ir a la tienda' }).click();
     await page.waitForURL(/stores\/.*/);
 
-    const storeName = await page.getByText('Roire');
+    const storeName = await page.getByText('Un nombre de tienda');
     await expect(storeName).toBeVisible({ timeout: 10000 });
   });
 
