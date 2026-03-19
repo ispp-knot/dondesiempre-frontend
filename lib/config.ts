@@ -7,7 +7,13 @@ let _directoryBackend: string | undefined;
 export function initClientConfig(backendUrl: string, webUrl: string, directoryBackend: string) {
   _backendUrl = backendUrl;
   _webUrl = webUrl;
-  _directoryBackend = directoryBackend;
+
+  if (typeof navigator !== 'undefined' && navigator.serviceWorker) {
+    const send = () =>
+      navigator.serviceWorker.controller?.postMessage({ type: 'SET_CONFIG', backendUrl });
+    send();
+    navigator.serviceWorker.addEventListener('controllerchange', send, { once: true });
+  }
 }
 
 export function getBackendUrl(): string {
