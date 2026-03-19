@@ -85,28 +85,6 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
         />
       </div>
 
-      <div className="flex justify-between items-center gap-4">
-        <p className="text-[#c65a3a] text-lg font-medium leading-tight flex-1">
-          Mostrar colecciones antes que outfits
-        </p>
-        <button
-          onClick={() =>
-            updateStorefrontState({
-              isFirstCollections: !storefront.isFirstCollections,
-            })
-          }
-          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-            storefront.isFirstCollections ? 'bg-[#c65a3a]' : 'bg-gray-300'
-          }`}
-        >
-          <span
-            className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
-              storefront.isFirstCollections ? 'translate-x-6' : 'translate-x-1'
-            }`}
-          />
-        </button>
-      </div>
-
       <div>
         <div className="flex items-center gap-2 mb-4">
           <span className="text-[#c65a3a] text-lg font-medium">Colores del escaparate</span>
