@@ -7,8 +7,16 @@ import { StoreDTO, StoreSocialNetworkDTO } from '@/lib/types/stores/storesDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
-import { FaFacebook, FaInstagram, FaLink, FaTiktok, FaTwitter } from 'react-icons/fa';
-import { FaLocationDot } from 'react-icons/fa6';
+import {
+  FaFacebook,
+  FaHome,
+  FaInstagram,
+  FaLink,
+  FaPhoneAlt,
+  FaTiktok,
+  FaTwitter,
+} from 'react-icons/fa';
+import { FaLocationDot, FaWhatsapp } from 'react-icons/fa6';
 import { MdAccessTimeFilled } from 'react-icons/md';
 import StoreTabs from './store-tabs';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
@@ -25,6 +33,9 @@ const getSocialIcon = (name: string) => {
   if (lowerName.includes('twitter') || lowerName.includes('x'))
     return <FaTwitter className="w-4 h-4" />;
   if (lowerName.includes('tiktok')) return <FaTiktok className="w-4 h-4" />;
+  if (lowerName.includes('web')) return <FaHome className="w-4 h-4" />;
+  if (lowerName.includes('teléfono')) return <FaPhoneAlt className="w-4 h-4" />;
+  if (lowerName.includes('whatsapp')) return <FaWhatsapp className="w-4 h-4" />;
   return <FaLink className="w-4 h-4" />;
 };
 

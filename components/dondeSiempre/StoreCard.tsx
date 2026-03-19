@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { distance } from '@/lib/geoUtils';
 import { Button } from '../ui/button';
 import Link from 'next/link';
+import { useAuth } from '@/lib/auth/AuthContext';
 
 export function StoreCard({
   store,
@@ -29,6 +30,8 @@ export function StoreCard({
       ? distance(userLocation.lat, userLocation.lng, store.latitude, store.longitude)
       : null;
   const router = useRouter();
+  const { getCurrentUser } = useAuth();
+  const isLoggedIn = getCurrentUser() !== null;
 
   const clickCount = useRef(0);
   const clickTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -73,7 +76,7 @@ export function StoreCard({
     } else {
       clearTimeout(clickTimer.current);
       clickCount.current = 0;
-      toggleFollow();
+      if (isLoggedIn) toggleFollow();
     }
   };
 
@@ -112,7 +115,7 @@ export function StoreCard({
             src={store.storefront.bannerImageUrl}
             alt={store.name}
             fill
-            className="object-cover group-hover:scale-105 md:group-hover:scale-110 transition-transform duration-500 md:duration-700"
+            className="object-cover"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary/30">
@@ -181,20 +184,22 @@ export function StoreCard({
           <LuRoute size={24} />
         </Button>
 
-        <Button
-          onClick={handleFollowClick}
-          className="p-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors disabled:opacity-50"
-          title={isFollowing.data?.isFollowing ? 'Dejar de seguir' : 'Seguir'}
-          disabled={isFollowing.isLoading}
-          onAnimationEnd={() => setHeartAnimating(false)}
-        >
-          <Heart
-            size={24}
-            className={`transition-colors duration-200 ${
-              isFollowing.data?.isFollowing ? 'fill-primary text-primary' : 'text-primary'
-            } ${heartAnimating ? 'animate-heart-pop' : ''}`}
-          />
-        </Button>
+        {isLoggedIn && (
+          <Button
+            onClick={handleFollowClick}
+            className="p-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors disabled:opacity-50"
+            title={isFollowing.data?.isFollowing ? 'Dejar de seguir' : 'Seguir'}
+            disabled={isFollowing.isLoading}
+            onAnimationEnd={() => setHeartAnimating(false)}
+          >
+            <Heart
+              size={24}
+              className={`transition-colors duration-200 ${
+                isFollowing.data?.isFollowing ? 'fill-primary text-primary' : 'text-primary'
+              } ${heartAnimating ? 'animate-heart-pop' : ''}`}
+            />
+          </Button>
+        )}
 
         <Button
           onClick={handleGoToStore}
