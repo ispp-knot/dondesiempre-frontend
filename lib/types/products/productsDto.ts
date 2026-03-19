@@ -8,3 +8,11 @@ export interface ProductDTO {
   typeId: string;
   storeId: string;
 }
+
+export interface ProductCreationDTO {
+  name: string;
+  priceInCents: number;
+  description: string | null;
+  typeId: string;
+}
+

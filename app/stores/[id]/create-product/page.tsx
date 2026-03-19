@@ -1,0 +1,129 @@
+'use client';
+
+import ErrorText from '@/components/dondeSiempre/ErrorText';
+import ImageUpload from '@/components/dondeSiempre/ImageUpload';
+import LoadingText from '@/components/dondeSiempre/LoadingText';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
+import { ProductCreationDTO } from '@/lib/types/products/productsDto';
+import { ProductTypeDTO } from '@/lib/types/producttypes/productTypesDto';
+import { redirect, useParams } from 'next/navigation';
+import { useState } from 'react';
+
+export default function ProductCreationPage() {
+  const params = useParams<{ id: string }>();
+
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
+  const productTypes = usePassiveFetcher<ProductTypeDTO[]>({ url: `product-types` });
+  const createProduct = useActiveFetcher<any>({
+    url: `products?storeId=${params.id}`,
+    method: 'POST',
+  });
+
+  if (productTypes.isLoading) {
+    return <LoadingText />;
+  }
+
+  if (productTypes.isError) {
+    return <ErrorText error={productTypes.error} />;
+  }
+
+  const submitForm = async (event: React.SyntheticEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log(productTypes.data);
+    const dto: ProductCreationDTO = {
+      name: (document.getElementById('form-name') as HTMLInputElement).value,
+      description: (document.getElementById('form-description') as HTMLInputElement).value || null,
+      priceInCents: Number.parseInt(
+        (document.getElementById('form-price') as HTMLInputElement).value
+      ),
+      typeId: (document.getElementById('form-type') as HTMLSelectElement).value,
+    };
+
+    await createProduct.fetch({
+      formPayload: {
+        dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
+        image: imageFile ?? undefined,
+      },
+    });
+    //redirect(`/stores/${params.id}/products`);
+  };
+
+  return (
+    <div className="flex flex-col items-center">
+      <div className="w-full md:w-8/12">
+        <Card className="p-4 pt-8 m-4 mb-8 shadow-xl">
+          <h1 className="mb-3 font-bold text-primary text-center text-3xl">Crear producto</h1>
+          <div className="w-full flex flex-col items-center">
+            <form onSubmit={submitForm} className="w-10/12">
+              <div className="flex flex-col gap-4">
+                <label htmlFor="form-name" className="font-bold text-lg text-secondary">
+                  Nombre:{' '}
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  id="form-name"
+                  minLength={1}
+                  maxLength={255}
+                  required
+                  className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
+                />
+                <label htmlFor="form-description" className="font-bold text-lg text-secondary">
+                  Descripción:{' '}
+                </label>
+                <input
+                  type="text"
+                  name="description"
+                  minLength={0}
+                  maxLength={5000}
+                  id="form-description"
+                  className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
+                />
+                <label htmlFor="form-price" className="font-bold text-lg text-secondary">
+                  Precio (en céntimos):{' '}
+                </label>
+                <input
+                  type="number"
+                  name="price"
+                  id="form-price"
+                  min="0"
+                  step="1"
+                  required
+                  className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
+                />
+                <label htmlFor="form-type" className="font-bold text-lg text-secondary">
+                  Tipo:{' '}
+                </label>
+                <select
+                  name="type"
+                  id="form-type"
+                  required
+                  className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
+                >
+                  {productTypes.data?.map((type) => (
+                    <option key={type.id} value={type.id}>
+                      {type.name}
+                    </option>
+                  ))}
+                </select>
+                <label className="font-bold text-lg text-secondary">Imagen:</label>
+                <ImageUpload onChange={setImageFile} />
+              </div>
+              <div className="flex flex-row justify-center mb-8">
+                <Button
+                  type="submit"
+                  className="self-center bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md h-12 md:w-1/3 mt-8"
+                >
+                  Crear producto
+                </Button>
+              </div>
+            </form>
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}
