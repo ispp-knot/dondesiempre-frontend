@@ -6,7 +6,7 @@ import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { StoreDTO, StoreSocialNetworkDTO } from '@/lib/types/stores/storesDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import Image from 'next/image';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import {
   FaFacebook,
   FaHome,
@@ -41,7 +41,6 @@ const getSocialIcon = (name: string) => {
 export default function StorePage() {
   const params = useParams<{ id: string }>();
   const { getCurrentUser } = useAuth();
-  const router = useRouter();
   const user = getCurrentUser();
   const isFollowing = usePassiveFetcher<{ isFollowing: boolean }>({
     url: `stores/${params.id}/follow`,
@@ -111,26 +110,24 @@ export default function StorePage() {
       </div>
 
       <div className="flex gap-3 mt-3 flex-wrap justify-center mb-2">
-        <Button
-          variant="outline"
-          className="flex items-center w-fit gap-1.5 border border-primary rounded-sm px-3 py-1.5 text-xs text-primary hover:bg-primary hover:text-white transition"
-          disabled={isFollowing.isLoading || followStore.isPending || unfollowStore.isPending}
-          onClick={async () => {
-            if (!user) {
-              router.push(`/login`);
-              return;
-            }
-            if (isFollowing.data?.isFollowing) {
-              await unfollowStore.fetch();
-              isFollowing.setData({ isFollowing: false });
-            } else {
-              await followStore.fetch();
-              isFollowing.setData({ isFollowing: true });
-            }
-          }}
-        >
-          {isFollowing.data?.isFollowing ? 'Dejar de seguir' : '+ Seguir'}
-        </Button>
+        {!!user && (
+          <Button
+            variant="outline"
+            className="flex items-center w-fit gap-1.5 border border-primary rounded-sm px-3 py-1.5 text-xs text-primary hover:bg-primary hover:text-white transition"
+            disabled={isFollowing.isLoading || followStore.isPending || unfollowStore.isPending}
+            onClick={async () => {
+              if (isFollowing.data?.isFollowing) {
+                await unfollowStore.fetch();
+                isFollowing.setData({ isFollowing: false });
+              } else {
+                await followStore.fetch();
+                isFollowing.setData({ isFollowing: true });
+              }
+            }}
+          >
+            {isFollowing.data?.isFollowing ? 'Dejar de seguir' : '+ Seguir'}
+          </Button>
+        )}
         {socialNetworks.map((social: StoreSocialNetworkDTO, index: number) => (
           <a
             key={index}
