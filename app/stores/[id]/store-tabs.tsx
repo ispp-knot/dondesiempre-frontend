@@ -90,19 +90,7 @@ export default function StoreTabs({ description = '', outfits = [], store }: Pro
       </div>
 
       <div className="flex flex-col gap-10 sm:items-center">
-        {activeTab === 'catalogo' && (
-          <>
-            {store.storefront.isFirstCollections ? (
-              <>
-                <Outfits storeId={store.id} outfits={outfits} />
-              </>
-            ) : (
-              <>
-                <Outfits storeId={store.id} outfits={outfits} />
-              </>
-            )}
-          </>
-        )}
+        {activeTab === 'catalogo' && <Outfits storeId={store.id} outfits={outfits} />}
 
         {activeTab === 'sobre' && <AboutUs description={description} />}
 
