@@ -1,15 +1,12 @@
-import { DEFAULT_MAP_LOCATION } from '@/lib/mapUtils';
 import { test, expect } from '@playwright/test';
+import { TEST_MAP_LOCATION } from './scripts/generator';
 
 test.beforeEach(async ({ context }) => {
-  // Bloquea el registro del Service Worker antes de cargar la página
-
   await context.grantPermissions(['geolocation']);
 
-  // 3. (Opcional) Forzamos la posición inicial para que el mapa no flote
   await context.setGeolocation({
-    latitude: DEFAULT_MAP_LOCATION.lat,
-    longitude: DEFAULT_MAP_LOCATION.lng,
+    latitude: TEST_MAP_LOCATION.lat,
+    longitude: TEST_MAP_LOCATION.lng,
   });
 });
 
@@ -58,17 +55,9 @@ test.describe.serial('private navbar', () => {
     await page.goto('http://localhost:3000/stores');
     await page.getByRole('button', { name: 'Usuario' }).click();
 
-    /*
-    const profileName = await page.locator('#radix-_r_1_').getByText('Jose');
-    await expect(profileName).toBeVisible();
-    */
     await page.getByRole('button', { name: 'Mi perfil' }).click();
 
     await expect(page).toHaveURL('http://localhost:3000/profile');
-    /*
-    const profileTest = await page.getByText(`Jose${clientName.split('@')[0]}@ejemplo.`);
-    await expect(profileTest).toBeVisible();
-    */
   });
 
   test('logout', async ({ page }) => {

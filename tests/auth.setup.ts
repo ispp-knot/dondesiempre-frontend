@@ -1,16 +1,12 @@
-import { TEST_MAP_LOCATION } from '@/lib/mapUtils';
-import { clientName, storeName } from '@/test-public/generator';
+import { TEST_MAP_LOCATION } from '@/tests/scripts/generator';
 import { test, expect } from '@playwright/test';
 
-const authClientFile = 'test-public/auth.client.json';
-const authStoreFile = 'test-public/auth.store.json';
+const authClientFile = './scripts/auth.client.json';
+const authStoreFile = './scripts/auth.store.json';
 
 test.beforeEach(async ({ context }) => {
-  // Bloquea el registro del Service Worker antes de cargar la página
-
   await context.grantPermissions(['geolocation']);
 
-  // 3. (Opcional) Forzamos la posición inicial para que el mapa no flote
   await context.setGeolocation({
     latitude: TEST_MAP_LOCATION.lat,
     longitude: TEST_MAP_LOCATION.lng,
@@ -21,7 +17,7 @@ test.describe.serial('client auth setup', () => {
   test('register of a client successfully', async ({ page }) => {
     await page.goto('http://localhost:3000/register');
     await page.getByRole('textbox', { name: 'Email' }).click();
-    await page.getByRole('textbox', { name: 'Email' }).fill("client@example.com");
+    await page.getByRole('textbox', { name: 'Email' }).fill('client@example.com');
     await page.getByRole('textbox', { name: 'Email' }).press('Tab');
     await page.getByRole('textbox', { name: 'Contraseña', exact: true }).fill('Password123!');
     await page.getByRole('textbox', { name: 'Contraseña', exact: true }).press('Tab');
@@ -48,7 +44,7 @@ test.describe.serial('client auth setup', () => {
   test('login as a client successfully', async ({ page }) => {
     await page.goto('http://localhost:3000/login');
     await page.getByRole('textbox', { name: 'Email' }).click();
-    await page.getByRole('textbox', { name: 'Email' }).fill("client@example.com");
+    await page.getByRole('textbox', { name: 'Email' }).fill('client@example.com');
     await page.getByRole('textbox', { name: 'Contraseña' }).click();
     await page.getByRole('textbox', { name: 'Contraseña' }).fill('Password123!');
     await page.getByRole('button', { name: 'Iniciar sesión' }).click();
@@ -66,7 +62,7 @@ test.describe.serial('store auth setup', () => {
     await page.goto('http://localhost:3000/register');
     await page.getByRole('button', { name: 'Soy tienda' }).click();
     await page.getByRole('textbox', { name: 'Email' }).click();
-    await page.getByRole('textbox', { name: 'Email' }).fill("store@example.com");
+    await page.getByRole('textbox', { name: 'Email' }).fill('store@example.com');
     await page.getByRole('textbox', { name: 'Contraseña', exact: true }).click();
     await page.getByRole('textbox', { name: 'Contraseña', exact: true }).fill('Password123!');
     await page.getByRole('textbox', { name: 'Confirmar contraseña' }).click();
@@ -105,7 +101,7 @@ test.describe.serial('store auth setup', () => {
   test('login as a store successfully', async ({ page }) => {
     await page.goto('http://localhost:3000/login');
     await page.getByRole('textbox', { name: 'Email' }).click();
-    await page.getByRole('textbox', { name: 'Email' }).fill("store@example.com");
+    await page.getByRole('textbox', { name: 'Email' }).fill('store@example.com');
     await page.getByRole('textbox', { name: 'Contraseña' }).click();
     await page.getByRole('textbox', { name: 'Contraseña' }).fill('Password123!');
     await page.getByRole('button', { name: 'Iniciar sesión' }).click();

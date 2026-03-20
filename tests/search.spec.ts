@@ -8,7 +8,9 @@ test.describe.serial('search page', () => {
     await expect(searchBar).toBeVisible();
     await searchBar.fill('Un nombre');
 
-    const storeLink = await page.getByRole('link', { name: 'Un nombre de tienda Lun-Vier' }).first();
+    const storeLink = await page
+      .getByRole('link', { name: 'Un nombre de tienda Lun-Vier' })
+      .first();
     await expect(storeLink).toBeVisible();
   });
 
@@ -18,7 +20,9 @@ test.describe.serial('search page', () => {
     const searchBar = await page.getByRole('textbox', { name: 'Buscar tienda por nombre...' });
     await expect(searchBar).toBeVisible();
 
-    const storeLink = await page.getByRole('link', { name: 'Un nombre de tienda Lun-Vier' }).first();
+    const storeLink = await page
+      .getByRole('link', { name: 'Un nombre de tienda Lun-Vier' })
+      .first();
     await expect(storeLink).toBeVisible();
     await storeLink.click();
 

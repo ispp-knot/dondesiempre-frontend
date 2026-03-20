@@ -6,7 +6,9 @@ test.describe.serial('search page', () => {
   test('display store from search', async ({ page }) => {
     await page.goto('http://localhost:3000/search');
 
-    const storeLink = await page.getByRole('link', { name: 'Un nombre de tienda Lun-Vier' }).first();
+    const storeLink = await page
+      .getByRole('link', { name: 'Un nombre de tienda Lun-Vier' })
+      .first();
     await expect(storeLink).toBeVisible();
     await storeLink.click();
 

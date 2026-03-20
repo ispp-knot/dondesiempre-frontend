@@ -1,8 +1,6 @@
 import 'dotenv/config';
 import { defineConfig, devices } from '@playwright/test';
 import { DEFAULT_MAP_LOCATION } from './lib/mapUtils';
-import { getDirectoryBackend } from './lib/config';
-
 
 // We expect the backend to already be running
 
@@ -21,7 +19,8 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   webServer: [
     {
-      command: 'npm run build && node tests/scripts/copy-standalone.js && node .next/standalone/server.js',
+      command:
+        'npm run build && node tests/scripts/copy-standalone.js && node .next/standalone/server.js',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 180 * 1000,
@@ -101,7 +100,7 @@ export default defineConfig({
     },
     {
       name: 'tests',
-      timeout: 300*1000,
+      timeout: 300 * 1000,
       use: {
         ...devices['Desktop Chrome'],
         screenshot: 'on',
@@ -110,18 +109,6 @@ export default defineConfig({
           : {}),
       },
       dependencies: ['setup-registro'],
-    },
-    {
-      name: 'tests failure',
-      testMatch: /.*\.fail\.ts/,
-      use: {
-        ...devices['Desktop Chrome'],
-        screenshot: 'on',
-        ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
-          ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
-          : {}),
-      },
-      dependencies: ['tests'],
     },
   ],
 

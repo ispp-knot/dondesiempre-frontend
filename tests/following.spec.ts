@@ -1,12 +1,9 @@
-import { TEST_MAP_LOCATION } from '@/lib/mapUtils';
 import { test, expect } from '@playwright/test';
+import { TEST_MAP_LOCATION } from './scripts/generator';
 
 test.beforeEach(async ({ context }) => {
-  // Bloquea el registro del Service Worker antes de cargar la página
-
   await context.grantPermissions(['geolocation']);
 
-  // 3. (Opcional) Forzamos la posición inicial para que el mapa no flote
   await context.setGeolocation({
     latitude: TEST_MAP_LOCATION.lat,
     longitude: TEST_MAP_LOCATION.lng,
