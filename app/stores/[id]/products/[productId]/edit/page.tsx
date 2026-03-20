@@ -58,14 +58,17 @@ export default function ProductEditPage() {
   }
 
   if (!product.data) {
-    return <ErrorText error={new Error("Producto no encontrado")} />;
+    return <ErrorText error={new Error('Producto no encontrado')} />;
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'priceInCents' ? (value ? Number.parseInt(value) : undefined) : value || undefined,
+      [name]:
+        name === 'priceInCents' ? (value ? Number.parseInt(value) : undefined) : value || undefined,
     }));
   };
 
