@@ -15,4 +15,3 @@ export interface ProductCreationDTO {
   description: string | null;
   typeId: string;
 }
-
