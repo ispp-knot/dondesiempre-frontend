@@ -35,7 +35,7 @@ test.describe.serial('public navbar', () => {
 });
 
 test.describe.serial('private navbar', () => {
-  test.use({ storageState: 'test-public/auth.client.json' });
+  test.use({ storageState: './tests/scripts/auth.client.json' });
 
   test('navbar to followed stores page', async ({ page }) => {
     await page.goto('http://localhost:3000/stores');

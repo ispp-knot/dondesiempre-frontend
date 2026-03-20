@@ -11,7 +11,7 @@ test.beforeEach(async ({ context }) => {
 });
 
 test.describe.serial('follow store from map', () => {
-  test.use({ storageState: 'test-public/auth.client.json' });
+  test.use({ storageState: './tests/scripts/auth.client.json' });
   test('follow store from map', async ({ page }) => {
     await page.goto('http://localhost:3000/stores');
 

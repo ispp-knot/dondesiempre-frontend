@@ -1,8 +1,8 @@
 import { TEST_MAP_LOCATION } from '@/tests/scripts/generator';
 import { test, expect } from '@playwright/test';
 
-const authClientFile = './scripts/auth.client.json';
-const authStoreFile = './scripts/auth.store.json';
+const authClientFile = './tests/scripts/auth.client.json';
+const authStoreFile = './tests/scripts/auth.store.json';
 
 test.beforeEach(async ({ context }) => {
   await context.grantPermissions(['geolocation']);
