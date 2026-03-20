@@ -28,7 +28,8 @@ export interface PromotionFormData {
   description: string;
   products: Product[];
   isActive: boolean;
-  dateRange?: DateRange;
+  endDate: string | null;
+  startDate: string | null;
   publishToInstagram: boolean;
   promotionImage: File | null;
   existingImageUrl?: string;
@@ -53,7 +54,14 @@ export default function PromotionForm({
   const [discountPercentage, setDiscountPercentage] = useState<number>(
     initialData?.discountPercentage ?? 20
   );
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(initialData?.dateRange);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(
+    initialData?.startDate || initialData?.endDate
+      ? {
+          from: initialData.startDate ? new Date(initialData.startDate) : undefined,
+          to: initialData.endDate ? new Date(initialData.endDate) : undefined,
+        }
+      : undefined
+  );
   const [description, setDescription] = useState(initialData?.description ?? '');
   const [products, setProducts] = useState<Product[]>(initialData?.products ?? []);
   const [isActive, setIsActive] = useState(initialData?.isActive ?? true);
@@ -89,8 +97,8 @@ export default function PromotionForm({
       promotionImage,
       publishToInstagram,
       products,
-      startDate: dateRange?.from ? dateRange.from.toISOString() : null,
-      endDate: dateRange?.to ? dateRange.to.toISOString() : null,
+      startDate: dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : null,
+      endDate: dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : null,
     };
     onSubmit(formattedData);
   };

@@ -27,9 +27,10 @@ export default function CreatePromotionPage() {
       productIds: formData.products.map((p) => p.id),
       storeId: storeId,
       description: formData.description,
+      endDate: formData.endDate,
+      startDate: formData.startDate,
     };
 
-    
     try {
       await createPromotion.fetch({
         formPayload: {
@@ -41,7 +42,10 @@ export default function CreatePromotionPage() {
       router.push(`/stores/${storeId}`);
     } catch (error) {
       console.error('Error creating promotion:', error);
-      setStatus({ type: 'error', message: `Error al crear la promoción. Verifica los datos.${dto}` });
+      setStatus({
+        type: 'error',
+        message: `Error al crear la promoción. Verifica los datos.${dto}`,
+      });
     } finally {
       setIsLoading(false);
     }

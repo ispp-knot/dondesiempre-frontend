@@ -28,6 +28,8 @@ export default function EditPromotionPage() {
         description: data.description || '',
         existingImageUrl: data.promotionImageUrl,
         isActive: data.active,
+        startDate: data.startDate || null,
+        endDate: data.endDate || null,
         products:
           data.products && data.products.length > 0
             ? data.products.map((p) => ({
@@ -54,9 +56,9 @@ export default function EditPromotionPage() {
       isActive: formData.isActive,
       productIds: formData.products.map((p) => p.id),
       description: formData.description,
+      endDate: formData.endDate,
+      startDate: formData.startDate,
     };
-    console.log('DTO is Active envidado:', dto.isActive); // ← añadir
-    console.log('DTO JSON:', JSON.stringify(dto));
 
     try {
       await updatePromotion.fetch({
