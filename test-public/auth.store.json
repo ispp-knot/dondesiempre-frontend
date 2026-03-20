@@ -2,17 +2,17 @@
   "cookies": [
     {
       "name": "token",
-      "value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJzdG9yZTY4YjYwZjQzYzM5MzI4QGV4YW1wbGUuY29tIiwiaWF0IjoxNzczOTQ4ODU1LCJleHAiOjE3NzY1NDA4NTV9.Htg7Pc5drfhJEtEb_n1fAWEVEaM5ASNZKTNg0Oayo1rQkVhvP2CJhJOGF78CXTnI",
+      "value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJzdG9yZUBleGFtcGxlLmNvbSIsImlhdCI6MTc3NDAyOTkwMywiZXhwIjoxNzc2NjIxOTAzfQ.uqdiYpZQiC1plDU5gC3TO9DBIa0sbDwXUZJHnyilZ2vPfVytk2xf4Qwvbcgei2he",
       "domain": "localhost",
       "path": "/",
-      "expires": 1776540855.782308,
+      "expires": 1776621903.784871,
       "httpOnly": true,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "session",
-      "value": "eyJpZCI6IjM3NDdjNzUxLTk4ZWEtNDQ5Ni05NjQzLTViNGY5YWIwMDgzOCIsImVtYWlsIjoic3RvcmU2OGI2MGY0M2MzOTMyOEBleGFtcGxlLmNvbSIsInJvbGVzIjpbIlNUT1JFIl0sImV4cGlyZXNBdCI6IjIwMjYtMDQtMThUMTk6MzQ6MTVaIn0=",
+      "value": "eyJpZCI6IjNjOTc4MTRjLWY5NzUtNDAwMS05MWUyLWVkMWNiZDJiODc0NyIsImVtYWlsIjoic3RvcmVAZXhhbXBsZS5jb20iLCJyb2xlcyI6WyJTVE9SRSJdLCJleHBpcmVzQXQiOiIyMDI2LTA0LTE5VDE4OjA1OjAzWiJ9",
       "domain": "localhost",
       "path": "/",
       "expires": -1,
@@ -27,7 +27,7 @@
       "localStorage": [
         {
           "name": "auth_user",
-          "value": "{\"id\":\"3747c751-98ea-4496-9643-5b4f9ab00838\",\"email\":\"store68b60f43c39328@example.com\",\"roles\":[\"STORE\"],\"expiresAt\":\"2026-04-18T19:34:15Z\",\"store\":{\"id\":\"77dc5f88-38ba-4a8a-8a18-dcee4a49cf33\",\"name\":\"Un nombre de tienda\",\"email\":\"store68b60f43c39328@example.com\",\"address\":\"Una dirección de una tienda\",\"openingHours\":\"Lun-Vier 8:00 a 20:00\",\"phone\":\"123456789\",\"acceptsShipping\":true,\"hasActivePromotions\":null,\"latitude\":26.556127,\"longitude\":-134.549719,\"aboutUs\":\"Somos una tienda de testing\",\"storefront\":{\"id\":\"7e70b765-341e-42f1-838f-2e7b1098421a\",\"primaryColor\":\"#532508\",\"secondaryColor\":\"#124568\",\"bannerImageUrl\":null},\"socialNetworks\":null},\"client\":null}"
+          "value": "{\"id\":\"3c97814c-f975-4001-91e2-ed1cbd2b8747\",\"email\":\"store@example.com\",\"roles\":[\"STORE\"],\"expiresAt\":\"2026-04-19T18:05:03Z\",\"store\":{\"id\":\"5b17b8d1-21d3-41c4-b1c7-9de98656069e\",\"name\":\"Un nombre de tienda\",\"email\":\"store@example.com\",\"address\":\"Una dirección de una tienda\",\"openingHours\":\"Lun-Vier 8:00 a 20:00\",\"phone\":\"123456789\",\"acceptsShipping\":true,\"hasActivePromotions\":null,\"latitude\":37.3592086,\"longitude\":-5.9810645,\"aboutUs\":\"Somos una tienda de testing\",\"storefront\":{\"id\":\"ba0d9e7d-45fb-4a60-948b-fe479807b8f0\",\"primaryColor\":\"#532508\",\"secondaryColor\":\"#124568\",\"bannerImageUrl\":null},\"socialNetworks\":null},\"client\":null}"
         }
       ]
     }

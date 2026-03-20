@@ -21,7 +21,7 @@ test.describe.serial('client auth setup', () => {
   test('register of a client successfully', async ({ page }) => {
     await page.goto('http://localhost:3000/register');
     await page.getByRole('textbox', { name: 'Email' }).click();
-    await page.getByRole('textbox', { name: 'Email' }).fill(clientName);
+    await page.getByRole('textbox', { name: 'Email' }).fill("client@example.com");
     await page.getByRole('textbox', { name: 'Email' }).press('Tab');
     await page.getByRole('textbox', { name: 'Contraseña', exact: true }).fill('Password123!');
     await page.getByRole('textbox', { name: 'Contraseña', exact: true }).press('Tab');
@@ -48,7 +48,7 @@ test.describe.serial('client auth setup', () => {
   test('login as a client successfully', async ({ page }) => {
     await page.goto('http://localhost:3000/login');
     await page.getByRole('textbox', { name: 'Email' }).click();
-    await page.getByRole('textbox', { name: 'Email' }).fill(clientName);
+    await page.getByRole('textbox', { name: 'Email' }).fill("client@example.com");
     await page.getByRole('textbox', { name: 'Contraseña' }).click();
     await page.getByRole('textbox', { name: 'Contraseña' }).fill('Password123!');
     await page.getByRole('button', { name: 'Iniciar sesión' }).click();
@@ -66,7 +66,7 @@ test.describe.serial('store auth setup', () => {
     await page.goto('http://localhost:3000/register');
     await page.getByRole('button', { name: 'Soy tienda' }).click();
     await page.getByRole('textbox', { name: 'Email' }).click();
-    await page.getByRole('textbox', { name: 'Email' }).fill(storeName);
+    await page.getByRole('textbox', { name: 'Email' }).fill("store@example.com");
     await page.getByRole('textbox', { name: 'Contraseña', exact: true }).click();
     await page.getByRole('textbox', { name: 'Contraseña', exact: true }).fill('Password123!');
     await page.getByRole('textbox', { name: 'Confirmar contraseña' }).click();
@@ -105,7 +105,7 @@ test.describe.serial('store auth setup', () => {
   test('login as a store successfully', async ({ page }) => {
     await page.goto('http://localhost:3000/login');
     await page.getByRole('textbox', { name: 'Email' }).click();
-    await page.getByRole('textbox', { name: 'Email' }).fill(storeName);
+    await page.getByRole('textbox', { name: 'Email' }).fill("store@example.com");
     await page.getByRole('textbox', { name: 'Contraseña' }).click();
     await page.getByRole('textbox', { name: 'Contraseña' }).fill('Password123!');
     await page.getByRole('button', { name: 'Iniciar sesión' }).click();

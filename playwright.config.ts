@@ -1,5 +1,8 @@
+import 'dotenv/config';
 import { defineConfig, devices } from '@playwright/test';
 import { DEFAULT_MAP_LOCATION } from './lib/mapUtils';
+import { getDirectoryBackend } from './lib/config';
+
 
 // We expect the backend to already be running
 
@@ -7,7 +10,6 @@ import { DEFAULT_MAP_LOCATION } from './lib/mapUtils';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  /*globalSetup: require.resolve('./tests/global-setup'),*/
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -21,6 +23,15 @@ export default defineConfig({
     {
       command: 'npm run build && node tests/scripts/copy-standalone.js && node .next/standalone/server.js',
       url: 'http://localhost:3000',
+      reuseExistingServer: !process.env.CI,
+      timeout: 180 * 1000,
+      // stdout: 'pipe', // <--- Verás los logs del Frontend
+      // stderr: 'pipe',
+    },
+    {
+      /* TODO tener en cuenta a la gente de linux */
+      command: `cd ${process.env.DIR_BACKEND} && docker compose down -v postgres-test && docker compose up -d && mvnw spring-boot:run -D spring-boot.run.profiles=test`,
+      url: 'http://localhost:8080',
       reuseExistingServer: !process.env.CI,
       timeout: 180 * 1000,
       // stdout: 'pipe', // <--- Verás los logs del Frontend
