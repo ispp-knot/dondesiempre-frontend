@@ -75,7 +75,6 @@ export function StoreMap({
     .map(({ store }, index) => (
       <Marker
         key={`store-${index}`}
-        
         longitude={store.longitude}
         latitude={store.latitude}
         anchor="bottom"
