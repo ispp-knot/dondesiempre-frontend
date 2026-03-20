@@ -26,12 +26,13 @@ export default function EditPromotionPage() {
         name: data.name,
         discountPercentage: data.discountPercentage,
         description: data.description || '',
+        existingImageUrl: data.promotionImageUrl,
         products:
           data.products && data.products.length > 0
             ? data.products.map((p) => ({
                 id: p.id,
-                name: `Producto ${p.id.substring(0, 4)}`,
-                imageUrl: '/static/img/outfit_placeholder.jpg',
+                name: p.name,
+                imageUrl: p.image ?? '/static/img/outfit_placeholder.jpg',
               }))
             : [],
       });
@@ -48,7 +49,7 @@ export default function EditPromotionPage() {
     const dto = {
       name: formData.name,
       discountPercentage: formData.discountPercentage,
-      isActive: true,
+      isActive: formData.isActive,
       productIds: formData.products.map((p) => p.id),
       description: formData.description,
     };
@@ -73,7 +74,7 @@ export default function EditPromotionPage() {
     }
   };
 
-  if (promotion.isLoading) {
+  if (promotion.isLoading || !initialData) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white font-quicksand text-primary">
         <div className="flex flex-col items-center gap-4">

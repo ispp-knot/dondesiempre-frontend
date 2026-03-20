@@ -1,14 +1,7 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  FaCalendarAlt,
-  FaPlus,
-  FaTimes,
-  FaCheckCircle,
-  FaExclamationCircle,
-  FaLock,
-} from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { FaCalendarAlt, FaPlus, FaTimes, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
@@ -38,6 +31,7 @@ export interface PromotionFormData {
   dateRange?: DateRange;
   publishToInstagram: boolean;
   promotionImage: File | null;
+  existingImageUrl?: string;
 }
 
 interface PromotionFormProps {
@@ -55,7 +49,6 @@ export default function PromotionForm({
   isLoading = false,
   status,
 }: PromotionFormProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState(initialData?.name ?? '');
   const [discountPercentage, setDiscountPercentage] = useState<number>(
     initialData?.discountPercentage ?? 20
@@ -64,9 +57,7 @@ export default function PromotionForm({
   const [description, setDescription] = useState(initialData?.description ?? '');
   const [products, setProducts] = useState<Product[]>(initialData?.products ?? []);
   const [isActive, setIsActive] = useState(initialData?.isActive ?? true);
-  const [publishToInstagram, setPublishToInstagram] = useState(
-    initialData?.publishToInstagram ?? true
-  );
+  const [publishToInstagram] = useState(initialData?.publishToInstagram ?? true);
   const [promotionImage, setPromotionImage] = useState<File | null>(
     initialData?.promotionImage ?? null
   );
@@ -81,18 +72,6 @@ export default function PromotionForm({
       setDiscountPercentage(Math.min(100, Math.max(1, value)));
     } else if (e.target.value === '') {
       setDiscountPercentage(0);
-    }
-  };
-
-
-  const handleImageClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleImageKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleImageClick();
     }
   };
 
@@ -296,21 +275,27 @@ export default function PromotionForm({
 
       {/* Promotion Image */}
       <div className={cn('flex flex-col gap-1', isEditMode && 'opacity-60')}>
-        <h2 className="text-xl font-bold flex items-center gap-2">
-          Imagen de la promoción {isEditMode && <FaLock size={14} className="text-gray-400" />}
-        </h2>
+        <h2 className="text-xl font-bold flex items-center gap-2">Imagen de la promoción</h2>
         {!isEditMode && (
           <p className="text-secondary text-xs font-semibold">
             Se usará como imagen de fondo en el banner y stories
           </p>
         )}
-        <ImageUpload onChange={setPromotionImage} disabled={isEditMode} className="mt-2" />
+        <ImageUpload
+          onChange={setPromotionImage}
+          existingImageUrl={initialData?.existingImageUrl}
+          className="mt-2"
+        />
       </div>
 
       {/* Instagram Toggle */}
       <div className="flex items-center justify-between py-2">
         <span className="text-lg font-bold flex items-center gap-2 text-primary">Activa</span>
-        <Switch checked={isActive} onCheckedChange={setIsActive} className="cursor-pointer" />
+        <Switch
+          checked={isActive}
+          onCheckedChange={setIsActive}
+          className="cursor-pointer data-[state=unchecked]:bg-gray-300"
+        />
       </div>
 
       {/* Submit Button */}
@@ -348,19 +333,6 @@ function ProductSelector({
       if (!params?.id) return;
       setLoading(true);
       try {
-        // First, get the store to find the storefront ID
-        const storeResponse = await authorizedOfetch(
-          `${getBackendUrl()}/api/v1/stores/${params.id}`
-        );
-
-        const storefrontId = storeResponse.storefront?.id;
-
-        if (!storefrontId) {
-          console.error('No storefront ID found for store:', params.id);
-          setStoreProducts([]);
-          return;
-        }
-
         const response = await authorizedOfetch(
           `${getBackendUrl()}/api/v1/stores/${params.id}/products`
         );
