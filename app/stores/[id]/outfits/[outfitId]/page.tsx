@@ -9,7 +9,11 @@ import { Button } from '@/components/ui/button';
 import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { OutfitDTO, OutfitUpdateDTO } from '@/lib/types/outfits/outfitsDto';
 import { OrderDTO } from '@/lib/types/orders/orderDto';
-import { calculatePriceWithPercentageDiscount, convertPrice } from '@/lib/utils';
+import {
+  calculatePriceWithPercentageDiscount,
+  convertPrice,
+  outfitWithDiscount,
+} from '@/lib/utils';
 import Image from 'next/image';
 import { redirect, useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -300,8 +304,7 @@ export default function OutfitDetailsPage() {
                   ))}
                 </div>
                 <div>
-                  {outfit.data.discountedPriceInCents !== null &&
-                  outfit.data.discountedPriceInCents > 0 ? (
+                  {outfitWithDiscount(outfit.data) ? (
                     <h1 className="mt-4 mb-4 text-primary text-2xl">
                       <strong>Total: </strong>
                       {`${calculatePriceWithPercentageDiscount(
@@ -343,8 +346,7 @@ export default function OutfitDetailsPage() {
             {outfit.data && (
               <p className="text-secondary text-center">
                 Vas a realizar un pedido por un total de{' '}
-                {outfit.data.discountedPriceInCents !== null &&
-                outfit.data.discountedPriceInCents > 0 ? (
+                {outfitWithDiscount(outfit.data) ? (
                   <strong>{`${calculatePriceWithPercentageDiscount(
                     outfit.data.priceInCents,
                     outfit.data.discountedPriceInCents
