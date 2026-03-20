@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
-import { convertPrice } from '@/lib/utils';
+import { calculatePriceWithPercentageDiscount, convertPrice } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -57,7 +57,7 @@ export default function OutfitsPage() {
               {outfits.data.map((o) => (
                 <Card key={o.id} className="p-4 m-4 pt-8 shadow-xl">
                   <div>
-                    {o.discountedPriceInCents === o.priceInCents ? (
+                    {o.discountedPriceInCents === null || o.discountedPriceInCents === 0 ? (
                       <></>
                     ) : (
                       <RiDiscountPercentFill className="text-4xl" />
@@ -76,7 +76,7 @@ export default function OutfitsPage() {
                       />
                     ))}
                   </div>
-                  {o.discountedPriceInCents === o.priceInCents ? (
+                  {o.discountedPriceInCents === null || o.discountedPriceInCents === 0 ? (
                     <h1 className="font-bold text-primary text-center text-3xl">
                       {`${convertPrice(o.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
                     </h1>
@@ -86,7 +86,13 @@ export default function OutfitsPage() {
                         {`${convertPrice(o.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
                       </h1>
                       <h1 className="font-bold text-primary text-center text-3xl">
-                        {`${convertPrice(o.discountedPriceInCents).toFixed(2).toString().replace('.', ',')}€`}
+                        {`${calculatePriceWithPercentageDiscount(
+                          o.priceInCents,
+                          o.discountedPriceInCents
+                        )
+                          .toFixed(2)
+                          .toString()
+                          .replace('.', ',')}€`}
                       </h1>
                     </div>
                   )}

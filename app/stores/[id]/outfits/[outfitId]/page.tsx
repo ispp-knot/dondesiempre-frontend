@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { OutfitDTO, OutfitUpdateDTO } from '@/lib/types/outfits/outfitsDto';
 import { OrderDTO } from '@/lib/types/orders/orderDto';
-import { convertPrice } from '@/lib/utils';
+import { calculatePriceWithPercentageDiscount, convertPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { redirect, useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -104,10 +104,9 @@ export default function OutfitDetailsPage() {
     const dto: OutfitUpdateDTO = {
       name: (document.getElementById('form-name') as HTMLInputElement).value,
       description: (document.getElementById('form-description') as HTMLInputElement).value || null,
-      discountedPriceInCents:
-        Number.parseFloat(
-          (document.getElementById('form-discounted-price') as HTMLInputElement).value
-        ) * 100,
+      discountedPriceInCents: Number.parseFloat(
+        (document.getElementById('form-discounted-price') as HTMLInputElement).value
+      ),
       index: Number.parseInt((document.getElementById('form-index') as HTMLInputElement).value),
     };
 
@@ -173,15 +172,16 @@ export default function OutfitDetailsPage() {
                     htmlFor="form-discounted-price"
                     className="font-bold text-lg text-secondary"
                   >
-                    Precio rebajado:{' '}
+                    Descuento:{' '}
                   </label>
                   <input
                     type="number"
                     name="discounted-price"
                     id="form-discounted-price"
                     min="0.00"
+                    max="100.00"
                     step="0.01"
-                    defaultValue={`${convertPrice(outfit.data.discountedPriceInCents)}`}
+                    defaultValue={outfit.data.discountedPriceInCents}
                     required
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                   />
@@ -300,10 +300,27 @@ export default function OutfitDetailsPage() {
                   ))}
                 </div>
                 <div>
-                  <h1 className="mt-4 mb-4 text-primary text-2xl">
-                    <strong>Total: </strong>
-                    {`${convertPrice(outfit.data.discountedPriceInCents).toFixed(2).toString().replace('.', ',')}€ con IVA`}
-                  </h1>
+                  {outfit.data.discountedPriceInCents !== null &&
+                  outfit.data.discountedPriceInCents > 0 ? (
+                    <h1 className="mt-4 mb-4 text-primary text-2xl">
+                      <strong>Total: </strong>
+                      {`${calculatePriceWithPercentageDiscount(
+                        outfit.data.priceInCents,
+                        outfit.data.discountedPriceInCents
+                      )
+                        .toFixed(2)
+                        .toString()
+                        .replace('.', ',')}€ con IVA`}
+                    </h1>
+                  ) : (
+                    <h1 className="mt-4 mb-4 text-primary text-2xl">
+                      <strong>Total: </strong>
+                      {`${convertPrice(outfit.data.priceInCents)
+                        .toFixed(2)
+                        .toString()
+                        .replace('.', ',')}€ con IVA`}
+                    </h1>
+                  )}
                 </div>
                 <Button
                   onClick={() => setIsConfirmModalOpen(true)}
@@ -326,7 +343,21 @@ export default function OutfitDetailsPage() {
             {outfit.data && (
               <p className="text-secondary text-center">
                 Vas a realizar un pedido por un total de{' '}
-                <strong>{`${convertPrice(outfit.data.discountedPriceInCents).toFixed(2).toString().replace('.', ',')}€`}</strong>
+                {outfit.data.discountedPriceInCents !== null &&
+                outfit.data.discountedPriceInCents > 0 ? (
+                  <strong>{`${calculatePriceWithPercentageDiscount(
+                    outfit.data.priceInCents,
+                    outfit.data.discountedPriceInCents
+                  )
+                    .toFixed(2)
+                    .toString()
+                    .replace('.', ',')}€`}</strong>
+                ) : (
+                  <strong>{`${convertPrice(outfit.data.priceInCents)
+                    .toFixed(2)
+                    .toString()
+                    .replace('.', ',')}€`}</strong>
+                )}
                 .
               </p>
             )}
