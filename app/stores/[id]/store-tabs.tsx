@@ -38,7 +38,9 @@ export default function StoreTabs({
 }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
 
-  {/*TODO: Filter active promotions */}
+  {
+    /*TODO: Filter active promotions */
+  }
   const activePromotions = promotions;
   const [currentPromoIndex, setCurrentPromoIndex] = useState(0);
   const [selectedPromo, setSelectedPromo] = useState<PromotionDTO | null>(null);
@@ -62,8 +64,6 @@ export default function StoreTabs({
   const prevPromo = () => {
     setCurrentPromoIndex((prev) => (prev - 1 + activePromotions.length) % activePromotions.length);
   };
-  // If we have actual active promotions, use the first one for the banner
-  const promoOutfit = outfits.find((o) => o.discountedPriceInCents < o.priceInCents);
 
   /*
   const bannerPromo = activePromo
@@ -289,10 +289,10 @@ export default function StoreTabs({
                         </h4>
                         <div className="flex items-center gap-2">
                           <span className="text-primary font-bold text-sm">
-                            {product.discountedPriceInCents}€
+                            {product.discountedPriceInCents / 100}€
                           </span>
                           <span className="text-gray-400 text-xs line-through">
-                            {product.priceInCents/100}€
+                            {product.priceInCents / 100}€
                           </span>
                         </div>
                       </div>

@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
+import { usePassiveFetcher } from '@/lib/api/fetcher';
 import { StoreDTO, StoreSocialNetworkDTO } from '@/lib/types/stores/storesDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import Image from 'next/image';
@@ -14,12 +14,7 @@ import StoreTabs from './store-tabs';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import ErrorText from '@/components/dondeSiempre/ErrorText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
-import { use } from 'react';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
-
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
 
 const getSocialIcon = (name: string) => {
   const lowerName = name.toLowerCase();
@@ -36,7 +31,9 @@ export default function StorePage() {
 
   const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
   const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
-  const promotionsDto = usePassiveFetcher<PromotionDTO[]>({ url: `stores/${params.id}/promotions`});
+  const promotionsDto = usePassiveFetcher<PromotionDTO[]>({
+    url: `stores/${params.id}/promotions`,
+  });
 
   if (store.isLoading || outfits.isLoading) {
     return <LoadingText />;
@@ -85,7 +82,6 @@ export default function StorePage() {
           unoptimized
         />
       </div>
-
 
       <div className="w-full mt-5 text-center text-3xl md:text-5xl text-[var(--primary)] font-bold">
         {store.data.name}
