@@ -1,4 +1,4 @@
-import { ProductDTO } from "../products/productsDto";
+import { ProductDTO } from '../products/productsDto';
 
 export interface PromotionCreationDTO {
   name: string;
@@ -16,7 +16,7 @@ export interface PromotionDTO {
   id: string;
   name: string;
   discountPercentage: number;
-  isActive: boolean;
+  active: boolean;
   description: string;
   storeId: string;
   products: ProductDTO[];

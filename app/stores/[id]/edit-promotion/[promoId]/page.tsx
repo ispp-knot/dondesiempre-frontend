@@ -27,6 +27,7 @@ export default function EditPromotionPage() {
         discountPercentage: data.discountPercentage,
         description: data.description || '',
         existingImageUrl: data.promotionImageUrl,
+        isActive: data.active,
         products:
           data.products && data.products.length > 0
             ? data.products.map((p) => ({
@@ -43,6 +44,7 @@ export default function EditPromotionPage() {
   }, [promotion.data, promotion.isError, promotion.error]);
 
   const handleSubmit = async (formData: PromotionFormData) => {
+    console.log('isActive recibido:', formData.isActive);
     setIsSaving(true);
     setStatus(null);
 
@@ -53,6 +55,8 @@ export default function EditPromotionPage() {
       productIds: formData.products.map((p) => p.id),
       description: formData.description,
     };
+    console.log('DTO is Active envidado:', dto.isActive); // ← añadir
+    console.log('DTO JSON:', JSON.stringify(dto));
 
     try {
       await updatePromotion.fetch({
