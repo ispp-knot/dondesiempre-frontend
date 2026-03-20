@@ -172,6 +172,8 @@ export default function OutfitCreationPage() {
                           index={i}
                           product={p}
                           removable={true}
+                          isOwner={true}
+                          storeId={params.id}
                           onClick={async () => {
                             setOutfitProducts(
                               outfitProducts.filter((product) => product.id !== p.id)

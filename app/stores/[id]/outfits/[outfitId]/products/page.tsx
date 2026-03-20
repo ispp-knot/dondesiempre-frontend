@@ -5,6 +5,7 @@ import SortableProduct from '@/components/dondeSiempre/SortableProduct';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
+import { useAuth } from '@/lib/auth/AuthContext';
 import { OutfitDTO, OutfitCreationProductDTO } from '@/lib/types/outfits/outfitsDto';
 import { ProductDTO } from '@/lib/types/products/productsDto';
 import { convertPrice } from '@/lib/utils';
@@ -18,6 +19,7 @@ import LoadingText from '../../../../../../components/dondeSiempre/LoadingText';
 
 export default function OutfitProductsPage() {
   const params = useParams<{ id: string; outfitId: string }>();
+  const { getCurrentUser } = useAuth();
 
   const [movedProducts, setMovedProducts] = useState(new Array<string>());
 
@@ -46,6 +48,9 @@ export default function OutfitProductsPage() {
       </>
     );
   }
+
+  const user = getCurrentUser();
+  const isOwner = user?.roles.includes('STORE') ?? false;
   const outfitProducts = outfit.data?.products.sort((a, b) => a.index - b.index);
   return products.data && outfit.data && outfitProducts ? (
     <DragDropProvider
@@ -82,6 +87,8 @@ export default function OutfitProductsPage() {
                   index={i}
                   product={p}
                   removable={outfitProducts.length > 1}
+                  isOwner={isOwner}
+                  storeId={params.id}
                   onClick={async () => {
                     await removeProduct.fetch({
                       url: `outfits/${params.outfitId}/products/${p.id}`,
