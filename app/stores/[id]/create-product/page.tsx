@@ -6,9 +6,9 @@ import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
-import { ProductCreationDTO } from '@/lib/types/products/productsDto';
+import { ProductCreationDTO, ProductDTO } from '@/lib/types/products/productsDto';
 import { ProductTypeDTO } from '@/lib/types/producttypes/productTypesDto';
-import { redirect, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
 export default function ProductCreationPage() {
@@ -17,7 +17,7 @@ export default function ProductCreationPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const productTypes = usePassiveFetcher<ProductTypeDTO[]>({ url: `product-types` });
-  const createProduct = useActiveFetcher<any>({
+  const createProduct = useActiveFetcher<ProductDTO>({
     url: `products?storeId=${params.id}`,
     method: 'POST',
   });

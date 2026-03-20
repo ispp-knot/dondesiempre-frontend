@@ -35,6 +35,7 @@ export default function ProductEditPage() {
 
   useEffect(() => {
     if (product.data) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData({
         name: product.data.name,
         description: product.data.description,
