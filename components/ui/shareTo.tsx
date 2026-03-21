@@ -44,14 +44,8 @@ function getBackgroundImage(item: Props['item'], images?: string[]): string {
 
 function getDrawOptions(item: Props['item'], typeValue: itemType) {
   const badgeTitle = typeValue === itemType.PROMOTION ? '¡Nueva promoción!' : '¡Nuevo descuento!';
-  let discount: number;
-  if (itemType.OUTFIT == typeValue) {
-    item = item as OutfitDTO;
-    discount = Math.floor((1 - item.discountedPriceInCents / item.priceInCents) * 100);
-  } else {
-    item = item as PromotionDTO | ProductDTO;
-    discount = item.discountPercentage;
-  }
+  const discount: number = item.discountPercentage ? item.discountPercentage : 0;
+  item = item as PromotionDTO | ProductDTO;
   return {
     badgeTitle: badgeTitle,
     itemName: item.name,
