@@ -1,4 +1,4 @@
-import { TEST_MAP_LOCATION } from '@/tests/scripts/generator';
+import { TEST_MAP_LOCATION } from '@/tests/scripts/utils';
 import { test, expect } from '@playwright/test';
 
 const authClientFile = './tests/scripts/auth.client.json';

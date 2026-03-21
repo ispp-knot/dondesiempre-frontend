@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TEST_MAP_LOCATION } from './scripts/generator';
+import { TEST_MAP_LOCATION } from './scripts/utils';
 
 test.beforeEach(async ({ context }) => {
   await context.grantPermissions(['geolocation']);
