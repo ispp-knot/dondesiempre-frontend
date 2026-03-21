@@ -2,7 +2,6 @@ import type { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { z } from 'zod';
 
 export const MIN_OUTFIT_PRODUCTS = 2;
-export const MAX_OUTFIT_INDEX = 2147483647;
 export const MAX_OUTFIT_NAME_LENGTH = 255;
 export const MAX_OUTFIT_DESCRIPTION_LENGTH = 5000;
 export const MAX_OUTFIT_TAG_LENGTH = 255;
@@ -10,10 +9,10 @@ export const MAX_OUTFIT_TAG_LENGTH = 255;
 export const outfitTagSchema = z
   .string()
   .trim()
-  .min(1, 'La etiqueta no puede estar vacía.')
+  .min(1, 'La etiqueta no puede estar vacia.')
   .max(
     MAX_OUTFIT_TAG_LENGTH,
-    `Cada etiqueta puede tener como máximo ${MAX_OUTFIT_TAG_LENGTH} caracteres.`
+    `Cada etiqueta puede tener como maximo ${MAX_OUTFIT_TAG_LENGTH} caracteres.`
   );
 
 const baseOutfitFormSchema = z.object({
@@ -29,7 +28,7 @@ const baseOutfitFormSchema = z.object({
     .string()
     .max(
       MAX_OUTFIT_DESCRIPTION_LENGTH,
-      `La descripción no puede superar los ${MAX_OUTFIT_DESCRIPTION_LENGTH} caracteres.`
+      `La descripcion no puede superar los ${MAX_OUTFIT_DESCRIPTION_LENGTH} caracteres.`
     )
     .transform((value) => {
       const trimmedValue = value.trim();
@@ -39,11 +38,6 @@ const baseOutfitFormSchema = z.object({
     .number({ error: 'El descuento es obligatorio.' })
     .min(0, 'El descuento no puede ser negativo.')
     .max(100, 'El descuento no puede superar el 100%.'),
-  index: z.coerce
-    .number({ error: 'El índice es obligatorio.' })
-    .int('El índice debe ser un número entero.')
-    .min(0, 'El índice no puede ser negativo.')
-    .max(MAX_OUTFIT_INDEX, `El índice no puede superar ${MAX_OUTFIT_INDEX}.`),
 });
 
 export function createOutfitFormSchema() {

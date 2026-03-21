@@ -17,7 +17,6 @@ import {
   createOutfitFormSchema,
   getMissingOutfitProductsCount,
   MAX_OUTFIT_DESCRIPTION_LENGTH,
-  MAX_OUTFIT_INDEX,
   MAX_OUTFIT_NAME_LENGTH,
   MAX_OUTFIT_TAG_LENGTH,
   MIN_OUTFIT_PRODUCTS,
@@ -86,7 +85,6 @@ export default function OutfitCreationPage() {
     defaultValues: {
       name: '',
       description: '',
-      index: 0,
       discountPercentage: 0,
       tags: [],
       productIds: [],
@@ -196,7 +194,6 @@ export default function OutfitCreationPage() {
     const dto: OutfitCreationDTO = {
       name: data.name,
       description: data.description,
-      index: data.index,
       discountPercentage: data.discountPercentage > 0 ? data.discountPercentage : null,
       discountedPriceInCents: hasOutfitDiscount ? discountedOutfitPriceInCents : totalPriceInCents,
       storefrontId: store.data.storefront.id,
@@ -223,7 +220,6 @@ export default function OutfitCreationPage() {
                 JSON.stringify({
                   name: data.name,
                   description: data.description,
-                  index: data.index,
                   discountPercentage: data.discountPercentage,
                   discountedPriceInCents: discountedOutfitPriceInCents,
                 }),
@@ -317,45 +313,26 @@ export default function OutfitCreationPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="form-index" className="text-base font-bold text-secondary">
-                    Índice
-                  </Label>
-                  <Input
-                    id="form-index"
-                    type="number"
-                    min="0"
-                    max={`${MAX_OUTFIT_INDEX}`}
-                    step="1"
-                    inputMode="numeric"
-                    aria-invalid={!!errors.index}
-                    {...register('index')}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Usa un número entero entre 0 y {MAX_OUTFIT_INDEX}.
-                  </p>
-                  <FieldError message={errors.index?.message} />
-                </div>
-
-                <div className="space-y-2">
                   <Label
                     htmlFor="form-discount-percentage"
                     className="text-base font-bold text-secondary"
                   >
                     Descuento
                   </Label>
-                  <Input
-                    id="form-discount-percentage"
-                    type="number"
-                    min="0"
-                    max="100"
-                    step="1"
-                    inputMode="numeric"
-                    aria-invalid={!!errors.discountPercentage}
-                    {...register('discountPercentage')}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Usa `0` si no quieres aplicar descuento. Si lo hay, indica el porcentaje.
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="form-discount-percentage"
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="1"
+                      inputMode="numeric"
+                      aria-invalid={!!errors.discountPercentage}
+                      className="w-24 sm:w-28"
+                      {...register('discountPercentage')}
+                    />
+                    <span className="text-base font-semibold text-secondary">%</span>
+                  </div>
                   <FieldError message={errors.discountPercentage?.message} />
                 </div>
 
@@ -395,8 +372,7 @@ export default function OutfitCreationPage() {
                   </div>
                   <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                     <p className="text-xs text-muted-foreground">
-                      Pulsa Enter o &quot;,&quot; para añadir una etiqueta. Los espacios ya no la
-                      crean automáticamente.
+                      Pulsa Enter o &quot;,&quot; para añadir una etiqueta.
                     </p>
                     <p className="shrink-0 text-xs text-muted-foreground">
                       {tagInput.length}/{MAX_OUTFIT_TAG_LENGTH}
@@ -458,6 +434,11 @@ export default function OutfitCreationPage() {
                     />
                   ))}
                 </div>
+                {outfitProducts.length > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    Pulsa la X de una prenda para quitarla del outfit antes de crearlo.
+                  </p>
+                )}
               </div>
 
               <div>

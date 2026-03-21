@@ -12,11 +12,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
+import { useAuth } from '@/lib/auth/AuthContext';
 import { OutfitDTO, OutfitUpdateDTO } from '@/lib/types/outfits/outfitsDto';
 import {
   createEditOutfitFormSchema,
+  MIN_OUTFIT_PRODUCTS,
   MAX_OUTFIT_DESCRIPTION_LENGTH,
-  MAX_OUTFIT_INDEX,
   MAX_OUTFIT_NAME_LENGTH,
   MAX_OUTFIT_TAG_LENGTH,
   normalizeOutfitTag,
@@ -30,18 +31,15 @@ import {
   getOutfitDisplayPrice,
 } from '@/lib/utils';
 import Image from 'next/image';
+import { FetchError } from 'ofetch';
 import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { FaPlus } from 'react-icons/fa';
 import { FaTag } from 'react-icons/fa6';
 import { GoDotFill } from 'react-icons/go';
+import { IoIosCloseCircle } from 'react-icons/io';
 import { z } from 'zod';
-
-interface FetchError {
-  status?: number;
-  message?: string;
-}
 
 type EditOutfitSchema = ReturnType<typeof createEditOutfitFormSchema>;
 type EditOutfitFormInput = z.input<EditOutfitSchema>;
@@ -52,9 +50,11 @@ type OutfitAdminFormProps = {
   onSave: (dto: OutfitUpdateDTO, image: File | null) => Promise<void>;
   onAddTag: (tag: string) => Promise<void>;
   onRemoveTag: (tag: string) => Promise<void>;
+  onRemoveProduct: (productId: string) => Promise<void>;
   isSaving: boolean;
   isAddingTag: boolean;
   isRemovingTag: boolean;
+  isRemovingProduct: boolean;
 };
 
 function FieldError({ message }: { message?: string | null }) {
@@ -62,19 +62,50 @@ function FieldError({ message }: { message?: string | null }) {
   return <p className="text-sm text-destructive">{message}</p>;
 }
 
+function getFetchErrorMessage(
+  error: unknown,
+  fallback: string,
+  unauthorizedMessage = fallback
+): string {
+  if (error instanceof FetchError) {
+    const status = error.response?.status ?? error.status;
+
+    if (status === 401 || status === 403) {
+      return unauthorizedMessage;
+    }
+
+    if (typeof error.data === 'string' && error.data.trim().length > 0) {
+      return error.data;
+    }
+
+    if (typeof error.message === 'string' && error.message.trim().length > 0) {
+      return error.message;
+    }
+  }
+
+  if (error instanceof Error && error.message.trim().length > 0) {
+    return error.message;
+  }
+
+  return fallback;
+}
+
 function OutfitAdminForm({
   outfit,
   onSave,
   onAddTag,
   onRemoveTag,
+  onRemoveProduct,
   isSaving,
   isAddingTag,
   isRemovingTag,
+  isRemovingProduct,
 }: Readonly<OutfitAdminFormProps>) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [tagInput, setTagInput] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
   const [tagError, setTagError] = useState<string | null>(null);
+  const [productError, setProductError] = useState<string | null>(null);
   const editOutfitSchema = createEditOutfitFormSchema();
 
   const {
@@ -88,7 +119,6 @@ function OutfitAdminForm({
       name: outfit.name,
       description: outfit.description ?? '',
       discountPercentage: getOutfitDiscountPercentage(outfit),
-      index: outfit.index,
     },
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -103,6 +133,8 @@ function OutfitAdminForm({
   const outfitDisplayPrice = hasOutfitDiscount
     ? calculatePriceWithPercentageDiscount(outfit.priceInCents, discountPercentage)
     : convertPrice(outfit.priceInCents);
+  const sortedProducts = [...outfit.products].sort((a, b) => a.index - b.index);
+  const canRemoveProducts = sortedProducts.length > MIN_OUTFIT_PRODUCTS;
 
   const handleAddTag = async () => {
     const parsedTag = outfitTagSchema.safeParse(normalizedTagInput);
@@ -121,8 +153,14 @@ function OutfitAdminForm({
       await onAddTag(parsedTag.data);
       setTagInput('');
       setTagError(null);
-    } catch {
-      setTagError('No se pudo añadir la etiqueta. Inténtalo de nuevo.');
+    } catch (error: unknown) {
+      setTagError(
+        getFetchErrorMessage(
+          error,
+          'No se pudo añadir la etiqueta. Inténtalo de nuevo.',
+          'Solo la tienda propietaria puede modificar las etiquetas.'
+        )
+      );
     }
   };
 
@@ -130,8 +168,34 @@ function OutfitAdminForm({
     try {
       await onRemoveTag(tag);
       setTagError(null);
-    } catch {
-      setTagError('No se pudo eliminar la etiqueta. Inténtalo de nuevo.');
+    } catch (error: unknown) {
+      setTagError(
+        getFetchErrorMessage(
+          error,
+          'No se pudo eliminar la etiqueta. Inténtalo de nuevo.',
+          'Solo la tienda propietaria puede modificar las etiquetas.'
+        )
+      );
+    }
+  };
+
+  const handleRemoveProduct = async (productId: string) => {
+    if (!canRemoveProducts) {
+      setProductError(`Un outfit debe conservar al menos ${MIN_OUTFIT_PRODUCTS} prendas.`);
+      return;
+    }
+
+    try {
+      await onRemoveProduct(productId);
+      setProductError(null);
+    } catch (error: unknown) {
+      setProductError(
+        getFetchErrorMessage(
+          error,
+          'No se pudo quitar el producto. Intentalo de nuevo.',
+          'Solo la tienda propietaria puede modificar los productos del outfit.'
+        )
+      );
     }
   };
 
@@ -148,12 +212,17 @@ function OutfitAdminForm({
             data.discountPercentage > 0
               ? Math.round(outfit.priceInCents * (1 - data.discountPercentage / 100))
               : outfit.priceInCents,
-          index: data.index,
         },
         imageFile
       );
-    } catch {
-      setFormError('No se pudieron guardar los cambios. Revisa los campos e inténtalo de nuevo.');
+    } catch (error: unknown) {
+      setFormError(
+        getFetchErrorMessage(
+          error,
+          'No se pudieron guardar los cambios. Revisa los campos e inténtalo de nuevo.',
+          'Debes iniciar sesión como la tienda propietaria para editar este outfit.'
+        )
+      );
     }
   };
 
@@ -201,7 +270,7 @@ function OutfitAdminForm({
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 md:col-span-2">
             <Label htmlFor="form-image" className="text-base font-bold text-secondary">
               Imagen
             </Label>
@@ -210,48 +279,29 @@ function OutfitAdminForm({
             </div>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2">
-            <div className="space-y-2">
+          <div className="space-y-2 md:col-span-2">
+            <div className="max-w-xs space-y-2">
               <Label
                 htmlFor="form-discount-percentage"
                 className="text-base font-bold text-secondary"
               >
                 Descuento
               </Label>
-              <Input
-                id="form-discount-percentage"
-                type="number"
-                min="0"
-                max="100"
-                step="1"
-                inputMode="numeric"
-                aria-invalid={!!errors.discountPercentage}
-                {...register('discountPercentage')}
-              />
-              <p className="text-xs text-muted-foreground">
-                Usa `0` si no quieres aplicar descuento. Si lo hay, indica el porcentaje.
-              </p>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="form-discount-percentage"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="1"
+                  inputMode="numeric"
+                  aria-invalid={!!errors.discountPercentage}
+                  className="w-24 sm:w-28"
+                  {...register('discountPercentage')}
+                />
+                <span className="text-base font-semibold text-secondary">%</span>
+              </div>
               <FieldError message={errors.discountPercentage?.message} />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="form-index" className="text-base font-bold text-secondary">
-                Índice
-              </Label>
-              <Input
-                id="form-index"
-                type="number"
-                min="0"
-                max={`${MAX_OUTFIT_INDEX}`}
-                step="1"
-                inputMode="numeric"
-                aria-invalid={!!errors.index}
-                {...register('index')}
-              />
-              <p className="text-xs text-muted-foreground">
-                Usa un número entero entre 0 y {MAX_OUTFIT_INDEX}.
-              </p>
-              <FieldError message={errors.index?.message} />
             </div>
           </div>
 
@@ -262,15 +312,56 @@ function OutfitAdminForm({
                 {`${convertPrice(outfit.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
               </strong>
             </p>
-            <p className="text-sm text-muted-foreground">
-              Precio final del outfit:{' '}
-              <strong>{`${outfitDisplayPrice.toFixed(2).toString().replace('.', ',')}€`}</strong>
-            </p>
             {hasOutfitDiscount && (
               <p className="text-sm font-semibold text-secondary">
                 Descuento aplicado al outfit: -{discountPercentage.toFixed(0)}%
               </p>
             )}
+            <p className="text-sm text-muted-foreground">
+              Precio final del outfit:{' '}
+              <strong>{`${outfitDisplayPrice.toFixed(2).toString().replace('.', ',')}€`}</strong>
+            </p>
+          </div>
+
+          <div className="space-y-3 md:col-span-2">
+            <div className="space-y-1">
+              <Label className="text-base font-bold text-secondary">Productos del outfit</Label>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {sortedProducts.map((product) => (
+                <Card key={product.id} className="relative overflow-hidden p-3">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-xs"
+                    aria-label={`Quitar ${product.name} del outfit`}
+                    onClick={() => void handleRemoveProduct(product.id)}
+                    disabled={isRemovingProduct}
+                    className="absolute right-2 top-2 text-secondary hover:bg-transparent hover:text-dark-secondary"
+                  >
+                    <IoIosCloseCircle className="size-5" />
+                  </Button>
+                  <div className="flex items-start gap-3 pr-6">
+                    <Image
+                      src={product.image || '/static/img/product_placeholder.png'}
+                      alt={product.name}
+                      width={160}
+                      height={160}
+                      className="h-20 w-20 shrink-0 rounded-lg object-cover shadow-md"
+                    />
+                    <div className="flex min-w-0 flex-1 flex-col gap-2">
+                      <div className="min-w-0">
+                        <p className="break-words font-semibold text-primary">{product.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {`${convertPrice(product.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+            <FieldError message={productError} />
           </div>
 
           <div className="space-y-2 md:col-span-2">
@@ -309,8 +400,7 @@ function OutfitAdminForm({
             </div>
             <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
               <p className="text-xs text-muted-foreground">
-                Pulsa Enter o &quot;,&quot; para añadir una etiqueta. Los espacios ya no la crean
-                automáticamente.
+                Pulsa Enter o &quot;,&quot; para añadir una etiqueta.
               </p>
               <p className="shrink-0 text-xs text-muted-foreground">
                 {tagInput.length}/{MAX_OUTFIT_TAG_LENGTH}
@@ -353,6 +443,7 @@ function OutfitAdminForm({
 export default function OutfitDetailsPage() {
   const params = useParams<{ id: string; outfitId: string }>();
   const router = useRouter();
+  const { getCurrentUser } = useAuth();
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(0);
@@ -375,10 +466,32 @@ export default function OutfitDetailsPage() {
     url: `outfits/${params.outfitId}/tags`,
     method: 'DELETE',
   });
+  const removeProduct = useActiveFetcher<void>({ method: 'DELETE' });
   const createOrder = useActiveFetcher<OrderDTO>({
     url: 'orders',
     method: 'POST',
   });
+
+  const currentUser = getCurrentUser();
+  const canManageOutfit = !!currentUser?.store?.id && currentUser.store.id === outfit.data?.storeId;
+
+  useEffect(() => {
+    if (!canManageOutfit) {
+      setIsAdmin(false);
+    }
+  }, [canManageOutfit]);
+
+  useEffect(() => {
+    const productCount = outfit.data?.products.length ?? 0;
+    if (productCount === 0) {
+      setSelectedProduct(0);
+      return;
+    }
+
+    setSelectedProduct((currentSelectedProduct) =>
+      Math.min(currentSelectedProduct, productCount - 1)
+    );
+  }, [outfit.data?.products.length]);
 
   if (outfit.isLoading) {
     return <LoadingText />;
@@ -422,6 +535,13 @@ export default function OutfitDetailsPage() {
     });
   };
 
+  const deleteProduct = async (productId: string) => {
+    await removeProduct.fetch({
+      url: `outfits/${params.outfitId}/products/${productId}`,
+    });
+    await outfit.refetch();
+  };
+
   const confirmAndCreateOrder = async () => {
     if (!outfit.data) return;
 
@@ -458,11 +578,13 @@ export default function OutfitDetailsPage() {
 
   return (
     <>
-      <LabelledSwitch
-        label="Modo tienda"
-        checked={isAdmin}
-        onCheckedChange={(checked) => setIsAdmin(checked)}
-      />
+      {canManageOutfit && (
+        <LabelledSwitch
+          label="Modo tienda"
+          checked={isAdmin}
+          onCheckedChange={(checked) => setIsAdmin(checked)}
+        />
+      )}
       <div className="flex flex-col items-center relative">
         {outfit.data ? (
           isAdmin ? (
@@ -473,9 +595,11 @@ export default function OutfitDetailsPage() {
                   onSave={saveOutfit}
                   onAddTag={saveAddedTag}
                   onRemoveTag={deleteTag}
+                  onRemoveProduct={deleteProduct}
                   isSaving={updateOutfit.isPending}
                   isAddingTag={addTag.isPending}
                   isRemovingTag={removeTag.isPending}
+                  isRemovingProduct={removeProduct.isPending}
                 />
               </div>
             </div>
