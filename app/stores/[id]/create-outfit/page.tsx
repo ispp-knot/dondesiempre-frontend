@@ -303,7 +303,7 @@ export default function OutfitCreationPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="form-image" className="text-base font-bold text-secondary">
                     Imagen
                   </Label>
@@ -312,28 +312,30 @@ export default function OutfitCreationPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="form-discount-percentage"
-                    className="text-base font-bold text-secondary"
-                  >
-                    Descuento
-                  </Label>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      id="form-discount-percentage"
-                      type="number"
-                      min="0"
-                      max="100"
-                      step="1"
-                      inputMode="numeric"
-                      aria-invalid={!!errors.discountPercentage}
-                      className="w-24 sm:w-28"
-                      {...register('discountPercentage')}
-                    />
-                    <span className="text-base font-semibold text-secondary">%</span>
+                <div className="space-y-2 md:col-span-2">
+                  <div className="max-w-xs space-y-2">
+                    <Label
+                      htmlFor="form-discount-percentage"
+                      className="text-base font-bold text-secondary"
+                    >
+                      Descuento
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        id="form-discount-percentage"
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="1"
+                        inputMode="numeric"
+                        aria-invalid={!!errors.discountPercentage}
+                        className="w-24 sm:w-28"
+                        {...register('discountPercentage')}
+                      />
+                      <span className="text-base font-semibold text-secondary">%</span>
+                    </div>
+                    <FieldError message={errors.discountPercentage?.message} />
                   </div>
-                  <FieldError message={errors.discountPercentage?.message} />
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
