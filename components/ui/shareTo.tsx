@@ -16,7 +16,6 @@ import { Button } from './button';
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Share2, Loader2 } from 'lucide-react';
 import Image from 'next/image';
-import { PromotionFormData } from '../dondeSiempre/PromotionForm';
 
 interface Props {
   item: ProductDTO | OutfitDTO | PromotionDTO | PromotionMockDTO;

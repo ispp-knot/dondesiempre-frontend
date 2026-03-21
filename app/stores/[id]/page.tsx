@@ -61,7 +61,6 @@ export default function StorePage() {
   const promotionsDto = usePassiveFetcher<PromotionDTO[]>({
     url: `stores/${params.id}/promotions`,
   });
-  
 
   if (store.isLoading || outfits.isLoading) {
     return <LoadingText />;

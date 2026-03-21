@@ -23,7 +23,7 @@ export default function CreatePromotionPage() {
     const dto = {
       name: formData.name,
       discountPercentage: formData.discountPercentage,
-      isActive: true,
+      active: formData.isActive,
       productIds: formData.products.map((p) => p.id),
       storeId: storeId,
       description: formData.description,
@@ -44,7 +44,7 @@ export default function CreatePromotionPage() {
       console.error('Error creating promotion:', error);
       setStatus({
         type: 'error',
-        message: `Error al crear la promoción. Verifica los datos.${dto}`,
+        message: `Error al crear la promoción. Verifica los datos.`,
       });
     } finally {
       setIsLoading(false);

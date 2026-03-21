@@ -346,7 +346,7 @@ function ProductSelector({
           `${getBackendUrl()}/api/v1/stores/${params.id}/products`
         );
 
-        console.log(response)
+        console.log(response);
         // Map backend response to Product interface
         const mapped: Product[] = response.map(
           (p: { id: string; name: string; image?: string }) => ({
