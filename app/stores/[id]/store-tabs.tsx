@@ -7,7 +7,6 @@ import Outfits from './outfits';
 import StoreOptions from './options';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
-import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { ShareTo } from '@/components/ui/shareTo';
 
 type Tab = 'catalogo' | 'sobre' | 'opciones';
@@ -21,20 +20,10 @@ type Props = {
 export default function StoreTabs({ description = '', outfits = [], store }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
 
-  const promoOutfit = outfits.find((o) => o.discountedPriceInCents < o.priceInCents);
+  const promoOutfit = outfits.find((o) => o.discountPercentage);
 
   const storefrontId = store?.storefront?.id;
-  const mockPromotion: PromotionDTO = {
-    id: '1a383fda-5ac8-4f1f-bfba-2dcd4f09dca3',
-    name: promoOutfit?.name || 'Esto es una promoción',
-    discountPercentage: promoOutfit
-      ? 100 - Math.trunc((promoOutfit.discountedPriceInCents / promoOutfit.priceInCents) * 100)
-      : 0,
-    isActive: true,
-    description: promoOutfit?.description || 'Esto es una descripcion',
-    storeId: store.id,
-    productIds: ['1a383fda', '5ac8', '4f1f-bfba', '2dcd4f09dca3'],
-  };
+
   return (
     <>
       {promoOutfit && (
@@ -53,7 +42,7 @@ export default function StoreTabs({ description = '', outfits = [], store }: Pro
             </h2>
             <p className="text-primary font-semibold mt-1">12/04/2026 - 26/04/2026</p>
             <ShareTo
-              item={mockPromotion}
+              item={promoOutfit}
               className="bg-secondary text-white font-medium py-2 px-4 rounded mt-4 w-[95%] shadow-sm hover:bg-secondary/90 hover:cursor-pointer transition"
             />
           </div>

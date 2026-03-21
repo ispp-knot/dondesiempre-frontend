@@ -6,10 +6,10 @@ import LabelledSwitch from '@/components/dondeSiempre/LabelledSwitch';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { Button } from '@/components/ui/button';
-import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
-import { OutfitDTO, OutfitUpdateDTO } from '@/lib/types/outfits/outfitsDto';
+import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { OrderDTO } from '@/lib/types/orders/orderDto';
-import { convertPrice } from '@/lib/utils';
+import { OutfitDTO, OutfitUpdateDTO } from '@/lib/types/outfits/outfitsDto';
+import { discountPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { redirect, useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -100,14 +100,12 @@ export default function OutfitDetailsPage() {
     if (!outfit.data) {
       return;
     }
-
+    const discount = (document.getElementById('form-discount-percentage') as HTMLInputElement)
+      .value;
     const dto: OutfitUpdateDTO = {
       name: (document.getElementById('form-name') as HTMLInputElement).value,
       description: (document.getElementById('form-description') as HTMLInputElement).value || null,
-      discountedPriceInCents:
-        Number.parseFloat(
-          (document.getElementById('form-discounted-price') as HTMLInputElement).value
-        ) * 100,
+      discountPercentage: discount ? Number.parseFloat(discount) : null,
       index: Number.parseInt((document.getElementById('form-index') as HTMLInputElement).value),
     };
 
@@ -170,19 +168,19 @@ export default function OutfitDetailsPage() {
                     existingImageUrl={outfit.data.image || undefined}
                   />
                   <label
-                    htmlFor="form-discounted-price"
+                    htmlFor="form-discount-percentage"
                     className="font-bold text-lg text-secondary"
                   >
-                    Precio rebajado:{' '}
+                    Descuento (%):{' '}
                   </label>
                   <input
                     type="number"
-                    name="discounted-price"
-                    id="form-discounted-price"
-                    min="0.00"
-                    step="0.01"
-                    defaultValue={`${convertPrice(outfit.data.discountedPriceInCents)}`}
-                    required
+                    name="discount-percentage"
+                    id="form-dicsount-percentage"
+                    min="0"
+                    max="100"
+                    step="1"
+                    defaultValue={`${outfit.data.discountPercentage}`}
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                   />
                   <label htmlFor="form-index" className="font-bold text-lg text-secondary">
@@ -313,7 +311,7 @@ export default function OutfitDetailsPage() {
                 <div>
                   <h1 className="mt-4 mb-4 text-primary text-2xl">
                     <strong>Total: </strong>
-                    {`${convertPrice(outfit.data.discountedPriceInCents).toFixed(2).toString().replace('.', ',')}€ con IVA`}
+                    {`${discountPrice(outfit.data.priceInCents, outfit.data.discountPercentage).toFixed(2).toString().replace('.', ',')}€ con IVA`}
                   </h1>
                 </div>
                 <Button
@@ -337,7 +335,7 @@ export default function OutfitDetailsPage() {
             {outfit.data && (
               <p className="text-secondary text-center">
                 Vas a realizar un pedido por un total de{' '}
-                <strong>{`${convertPrice(outfit.data.discountedPriceInCents).toFixed(2).toString().replace('.', ',')}€`}</strong>
+                <strong>{`${discountPrice(outfit.data.priceInCents, outfit.data.discountPercentage).toFixed(2).toString().replace('.', ',')}€`}</strong>
                 .
               </p>
             )}
