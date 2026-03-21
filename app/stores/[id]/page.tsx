@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { StoreDTO, StoreSocialNetworkDTO } from '@/lib/types/stores/storesDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
+import { hasMinimumOutfitProducts } from '@/lib/types/outfits/outfitsRules';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import {
@@ -73,6 +74,7 @@ export default function StorePage() {
   const primaryColor = store.data?.storefront?.primaryColor || '#000000';
   const secondaryColor = store.data?.storefront?.secondaryColor || '#000000';
   const banner = store.data?.storefront?.bannerImageUrl;
+  const validOutfits = (outfits.data ?? []).filter(hasMinimumOutfitProducts);
 
   return store.data && outfits.data ? (
     <div
@@ -145,7 +147,7 @@ export default function StorePage() {
       <StoreTabs
         store={store.data}
         description={store.data?.aboutUs || ''}
-        outfits={outfits.data}
+        outfits={validOutfits}
       />
     </div>
   ) : (
