@@ -4,7 +4,7 @@ import LabelledSwitch from '@/components/dondeSiempre/LabelledSwitch';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
+import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { hasMinimumOutfitProducts } from '@/lib/types/outfits/outfitsRules';
 import { convertPrice, getOutfitDisplayPrice, outfitWithDiscount } from '@/lib/utils';
@@ -29,7 +29,9 @@ export default function OutfitsPage() {
 
   if (outfits.isLoading) {
     return <LoadingText />;
-  } else if (outfits.isError) {
+  }
+
+  if (outfits.isError) {
     return <ErrorText error={outfits.error} />;
   }
 
@@ -49,11 +51,11 @@ export default function OutfitsPage() {
       outfits.setData(validOutfits);
       setCleanupStatus(
         invalidOutfits.length === 1
-          ? 'Se ha eliminado 1 outfit con una única prenda.'
-          : `Se han eliminado ${invalidOutfits.length} outfits con una única prenda.`
+          ? 'Se ha eliminado 1 outfit con una unica prenda.'
+          : `Se han eliminado ${invalidOutfits.length} outfits con una unica prenda.`
       );
     } catch {
-      setCleanupError('No se pudieron eliminar todos los outfits inválidos. Inténtalo de nuevo.');
+      setCleanupError('No se pudieron eliminar todos los outfits invalidos. Intentalo de nuevo.');
     } finally {
       setIsCleaningInvalidOutfits(false);
     }
@@ -71,10 +73,10 @@ export default function OutfitsPage() {
           {isAdmin && invalidOutfits.length > 0 && (
             <Card className="m-4 space-y-4 border-destructive/30 bg-destructive/5 p-4 shadow-xl">
               <div className="space-y-2">
-                <h2 className="text-xl font-bold text-primary">Outfits inválidos detectados</h2>
+                <h2 className="text-xl font-bold text-primary">Outfits invalidos detectados</h2>
                 <p className="text-sm text-secondary">
                   Hay {invalidOutfits.length} outfit
-                  {invalidOutfits.length === 1 ? '' : 's'} con una única prenda. No deberían
+                  {invalidOutfits.length === 1 ? '' : 's'} con una unica prenda. No deberian
                   mantenerse publicados.
                 </p>
                 <p className="text-sm text-muted-foreground">
@@ -90,89 +92,98 @@ export default function OutfitsPage() {
                 className="bg-primary text-white hover:bg-dark-primary"
               >
                 {isCleaningInvalidOutfits
-                  ? 'Eliminando outfits inválidos...'
-                  : 'Eliminar outfits inválidos'}
+                  ? 'Eliminando outfits invalidos...'
+                  : 'Eliminar outfits invalidos'}
               </Button>
             </Card>
           )}
+
           {isAdmin ? (
             <Link href={`/stores/${params.id}/create-outfit/`}>
-              <Card className="p-4 m-4 shadow-xl hover:bg-muted active:bg-input hover:cursor-pointer">
-                <div className="p-4 border-4 border-dashed border-secondary rounded-lg flex flex-row justify-center gap-4">
-                  <IoMdAddCircleOutline className="mt-8 mb-8 text-secondary text-center text-4xl" />
-                  <h1 className="mt-8 mb-8 font-bold text-secondary text-center text-3xl">
+              <Card className="m-4 p-4 shadow-xl hover:cursor-pointer hover:bg-muted active:bg-input">
+                <div className="flex flex-row justify-center gap-4 rounded-lg border-4 border-dashed border-secondary p-4">
+                  <IoMdAddCircleOutline className="mb-8 mt-8 text-center text-4xl text-secondary" />
+                  <h1 className="mb-8 mt-8 text-center text-3xl font-bold text-secondary">
                     Crear outfit
                   </h1>
                 </div>
               </Card>
             </Link>
-          ) : (
-            <></>
-          )}
+          ) : null}
+
           {validOutfits.length > 0 ? (
             <>
-              {validOutfits.map((o) => (
-                <Card key={o.id} className="p-4 m-4 pt-8 shadow-xl">
+              {validOutfits.map((outfit) => (
+                <Card key={outfit.id} className="m-4 p-4 pt-8 shadow-xl">
                   <div>
-                    {outfitWithDiscount(o) ? <RiDiscountPercentFill className="text-4xl" /> : <></>}
-                    <h1 className="mb-3 font-bold text-primary text-center text-3xl">{o.name}</h1>
+                    {outfitWithDiscount(outfit) ? (
+                      <RiDiscountPercentFill className="text-4xl" />
+                    ) : null}
+                    <h1 className="mb-3 text-center text-3xl font-bold text-primary">
+                      {outfit.name}
+                    </h1>
                   </div>
-                  <div className="flex flex-row w-fit max-w-11/12 self-center overflow-x-auto items-center gap-4 p-4">
-                    {o.products.map((p) => (
+
+                  <div className="flex w-fit max-w-11/12 flex-row items-center gap-4 self-center overflow-x-auto p-4">
+                    {outfit.products.map((product) => (
                       <Image
-                        key={p.id}
-                        src={p.image || '/static/img/product_placeholder.png'}
-                        alt={p.name}
+                        key={product.id}
+                        src={product.image || '/static/img/product_placeholder.png'}
+                        alt={product.name}
                         width={512}
                         height={512}
-                        className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg"
+                        className="h-30 w-30 shrink-0 rounded-lg object-cover shadow-lg md:h-50 md:w-50"
                       />
                     ))}
                   </div>
-                  {!outfitWithDiscount(o) ? (
-                    <h1 className="font-bold text-primary text-center text-3xl">
-                      {`${convertPrice(o.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
+
+                  {!outfitWithDiscount(outfit) ? (
+                    <h1 className="text-center text-3xl font-bold text-primary">
+                      {`${convertPrice(outfit.priceInCents).toFixed(2).replace('.', ',')}EUR`}
                     </h1>
                   ) : (
-                    <div className="flex flex-row self-center gap-3">
-                      <h1 className="text-primary text-center line-through text-3xl">
-                        {`${convertPrice(o.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
+                    <div className="flex flex-row gap-3 self-center">
+                      <h1 className="text-center text-3xl text-primary line-through">
+                        {`${convertPrice(outfit.priceInCents).toFixed(2).replace('.', ',')}EUR`}
                       </h1>
-                      <h1 className="font-bold text-primary text-center text-3xl">
-                        {`${getOutfitDisplayPrice(o).toFixed(2).toString().replace('.', ',')}€`}
+                      <h1 className="text-center text-3xl font-bold text-primary">
+                        {`${getOutfitDisplayPrice(outfit).toFixed(2).replace('.', ',')}EUR`}
                       </h1>
                     </div>
                   )}
+
                   {isAdmin ? (
-                    <div className="self-center grid grid-cols-3 w-11/12 gap-2">
+                    <div className="grid w-11/12 grid-cols-3 gap-2 self-center">
                       <Link
-                        href={`/stores/${params.id}/outfits/${o.id}`}
-                        className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
+                        href={`/stores/${params.id}/outfits/${outfit.id}`}
+                        className="flex h-12 w-full flex-wrap items-center justify-center gap-2 self-center rounded-lg bg-secondary p-2 text-md font-bold text-white hover:cursor-pointer hover:bg-dark-secondary md:flex-row md:text-xl"
                       >
                         Editar
                       </Link>
                       <Link
-                        href={`/stores/${params.id}/outfits/${o.id}/products`}
-                        className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
+                        href={`/stores/${params.id}/outfits/${outfit.id}/products`}
+                        className="flex h-12 w-full flex-wrap items-center justify-center gap-2 self-center rounded-lg bg-secondary p-2 text-md font-bold text-white hover:cursor-pointer hover:bg-dark-secondary md:flex-row md:text-xl"
                       >
                         Productos
                       </Link>
                       <Button
                         onClick={async () => {
-                          await deleteOutfit.fetch({ url: `outfits/${o.id}` });
-                          outfits.setData(validOutfits.filter((outfit) => outfit.id !== o.id));
+                          await deleteOutfit.fetch({ url: `outfits/${outfit.id}` });
+                          outfits.setData(
+                            validOutfits.filter((currentOutfit) => currentOutfit.id !== outfit.id)
+                          );
                         }}
-                        className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-primary hover:bg-dark-primary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
+                        className="flex h-12 w-full flex-wrap items-center justify-center gap-2 self-center rounded-lg bg-primary p-2 text-md font-bold text-white hover:cursor-pointer hover:bg-dark-primary md:flex-row md:text-xl"
                       >
                         Eliminar
                       </Button>
                     </div>
                   ) : (
                     <Link
-                      href={`/stores/${params.id}/outfits/${o.id}`}
-                      className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-11/12 md:w-1/4 h-12"
+                      href={`/stores/${params.id}/outfits/${outfit.id}`}
+                      className="flex h-12 w-11/12 flex-wrap items-center justify-center gap-2 self-center rounded-lg bg-secondary text-md font-bold text-white hover:cursor-pointer hover:bg-dark-secondary md:w-1/4 md:flex-row md:text-xl"
                     >
-                      Ver más
+                      Ver mas
                     </Link>
                   )}
                 </Card>
@@ -180,7 +191,7 @@ export default function OutfitsPage() {
             </>
           ) : (
             !isAdmin && (
-              <NotFoundText message="Esta tienda todavía no tiene outfits disponibles..." />
+              <NotFoundText message="Esta tienda todavia no tiene outfits disponibles..." />
             )
           )}
         </div>

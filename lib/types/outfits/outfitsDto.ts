@@ -18,7 +18,7 @@ export interface OutfitProductDTO {
   description: string | null;
   image: string | null;
   priceInCents: number;
-  discountedPriceInCents: number;
+  discountPercentage: number | null;
   typeId: string;
   index: number;
   storeId: string;
