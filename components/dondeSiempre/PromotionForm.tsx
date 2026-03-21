@@ -1,40 +1,61 @@
 'use client';
 
-import 'dotenv/config';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useForm, Controller, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { FaCalendarAlt, FaPlus, FaTimes, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
+import Image from 'next/image';
+import { format } from 'date-fns';
+import { useParams } from 'next/navigation';
+
+// UI Components
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
-import Image from 'next/image';
-import { format } from 'date-fns';
-import { DateRange } from 'react-day-picker';
-import { useParams } from 'next/navigation';
+
+// Utils
 import { authorizedOfetch } from '@/lib/api/authorizedOfetch';
 import { cn } from '@/lib/utils';
 import { getBackendUrl } from '@/lib/config';
+import { DateRange } from 'react-day-picker';
 
-export interface Product {
-  id: string;
-  name: string;
-  imageUrl: string;
-}
+const productSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  imageUrl: z.string(),
+});
 
-export interface PromotionFormData {
-  name: string;
-  discountPercentage: number;
-  description: string;
-  products: Product[];
-  isActive: boolean;
-  endDate: string | null;
-  startDate: string | null;
-  publishToInstagram: boolean;
-  promotionImage: File | null;
-  existingImageUrl?: string;
-}
+export type Product = z.infer<typeof productSchema>;
+// 1. Definición del Esquema de Validación con Zod
+const promotionSchema = z.object({
+  name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
+  discountPercentage: z
+    .number()
+    .min(1, 'El descuento debe ser al menos 1%')
+    .max(100, 'El descuento máximo es de 100%'),
+  description: z.string().min(5, 'La descripción es muy corta'),
+  products: z.array(productSchema).min(1, 'Selecciona al menos un producto'),
+  isActive: z.boolean(),
+  // Para objetos anidados, validamos los campos internos
+  dateRange: z
+    .object({
+      from: z.date({ error: 'Fecha de inicio requerida' }),
+      to: z.date({ error: 'Fecha de fin requerida' }),
+    })
+    .refine((data) => data.from && data.to, {
+      message: 'El rango de fechas es obligatorio',
+    }),
+  // Para la imagen, validamos que no sea null
+  promotionImage: z.any().refine((val) => val !== null && val !== undefined, {
+    message: 'La imagen de la promoción es obligatoria',
+  }),
+});
+
+export type PromotionFormData = z.infer<typeof promotionSchema>;
 
 interface PromotionFormProps {
   initialData?: Partial<PromotionFormData>;
@@ -51,57 +72,55 @@ export default function PromotionForm({
   isLoading = false,
   status,
 }: PromotionFormProps) {
-  const [name, setName] = useState(initialData?.name ?? '');
-  const [discountPercentage, setDiscountPercentage] = useState<number>(
-    initialData?.discountPercentage ?? 20
-  );
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(
-    initialData?.startDate || initialData?.endDate
-      ? {
-          from: initialData.startDate ? new Date(initialData.startDate) : undefined,
-          to: initialData.endDate ? new Date(initialData.endDate) : undefined,
-        }
-      : undefined
-  );
-  const [description, setDescription] = useState(initialData?.description ?? '');
-  const [products, setProducts] = useState<Product[]>(initialData?.products ?? []);
-  const [isActive, setIsActive] = useState(initialData?.isActive ?? true);
-  const [publishToInstagram] = useState(initialData?.publishToInstagram ?? true);
-  const [promotionImage, setPromotionImage] = useState<File | null>(
-    initialData?.promotionImage ?? null
-  );
+  // 2. Inicialización de React Hook Form
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm<PromotionFormData>({
+    resolver: zodResolver(promotionSchema),
+    defaultValues: {
+      name: initialData?.name ?? '',
+      discountPercentage: initialData?.discountPercentage ?? 20,
+      description: initialData?.description ?? '',
+      products: initialData?.products ?? [],
+      isActive: initialData?.isActive ?? true,
+      dateRange: {
+        from: initialData?.dateRange?.from ? new Date(initialData.dateRange.from) : undefined,
+        to: initialData?.dateRange?.to ? new Date(initialData.dateRange.to) : undefined,
+      },
+      promotionImage: null,
+    },
+  });
 
-  const handleDiscountChange = (value: number[]) => {
-    setDiscountPercentage(value[0]);
-  };
+  const selectedProducts =
+    useWatch({
+      control,
+      name: 'products',
+    }) || []; // Aseguramos que sea un array para evitar errores de .map
 
-  const handleDiscountInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Number.parseInt(e.target.value, 10);
-    if (!Number.isNaN(value)) {
-      setDiscountPercentage(Math.min(100, Math.max(1, value)));
-    } else if (e.target.value === '') {
-      setDiscountPercentage(0);
-    }
+  const dateRange = useWatch({
+    control,
+    name: 'dateRange',
+  });
+
+  const onFormSubmit = (data: PromotionFormData) => {
+    // Formateamos las fechas al formato que espera tu API antes de enviar
+    const formattedData = {
+      ...data,
+      startDate: data.dateRange.from ? format(data.dateRange.from, 'yyyy-MM-dd') : null,
+      endDate: data.dateRange.to ? format(data.dateRange.to, 'yyyy-MM-dd') : null,
+    };
+    onSubmit(formattedData);
   };
 
   const removeProduct = (id: string) => {
-    setProducts(products.filter((p) => p.id !== id));
-  };
-
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const formattedData = {
-      name,
-      discountPercentage,
-      description,
-      isActive,
-      promotionImage,
-      publishToInstagram,
-      products,
-      startDate: dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : null,
-      endDate: dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : null,
-    };
-    onSubmit(formattedData);
+    setValue(
+      'products',
+      selectedProducts.filter((p) => p.id !== id)
+    );
   };
 
   const dateDisplay = dateRange?.from
@@ -111,7 +130,10 @@ export default function PromotionForm({
     : 'Selecciona el rango de fechas';
 
   return (
-    <form onSubmit={handleFormSubmit} className="flex flex-col gap-6 max-w-md mx-auto w-full">
+    <form
+      onSubmit={handleSubmit(onFormSubmit)}
+      className="flex flex-col gap-6 max-w-md mx-auto w-full"
+    >
       <h1 className="text-2xl font-bold mb-2">
         {isEditMode ? 'Editar Promoción' : 'Nueva Promoción'}
       </h1>
@@ -132,112 +154,130 @@ export default function PromotionForm({
       )}
 
       {/* Promotion Name */}
-      <div className="relative border-2 border-secondary group-focus-within:border-dark-secondary rounded-lg p-3 transition-colors">
-        <label
-          htmlFor="promo-name"
-          className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold flex items-center gap-1 text-primary"
-        >
+      <div className="relative border-2 border-secondary rounded-lg p-3">
+        <label className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold text-primary">
           Nombre de la promoción
         </label>
         <input
-          id="promo-name"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full outline-none text-lg font-bold bg-transparent text-primary placeholder:text-gray-300"
+          {...register('name')}
+          className="w-full outline-none text-lg font-bold bg-transparent text-primary"
           placeholder="Ej. Rebajas de Verano"
         />
+        {errors.name && <p className="text-destructive text-xs mt-1">{errors.name.message}</p>}
       </div>
 
-      {/* Discount Percentage */}
-      <div className="relative border-2 border-secondary rounded-lg p-3 group flex flex-col gap-4">
-        <label
-          htmlFor="promo-discount-input"
-          className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold text-primary z-10"
-        >
+      {/* Discount Percentage - Usando Controller para el Slider */}
+      <div className="relative border-2 border-secondary rounded-lg p-3 flex flex-col gap-4">
+        <label className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold text-primary">
           Porcentaje de descuento*
         </label>
         <div className="flex items-center gap-4 mt-2">
-          <Slider
-            value={[discountPercentage]}
-            onValueChange={handleDiscountChange}
-            max={100}
-            min={1}
-            step={1}
-            className="flex-1 cursor-pointer"
+          <Controller
+            control={control}
+            name="discountPercentage"
+            render={({ field }) => (
+              <>
+                <Slider
+                  value={[field.value]}
+                  onValueChange={(val) => field.onChange(val[0])}
+                  max={100}
+                  min={1}
+                  step={1}
+                  className="flex-1 cursor-pointer"
+                />
+                <div className="flex items-center gap-1 bg-gray-100 rounded-md px-2 py-1 min-w-[60px]">
+                  <input
+                    type="number"
+                    value={field.value}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                    className="w-8 outline-none text-lg text-dark-blue font-bold bg-transparent text-right"
+                  />
+                  <span className="text-secondary font-bold">%</span>
+                </div>
+              </>
+            )}
           />
-          <div className="flex items-center gap-1 bg-gray-100 rounded-md px-2 py-1 min-w-[60px]">
-            <input
-              id="promo-discount-input"
-              type="number"
-              value={discountPercentage || ''}
-              onChange={handleDiscountInputChange}
-              className="w-8 outline-none text-lg text-dark-blue font-bold bg-transparent text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            />
-            <span className="text-secondary font-bold">%</span>
-          </div>
         </div>
+        {errors.discountPercentage && (
+          <p className="text-destructive text-xs">{errors.discountPercentage.message}</p>
+        )}
       </div>
 
-      {/* Duration */}
-      <div className="relative border-2 border-secondary rounded-lg p-3 transition-colors">
-        <label className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold flex items-center gap-1 text-primary">
+      <div
+        className={cn(
+          'relative border-2 rounded-lg p-3 transition-colors',
+          errors.dateRange ? 'border-destructive' : 'border-secondary'
+        )}
+      >
+        <label className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold text-primary">
           Duración de la promoción
         </label>
-
-        <Popover>
-          <PopoverTrigger asChild>
-            <button className="flex justify-between items-center w-full text-left outline-none">
-              <div
-                className={cn('text-lg font-bold', dateRange ? 'text-primary' : 'text-gray-300')}
-              >
-                {dateDisplay}
-              </div>
-              <FaCalendarAlt className="text-secondary text-xl" />
-            </button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              initialFocus
-              mode="range"
-              defaultMonth={dateRange?.from}
-              selected={dateRange}
-              onSelect={setDateRange}
-              numberOfMonths={1}
-            />
-          </PopoverContent>
-        </Popover>
+        <Controller
+          control={control}
+          name="dateRange"
+          render={({ field }) => (
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className="flex justify-between items-center w-full text-left outline-none"
+                >
+                  <div
+                    className={cn(
+                      'text-lg font-bold',
+                      field.value?.from ? 'text-primary' : 'text-gray-300'
+                    )}
+                  >
+                    {dateDisplay}
+                  </div>
+                  <FaCalendarAlt
+                    className={cn(
+                      'text-xl',
+                      errors.dateRange ? 'text-destructive' : 'text-secondary'
+                    )}
+                  />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="range"
+                  selected={field.value as DateRange | undefined}
+                  onSelect={field.onChange}
+                  numberOfMonths={1}
+                />
+              </PopoverContent>
+            </Popover>
+          )}
+        />
+        {errors.dateRange && (
+          <p className="text-destructive text-xs mt-1">Selecciona ambas fechas (inicio y fin)</p>
+        )}
       </div>
 
       {/* Description */}
-      <div className="relative border-2 border-secondary rounded-lg p-3 transition-colors">
-        <label
-          htmlFor="promo-description"
-          className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold flex items-center gap-1 text-primary"
-        >
+      <div className="relative border-2 border-secondary rounded-lg p-3">
+        <label className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold text-primary">
           Descripción
         </label>
         <textarea
-          id="promo-description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Escribe una breve descripción de la promoción..."
-          className="w-full outline-none text-lg font-bold resize-none h-20 bg-transparent text-primary placeholder:text-gray-300"
+          {...register('description')}
+          placeholder="Escribe una descripción..."
+          className="w-full outline-none text-lg font-bold resize-none h-20 bg-transparent text-primary"
         />
+        {errors.description && (
+          <p className="text-destructive text-xs mt-1">{errors.description.message}</p>
+        )}
       </div>
 
       {/* Products Section */}
       <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-2">
-          <h2 className="text-xl font-bold flex items-center gap-2">Artículos en promoción</h2>
-        </div>
+        <h2 className="text-xl font-bold">Artículos en promoción</h2>
 
         <Popover>
           <PopoverTrigger asChild>
             <button
               type="button"
-              className="flex items-center gap-2 text-secondary font-bold text-lg hover:text-dark-secondary transition-colors w-fit p-2 border-2 border-secondary rounded-md"
-              onClick={() => console.log('Popover Trigger Clicked')}
+              className="flex items-center gap-2 text-secondary font-bold text-lg p-2 border-2 border-secondary rounded-md w-fit"
             >
               <FaPlus /> Añadir artículos
             </button>
@@ -245,85 +285,90 @@ export default function PromotionForm({
           <PopoverContent className="w-80 p-0 z-[100]" align="start">
             <ProductSelector
               onSelect={(product) => {
-                if (!products.some((p) => p.id === product.id)) {
-                  setProducts([...products, product]);
+                if (!selectedProducts.some((p) => p.id === product.id)) {
+                  setValue('products', [...selectedProducts, product]);
                 }
               }}
-              excludeIds={products.map((p) => p.id)}
+              excludeIds={selectedProducts.map((p) => p.id)}
             />
           </PopoverContent>
         </Popover>
 
+        {errors.products && (
+          <p className="text-destructive text-sm font-bold">{errors.products.message}</p>
+        )}
+
         <div className="flex flex-col gap-3">
-          {products.length > 0 ? (
-            products.map((product) => (
-              <div
-                key={product.id}
-                className={cn(
-                  'flex items-center gap-4 border-2 rounded-lg p-2 transition-colors border-secondary'
-                )}
-              >
-                <div className="relative w-16 h-16 rounded overflow-hidden flex-shrink-0">
-                  <Image src={product.imageUrl} alt={product.name} fill className="object-cover" />
-                </div>
-                <div className="flex-1 font-bold text-lg text-secondary">{product.name}</div>
-                <button
-                  type="button"
-                  onClick={() => removeProduct(product.id)}
-                  className="p-2 text-secondary hover:text-destructive transition-colors"
-                >
-                  <FaTimes size={18} />
-                </button>
+          {selectedProducts.map((product) => (
+            <div
+              key={product.id}
+              className="flex items-center gap-4 border-2 rounded-lg p-2 border-secondary"
+            >
+              <div className="relative w-16 h-16 rounded overflow-hidden flex-shrink-0">
+                <Image src={product.imageUrl} alt={product.name} fill className="object-cover" />
               </div>
-            ))
-          ) : (
-            <p className="text-gray-400 italic">No hay productos seleccionados.</p>
-          )}
+              <div className="flex-1 font-bold text-lg text-secondary">{product.name}</div>
+              <button
+                type="button"
+                onClick={() => removeProduct(product.id)}
+                className="p-2 text-secondary hover:text-destructive"
+              >
+                <FaTimes size={18} />
+              </button>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Promotion Image */}
       <div className={cn('flex flex-col gap-1', isEditMode && 'opacity-60')}>
-        <h2 className="text-xl font-bold flex items-center gap-2">Imagen de la promoción</h2>
-        {!isEditMode && (
-          <p className="text-secondary text-xs font-semibold">
-            Se usará como imagen de fondo en el banner y stories
-          </p>
+        <h2 className="text-xl font-bold">Imagen de la promoción</h2>
+        <Controller
+          control={control}
+          name="promotionImage"
+          render={({ field }) => (
+            <ImageUpload
+              onChange={field.onChange}
+              existingImageUrl={initialData?.promotionImage}
+              className={cn(
+                'mt-2 border-2 rounded-lg transition-colors',
+                errors.promotionImage ? 'border-destructive' : 'border-transparent'
+              )}
+            />
+          )}
+        />
+        {errors.promotionImage && (
+          <p className="text-destructive text-xs mt-1">{errors.promotionImage.message as string}</p>
         )}
-        <ImageUpload
-          onChange={setPromotionImage}
-          existingImageUrl={initialData?.existingImageUrl}
-          className="mt-2"
-        />
       </div>
 
-      {/* Instagram Toggle */}
+      {/* Active Toggle */}
       <div className="flex items-center justify-between py-2">
-        <span className="text-lg font-bold flex items-center gap-2 text-primary">Activa</span>
-        <Switch
-          checked={isActive}
-          onCheckedChange={setIsActive}
-          className="cursor-pointer data-[state=unchecked]:bg-gray-300"
+        <span className="text-lg font-bold text-primary">Activa</span>
+        <Controller
+          control={control}
+          name="isActive"
+          render={({ field }) => (
+            <Switch
+              checked={field.value}
+              onCheckedChange={field.onChange}
+              className="cursor-pointer"
+            />
+          )}
         />
       </div>
 
-      {/* Submit Button */}
       <Button
         type="submit"
         disabled={isLoading}
-        className="bg-secondary text-white font-bold py-8 rounded-lg text-xl mt-4 cursor-pointer hover:bg-dark-secondary transform transition active:scale-[0.98] w-full disabled:opacity-50"
+        className="bg-secondary text-white font-bold py-8 rounded-lg text-xl mt-4 w-full"
       >
-        {isLoading
-          ? isEditMode
-            ? 'Guardando...'
-            : 'Lanzando...'
-          : isEditMode
-            ? 'Guardar cambios'
-            : 'Lanzar promoción'}
+        {isLoading ? 'Cargando...' : isEditMode ? 'Guardar cambios' : 'Lanzar promoción'}
       </Button>
     </form>
   );
 }
+
+// Nota: El componente ProductSelector se mantiene igual pero recibe onSelect para actualizar el estado de RHF.
 
 function ProductSelector({
   onSelect,
