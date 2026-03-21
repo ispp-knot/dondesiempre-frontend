@@ -1,10 +1,8 @@
 'use client';
 
-import LabelledSwitch from '@/components/dondeSiempre/LabelledSwitch';
 import OutfitCard from '@/components/dondeSiempre/OutfitCard';
 import SortableOutfitCard from '@/components/dondeSiempre/SortableOutfitCard';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
-import { Card } from '@/components/ui/card';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { OutfitDTO, OutfitSortDTO } from '@/lib/types/outfits/outfitsDto';
 import { move } from '@dnd-kit/helpers';
@@ -12,10 +10,12 @@ import { DragDropProvider } from '@dnd-kit/react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ReactNode, useState } from 'react';
+import { FaRegSave } from 'react-icons/fa';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import ErrorText from '../../../../components/dondeSiempre/ErrorText';
 import LoadingText from '../../../../components/dondeSiempre/LoadingText';
 import ClientOutfitsPage from './ClientOutfitsPage';
+import { BiTransfer } from 'react-icons/bi';
 
 export default function OutfitsPage() {
   const params = useParams<{ id: string }>();
@@ -66,33 +66,48 @@ export default function OutfitsPage() {
           );
         }}
       >
-        <LabelledSwitch
-          label="Editar orden"
-          checked={isOrdering}
-          onCheckedChange={async (checked) => {
-            if (!checked) {
-              const dtos: OutfitSortDTO[] =
-                outfits.data?.map((out) => {
-                  return { id: out.id, index: out.index } as OutfitSortDTO;
-                }) || [];
-              await sortOutfits.fetch({ body: dtos });
-              outfits.refetch();
-            }
-            setIsOrdering(checked);
-          }}
-        />
         <div className="flex flex-col items-center">
           <div className="w-full md:w-8/12">
-            <Link href={`/stores/${params.id}/create-outfit/`}>
-              <Card className="p-4 m-4 shadow-xl hover:bg-muted active:bg-input hover:cursor-pointer">
-                <div className="p-4 border-4 border-dashed border-secondary rounded-lg flex flex-row justify-center gap-4">
-                  <IoMdAddCircleOutline className="mt-8 mb-8 text-secondary text-center text-4xl" />
-                  <h1 className="mt-8 mb-8 font-bold text-secondary text-center text-3xl">
-                    Crear outfit
-                  </h1>
+            <div className="flex flex-row justify-between w-full gap-2 p-4">
+              <div className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12">
+                <Link href={`/stores/${params.id}/create-outfit/`} className="flex flex-row gap-2">
+                  <IoMdAddCircleOutline className="mt-0.5 text-white text-center text-2xl" />
+                  <h1 className="font-bold text-white text-center text-xl">Crear outfit</h1>
+                </Link>
+              </div>
+              {isOrdering ? (
+                <div
+                  className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-primary hover:bg-dark-primary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
+                  onClick={async () => {
+                    setIsOrdering(false);
+
+                    const dtos: OutfitSortDTO[] =
+                      outfits.data?.map((out) => {
+                        return { id: out.id, index: out.index } as OutfitSortDTO;
+                      }) || [];
+                    await sortOutfits.fetch({ body: dtos });
+                    outfits.refetch();
+                  }}
+                >
+                  <div className="flex flex-row gap-2">
+                    <FaRegSave className="mt-0.5 text-white text-center text-2xl" />
+                    <h1 className="font-bold text-white text-center text-xl">Guardar</h1>
+                  </div>
                 </div>
-              </Card>
-            </Link>
+              ) : (
+                <div
+                  className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
+                  onClick={async () => {
+                    setIsOrdering(true);
+                  }}
+                >
+                  <div className="flex flex-row gap-2">
+                    <BiTransfer className="mt-0.5 text-white text-center text-2xl" />
+                    <h1 className="font-bold text-white text-center text-xl">Ordenar</h1>
+                  </div>
+                </div>
+              )}
+            </div>
             {outfits.data && outfits.data.length > 0 && (
               <>
                 {outfits.data.map((outfit, index) =>

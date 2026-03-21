@@ -17,13 +17,14 @@ export interface OutfitCardProps {
 export default function OutfitCard(props: OutfitCardProps) {
   return (
     <Card key={props.outfit.id} className="p-4 m-4 pt-8 shadow-xl">
-      <div>
+      <div className="flex flex-row justify-between ps-4 pe-4">
+        <div></div>
+        <h1 className="mb-3 font-bold text-primary text-center text-3xl">{props.outfit.name}</h1>
         {props.outfit.discountedPriceInCents === props.outfit.priceInCents ? (
-          <></>
+          <div></div>
         ) : (
           <RiDiscountPercentFill className="text-4xl" />
         )}
-        <h1 className="mb-3 font-bold text-primary text-center text-3xl">{props.outfit.name}</h1>
       </div>
       <div className="flex flex-row w-fit max-w-11/12 self-center overflow-x-auto items-center gap-4 p-4">
         {props.outfit.products.map((p) => (
