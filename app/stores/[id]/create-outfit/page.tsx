@@ -5,13 +5,14 @@ import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import SortableProduct from '@/components/dondeSiempre/SortableProduct';
+import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
-import { StoreDTO } from '@/lib/types/stores/storesDto';
-import { OutfitDTO, OutfitCreationDTO } from '@/lib/types/outfits/outfitsDto';
+import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
+import { OutfitCreationDTO, OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { productDTOToOufitCreationProductDTO } from '@/lib/types/outfits/outfitsHelper';
 import { ProductDTO } from '@/lib/types/products/productsDto';
+import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { convertPrice } from '@/lib/utils';
 import { move } from '@dnd-kit/helpers';
 import { DragDropProvider } from '@dnd-kit/react';
@@ -69,7 +70,7 @@ export default function OutfitCreationPage() {
   };
 
   return (
-    <>
+    <StoreOwnerGuard storeId={params.id}>
       {products.data ? (
         <DragDropProvider
           onDragEnd={(event) => {
@@ -237,6 +238,6 @@ export default function OutfitCreationPage() {
       ) : (
         <NotFoundText message="No hay productos para crear un outfit..." />
       )}
-    </>
+    </StoreOwnerGuard>
   );
 }

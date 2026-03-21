@@ -3,7 +3,7 @@
 import LabelledSwitch from '@/components/dondeSiempre/LabelledSwitch';
 import OutfitCard from '@/components/dondeSiempre/OutfitCard';
 import SortableOutfitCard from '@/components/dondeSiempre/SortableOutfitCard';
-import { StoreGuard } from '@/components/guards/StoreGuard';
+import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import { Card } from '@/components/ui/card';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { OutfitDTO, OutfitSortDTO } from '@/lib/types/outfits/outfitsDto';
@@ -35,14 +35,16 @@ export default function OutfitsPage() {
     return <ErrorText error={outfits.error} />;
   }
 
-  const renderClientOutfits = (): ReactNode => {
+  const renderClientPage = (): ReactNode => {
     return <ClientOutfitsPage storeId={params.id} outfits={outfits.data} />;
   };
 
   return (
-    <StoreGuard
-      fallbackWhenNotStore={renderClientOutfits()}
-      fallbackWhenLoggedOut={renderClientOutfits()}
+    <StoreOwnerGuard
+      storeId={params.id}
+      fallbackWhenLoggedOut={renderClientPage()}
+      fallbackWhenNotStore={renderClientPage()}
+      fallbackWhenNotStoreOwner={renderClientPage()}
     >
       <DragDropProvider
         onDragEnd={(event) => {
@@ -121,6 +123,6 @@ export default function OutfitsPage() {
           </div>
         </div>
       </DragDropProvider>
-    </StoreGuard>
+    </StoreOwnerGuard>
   );
 }
