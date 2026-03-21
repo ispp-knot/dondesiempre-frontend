@@ -5,7 +5,7 @@ import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { format } from 'util';
+import { format } from 'date-fns';
 
 export default function EditPromotionPage() {
   const params = useParams<{ id: string; promoId: string }>();
