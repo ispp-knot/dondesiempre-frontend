@@ -21,15 +21,13 @@ type Props = {
 export default function StoreTabs({ description = '', outfits = [], store }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
 
-  const promoOutfit = outfits.find((o) => o.discountedPriceInCents < o.priceInCents);
+  const promoOutfit = outfits.find((o) => o.discountPercentage);
 
   const storefrontId = store?.storefront?.id;
   const mockPromotion: PromotionDTO = {
     id: '1a383fda-5ac8-4f1f-bfba-2dcd4f09dca3',
     name: promoOutfit?.name || 'Esto es una promoción',
-    discountPercentage: promoOutfit
-      ? 100 - Math.trunc((promoOutfit.discountedPriceInCents / promoOutfit.priceInCents) * 100)
-      : 0,
+    discountPercentage: promoOutfit ? promoOutfit.discountPercentage || 0 : 0,
     isActive: true,
     description: promoOutfit?.description || 'Esto es una descripcion',
     storeId: store.id,
