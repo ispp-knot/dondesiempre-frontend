@@ -29,7 +29,6 @@ export interface OutfitCreationProductDTO {
 }
 
 export interface OutfitCreationDTO {
-  index: number;
   storefrontId: string;
   name: string;
   description: string | null;
@@ -41,7 +40,6 @@ export interface OutfitUpdateDTO {
   name: string;
   description: string | null;
   discountedPriceInCents: number;
-  index: number;
 }
 
 export interface OutfitSortDTO {

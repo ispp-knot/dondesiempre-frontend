@@ -53,7 +53,6 @@ export default function OutfitCreationPage() {
     const dto: OutfitCreationDTO = {
       name: (document.getElementById('form-name') as HTMLInputElement).value,
       description: (document.getElementById('form-description') as HTMLInputElement).value || null,
-      index: Number.parseInt((document.getElementById('form-index') as HTMLInputElement).value),
       storefrontId: store.data!.storefront.id,
       tags: outfitTags,
       products: outfitProducts.map((product, index) =>
@@ -120,19 +119,6 @@ export default function OutfitCreationPage() {
                       />
                       <label className="font-bold text-lg text-secondary">Imagen:</label>
                       <ImageUpload onChange={setImageFile} />
-                      <label htmlFor="form-index" className="font-bold text-lg text-secondary">
-                        Índice:{' '}
-                      </label>
-                      <input
-                        type="number"
-                        name="index"
-                        id="form-index"
-                        min="0"
-                        step="1"
-                        defaultValue={0}
-                        required
-                        className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
-                      />
                       <label htmlFor="form-tags" className="font-bold text-lg text-secondary">
                         Etiquetas:{' '}
                       </label>

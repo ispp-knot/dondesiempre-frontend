@@ -185,19 +185,6 @@ export default function OutfitDetailsPage() {
                     required
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                   />
-                  <label htmlFor="form-index" className="font-bold text-lg text-secondary">
-                    Índice:{' '}
-                  </label>
-                  <input
-                    type="number"
-                    name="index"
-                    id="form-index"
-                    min="0"
-                    step="1"
-                    defaultValue={outfit.data.index}
-                    required
-                    className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
-                  />
                   <label htmlFor="form-tags" className="font-bold text-lg text-secondary">
                     Etiquetas:{' '}
                   </label>
