@@ -2,7 +2,7 @@
 
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { JSX, useState } from 'react';
+import { JSX, useEffect, useState } from 'react';
 import Image from 'next/image';
 import AboutUs from './about-us';
 import Outfits from './outfits';
@@ -32,10 +32,17 @@ export default function StoreTabs({
   {
     /*TODO: Filter active promotions */
   }
-  const activePromotions = promotions;
+
+  const [activePromotions, setActivePromotions] = useState<PromotionDTO[]>([]);
   const [currentPromoIndex, setCurrentPromoIndex] = useState(0);
   const [selectedPromo, setSelectedPromo] = useState<PromotionDTO | null>(null);
+  
 
+  useEffect(() => {
+    setActivePromotions(promotions.filter(p=>p.active))
+  }, [promotions]);
+  
+  const totalSlides = activePromotions.length + 1;
   const formatDateRange = (start?: string, end?: string) => {
     if (!start || !end) return '¡Por tiempo limitado!';
 
@@ -49,11 +56,11 @@ export default function StoreTabs({
 
   // Funciones para navegar
   const nextPromo = () => {
-    setCurrentPromoIndex((prev) => (prev + 1) % activePromotions.length);
+    setCurrentPromoIndex((prev) => (prev + 1) % totalSlides);
   };
 
   const prevPromo = () => {
-    setCurrentPromoIndex((prev) => (prev - 1 + activePromotions.length) % activePromotions.length);
+    setCurrentPromoIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
 
   /*
@@ -72,103 +79,128 @@ export default function StoreTabs({
       : null;
   */
   const storefrontId = store?.storefront?.id;
+
+  // Renderizado del contenido del Banner (Promo vs Crear)
+  const renderBannerContent = () => {
+    // Si el índice actual es igual a la longitud, mostramos la tarjeta de "Crear"
+    if (currentPromoIndex === activePromotions.length) {
+      return (
+        <div className="relative z-10 flex flex-col items-center w-full text-center p-4">
+          <div className="bg-secondary/10 p-4 rounded-full mb-4">
+            <svg className="w-10 h-10 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+            </svg>
+          </div>
+          <h2 className="text-secondary font-black text-2xl md:text-3xl leading-tight">
+            ¿Quieres atraer más clientes?
+          </h2>
+          <p className="text-gray-600 font-medium mt-2 text-sm md:text-base">
+            Crea una nueva oferta o descuento especial para tu tienda.
+          </p>
+          <button
+            onClick={() => { window.location.href = `/stores/${store.id}/create-promotion` }}
+            className="bg-primary text-white font-bold py-3 px-8 rounded-lg mt-6 w-full shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
+          >
+            Crear Nueva Promoción
+          </button>
+        </div>
+      );
+    }
+
+    // Contenido normal de la promoción
+    const currentPromo = activePromotions[currentPromoIndex];
+    return (
+      <div className="relative z-10 flex flex-col items-center w-full text-center">
+        <h3 className="text-primary font-bold text-sm md:text-base uppercase tracking-widest">
+          ¡Promoción Activa!
+        </h3>
+        <h2 className="text-secondary font-black text-3xl md:text-4xl mt-2 leading-tight">
+          {currentPromo.name}
+        </h2>
+        <button
+          onClick={() => { window.location.href = `/stores/${store.id}/edit-promotion/${currentPromo.id}/` }}
+          className="absolute top-0 right-0 bg-white/80 hover:bg-white text-secondary p-2 rounded-full shadow-md transition-all z-30 group"
+          title="Editar promoción"
+        >
+          <svg 
+            className="w-5 h-5 group-hover:scale-110 transition-transform" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth="2" 
+              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" 
+            />
+          </svg>
+        </button>
+        <p className="text-white-200 font-medium mt-2 text-sm md:text-base">
+          {formatDateRange(currentPromo.startDate, currentPromo.endDate)}
+        </p>
+        <button
+          onClick={() => setSelectedPromo(currentPromo)}
+          className="bg-secondary text-white font-bold py-3 px-8 rounded-lg mt-6 w-full shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
+        >
+          Ver productos
+        </button>
+        <div className="mt-4 w-full">
+          <ShareTo
+            item={{ ...currentPromo, name: currentPromo.name, id: currentPromo.id }}
+            className="bg-secondary text-white font-medium py-2 px-4 rounded mt-4 w-[95%] shadow-sm hover:bg-secondary/90 hover:cursor-pointer transition"
+          />
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
-      {activePromotions.length > 0 && currentPromo && (
-        <div className="relative mx-4 mt-5 flex flex-col items-center justify-center border-2 border-secondary/30 rounded-xl p-6 overflow-hidden w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5 min-h-[300px] transition-all">
-          {/* Fondo del Banner */}
-          <div className="absolute inset-0 z-0 w-full h-full">
-            <Image
-              src={currentPromo.promotionImageUrl || '/static/img/outfit_placeholder.jpg'}
-              alt={currentPromo.name}
-              fill
-              className="object-cover transition-opacity duration-500"
-            />
-            <div className="absolute inset-0 bg-white/50 backdrop-blur-[2px]"></div>
-          </div>
-
-          {/* Contenido del Banner */}
-          <div className="relative z-10 flex flex-col items-center w-full text-center">
-            <h3 className="text-primary font-bold text-sm md:text-base uppercase tracking-widest">
-              ¡Promoción Activa!
-            </h3>
-            <h2 className="text-secondary font-black text-3xl md:text-4xl mt-2 leading-tight">
-              {currentPromo.name}
-            </h2>
-
-            <p className="text-white-200 font-medium mt-2 text-sm md:text-base">
-              {formatDateRange(currentPromo.startDate, currentPromo.endDate)}
-            </p>
-
-            <button
-              onClick={() => setSelectedPromo(currentPromo)}
-              className="bg-secondary text-white font-bold py-3 px-8 rounded-lg mt-6 w-full shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
-            >
-              Ver productos
-            </button>
-
-            {/* Compartir (usando el mock o adaptándolo a la promo actual) */}
-            <div className="mt-4 w-full">
-              <ShareTo
-                item={{ ...currentPromo, name: currentPromo.name, id: currentPromo.id }}
-                className="bg-secondary text-white font-medium py-2 px-4 rounded mt-4 w-[95%] shadow-sm hover:bg-secondary/90 hover:cursor-pointer transition"
-              />
-            </div>
-          </div>
-
-          {/* Flechas de Navegación (Solo si hay más de una) */}
-          {activePromotions.length > 1 && (
+      {/* Banner Principal (Ahora siempre visible o con slide de creación) */}
+      <div className="relative mx-4 mt-5 flex flex-col items-center justify-center border-2 border-secondary/30 rounded-xl p-6 overflow-hidden w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5 min-h-[300px] transition-all bg-gray-50">
+        
+        {/* Fondo Dinámico (Solo si hay promo, si no, un fondo neutro para 'Crear') */}
+        <div className="absolute inset-0 z-0 w-full h-full">
+          {currentPromoIndex < activePromotions.length ? (
             <>
-              <button
-                onClick={prevPromo}
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-white/10 hover:bg-white p-2 rounded-full shadow-md transition"
-              >
-                <svg
-                  className="w-5 h-5 text-secondary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2.5"
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-              </button>
-              <button
-                onClick={nextPromo}
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-white/10 hover:bg-white p-2 rounded-full shadow-md transition"
-              >
-                <svg
-                  className="w-5 h-5 text-secondary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2.5"
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
-
-              {/* Indicador de posición */}
-              <div className="absolute bottom-2 flex gap-1">
-                {activePromotions.map((_, i) => (
-                  <div
-                    key={i}
-                    className={`h-1.5 rounded-full transition-all ${i === currentPromoIndex ? 'w-4 bg-secondary' : 'w-1.5 bg-secondary/30'}`}
-                  />
-                ))}
-              </div>
+              <Image
+                src={activePromotions[currentPromoIndex].promotionImageUrl || '/static/img/outfit_placeholder.jpg'}
+                alt="Promo background"
+                fill
+                className="object-cover transition-opacity duration-500"
+              />
+              <div className="absolute inset-0 bg-white/50 backdrop-blur-[2px]"></div>
             </>
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-200" />
           )}
         </div>
-      )}
+
+        {renderBannerContent()}
+
+        {/* Flechas de Navegación (Siempre que el total sea > 1) */}
+        {totalSlides > 1 && (
+          <>
+            <button onClick={prevPromo} className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-white/40 hover:bg-white p-2 rounded-full shadow-md transition">
+              <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" /></svg>
+            </button>
+            <button onClick={nextPromo} className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-white/40 hover:bg-white p-2 rounded-full shadow-md transition">
+              <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
+            </button>
+
+            {/* Indicadores de posición */}
+            <div className="absolute bottom-2 flex gap-1">
+              {Array.from({ length: totalSlides }).map((_, i) => (
+                <div
+                  key={i}
+                  className={`h-1.5 rounded-full transition-all ${i === currentPromoIndex ? 'w-4 bg-secondary' : 'w-1.5 bg-secondary/30'}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
 
       <div className="flex mx-4 mt-5 mb-5 self-center rounded-md overflow-hidden border border-gray-200 w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5">
         <button

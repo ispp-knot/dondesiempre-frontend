@@ -1,5 +1,6 @@
 'use client';
 
+import 'dotenv/config';
 import React, { useState, useEffect } from 'react';
 import { FaCalendarAlt, FaPlus, FaTimes, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
@@ -345,12 +346,13 @@ function ProductSelector({
           `${getBackendUrl()}/api/v1/stores/${params.id}/products`
         );
 
+        console.log(response)
         // Map backend response to Product interface
         const mapped: Product[] = response.map(
-          (p: { id: string; name: string; imageUrl?: string }) => ({
+          (p: { id: string; name: string; image?: string }) => ({
             id: p.id,
             name: p.name,
-            imageUrl: p.imageUrl || '/static/img/outfit_placeholder.jpg',
+            imageUrl: p.image || '/static/img/outfit_placeholder.jpg',
           })
         );
 
