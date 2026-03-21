@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { RiDiscountPercentFill } from 'react-icons/ri';
 import { Card } from '../ui/card';
 import { Button } from '../ui/button';
+import { discountPrice } from '@/lib/utils';
 
 export interface OutfitCardProps {
   outfit: OutfitDTO;
@@ -20,10 +21,10 @@ export default function OutfitCard(props: OutfitCardProps) {
       <div className="flex flex-row justify-between ps-4 pe-4">
         <div></div>
         <h1 className="mb-3 font-bold text-primary text-center text-3xl">{props.outfit.name}</h1>
-        {props.outfit.discountedPriceInCents === props.outfit.priceInCents ? (
-          <div></div>
-        ) : (
+        {props.outfit.discountPercentage ? (
           <RiDiscountPercentFill className="text-4xl" />
+        ) : (
+          <div></div>
         )}
       </div>
       <div className="flex flex-row w-fit max-w-11/12 self-center overflow-x-auto items-center gap-4 p-4">
@@ -38,19 +39,19 @@ export default function OutfitCard(props: OutfitCardProps) {
           />
         ))}
       </div>
-      {props.outfit.discountedPriceInCents === props.outfit.priceInCents ? (
-        <h1 className="font-bold text-primary text-center text-3xl">
-          {`${convertPrice(props.outfit.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
-        </h1>
-      ) : (
+      {props.outfit.discountPercentage ? (
         <div className="flex flex-row self-center gap-3">
           <h1 className="text-primary text-center line-through text-3xl">
             {`${convertPrice(props.outfit.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
           </h1>
           <h1 className="font-bold text-primary text-center text-3xl">
-            {`${convertPrice(props.outfit.discountedPriceInCents).toFixed(2).toString().replace('.', ',')}€`}
+            {`${discountPrice(props.outfit.priceInCents, props.outfit.discountPercentage).toFixed(2).toString().replace('.', ',')}€`}
           </h1>
         </div>
+      ) : (
+        <h1 className="font-bold text-primary text-center text-3xl">
+          {`${convertPrice(props.outfit.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
+        </h1>
       )}
       {props.isOwner ? (
         <div className="self-center grid grid-cols-3 w-11/12 gap-2">
