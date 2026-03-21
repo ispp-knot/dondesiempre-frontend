@@ -305,8 +305,8 @@ export default function OutfitDetailsPage() {
                       key={i}
                       className="p-2 rounded-lg bg-secondary flex flex-row gap-1 shrink-0"
                     >
-                      <FaTag className="text-white"></FaTag>
-                      <p className="font-bold text-white text-center text-xs">{t}</p>
+                      <FaTag className="text-white text-xl"></FaTag>
+                      <p className="font-bold text-white text-center text-sm">{t}</p>
                     </div>
                   ))}
                 </div>
