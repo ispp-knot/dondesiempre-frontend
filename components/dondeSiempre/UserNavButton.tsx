@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaRegUser, FaUser } from 'react-icons/fa';
-import { RiLoginCircleLine, RiLoginCircleFill } from 'react-icons/ri';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth/AuthContext';
