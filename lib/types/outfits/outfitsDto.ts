@@ -43,3 +43,8 @@ export interface OutfitUpdateDTO {
   discountedPriceInCents: number;
   index: number;
 }
+
+export interface OutfitSortDTO {
+  id: string;
+  index: number;
+}
