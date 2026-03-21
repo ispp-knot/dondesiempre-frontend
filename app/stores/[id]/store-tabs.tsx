@@ -4,7 +4,6 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { JSX, useState } from 'react';
 import Image from 'next/image';
-import Collections from './collections';
 import AboutUs from './about-us';
 import Outfits from './outfits';
 import StoreOptions from './options';
@@ -15,14 +14,7 @@ import { ShareTo } from '@/components/ui/shareTo';
 
 type Tab = 'catalogo' | 'sobre' | 'opciones';
 
-type Collection = {
-  id: number;
-  name: string;
-  image: string;
-};
-
 type Props = {
-  collections?: Collection[];
   description?: string;
   outfits?: OutfitDTO[];
   promotions?: PromotionDTO[];
@@ -30,7 +22,6 @@ type Props = {
 };
 
 export default function StoreTabs({
-  collections = [],
   description = '',
   outfits = [],
   promotions = [],
@@ -209,21 +200,7 @@ export default function StoreTabs({
       </div>
 
       <div className="flex flex-col gap-10 sm:items-center">
-        {activeTab === 'catalogo' && (
-          <>
-            {store.storefront.isFirstCollections ? (
-              <>
-                <Collections storeId={store.id} collections={collections} />
-                <Outfits storeId={store.id} outfits={outfits} />
-              </>
-            ) : (
-              <>
-                <Outfits storeId={store.id} outfits={outfits} />
-                <Collections storeId={store.id} collections={collections} />
-              </>
-            )}
-          </>
-        )}
+        {activeTab === 'catalogo' && <Outfits storeId={store.id} outfits={outfits} />}
 
         {activeTab === 'sobre' && <AboutUs description={description} />}
 

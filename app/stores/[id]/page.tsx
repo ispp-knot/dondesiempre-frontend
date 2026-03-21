@@ -2,19 +2,29 @@
 
 export const dynamic = 'force-dynamic';
 
-import { usePassiveFetcher } from '@/lib/api/fetcher';
+import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { StoreDTO, StoreSocialNetworkDTO } from '@/lib/types/stores/storesDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
-import { FaFacebook, FaInstagram, FaLink, FaTiktok, FaTwitter } from 'react-icons/fa';
-import { FaLocationDot } from 'react-icons/fa6';
+import {
+  FaFacebook,
+  FaHome,
+  FaInstagram,
+  FaLink,
+  FaPhoneAlt,
+  FaTiktok,
+  FaTwitter,
+} from 'react-icons/fa';
+import { FaLocationDot, FaWhatsapp } from 'react-icons/fa6';
 import { MdAccessTimeFilled } from 'react-icons/md';
 import StoreTabs from './store-tabs';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import ErrorText from '@/components/dondeSiempre/ErrorText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/lib/auth/AuthContext';
 
 const getSocialIcon = (name: string) => {
   const lowerName = name.toLowerCase();
@@ -23,11 +33,28 @@ const getSocialIcon = (name: string) => {
   if (lowerName.includes('twitter') || lowerName.includes('x'))
     return <FaTwitter className="w-4 h-4" />;
   if (lowerName.includes('tiktok')) return <FaTiktok className="w-4 h-4" />;
+  if (lowerName.includes('web')) return <FaHome className="w-4 h-4" />;
+  if (lowerName.includes('teléfono')) return <FaPhoneAlt className="w-4 h-4" />;
+  if (lowerName.includes('whatsapp')) return <FaWhatsapp className="w-4 h-4" />;
   return <FaLink className="w-4 h-4" />;
 };
 
 export default function StorePage() {
   const params = useParams<{ id: string }>();
+  const { getCurrentUser } = useAuth();
+  const user = getCurrentUser();
+  const isFollowing = usePassiveFetcher<{ isFollowing: boolean }>({
+    url: `stores/${params.id}/follow`,
+    enabled: !!user,
+  });
+  const followStore = useActiveFetcher<void>({
+    url: `stores/${params.id}/followers`,
+    method: 'POST',
+  });
+  const unfollowStore = useActiveFetcher<void>({
+    url: `stores/${params.id}/follow`,
+    method: 'DELETE',
+  });
 
   const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
   const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
@@ -51,16 +78,6 @@ export default function StorePage() {
   const primaryColor = store.data?.storefront?.primaryColor || '#000000';
   const secondaryColor = store.data?.storefront?.secondaryColor || '#000000';
   const banner = store.data?.storefront?.bannerImageUrl;
-
-  const collections = [
-    { id: 1, name: 'Veraneo', image: '' },
-    { id: 2, name: 'Nuevo', image: '' },
-    { id: 3, name: 'Invierno', image: '' },
-    { id: 4, name: 'Feria', image: '' },
-    { id: 5, name: 'Semana Santa', image: '' },
-    { id: 6, name: 'Joyería', image: '' },
-    { id: 7, name: 'Ropa interior', image: '' },
-  ];
 
   return store.data && outfits.data ? (
     <div
@@ -98,6 +115,24 @@ export default function StorePage() {
       </div>
 
       <div className="flex gap-3 mt-3 flex-wrap justify-center mb-2">
+        {!!user && (
+          <Button
+            variant="outline"
+            className="flex items-center w-fit gap-1.5 border border-primary rounded-sm px-3 py-1.5 text-xs text-primary hover:bg-primary hover:text-white transition"
+            disabled={isFollowing.isLoading || followStore.isPending || unfollowStore.isPending}
+            onClick={async () => {
+              if (isFollowing.data?.isFollowing) {
+                await unfollowStore.fetch();
+                isFollowing.setData({ isFollowing: false });
+              } else {
+                await followStore.fetch();
+                isFollowing.setData({ isFollowing: true });
+              }
+            }}
+          >
+            {isFollowing.data?.isFollowing ? 'Dejar de seguir' : '+ Seguir'}
+          </Button>
+        )}
         {socialNetworks.map((social: StoreSocialNetworkDTO, index: number) => (
           <a
             key={index}
@@ -114,7 +149,6 @@ export default function StorePage() {
 
       <StoreTabs
         store={store.data}
-        collections={collections}
         description={store.data?.aboutUs || ''}
         promotions={promotionData}
         outfits={outfits.data}
