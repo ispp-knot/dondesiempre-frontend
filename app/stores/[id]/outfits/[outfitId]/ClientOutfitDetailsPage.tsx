@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import { useActiveFetcher } from '@/lib/api/fetcher';
 import { OrderDTO } from '@/lib/types/orders/orderDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
-import { convertPrice } from '@/lib/utils';
+import { discountPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { FaTag } from 'react-icons/fa';
 import { GoDotFill } from 'react-icons/go';
 
 interface FetchError {
@@ -128,10 +129,18 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
                   ></Button>
                 ))}
               </div>
+              <div className="flex flex-row gap-4 flex-wrap">
+                {props.outfit.tags.map((t, i) => (
+                  <div key={i} className="p-2 rounded-lg bg-secondary flex flex-row gap-1 shrink-0">
+                    <FaTag className="text-white text-xl"></FaTag>
+                    <p className="font-bold text-white text-center text-sm">{t}</p>
+                  </div>
+                ))}
+              </div>
               <div>
                 <h1 className="mt-4 mb-4 text-primary text-2xl">
                   <strong>Total: </strong>
-                  {`${convertPrice(props.outfit.discountedPriceInCents).toFixed(2).toString().replace('.', ',')}€ con IVA`}
+                  {`${discountPrice(props.outfit.priceInCents, props.outfit.discountPercentage).toFixed(2).toString().replace('.', ',')}€ con IVA`}
                 </h1>
               </div>
               <Button
@@ -154,7 +163,7 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
             {props.outfit && (
               <p className="text-secondary text-center">
                 Vas a realizar un pedido por un total de{' '}
-                <strong>{`${convertPrice(props.outfit.discountedPriceInCents).toFixed(2).toString().replace('.', ',')}€`}</strong>
+                <strong>{`${discountPrice(props.outfit.priceInCents, props.outfit.discountPercentage).toFixed(2).toString().replace('.', ',')}€`}</strong>
                 .
               </p>
             )}

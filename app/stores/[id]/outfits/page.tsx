@@ -10,12 +10,12 @@ import { DragDropProvider } from '@dnd-kit/react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ReactNode, useState } from 'react';
+import { BiTransfer } from 'react-icons/bi';
 import { FaRegSave } from 'react-icons/fa';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import ErrorText from '../../../../components/dondeSiempre/ErrorText';
 import LoadingText from '../../../../components/dondeSiempre/LoadingText';
 import ClientOutfitsPage from './ClientOutfitsPage';
-import { BiTransfer } from 'react-icons/bi';
 
 export default function OutfitsPage() {
   const params = useParams<{ id: string }>();

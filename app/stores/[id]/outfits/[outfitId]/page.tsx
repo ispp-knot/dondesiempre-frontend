@@ -8,7 +8,6 @@ import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import { Button } from '@/components/ui/button';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { OutfitDTO, OutfitUpdateDTO } from '@/lib/types/outfits/outfitsDto';
-import { convertPrice } from '@/lib/utils';
 import { redirect, useParams } from 'next/navigation';
 import { ReactNode, useState } from 'react';
 import { FaTag } from 'react-icons/fa6';
@@ -47,14 +46,12 @@ export default function OutfitDetailsPage() {
     if (!outfit.data) {
       return;
     }
-
+    const discount = (document.getElementById('form-discount-percentage') as HTMLInputElement)
+      .value;
     const dto: OutfitUpdateDTO = {
       name: (document.getElementById('form-name') as HTMLInputElement).value,
       description: (document.getElementById('form-description') as HTMLInputElement).value || null,
-      discountedPriceInCents:
-        Number.parseFloat(
-          (document.getElementById('form-discounted-price') as HTMLInputElement).value
-        ) * 100,
+      discountPercentage: discount ? Number.parseFloat(discount) : null,
     };
 
     await updateOutfit.fetch({
@@ -118,17 +115,20 @@ export default function OutfitDetailsPage() {
                   onChange={setImageFile}
                   existingImageUrl={outfit.data.image || undefined}
                 />
-                <label htmlFor="form-discounted-price" className="font-bold text-lg text-secondary">
-                  Precio rebajado:{' '}
+                <label
+                  htmlFor="form-discount-percentage"
+                  className="font-bold text-lg text-secondary"
+                >
+                  Descuento (%):{' '}
                 </label>
                 <input
                   type="number"
-                  name="discounted-price"
-                  id="form-discounted-price"
-                  min="0.00"
-                  step="0.01"
-                  defaultValue={`${convertPrice(outfit.data.discountedPriceInCents)}`}
-                  required
+                  name="discount-percentage"
+                  id="form-dicsount-percentage"
+                  min="0"
+                  max="100"
+                  step="1"
+                  defaultValue={`${outfit.data.discountPercentage}`}
                   className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                 />
                 <label htmlFor="form-tags" className="font-bold text-lg text-secondary">

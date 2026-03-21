@@ -173,7 +173,7 @@ export default function OutfitCreationPage() {
                         {`${convertPrice(
                           outfitProducts.length > 0
                             ? outfitProducts
-                                .map((product) => product.discountedPriceInCents)
+                                .map((product) => product.priceInCents)
                                 .reduce((a, b) => a + b)
                             : 0
                         )
@@ -216,7 +216,7 @@ export default function OutfitCreationPage() {
                           ></Image>
                         </div>
                         <h1 className="font-bold text-primary text-center text-lg md:text-2xl">
-                          {`${convertPrice(p.discountedPriceInCents).toFixed(2).toString().replace('.', ',')}€`}
+                          {`${convertPrice(p.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
                         </h1>
                         <div className="flex flex-row justify-center">
                           <Button
