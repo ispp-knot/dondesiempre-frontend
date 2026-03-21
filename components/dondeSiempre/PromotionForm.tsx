@@ -48,6 +48,9 @@ const promotionSchema = z.object({
     })
     .refine((data) => data.from && data.to, {
       message: 'El rango de fechas es obligatorio',
+    })
+    .refine((data) => !data.from || !data.to || data.from < data.to, {
+      message: 'La fecha de fin debe ser posterior a la fecha de inicio',
     }),
   // Para la imagen, validamos que no sea null
   promotionImage: z.any().refine((val) => val !== null && val !== undefined, {

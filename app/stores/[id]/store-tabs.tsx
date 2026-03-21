@@ -35,13 +35,8 @@ export default function StoreTabs({
   const activePromotions = promotions.filter((p) => p.active);
   const [currentPromoIndex, setCurrentPromoIndex] = useState(0);
   const [selectedPromo, setSelectedPromo] = useState<PromotionDTO | null>(null);
-  const [totalSlides, setTotalSlides] = useState(0);
-
-  if (user?.email == store.email) {
-    setTotalSlides(activePromotions.length + 1);
-  } else {
-    setTotalSlides(activePromotions.length);
-  }
+  const totalSlides =
+    user?.email == store.email ? activePromotions.length + 1 : activePromotions.length;
 
   const formatDateRange = (start?: string, end?: string) => {
     if (!start || !end) return '¡Por tiempo limitado!';
