@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import type { UserResponseDTO } from '@/lib/types/auth/authDto';
 import { pick } from 'lodash';
@@ -10,7 +10,7 @@ const LOCAL_STORAGE_KEY = 'auth_user';
 /**
  * Sets the non-HttpOnly "session" cookie.
  *
- * This is intentionally unsigned and not verified — use only for routing
+ * This is intentionally unsigned and not verified â€” use only for routing
  * decisions (guards), never for security-critical logic.
  */
 export async function setServerSession(user: UserResponseDTO) {
@@ -23,7 +23,7 @@ export async function setServerSession(user: UserResponseDTO) {
 /**
  * Clears the non-HttpOnly "session" cookie.
  *
- * This is intentionally unsigned and not verified — use only for routing
+ * This is intentionally unsigned and not verified â€” use only for routing
  * decisions (guards), never for security-critical logic.
  */
 export async function clearServerSession() {
@@ -45,7 +45,7 @@ interface AuthContextValue {
 
   /**
    * Clears the auth state from memory and localStorage.
-   * Does NOT contact the backend — you must call your logout endpoint separately.
+   * Does NOT contact the backend â€” you must call your logout endpoint separately.
    */
   deleteInfo: () => void;
 }
@@ -73,7 +73,7 @@ function readFromStorage(): UserResponseDTO | null {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserResponseDTO | null>(readFromStorage());
-  const logOut = useActiveFetcher<void>({ url: 'auth/logout', method: 'GET' });
+  const logOut = useActiveFetcher<void>({ url: 'auth/logout', method: 'POST' });
 
   const registerInfo = useCallback((newUser: UserResponseDTO) => {
     setUser(newUser);
@@ -89,7 +89,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [logOut]);
 
   const getCurrentUser = useCallback((): UserResponseDTO | null => {
-    // Re-check expiry on every call so a long-lived session is evicted lazily.
     if (!user) return null;
     if (new Date(user.expiresAt) <= new Date()) {
       deleteInfo();
