@@ -2,7 +2,15 @@
 
 import type { UserResponseDTO } from '@/lib/types/auth/authDto';
 import { pick } from 'lodash';
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from 'react';
 import { useActiveFetcher } from '../api/fetcher';
 
 const LOCAL_STORAGE_KEY = 'auth_user';
@@ -56,6 +64,46 @@ function isExpired(user: Pick<UserResponseDTO, 'expiresAt'>): boolean {
   return new Date(user.expiresAt) <= new Date();
 }
 
+function getStoredUser(): UserResponseDTO | null {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  const rawUser = localStorage.getItem(LOCAL_STORAGE_KEY);
+  if (!rawUser) {
+    return null;
+  }
+
+  try {
+    const storedUser = JSON.parse(rawUser) as UserResponseDTO;
+
+    if (isExpired(storedUser)) {
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+      return null;
+    }
+
+    return storedUser;
+  } catch {
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
+    return null;
+  }
+}
+
+function subscribeToStoredUser(onStoreChange: () => void) {
+  if (typeof window === 'undefined') {
+    return () => undefined;
+  }
+
+  const handleStorageChange = (event: StorageEvent) => {
+    if (event.key === LOCAL_STORAGE_KEY) {
+      onStoreChange();
+    }
+  };
+
+  window.addEventListener('storage', handleStorageChange);
+  return () => window.removeEventListener('storage', handleStorageChange);
+}
+
 export function AuthProvider({
   children,
   initialUser = null,
@@ -70,6 +118,7 @@ export function AuthProvider({
 
     return initialUser;
   });
+  const storedUser = useSyncExternalStore(subscribeToStoredUser, getStoredUser, () => initialUser);
   const logOut = useActiveFetcher<void>({ url: 'auth/logout', method: 'POST' });
 
   const registerInfo = useCallback((newUser: UserResponseDTO) => {
@@ -85,14 +134,33 @@ export function AuthProvider({
     await logOut.fetch();
   }, [logOut]);
 
+  const resolvedUser = useMemo(() => {
+    if (!user) {
+      return storedUser;
+    }
+
+    if (!storedUser || user.id !== storedUser.id) {
+      return user;
+    }
+
+    const missingStore = !user.store && !!storedUser.store;
+    const missingClient = !user.client && !!storedUser.client;
+
+    if (missingStore || missingClient) {
+      return storedUser;
+    }
+
+    return user;
+  }, [storedUser, user]);
+
   const getCurrentUser = useCallback((): UserResponseDTO | null => {
-    if (!user) return null;
-    if (isExpired(user)) {
+    if (!resolvedUser) return null;
+    if (isExpired(resolvedUser)) {
       void deleteInfo();
       return null;
     }
-    return user;
-  }, [user, deleteInfo]);
+    return resolvedUser;
+  }, [resolvedUser, deleteInfo]);
 
   const value = useMemo(
     () => ({ getCurrentUser, registerInfo, deleteInfo }),

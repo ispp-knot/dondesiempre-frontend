@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from './button';
-import { useRef, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Share2, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -61,7 +61,11 @@ function drawStar(
     const angle = (i * Math.PI) / points - Math.PI / 2;
     const x = cx + r * Math.cos(angle);
     const y = cy + r * Math.sin(angle);
-    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    if (i === 0) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
   }
   ctx.closePath();
   ctx.fillStyle = color;
@@ -118,7 +122,7 @@ export function ShareTo({ item, images, className }: Props) {
   const ACCENT = '#c65a3a';
   const padding = 60;
 
-  const drawCanvas = async () => {
+  const drawCanvas = useCallback(async () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -231,16 +235,20 @@ export function ShareTo({ item, images, className }: Props) {
 
     setPreviewUrl(canvas.toDataURL('image/jpeg', 0.92));
     setLoading(false);
-  };
+  }, [ACCENT, backgroundImage, isPromotion, item, padding]);
 
   useEffect(() => {
     if (open) {
-      setTimeout(() => drawCanvas(), 100);
+      const timeoutId = window.setTimeout(() => {
+        void drawCanvas();
+      }, 100);
+
+      return () => window.clearTimeout(timeoutId);
     } else {
       setPreviewUrl('');
       setLoading(false);
     }
-  }, [open]);
+  }, [drawCanvas, open]);
 
   const handleShare = async () => {
     if (!canvasRef.current) return;
