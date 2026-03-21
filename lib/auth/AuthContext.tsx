@@ -14,6 +14,8 @@ import {
 import { useActiveFetcher } from '../api/fetcher';
 
 const LOCAL_STORAGE_KEY = 'auth_user';
+let lastStoredUserRaw: string | null = null;
+let lastStoredUserSnapshot: UserResponseDTO | null = null;
 
 /**
  * Sets the non-HttpOnly "session" cookie.
@@ -64,13 +66,19 @@ function isExpired(user: Pick<UserResponseDTO, 'expiresAt'>): boolean {
   return new Date(user.expiresAt) <= new Date();
 }
 
-function getStoredUser(): UserResponseDTO | null {
+function getStoredUserSnapshot(): UserResponseDTO | null {
   if (typeof window === 'undefined') {
     return null;
   }
 
   const rawUser = localStorage.getItem(LOCAL_STORAGE_KEY);
+  if (rawUser === lastStoredUserRaw) {
+    return lastStoredUserSnapshot;
+  }
+
   if (!rawUser) {
+    lastStoredUserRaw = null;
+    lastStoredUserSnapshot = null;
     return null;
   }
 
@@ -79,12 +87,18 @@ function getStoredUser(): UserResponseDTO | null {
 
     if (isExpired(storedUser)) {
       localStorage.removeItem(LOCAL_STORAGE_KEY);
+      lastStoredUserRaw = null;
+      lastStoredUserSnapshot = null;
       return null;
     }
 
+    lastStoredUserRaw = rawUser;
+    lastStoredUserSnapshot = storedUser;
     return storedUser;
   } catch {
     localStorage.removeItem(LOCAL_STORAGE_KEY);
+    lastStoredUserRaw = null;
+    lastStoredUserSnapshot = null;
     return null;
   }
 }
@@ -118,7 +132,11 @@ export function AuthProvider({
 
     return initialUser;
   });
-  const storedUser = useSyncExternalStore(subscribeToStoredUser, getStoredUser, () => initialUser);
+  const storedUser = useSyncExternalStore(
+    subscribeToStoredUser,
+    getStoredUserSnapshot,
+    () => initialUser
+  );
   const logOut = useActiveFetcher<void>({ url: 'auth/logout', method: 'POST' });
 
   const registerInfo = useCallback((newUser: UserResponseDTO) => {
