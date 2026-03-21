@@ -297,6 +297,17 @@ export default function OutfitDetailsPage() {
                     ></Button>
                   ))}
                 </div>
+                <div className="flex flex-row gap-4 flex-wrap">
+                  {outfit.data.tags.map((t, i) => (
+                    <div
+                      key={i}
+                      className="p-2 rounded-lg bg-secondary flex flex-row gap-1 shrink-0"
+                    >
+                      <FaTag className="text-white text-xl"></FaTag>
+                      <p className="font-bold text-white text-center text-sm">{t}</p>
+                    </div>
+                  ))}
+                </div>
                 <div>
                   <h1 className="mt-4 mb-4 text-primary text-2xl">
                     <strong>Total: </strong>
