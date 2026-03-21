@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next';
+import type { UserResponseDTO } from '@/lib/types/auth/authDto';
 import type { ReactNode } from 'react';
+import { getServerSession } from '@/lib/auth/serverSession';
 import { Quicksand } from 'next/font/google';
 import { Providers } from './providers';
 import { ConfigProvider } from './config-provider';
@@ -68,7 +70,12 @@ export const viewport: Viewport = {
   themeColor: '#FFFFFF',
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const session = await getServerSession();
+  const initialUser: UserResponseDTO | null = session
+    ? { ...session, store: null, client: null }
+    : null;
+
   return (
     <html lang="es" dir="ltr" className={quicksand.variable}>
       <head />
@@ -79,7 +86,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           backendUrl={process.env.BACKEND_URL ?? ''}
           webUrl={process.env.WEB_URL ?? ''}
         >
-          <Providers>
+          <Providers initialUser={initialUser}>
             <Navbar />
             <div className="flex flex-1 flex-col">
               <div className="flex flex-1 flex-col pb-20 sm:pb-0">{children}</div>

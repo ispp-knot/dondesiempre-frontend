@@ -52,27 +52,24 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-function readFromStorage(): UserResponseDTO | null {
-  if (typeof window === 'undefined') return null;
-  try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as UserResponseDTO;
+function isExpired(user: Pick<UserResponseDTO, 'expiresAt'>): boolean {
+  return new Date(user.expiresAt) <= new Date();
+}
 
-    // Drop the stored value if the token has already expired.
-    if (new Date(parsed.expiresAt) <= new Date()) {
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
+export function AuthProvider({
+  children,
+  initialUser = null,
+}: {
+  children: ReactNode;
+  initialUser?: UserResponseDTO | null;
+}) {
+  const [user, setUser] = useState<UserResponseDTO | null>(() => {
+    if (!initialUser || isExpired(initialUser)) {
       return null;
     }
 
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserResponseDTO | null>(readFromStorage());
+    return initialUser;
+  });
   const logOut = useActiveFetcher<void>({ url: 'auth/logout', method: 'POST' });
 
   const registerInfo = useCallback((newUser: UserResponseDTO) => {
@@ -90,8 +87,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const getCurrentUser = useCallback((): UserResponseDTO | null => {
     if (!user) return null;
-    if (new Date(user.expiresAt) <= new Date()) {
-      deleteInfo();
+    if (isExpired(user)) {
+      void deleteInfo();
       return null;
     }
     return user;
