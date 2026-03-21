@@ -36,8 +36,8 @@ export default function OutfitsPage() {
         checked={isAdmin}
         onCheckedChange={(checked) => setIsAdmin(checked)}
       />
-      <div className="flex flex-col items-center">
-        <div className="w-full md:w-8/12">
+      <div className="flex flex-col items-center w-full px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-full sm:max-w-4xl lg:max-w-6xl">
           {isAdmin ? (
             <Link href={`/stores/${params.id}/create-outfit/`}>
               <Card className="p-4 m-4 shadow-xl hover:bg-muted active:bg-input hover:cursor-pointer">
@@ -55,14 +55,16 @@ export default function OutfitsPage() {
           {outfits.data && outfits.data.length > 0 ? (
             <>
               {outfits.data.map((o) => (
-                <Card key={o.id} className="p-4 m-4 pt-8 shadow-xl">
+                <Card key={o.id} className="p-4 m-4 shadow-xl">
                   <div>
                     {o.discountedPriceInCents === o.priceInCents ? (
                       <></>
                     ) : (
-                      <RiDiscountPercentFill className="text-4xl" />
+                      <RiDiscountPercentFill className="text-3xl md:text-4xl" />
                     )}
-                    <h1 className="mb-3 font-bold text-primary text-center text-3xl">{o.name}</h1>
+                    <h1 className="mb-3 font-bold text-primary text-center text-2xl sm:text-3xl pt-2">
+                      {o.name}
+                    </h1>
                   </div>
                   <div className="flex flex-row w-fit max-w-11/12 self-center overflow-x-auto items-center gap-4 p-4">
                     {o.products.map((p) => (
@@ -117,7 +119,7 @@ export default function OutfitsPage() {
                   ) : (
                     <Link
                       href={`/stores/${params.id}/outfits/${o.id}`}
-                      className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-11/12 md:w-1/4 h-12"
+                      className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full sm:w-11/12 md:w-2/4 md:max-w-96 h-12"
                     >
                       Ver más
                     </Link>

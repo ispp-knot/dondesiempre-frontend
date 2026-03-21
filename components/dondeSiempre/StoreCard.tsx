@@ -109,7 +109,7 @@ export function StoreCard({
       )}
     >
       {/* Image */}
-      <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-xl md:rounded-3xl overflow-hidden bg-gray-100 mr-8 flex-shrink-0 shadow-inner">
+      <div className="relative w-32 h-32 md:w-32 md:h-32 rounded-xl md:rounded-3xl overflow-hidden bg-gray-100 mr-8 flex-shrink-0 shadow-inner">
         {store.storefront?.bannerImageUrl ? (
           <Image
             src={store.storefront.bannerImageUrl}
@@ -181,6 +181,7 @@ export function StoreCard({
           className="p-1.5 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/20 transition-colors"
           title="Cómo llegar"
         >
+          <p className={'hidden sm:block'}>Cómo llegar</p>
           <LuRoute size={24} />
         </Button>
 
@@ -211,6 +212,7 @@ export function StoreCard({
           }
           title="Ir a la tienda"
         >
+          <p className={'hidden sm:block'}>Ir a la tienda</p>
           <LuArrowRightToLine size={24} />
         </Button>
       </div>

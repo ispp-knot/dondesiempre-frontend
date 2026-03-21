@@ -70,7 +70,7 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
   const storefront = formData;
 
   return (
-    <div className="w-full max-w-142.5 space-y-10 relative pb-10">
+    <div className="w-11/12 max-w-200 space-y-10 relative pb-10 self-center">
       {loading && (
         <div className="absolute inset-0 bg-white/60 z-30 flex justify-center items-center rounded-xl">
           <Loader2 className="animate-spin text-teal-700 w-12 h-12" />
