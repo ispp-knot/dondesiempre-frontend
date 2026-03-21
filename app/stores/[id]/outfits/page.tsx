@@ -4,7 +4,7 @@ import LabelledSwitch from '@/components/dondeSiempre/LabelledSwitch';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
+import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { convertPrice } from '@/lib/utils';
 import Image from 'next/image';
@@ -15,6 +15,7 @@ import { IoMdAddCircleOutline } from 'react-icons/io';
 import { RiDiscountPercentFill } from 'react-icons/ri';
 import ErrorText from '../../../../components/dondeSiempre/ErrorText';
 import LoadingText from '../../../../components/dondeSiempre/LoadingText';
+import { FaTag } from 'react-icons/fa';
 
 export default function OutfitsPage() {
   const params = useParams<{ id: string }>();
@@ -74,6 +75,17 @@ export default function OutfitsPage() {
                         height={512}
                         className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg"
                       />
+                    ))}
+                  </div>
+                  <div className="flex flex-row gap-4 flex-wrap justify-center">
+                    {o.tags.map((t, i) => (
+                      <div
+                        key={i}
+                        className="p-2 rounded-lg bg-secondary flex flex-row gap-1 shrink-0"
+                      >
+                        <FaTag className="text-white"></FaTag>
+                        <p className="font-bold text-white text-center text-xs">{t}</p>
+                      </div>
                     ))}
                   </div>
                   {o.discountedPriceInCents === o.priceInCents ? (
