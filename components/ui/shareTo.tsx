@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from './button';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { Share2, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { drawShareImage } from '@/lib/utils/canvas';
@@ -70,7 +70,7 @@ export function ShareTo({ item, images, className }: Props) {
   const backgroundImage = getBackgroundImage(item, images);
   const shareUrl = `${getWebUrl()}/stores/${item.storeId}`; // LO SUYO SERÁ CAMBIARLO POR LA URL DEL PRODUCTO, OUTFIT O PROMO
 
-  const drawCanvas = async () => {
+  const drawCanvas = useCallback(async () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -90,7 +90,7 @@ export function ShareTo({ item, images, className }: Props) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [backgroundImage, item, typeValue]);
 
   useEffect(() => {
     if (open) {
@@ -99,7 +99,7 @@ export function ShareTo({ item, images, className }: Props) {
       setPreviewUrl('');
       setLoading(false);
     }
-  }, [open]);
+  }, [open, drawCanvas]);
 
   const handleShare = async () => {
     if (!canvasRef.current) return;
