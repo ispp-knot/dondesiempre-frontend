@@ -84,7 +84,7 @@ export default function OutfitsPage() {
                       </div>
                     ))}
                   </div>
-                    {o.discountPercentage ? (
+                  {o.discountPercentage ? (
                     <div className="flex flex-row self-center gap-3">
                       <h1 className="text-primary text-center line-through text-3xl">
                         {`${convertPrice(o.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
