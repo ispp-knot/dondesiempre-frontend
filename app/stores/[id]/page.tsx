@@ -166,7 +166,7 @@ export default function StorePage() {
       {isOwner && (
         <StoreEditModal
           open={isEditOpen}
-          onOpenChange={setIsEditOpen}
+          close={setIsEditOpen}
           store={store.data}
           storeId={params.id}
           onUpdated={(updatedStore) => {

@@ -43,7 +43,7 @@ function FieldError({ message }: { message?: string }) {
 
 type StoreEditModalProps = {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  close: (open: boolean) => void;
   store: StoreDTO;
   storeId: string;
   onUpdated: (store: StoreDTO) => void;
@@ -51,7 +51,7 @@ type StoreEditModalProps = {
 
 export default function StoreEditModal({
   open,
-  onOpenChange,
+  close,
   store,
   storeId,
   onUpdated,
@@ -95,7 +95,7 @@ export default function StoreEditModal({
     if (nextOpen) {
       setApiError(null);
     }
-    onOpenChange(nextOpen);
+    close(nextOpen);
   };
 
   async function onSubmit(data: StoreUpdateValues) {
@@ -114,7 +114,7 @@ export default function StoreEditModal({
       });
 
       onUpdated(updatedStore);
-      onOpenChange(false);
+      close(false);
     } catch {
       setApiError('No se pudo actualizar la tienda.');
     }
@@ -216,7 +216,7 @@ export default function StoreEditModal({
             <Button
               variant="outline"
               type="button"
-              onClick={() => onOpenChange(false)}
+              onClick={() => close(false)}
               disabled={isSubmitting || updateStore.isPending}
             >
               <X className="w-4 h-4 mr-1" />
