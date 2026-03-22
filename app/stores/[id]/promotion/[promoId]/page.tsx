@@ -13,6 +13,7 @@ export default function EditPromotionPage() {
   const storeId = params.id;
   const promoId = params.promoId;
 
+  const [isDeleting, setIsDeleting] = useState(false);
   const [initialData, setInitialData] = useState<Partial<PromotionFormData> | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -27,6 +28,34 @@ export default function EditPromotionPage() {
   });
 
   const updatePromotion = useActiveFetcher<void>({ method: 'PUT' });
+  const deletePromotion = useActiveFetcher<void>({ method: 'DELETE' });
+
+  const handleDelete = async () => {
+    if (
+      !window.confirm(
+        '¿Estás seguro de que deseas eliminar esta promoción? Esta acción no se puede deshacer.'
+      )
+    ) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await deletePromotion.fetch({
+        url: `promotions/${promoId}`,
+      });
+
+      setStatus({ type: 'success', message: 'Promoción eliminada correctamente.' });
+
+      setTimeout(() => {
+        router.push(`/stores/${storeId}`);
+      }, 1500);
+    } catch (err) {
+      console.error('Error deleting promotion:', err);
+      setStatus({ type: 'error', message: 'No se pudo eliminar la promoción.' });
+      setIsDeleting(false);
+    }
+  };
 
   useEffect(() => {
     if (promoData) {
@@ -133,6 +162,19 @@ export default function EditPromotionPage() {
         status={status}
       />
 
+      <div className="mt-8 pt-6 border-t border-gray-100 flex justify-center">
+        <button
+          onClick={handleDelete}
+          disabled={isSaving || isDeleting}
+          className={`px-6 py-2 rounded-full font-bold transition-colors ${
+            isDeleting
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-red-50 text-destructive border border-destructive hover:bg-destructive hover:text-white'
+          }`}
+        >
+          {isDeleting ? 'Eliminando...' : 'Eliminar Promoción'}
+        </button>
+      </div>
       <style jsx global>{`
         .font-quicksand {
           font-family: var(--font-quicksand), sans-serif;

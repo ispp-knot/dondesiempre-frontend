@@ -51,6 +51,9 @@ const promotionSchema = z.object({
     })
     .refine((data) => !data.from || !data.to || data.from < data.to, {
       message: 'La fecha de fin debe ser posterior a la fecha de inicio',
+    })
+    .refine((data) => !data.to || data.to.getTime() > Date.now(), {
+      message: 'La fecha de finalización debe de ser posterior a la fecha actual',
     }),
   // Para la imagen, validamos que no sea null
   promotionImage: z.any().refine((val) => val !== null && val !== undefined, {
@@ -94,7 +97,7 @@ export default function PromotionForm({
         from: initialData?.dateRange?.from ? new Date(initialData.dateRange.from) : undefined,
         to: initialData?.dateRange?.to ? new Date(initialData.dateRange.to) : undefined,
       },
-      promotionImage: null,
+      promotionImage: initialData?.promotionImage,
     },
   });
 

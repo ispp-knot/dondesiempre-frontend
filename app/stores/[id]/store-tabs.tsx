@@ -87,7 +87,7 @@ export default function StoreTabs({
           </p>
           <button
             onClick={() => {
-              window.location.href = `/stores/${store.id}/create-promotion`;
+              window.location.href = `/stores/${store.id}/promotion`;
             }}
             className="bg-primary text-white font-bold py-3 px-8 rounded-lg mt-6 w-full shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
           >
@@ -110,7 +110,7 @@ export default function StoreTabs({
           {user?.email == store.email && (
             <button
               onClick={() => {
-                window.location.href = `/stores/${store.id}/edit-promotion/${currentPromo.id}/`;
+                window.location.href = `/stores/${store.id}/promotion/${currentPromo.id}/`;
               }}
               className="absolute top-0 right-0 bg-white/80 hover:bg-white text-secondary p-2 rounded-full shadow-md transition-all z-30 group"
               title="Editar promoción"
