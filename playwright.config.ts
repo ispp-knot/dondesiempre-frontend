@@ -28,7 +28,7 @@ export default defineConfig({
       // stderr: 'pipe',
     },
     {
-      command: `cd ${process.env.DIR_BACKEND} && docker compose down -v postgres-test && docker compose up -d postgres-test && ${process.platform === 'win32' ? 'mvnw' : './mvnw'} clean spring-boot:run -D spring-boot.run.profiles=test`,
+      command: `cd ${process.env.DIR_BACKEND} && docker compose down -v postgres-test && docker compose up -d postgres-test && ${process.platform === 'win32' ? 'mvnw.cmd' : './mvnw'} clean spring-boot:run -D spring-boot.run.profiles=test`,
       url: 'http://localhost:8080',
       reuseExistingServer: !process.env.CI,
       timeout: 180 * 1000,
