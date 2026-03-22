@@ -4,9 +4,9 @@ import LabelledSwitch from '@/components/dondeSiempre/LabelledSwitch';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
+import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
-import { convertPrice } from '@/lib/utils';
+import { convertPrice, discountPrice } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -15,6 +15,7 @@ import { IoMdAddCircleOutline } from 'react-icons/io';
 import { RiDiscountPercentFill } from 'react-icons/ri';
 import ErrorText from '../../../../components/dondeSiempre/ErrorText';
 import LoadingText from '../../../../components/dondeSiempre/LoadingText';
+import { FaTag } from 'react-icons/fa';
 
 export default function OutfitsPage() {
   const params = useParams<{ id: string }>();
@@ -57,11 +58,7 @@ export default function OutfitsPage() {
               {outfits.data.map((o) => (
                 <Card key={o.id} className="p-4 m-4 pt-8 shadow-xl">
                   <div>
-                    {o.discountedPriceInCents === o.priceInCents ? (
-                      <></>
-                    ) : (
-                      <RiDiscountPercentFill className="text-4xl" />
-                    )}
+                    {o.discountPercentage && <RiDiscountPercentFill className="text-4xl" />}
                     <h1 className="mb-3 font-bold text-primary text-center text-3xl">{o.name}</h1>
                   </div>
                   <div className="flex flex-row w-fit max-w-11/12 self-center overflow-x-auto items-center gap-4 p-4">
@@ -76,19 +73,30 @@ export default function OutfitsPage() {
                       />
                     ))}
                   </div>
-                  {o.discountedPriceInCents === o.priceInCents ? (
-                    <h1 className="font-bold text-primary text-center text-3xl">
-                      {`${convertPrice(o.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
-                    </h1>
-                  ) : (
+                  <div className="flex flex-row gap-4 flex-wrap justify-center">
+                    {o.tags.map((t, i) => (
+                      <div
+                        key={i}
+                        className="p-2 rounded-lg bg-secondary flex flex-row gap-1 shrink-0"
+                      >
+                        <FaTag className="text-white text-xl"></FaTag>
+                        <p className="font-bold text-white text-center text-sm">{t}</p>
+                      </div>
+                    ))}
+                  </div>
+                  {o.discountPercentage ? (
                     <div className="flex flex-row self-center gap-3">
                       <h1 className="text-primary text-center line-through text-3xl">
                         {`${convertPrice(o.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
                       </h1>
                       <h1 className="font-bold text-primary text-center text-3xl">
-                        {`${convertPrice(o.discountedPriceInCents).toFixed(2).toString().replace('.', ',')}€`}
+                        {`${discountPrice(o.priceInCents, o.discountPercentage).toFixed(2).toString().replace('.', ',')}€`}
                       </h1>
                     </div>
+                  ) : (
+                    <h1 className="font-bold text-primary text-center text-3xl">
+                      {`${convertPrice(o.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
+                    </h1>
                   )}
                   {isAdmin ? (
                     <div className="self-center grid grid-cols-3 w-11/12 gap-2">
