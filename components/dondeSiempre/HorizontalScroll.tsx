@@ -6,7 +6,7 @@ import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 type Props = {
   title: string;
   viewMoreHref: string;
-  children: ReactNode[];
+  children: ReactNode;
 };
 
 export default function HorizontalScroll({ title, viewMoreHref, children }: Props) {

@@ -9,6 +9,7 @@ import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { ShareTo } from '@/components/ui/shareTo';
+import Products from './products';
 
 type Tab = 'catalogo' | 'sobre' | 'opciones';
 
@@ -90,7 +91,12 @@ export default function StoreTabs({ description = '', outfits = [], store }: Pro
       </div>
 
       <div className="flex flex-col gap-10 sm:items-center">
-        {activeTab === 'catalogo' && <Outfits storeId={store.id} outfits={outfits} />}
+        {activeTab === 'catalogo' && (
+          <>
+            <Products storeId={store.id} />
+            <Outfits storeId={store.id} outfits={outfits} />
+          </>
+        )}
 
         {activeTab === 'sobre' && <AboutUs description={description} />}
 
