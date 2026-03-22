@@ -48,14 +48,6 @@ export default function StorePage() {
   const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
   const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
 
-  // const isStore = user?.roles.includes('STORE') ?? false;
-
-  // const userId = user?.id;
-
-  // const storeId = params.id;
-
-  // const ownerStoreId = user?.store?.id;
-
   const isOwner = !!user?.store?.id && user.store.id === params.id;
   const [isEditOpen, setIsEditOpen] = useState(false);
 
