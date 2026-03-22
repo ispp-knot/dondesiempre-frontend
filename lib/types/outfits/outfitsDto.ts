@@ -42,6 +42,10 @@ export interface OutfitCreationDTO {
 export interface OutfitUpdateDTO {
   name: string;
   description: string | null;
-  discountPercentage?: number | null;
-  discountedPriceInCents?: number | null;
+  discountPercentage: number | null;
+}
+
+export interface OutfitSortDTO {
+  id: string;
+  index: number;
 }

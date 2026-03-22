@@ -1,31 +1,38 @@
 'use client';
 
-import LabelledSwitch from '@/components/dondeSiempre/LabelledSwitch';
-import NotFoundText from '@/components/dondeSiempre/NotFoundText';
+import OutfitCard from '@/components/dondeSiempre/OutfitCard';
+import SortableOutfitCard from '@/components/dondeSiempre/SortableOutfitCard';
+import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
-import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
+import { OutfitDTO, OutfitSortDTO } from '@/lib/types/outfits/outfitsDto';
 import { hasMinimumOutfitProducts } from '@/lib/types/outfits/outfitsRules';
-import { convertPrice, getOutfitDisplayPrice, outfitWithDiscount } from '@/lib/utils';
-import Image from 'next/image';
+import { move } from '@dnd-kit/helpers';
+import { DragDropProvider } from '@dnd-kit/react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
+import { BiTransfer } from 'react-icons/bi';
+import { FaRegSave } from 'react-icons/fa';
 import { IoMdAddCircleOutline } from 'react-icons/io';
-import { RiDiscountPercentFill } from 'react-icons/ri';
 import ErrorText from '../../../../components/dondeSiempre/ErrorText';
 import LoadingText from '../../../../components/dondeSiempre/LoadingText';
+import ClientOutfitsPage from './ClientOutfitsPage';
 
 export default function OutfitsPage() {
   const params = useParams<{ id: string }>();
-  const [isAdmin, setIsAdmin] = useState(false);
   const [cleanupStatus, setCleanupStatus] = useState<string | null>(null);
   const [cleanupError, setCleanupError] = useState<string | null>(null);
   const [isCleaningInvalidOutfits, setIsCleaningInvalidOutfits] = useState(false);
+  const [isOrdering, setIsOrdering] = useState(false);
 
   const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
   const deleteOutfit = useActiveFetcher<void>({ method: 'DELETE' });
+  const sortOutfits = useActiveFetcher<void>({
+    url: `stores/${params.id}/outfits/sort`,
+    method: 'PATCH',
+  });
 
   if (outfits.isLoading) {
     return <LoadingText />;
@@ -61,141 +68,135 @@ export default function OutfitsPage() {
     }
   };
 
+  const renderClientPage = (): ReactNode => {
+    return <ClientOutfitsPage storeId={params.id} outfits={outfits.data} />;
+  };
   return (
-    <>
-      <LabelledSwitch
-        label="Modo tienda"
-        checked={isAdmin}
-        onCheckedChange={(checked) => setIsAdmin(checked)}
-      />
-      <div className="flex flex-col items-center">
-        <div className="w-full md:w-8/12">
-          {isAdmin && invalidOutfits.length > 0 && (
-            <Card className="m-4 space-y-4 border-destructive/30 bg-destructive/5 p-4 shadow-xl">
-              <div className="space-y-2">
-                <h2 className="text-xl font-bold text-primary">Outfits invalidos detectados</h2>
-                <p className="text-sm text-secondary">
-                  Hay {invalidOutfits.length} outfit
-                  {invalidOutfits.length === 1 ? '' : 's'} con una unica prenda. No deberian
-                  mantenerse publicados.
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {invalidOutfits.map((outfit) => outfit.name).join(', ')}
-                </p>
-              </div>
-              {cleanupStatus && <p className="text-sm text-secondary">{cleanupStatus}</p>}
-              {cleanupError && <p className="text-sm text-destructive">{cleanupError}</p>}
-              <Button
-                type="button"
-                onClick={() => void deleteInvalidOutfits()}
-                disabled={isCleaningInvalidOutfits || deleteOutfit.isPending}
-                className="bg-primary text-white hover:bg-dark-primary"
-              >
-                {isCleaningInvalidOutfits
-                  ? 'Eliminando outfits invalidos...'
-                  : 'Eliminar outfits invalidos'}
-              </Button>
-            </Card>
-          )}
+    <StoreOwnerGuard
+      storeId={params.id}
+      fallbackWhenLoggedOut={renderClientPage()}
+      fallbackWhenNotStore={renderClientPage()}
+      fallbackWhenNotStoreOwner={renderClientPage()}
+    >
+      <DragDropProvider
+        onDragEnd={(event) => {
+          if (event.canceled) {
+            return;
+          }
+          const ids = outfits.data?.map((out) => out.id) || [];
+          const sorted = move(ids, event);
 
-          {isAdmin ? (
-            <Link href={`/stores/${params.id}/create-outfit/`}>
-              <Card className="m-4 p-4 shadow-xl hover:cursor-pointer hover:bg-muted active:bg-input">
-                <div className="flex flex-row justify-center gap-4 rounded-lg border-4 border-dashed border-secondary p-4">
-                  <IoMdAddCircleOutline className="mb-8 mt-8 text-center text-4xl text-secondary" />
-                  <h1 className="mb-8 mt-8 text-center text-3xl font-bold text-secondary">
-                    Crear outfit
-                  </h1>
+          outfits.setData(
+            outfits.data
+              ?.map((out) => {
+                return {
+                  ...out,
+                  index: sorted.indexOf(out.id) >= 0 ? sorted.indexOf(out.id) : out.index,
+                };
+              })
+              .sort((a, b) => a.index - b.index) || []
+          );
+        }}
+      >
+        <div className="flex flex-col items-center">
+          <div className="w-full md:w-8/12">
+            {invalidOutfits.length > 0 && (
+              <Card className="m-4 space-y-4 border-destructive/30 bg-destructive/5 p-4 shadow-xl">
+                <div className="space-y-2">
+                  <h2 className="text-xl font-bold text-primary">Outfits inválidos detectados</h2>
+                  <p className="text-sm text-secondary">
+                    Hay {invalidOutfits.length} outfit
+                    {invalidOutfits.length === 1 ? '' : 's'} con única prenda. No deberían
+                    mantenerse publicados.
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {invalidOutfits.map((outfit) => outfit.name).join(', ')}
+                  </p>
                 </div>
+                {cleanupStatus && <p className="text-sm text-secondary">{cleanupStatus}</p>}
+                {cleanupError && <p className="text-sm text-destructive">{cleanupError}</p>}
+                <Button
+                  type="button"
+                  onClick={() => void deleteInvalidOutfits()}
+                  disabled={isCleaningInvalidOutfits || deleteOutfit.isPending}
+                  className="bg-primary text-white hover:bg-dark-primary"
+                >
+                  {isCleaningInvalidOutfits
+                    ? 'Eliminando outfits invalidos...'
+                    : 'Eliminar outfits invalidos'}
+                </Button>
               </Card>
-            </Link>
-          ) : null}
+            )}
+            <div className="flex flex-row justify-between w-full gap-2 p-4">
+              <div className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12">
+                <Link href={`/stores/${params.id}/create-outfit/`} className="flex flex-row gap-2">
+                  <IoMdAddCircleOutline className="mt-0.5 text-white text-center text-2xl" />
+                  <h1 className="font-bold text-white text-center text-xl">Crear outfit</h1>
+                </Link>
+              </div>
+              {isOrdering ? (
+                <div
+                  className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-primary hover:bg-dark-primary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
+                  onClick={async () => {
+                    setIsOrdering(false);
 
-          {validOutfits.length > 0 ? (
-            <>
-              {validOutfits.map((outfit) => (
-                <Card key={outfit.id} className="m-4 p-4 pt-8 shadow-xl">
-                  <div>
-                    {outfitWithDiscount(outfit) ? (
-                      <RiDiscountPercentFill className="text-4xl" />
-                    ) : null}
-                    <h1 className="mb-3 text-center text-3xl font-bold text-primary">
-                      {outfit.name}
-                    </h1>
+                    const dtos: OutfitSortDTO[] =
+                      outfits.data?.map((out) => {
+                        return { id: out.id, index: out.index } as OutfitSortDTO;
+                      }) || [];
+                    await sortOutfits.fetch({ body: dtos });
+                    outfits.refetch();
+                  }}
+                >
+                  <div className="flex flex-row gap-2">
+                    <FaRegSave className="mt-0.5 text-white text-center text-2xl" />
+                    <h1 className="font-bold text-white text-center text-xl">Guardar</h1>
                   </div>
-
-                  <div className="flex w-fit max-w-11/12 flex-row items-center gap-4 self-center overflow-x-auto p-4">
-                    {outfit.products.map((product) => (
-                      <Image
-                        key={product.id}
-                        src={product.image || '/static/img/product_placeholder.png'}
-                        alt={product.name}
-                        width={512}
-                        height={512}
-                        className="h-30 w-30 shrink-0 rounded-lg object-cover shadow-lg md:h-50 md:w-50"
-                      />
-                    ))}
+                </div>
+              ) : (
+                <div
+                  className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
+                  onClick={async () => {
+                    setIsOrdering(true);
+                  }}
+                >
+                  <div className="flex flex-row gap-2">
+                    <BiTransfer className="mt-0.5 text-white text-center text-2xl" />
+                    <h1 className="font-bold text-white text-center text-xl">Ordenar</h1>
                   </div>
-
-                  {!outfitWithDiscount(outfit) ? (
-                    <h1 className="text-center text-3xl font-bold text-primary">
-                      {`${convertPrice(outfit.priceInCents).toFixed(2).replace('.', ',')}EUR`}
-                    </h1>
+                </div>
+              )}
+            </div>
+            {validOutfits.length > 0 && (
+              <>
+                {validOutfits.map((outfit, index) =>
+                  isOrdering ? (
+                    <SortableOutfitCard
+                      key={outfit.id}
+                      index={index}
+                      outfit={outfit}
+                      onDelete={async () => {
+                        await deleteOutfit.fetch({ url: `outfits/${outfit.id}` });
+                        outfits.refetch();
+                      }}
+                    />
                   ) : (
-                    <div className="flex flex-row gap-3 self-center">
-                      <h1 className="text-center text-3xl text-primary line-through">
-                        {`${convertPrice(outfit.priceInCents).toFixed(2).replace('.', ',')}EUR`}
-                      </h1>
-                      <h1 className="text-center text-3xl font-bold text-primary">
-                        {`${getOutfitDisplayPrice(outfit).toFixed(2).replace('.', ',')}EUR`}
-                      </h1>
-                    </div>
-                  )}
-
-                  {isAdmin ? (
-                    <div className="grid w-11/12 grid-cols-3 gap-2 self-center">
-                      <Link
-                        href={`/stores/${params.id}/outfits/${outfit.id}`}
-                        className="flex h-12 w-full flex-wrap items-center justify-center gap-2 self-center rounded-lg bg-secondary p-2 text-md font-bold text-white hover:cursor-pointer hover:bg-dark-secondary md:flex-row md:text-xl"
-                      >
-                        Editar
-                      </Link>
-                      <Link
-                        href={`/stores/${params.id}/outfits/${outfit.id}/products`}
-                        className="flex h-12 w-full flex-wrap items-center justify-center gap-2 self-center rounded-lg bg-secondary p-2 text-md font-bold text-white hover:cursor-pointer hover:bg-dark-secondary md:flex-row md:text-xl"
-                      >
-                        Productos
-                      </Link>
-                      <Button
-                        onClick={async () => {
-                          await deleteOutfit.fetch({ url: `outfits/${outfit.id}` });
-                          outfits.setData(
-                            validOutfits.filter((currentOutfit) => currentOutfit.id !== outfit.id)
-                          );
-                        }}
-                        className="flex h-12 w-full flex-wrap items-center justify-center gap-2 self-center rounded-lg bg-primary p-2 text-md font-bold text-white hover:cursor-pointer hover:bg-dark-primary md:flex-row md:text-xl"
-                      >
-                        Eliminar
-                      </Button>
-                    </div>
-                  ) : (
-                    <Link
-                      href={`/stores/${params.id}/outfits/${outfit.id}`}
-                      className="flex h-12 w-11/12 flex-wrap items-center justify-center gap-2 self-center rounded-lg bg-secondary text-md font-bold text-white hover:cursor-pointer hover:bg-dark-secondary md:w-1/4 md:flex-row md:text-xl"
-                    >
-                      Ver mas
-                    </Link>
-                  )}
-                </Card>
-              ))}
-            </>
-          ) : (
-            !isAdmin && (
-              <NotFoundText message="Esta tienda todavia no tiene outfits disponibles..." />
-            )
-          )}
+                    <OutfitCard
+                      key={outfit.id}
+                      outfit={outfit}
+                      isOwner={true}
+                      onDelete={async () => {
+                        await deleteOutfit.fetch({ url: `outfits/${outfit.id}` });
+                        outfits.refetch();
+                      }}
+                    />
+                  )
+                )}
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    </>
+      </DragDropProvider>
+    </StoreOwnerGuard>
   );
 }

@@ -15,8 +15,6 @@ const quicksand = Quicksand({
   variable: '--font-quicksand',
 });
 
-import './globals.css';
-
 const APP_NAME = 'Donde Siempre';
 const APP_DEFAULT_TITLE = 'Donde Siempre';
 const APP_TITLE_TEMPLATE = '%s – Donde Siempre';

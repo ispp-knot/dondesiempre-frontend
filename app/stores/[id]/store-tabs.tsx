@@ -1,15 +1,14 @@
 'use client';
 
-import { JSX, useState } from 'react';
-import Image from 'next/image';
-import AboutUs from './about-us';
-import Outfits from './outfits';
-import StoreOptions from './options';
-import { StoreDTO } from '@/lib/types/stores/storesDto';
-import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
-import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { ShareTo } from '@/components/ui/shareTo';
-import { getOutfitDiscountPercentage, outfitWithDiscount } from '@/lib/utils';
+import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
+import { StoreDTO } from '@/lib/types/stores/storesDto';
+import { outfitWithDiscount } from '@/lib/utils';
+import Image from 'next/image';
+import { JSX, useState } from 'react';
+import AboutUs from './about-us';
+import StoreOptions from './options';
+import Outfits from './outfits';
 
 type Tab = 'catalogo' | 'sobre' | 'opciones';
 
@@ -25,15 +24,6 @@ export default function StoreTabs({ description = '', outfits = [], store }: Pro
   const promoOutfit = outfits.find((outfit) => outfitWithDiscount(outfit));
 
   const storefrontId = store?.storefront?.id;
-  const mockPromotion: PromotionDTO = {
-    id: '1a383fda-5ac8-4f1f-bfba-2dcd4f09dca3',
-    name: promoOutfit?.name || 'Esto es una promoción',
-    discountPercentage: promoOutfit ? getOutfitDiscountPercentage(promoOutfit) : 0,
-    isActive: true,
-    description: promoOutfit?.description || 'Esto es una descripcion',
-    storeId: store.id,
-    productIds: ['1a383fda', '5ac8', '4f1f-bfba', '2dcd4f09dca3'],
-  };
   return (
     <>
       {promoOutfit && (
@@ -52,7 +42,7 @@ export default function StoreTabs({ description = '', outfits = [], store }: Pro
             </h2>
             <p className="text-primary font-semibold mt-1">12/04/2026 - 26/04/2026</p>
             <ShareTo
-              item={mockPromotion}
+              item={promoOutfit}
               className="bg-secondary text-white font-medium py-2 px-4 rounded mt-4 w-[95%] shadow-sm hover:bg-secondary/90 hover:cursor-pointer transition"
             />
           </div>
