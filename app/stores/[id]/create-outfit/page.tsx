@@ -5,13 +5,14 @@ import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import SortableProduct from '@/components/dondeSiempre/SortableProduct';
+import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
-import { StoreDTO } from '@/lib/types/stores/storesDto';
-import { OutfitDTO, OutfitCreationDTO } from '@/lib/types/outfits/outfitsDto';
+import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
+import { OutfitCreationDTO, OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { productDTOToOufitCreationProductDTO } from '@/lib/types/outfits/outfitsHelper';
 import { ProductDTO } from '@/lib/types/products/productsDto';
+import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { convertPrice } from '@/lib/utils';
 import { move } from '@dnd-kit/helpers';
 import { DragDropProvider } from '@dnd-kit/react';
@@ -53,7 +54,6 @@ export default function OutfitCreationPage() {
     const dto: OutfitCreationDTO = {
       name: (document.getElementById('form-name') as HTMLInputElement).value,
       description: (document.getElementById('form-description') as HTMLInputElement).value || null,
-      index: Number.parseInt((document.getElementById('form-index') as HTMLInputElement).value),
       storefrontId: store.data!.storefront.id,
       tags: outfitTags,
       products: outfitProducts.map((product, index) =>
@@ -70,7 +70,7 @@ export default function OutfitCreationPage() {
   };
 
   return (
-    <>
+    <StoreOwnerGuard storeId={params.id}>
       {products.data ? (
         <DragDropProvider
           onDragEnd={(event) => {
@@ -120,19 +120,6 @@ export default function OutfitCreationPage() {
                       />
                       <label className="font-bold text-lg text-secondary">Imagen:</label>
                       <ImageUpload onChange={setImageFile} />
-                      <label htmlFor="form-index" className="font-bold text-lg text-secondary">
-                        Índice:{' '}
-                      </label>
-                      <input
-                        type="number"
-                        name="index"
-                        id="form-index"
-                        min="0"
-                        step="1"
-                        defaultValue={0}
-                        required
-                        className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
-                      />
                       <label htmlFor="form-tags" className="font-bold text-lg text-secondary">
                         Etiquetas:{' '}
                       </label>
@@ -251,6 +238,6 @@ export default function OutfitCreationPage() {
       ) : (
         <NotFoundText message="No hay productos para crear un outfit..." />
       )}
-    </>
+    </StoreOwnerGuard>
   );
 }
