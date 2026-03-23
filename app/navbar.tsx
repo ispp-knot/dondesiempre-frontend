@@ -8,10 +8,13 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { UserNavButton } from '@/components/dondeSiempre/UserNavButton';
+import { useAuth } from '@/lib/auth/AuthContext';
 
 export default function Navbar() {
   const [isAdmin, _setIsAdmin] = useState<boolean>(false);
   const pathname = usePathname();
+  const { getCurrentUser } = useAuth();
+  const user = getCurrentUser();
 
   const userActiveMatches = ['/profile', '/login', '/register'];
   const isUserActive = userActiveMatches.some((m) => pathname.startsWith(m));
@@ -35,10 +38,12 @@ export default function Navbar() {
           <div className="flex flex-row items-center gap-5 text-2xl font-primary">
             {!isAdmin && (
               <>
-                <FaRegHeart
-                  className="cursor-pointer"
-                  onClick={() => (window.location.href = '/following')}
-                />
+                {user && !user?.roles.includes('STORE') && (
+                  <FaRegHeart
+                    className="cursor-pointer"
+                    onClick={() => (window.location.href = '/following')}
+                  />
+                )}
                 <LuPackage
                   className="cursor-pointer"
                   onClick={() => (window.location.href = '/orders')}

@@ -36,8 +36,6 @@ jobs:
           tags: |
             ${{ env.DOCKER_IMAGE }}:${{ steps.tag.outputs.tag }}
             ${{ env.DOCKER_IMAGE }}:latest
-          build-args: |
-            BACKEND_URL=${{ secrets.BACKEND_URL }}
 
   deploy:
     runs-on: ubuntu-latest

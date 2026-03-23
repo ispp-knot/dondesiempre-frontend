@@ -31,13 +31,18 @@ export function StoreCard({
       : null;
   const router = useRouter();
   const { getCurrentUser } = useAuth();
-  const isLoggedIn = getCurrentUser() !== null;
+  const user = getCurrentUser();
+  const isLoggedIn = user !== null;
+  const isStore = user?.roles.includes('STORE');
 
   const clickCount = useRef(0);
   const clickTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [heartAnimating, setHeartAnimating] = useState(false);
 
-  const isFollowing = usePassiveFetcher<StoreFollowerDTO>({ url: `stores/${store.id}/follow` });
+  const isFollowing = usePassiveFetcher<StoreFollowerDTO>({
+    url: `stores/${store.id}/follow`,
+    enabled: isLoggedIn && !isStore,
+  });
   const followStore = useActiveFetcher<void>({
     url: `stores/${store.id}/followers`,
     method: 'POST',
@@ -184,7 +189,7 @@ export function StoreCard({
           <LuRoute size={24} />
         </Button>
 
-        {isLoggedIn && (
+        {isLoggedIn && !isStore && (
           <Button
             onClick={handleFollowClick}
             className="p-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors disabled:opacity-50"
