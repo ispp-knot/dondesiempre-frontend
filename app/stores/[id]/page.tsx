@@ -160,7 +160,15 @@ export default function StorePage() {
         ))}
       </div>
 
-      {isOwner && <Button onClick={() => setIsSocialModalOpen(true)}>Editar redes</Button>}
+      {isOwner && (
+        <Button
+          type="button"
+          className="mx-auto flex w-fit rounded-md bg-teal-700 text-white font-medium hover:opacity-90"
+          onClick={() => setIsSocialModalOpen(true)}
+        >
+          Editar redes
+        </Button>
+      )}
 
       <StoreTabs
         store={store.data}

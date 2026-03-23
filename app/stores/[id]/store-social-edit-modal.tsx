@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useActiveFetcher } from '@/lib/api/fetcher';
+import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { StoreSocialNetworkDTO } from '@/lib/types/stores/storesSocialDto';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -54,6 +54,22 @@ export default function StoreSocialNetworksModal({
     setNewName('');
     setNewLink('');
   };
+
+  const socialNetworkNames = usePassiveFetcher<string[]>({
+    url: 'social-networks/names',
+    enabled: open,
+  });
+
+  const availableNames =
+    socialNetworkNames.data?.filter(
+      (name) => !localNetworks.some((network) => network.name === name)
+    ) ?? [];
+
+  useEffect(() => {
+    if (newName && !availableNames.includes(newName)) {
+      setNewName('');
+    }
+  }, [availableNames, newName]);
 
   const handleUpdate = async (id: string, link: string) => {
     try {
@@ -140,12 +156,18 @@ export default function StoreSocialNetworksModal({
 
           {/* AÑADIR NUEVA */}
           <div className="flex gap-2 items-center">
-            <Input
-              placeholder="Nombre (Instagram, TikTok...)"
+            <select
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
-              className="text-muted-foreground"
-            />
+              className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm text-muted-foreground font-sans"
+            >
+              <option value="">Selecciona una red social</option>
+              {availableNames.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
             <Input
               placeholder="Link"
               value={newLink}
