@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { StoreSocialNetworkDTO } from '@/lib/types/stores/storesSocialDto';
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,7 @@ export default function StoreSocialNetworksModal({
   socialNetworks,
   onUpdated,
 }: Props) {
-  const [localNetworks, setLocalNetworks] = useState(socialNetworks);
+  const [localNetworks, setLocalNetworks] = useState<StoreSocialNetworkDTO[]>([]);
   const [newName, setNewName] = useState('');
   const [newLink, setNewLink] = useState('');
 
@@ -44,33 +44,42 @@ export default function StoreSocialNetworksModal({
   const handleAdd = async () => {
     if (!newName || !newLink) return;
 
-    const created = await addSocial.fetch({
-      body: { name: newName, link: newLink },
-    });
+    try {
+      const created = await addSocial.fetch({
+        body: { name: newName, link: newLink },
+      });
 
-    const next = [...localNetworks, created];
-    setLocalNetworks(next);
-    onUpdated(next);
-    setNewName('');
-    setNewLink('');
+      setLocalNetworks((prev) => {
+        const next = [...prev.filter((s) => s.id !== created.id), created];
+
+        onUpdated(next);
+        return next;
+      });
+
+      setNewName('');
+      setNewLink('');
+    } catch (e) {
+      console.error('ERROR ADD:', e);
+    }
   };
-
   const socialNetworkNames = usePassiveFetcher<string[]>({
     url: 'social-networks/names',
     enabled: open,
   });
 
-  const availableNames =
-    socialNetworkNames.data?.filter(
-      (name) => !localNetworks.some((network) => network.name === name)
-    ) ?? [];
+  const availableNames = useMemo(
+    () =>
+      socialNetworkNames.data?.filter(
+        (name) => !localNetworks.some((network) => network.name === name)
+      ) ?? [],
+    [socialNetworkNames.data, localNetworks]
+  );
 
   useEffect(() => {
     if (newName && !availableNames.includes(newName)) {
       setNewName('');
     }
   }, [availableNames, newName]);
-
   const handleUpdate = async (id: string, link: string) => {
     try {
       console.log('UPDATE CALL:', {
@@ -127,7 +136,7 @@ export default function StoreSocialNetworksModal({
 
               {/* Input */}
               <Input
-                value={social.link}
+                value={social.link ?? ''}
                 onChange={(e) =>
                   setLocalNetworks((prev) =>
                     prev.map((s) => (s.id === social.id ? { ...s, link: e.target.value } : s))
