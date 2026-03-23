@@ -32,13 +32,13 @@ enum itemType {
 
 function checkType(item: Props['item']) {
   const res =
-    'isActive' in item ? itemType.PROMOTION : 'index' in item ? itemType.OUTFIT : itemType.PRODUCT;
+    'active' in item ? itemType.PROMOTION : 'index' in item ? itemType.OUTFIT : itemType.PRODUCT;
   return res;
 }
 
 function getBackgroundImage(item: Props['item'], images?: string[]): string {
   if (images && images.length > 0) return images[0];
-  if ('image' in item && item.image) return item.image; // 👈 ¡Ya tenías esta lógica!
+  if ('image' in item && item.image) return item.image;
   return '/static/img/promotion_placeholder.png';
 }
 

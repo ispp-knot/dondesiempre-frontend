@@ -32,12 +32,15 @@ const productSchema = z.object({
 export type Product = z.infer<typeof productSchema>;
 // 1. Definición del Esquema de Validación con Zod
 const promotionSchema = z.object({
-  name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
+  name: z
+    .string()
+    .min(3, 'El nombre debe tener al menos 3 caracteres')
+    .max(255, 'El nombre de ser como máximo de 255 caracteres'),
   discountPercentage: z
     .number()
     .min(1, 'El descuento debe ser al menos 1%')
     .max(100, 'El descuento máximo es de 100%'),
-  description: z.string().min(5, 'La descripción es muy corta'),
+  description: z.string().max(255, 'El nombre de ser como máximo de 255 caracteres'),
   products: z.array(productSchema).min(1, 'Selecciona al menos un producto'),
   isActive: z.boolean(),
   // Para objetos anidados, validamos los campos internos
@@ -56,9 +59,7 @@ const promotionSchema = z.object({
       message: 'La fecha de finalización debe de ser posterior a la fecha actual',
     }),
   // Para la imagen, validamos que no sea null
-  promotionImage: z.any().refine((val) => val !== null && val !== undefined, {
-    message: 'La imagen de la promoción es obligatoria',
-  }),
+  promotionImage: z.any().nullable().optional(),
 });
 
 export type PromotionFormData = z.infer<typeof promotionSchema>;
@@ -97,7 +98,7 @@ export default function PromotionForm({
         from: initialData?.dateRange?.from ? new Date(initialData.dateRange.from) : undefined,
         to: initialData?.dateRange?.to ? new Date(initialData.dateRange.to) : undefined,
       },
-      promotionImage: initialData?.promotionImage,
+      promotionImage: initialData?.promotionImage ? initialData.promotionImage : undefined,
     },
   });
 
@@ -196,7 +197,7 @@ export default function PromotionForm({
                     type="number"
                     value={field.value}
                     onChange={(e) => field.onChange(Number(e.target.value))}
-                    className="w-8 outline-none text-lg text-dark-blue font-bold bg-transparent text-right"
+                    className="w-10 outline-none text-lg text-dark-blue font-bold bg-transparent text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                   <span className="text-secondary font-bold">%</span>
                 </div>
@@ -256,7 +257,7 @@ export default function PromotionForm({
           )}
         />
         {errors.dateRange && (
-          <p className="text-destructive text-xs mt-1">Selecciona ambas fechas (inicio y fin)</p>
+          <p className="text-destructive text-xs mt-1">{errors.dateRange.message}</p>
         )}
       </div>
 
@@ -348,20 +349,22 @@ export default function PromotionForm({
       </div>
 
       {/* Active Toggle */}
-      <div className="flex items-center justify-between py-2">
-        <span className="text-lg font-bold text-primary">Activa</span>
-        <Controller
-          control={control}
-          name="isActive"
-          render={({ field }) => (
-            <Switch
-              checked={field.value}
-              onCheckedChange={field.onChange}
-              className="cursor-pointer"
-            />
-          )}
-        />
-      </div>
+      {initialData !== undefined && (
+        <div className="flex items-center justify-between py-2">
+          <span className="text-lg font-bold text-primary">Activa</span>
+          <Controller
+            control={control}
+            name="isActive"
+            render={({ field }) => (
+              <Switch
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                className="cursor-pointer"
+              />
+            )}
+          />
+        </div>
+      )}
 
       <Button
         type="submit"
