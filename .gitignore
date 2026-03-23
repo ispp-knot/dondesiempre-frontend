@@ -57,3 +57,5 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+/tests/scripts/auth.client.json
+/tests/scripts/auth.store.json
