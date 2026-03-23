@@ -7,6 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Trash2, Save, Plus } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { z } from 'zod';
+
+const socialNetworkSchema = z.object({
+  link: z.string().min(1, 'El link es obligatorio').max(500, 'Máximo 500 caracteres'),
+});
 
 type Props = {
   open: boolean;
@@ -27,6 +32,9 @@ export default function StoreSocialNetworksModal({
   const [newName, setNewName] = useState('');
   const [newLink, setNewLink] = useState('');
 
+  const [addError, setAddError] = useState<string | null>(null);
+  const [updateErrors, setUpdateErrors] = useState<Record<string, string>>({});
+
   useEffect(() => {
     setLocalNetworks(socialNetworks);
   }, [socialNetworks]);
@@ -39,10 +47,25 @@ export default function StoreSocialNetworksModal({
   const updateSocial = useActiveFetcher<StoreSocialNetworkDTO>({
     method: 'PUT',
   });
+
   const deleteSocial = useActiveFetcher({ method: 'DELETE' });
 
+  const [status, setStatus] = useState<{
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
+
   const handleAdd = async () => {
-    if (!newName || !newLink) return;
+    const result = socialNetworkSchema.safeParse({ link: newLink });
+
+    if (!result.success) {
+      setAddError(result.error.issues[0].message);
+      return;
+    }
+
+    setAddError(null);
+
+    if (!newName) return;
 
     try {
       const created = await addSocial.fetch({
@@ -51,15 +74,18 @@ export default function StoreSocialNetworksModal({
 
       setLocalNetworks((prev) => {
         const next = [...prev.filter((s) => s.id !== created.id), created];
-
         onUpdated(next);
         return next;
       });
 
       setNewName('');
       setNewLink('');
-    } catch (e) {
-      console.error('ERROR ADD:', e);
+      setStatus({ type: 'success', message: 'Social network added correctly' });
+    } catch {
+      setStatus({
+        type: 'error',
+        message: 'Error adding social network.',
+      });
     }
   };
   const socialNetworkNames = usePassiveFetcher<string[]>({
@@ -80,29 +106,39 @@ export default function StoreSocialNetworksModal({
       setNewName('');
     }
   }, [availableNames, newName]);
-  const handleUpdate = async (id: string, link: string) => {
-    try {
-      console.log('UPDATE CALL:', {
-        storeId,
-        id,
-        link,
-      });
 
+  const handleUpdate = async (id: string, link: string) => {
+    const result = socialNetworkSchema.safeParse({ link });
+
+    if (!result.success) {
+      setUpdateErrors((prev) => ({
+        ...prev,
+        [id]: result.error.issues[0].message,
+      }));
+      return;
+    }
+
+    setUpdateErrors((prev) => {
+      const copy = { ...prev };
+      delete copy[id];
+      return copy;
+    });
+
+    try {
       const updated = await updateSocial.fetch({
         url: `store-social-networks/${id}`,
         body: { link },
       });
 
-      console.log('UPDATED:', updated);
-
       const next = localNetworks.map((s) => (s.id === id ? updated : s));
       setLocalNetworks(next);
       onUpdated(next);
-    } catch (e) {
-      console.error('ERROR UPDATE:', e);
-      console.log('storeId:', storeId);
-      console.log('id:', id);
-      console.log('link:', link);
+      setStatus({ type: 'success', message: 'Social network updated correctly' });
+    } catch {
+      setStatus({
+        type: 'error',
+        message: 'Error updating social network.',
+      });
     }
   };
 
@@ -115,8 +151,12 @@ export default function StoreSocialNetworksModal({
       const next = localNetworks.filter((s) => s.id !== id);
       setLocalNetworks(next);
       onUpdated(next);
-    } catch (e) {
-      console.error('ERROR DELETE:', e);
+      setStatus({ type: 'success', message: 'Social network deleted correctly' });
+    } catch {
+      setStatus({
+        type: 'error',
+        message: 'Error deleting social network.',
+      });
     }
   };
 
@@ -126,15 +166,22 @@ export default function StoreSocialNetworksModal({
         <DialogHeader>
           <DialogTitle className="text-teal-700">Redes sociales</DialogTitle>
         </DialogHeader>
-
+        {status && (
+          <div
+            className={`rounded-md p-3 text-sm ${
+              status.type === 'error'
+                ? 'border border-red-300 bg-red-50 text-red-700'
+                : 'border border-green-300 bg-green-50 text-green-700'
+            }`}
+          >
+            {status.message}
+          </div>
+        )}
         <div className="flex flex-col gap-4">
-          {/* EXISTENTES */}
           {localNetworks.map((social) => (
             <div key={social.id} className="flex gap-2 items-center">
-              {/* Nombre */}
               <div className="w-32 text-sm font-medium text-primary">{social.name}</div>
 
-              {/* Input */}
               <Input
                 value={social.link ?? ''}
                 onChange={(e) =>
@@ -143,9 +190,12 @@ export default function StoreSocialNetworksModal({
                   )
                 }
                 className="flex-1 text-muted-foreground"
+                aria-invalid={!!updateErrors[social.id]}
               />
+              {updateErrors[social.id] && (
+                <p className="text-xs text-destructive">{updateErrors[social.id]}</p>
+              )}
 
-              {/* Guardar */}
               <Button
                 className="bg-secondary hover:opacity-90 text-white"
                 onClick={() => handleUpdate(social.id, social.link)}
@@ -153,7 +203,6 @@ export default function StoreSocialNetworksModal({
                 <Save className="w-4 h-4" />
               </Button>
 
-              {/* Borrar */}
               <Button
                 className="bg-primary hover:opacity-90 text-white"
                 onClick={() => handleDelete(social.id)}
@@ -163,7 +212,6 @@ export default function StoreSocialNetworksModal({
             </div>
           ))}
 
-          {/* AÑADIR NUEVA */}
           <div className="flex gap-2 items-center">
             <select
               value={newName}
@@ -181,8 +229,9 @@ export default function StoreSocialNetworksModal({
               placeholder="Link"
               value={newLink}
               onChange={(e) => setNewLink(e.target.value)}
-              className="text-muted-foreground"
+              aria-invalid={!!addError}
             />
+            {addError && <p className="text-xs text-destructive">{addError}</p>}
             <Button className="bg-primary hover:opacity-90 text-white" onClick={handleAdd}>
               <Plus className="w-4 h-4" />
             </Button>
