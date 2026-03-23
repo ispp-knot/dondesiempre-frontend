@@ -161,6 +161,7 @@ export default function StorePage() {
         store={store.data}
         description={store.data?.aboutUs || ''}
         outfits={outfits.data}
+        isOwner={isOwner}
       />
 
       {isOwner && (
