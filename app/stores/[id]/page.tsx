@@ -23,6 +23,7 @@ import StoreTabs from './store-tabs';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import ErrorText from '@/components/dondeSiempre/ErrorText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
+import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Edit2 } from 'lucide-react';
@@ -65,6 +66,10 @@ export default function StorePage() {
     method: 'DELETE',
   });
 
+  const promotionsDto = usePassiveFetcher<PromotionDTO[]>({
+    url: `stores/${params.id}/promotions`,
+  });
+
   if (store.isLoading || outfits.isLoading) {
     return <LoadingText />;
   } else if (store.isError || outfits.isError) {
@@ -76,6 +81,7 @@ export default function StorePage() {
     );
   }
 
+  const promotionData: PromotionDTO[] = promotionsDto.data || [];
   const socialNetworks: Array<StoreSocialNetworkDTO> = store.data?.socialNetworks || [];
   const primaryColor = store.data?.storefront?.primaryColor || '#000000';
   const secondaryColor = store.data?.storefront?.secondaryColor || '#000000';
@@ -161,6 +167,7 @@ export default function StorePage() {
       <StoreTabs
         store={store.data}
         description={store.data?.aboutUs || ''}
+        promotions={promotionData}
         outfits={outfits.data}
       />
 

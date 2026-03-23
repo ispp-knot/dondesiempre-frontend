@@ -45,12 +45,12 @@ function Calendar({
         ),
         button_previous: cn(
           buttonVariants({ variant: buttonVariant }),
-          'size-(--cell-size) aria-disabled:opacity-50 p-0 select-none',
+          'size-(--cell-size) aria-disabled:opacity-50 p-0 select-none text-secondary hover:text-white hover:bg-secondary transition-colors',
           defaultClassNames.button_previous
         ),
         button_next: cn(
           buttonVariants({ variant: buttonVariant }),
-          'size-(--cell-size) aria-disabled:opacity-50 p-0 select-none',
+          'size-(--cell-size) aria-disabled:opacity-50 p-0 select-none text-secondary hover:text-white hover:bg-secondary transition-colors',
           defaultClassNames.button_next
         ),
         month_caption: cn(
@@ -92,13 +92,13 @@ function Calendar({
             : '[&:first-child[data-selected=true]_button]:rounded-l-md',
           defaultClassNames.day
         ),
-        range_start: cn('rounded-l-md bg-primary/30 text-primary', defaultClassNames.range_start),
-        range_middle: cn('rounded-none bg-primary/10 text-primary', defaultClassNames.range_middle),
-        range_end: cn('rounded-r-md bg-primary/30 text-primary', defaultClassNames.range_end),
-        today: cn(
-          'bg-accent text-accent-foreground rounded-md data-[selected=true]:rounded-none',
-          defaultClassNames.today
+        range_start: cn('rounded-l-md bg-secondary text-white', defaultClassNames.range_start),
+        range_middle: cn(
+          'rounded-none bg-secondary/10 text-secondary',
+          defaultClassNames.range_middle
         ),
+        range_end: cn('rounded-r-md bg-secondary text-white', defaultClassNames.range_end),
+        today: cn('data-[selected=true]:rounded-none', defaultClassNames.today),
         outside: cn(
           'text-muted-foreground aria-selected:text-muted-foreground',
           defaultClassNames.outside
@@ -149,7 +149,7 @@ function CalendarDayButton({
       data-range-end={modifiers.range_end}
       data-range-middle={modifiers.range_middle}
       className={cn(
-        'data-[selected-single=true]:bg-primary/30 data-[selected-single=true]:text-primary data-[range-middle=true]:bg-primary/10 data-[range-middle=true]:text-primary data-[range-start=true]:bg-primary/30 data-[range-start=true]:text-primary data-[range-end=true]:bg-primary/30 data-[range-end=true]:text-primary group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-ring/50 dark:hover:text-accent-foreground flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px] data-[range-end=true]:rounded-md data-[range-end=true]:rounded-r-md data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-md data-[range-start=true]:rounded-l-md [&>span]:text-xs [&>span]:opacity-70',
+        'data-[selected-single=true]:bg-secondary data-[selected-single=true]:text-white data-[range-middle=true]:bg-secondary/10 data-[range-middle=true]:text-secondary data-[range-start=true]:bg-secondary data-[range-start=true]:text-white data-[range-end=true]:bg-secondary data-[range-end=true]:text-white group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-ring/50 hover:bg-secondary hover:text-white dark:hover:text-accent-foreground flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px] data-[range-end=true]:rounded-md data-[range-end=true]:rounded-r-md data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-md data-[range-start=true]:rounded-l-md [&>span]:text-xs [&>span]:opacity-70',
         defaultClassNames.day,
         className
       )}
