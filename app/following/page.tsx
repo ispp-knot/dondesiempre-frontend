@@ -1,12 +1,12 @@
 'use client';
 
 import FollowPage from './followPage';
-import { ServerClientGuard } from '@/components/guards/ServerClientGuard';
+import { ClientGuard } from '@/components/guards/ClientGuard';
 
 export default function Page() {
   return (
-    <ServerClientGuard>
+    <ClientGuard>
       <FollowPage />;
-    </ServerClientGuard>
+    </ClientGuard>
   );
 }
