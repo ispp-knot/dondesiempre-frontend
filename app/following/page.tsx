@@ -1,3 +1,5 @@
+'use client';
+
 import FollowPage from './followPage';
 import { ServerClientGuard } from '@/components/guards/ServerClientGuard';
 
