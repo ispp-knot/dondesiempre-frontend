@@ -41,7 +41,7 @@ export default function HorizontalScroll({ title, viewMoreHref, children }: Prop
         {hasOverflow && (
           <button
             onClick={() => scroll('left')}
-            className="absolute left-0 top-0 h-full w-16 z-10 flex items-center justify-start pl-2 opacity-0 group-hover:opacity-100 transition-opacity bg-linear-to-r from-white/80 to-transparent"
+            className="absolute left-0 top-0 h-full w-16 z-10 flex items-center justify-start pl-2 opacity-0 group-hover:opacity-100 transition-opacity bg-linear-to-r from-white/80 to-transparent cursor-pointer"
           >
             <LuChevronLeft className="w-6 h-6 text-black" />
           </button>
@@ -57,7 +57,7 @@ export default function HorizontalScroll({ title, viewMoreHref, children }: Prop
         {hasOverflow && (
           <button
             onClick={() => scroll('right')}
-            className="absolute right-0 top-0 h-full w-16 z-10 flex items-center justify-end pr-2 opacity-0 group-hover:opacity-100 transition-opacity bg-linear-to-l from-white/80 to-transparent"
+            className="absolute right-0 top-0 h-full w-16 z-10 flex items-center justify-end pr-2 opacity-0 group-hover:opacity-100 transition-opacity bg-linear-to-l from-white/80 to-transparent cursor-pointer"
           >
             <LuChevronRight className="w-6 h-6 text-black" />
           </button>
