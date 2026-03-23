@@ -17,7 +17,7 @@ interface Props {
  * If the user is already authenticated it redirects away (defaults to /).
  * If `fallback` is provided it renders that instead of redirecting.
  *
- * For server-side protection use ServerLoggedOutGuard instead.
+ * Use this guard in client components (pages with 'use client').
  */
 export function LoggedOutGuard({ children, redirectTo = '/', fallback }: Props) {
   const { getCurrentUser } = useAuth();

@@ -1,6 +1,7 @@
 'use client';
 
 export const dynamic = 'force-dynamic';
+import { useState } from 'react';
 
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { StoreDTO, StoreSocialNetworkDTO } from '@/lib/types/stores/storesDto';
@@ -25,6 +26,8 @@ import ErrorText from '@/components/dondeSiempre/ErrorText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { Edit2 } from 'lucide-react';
+import StoreEditModal from './store-edit-modal';
 
 const getSocialIcon = (name: string) => {
   const lowerName = name.toLowerCase();
@@ -43,6 +46,12 @@ export default function StorePage() {
   const params = useParams<{ id: string }>();
   const { getCurrentUser } = useAuth();
   const user = getCurrentUser();
+  const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
+  const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
+
+  const isOwner = !!user?.store?.id && user.store.id === params.id;
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
   const isFollowing = usePassiveFetcher<{ isFollowing: boolean }>({
     url: `stores/${params.id}/follow`,
     enabled: !!user,
@@ -55,9 +64,6 @@ export default function StorePage() {
     url: `stores/${params.id}/follow`,
     method: 'DELETE',
   });
-
-  const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
-  const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
 
   if (store.isLoading || outfits.isLoading) {
     return <LoadingText />;
@@ -99,11 +105,20 @@ export default function StorePage() {
 
       <div className="w-full mt-5 text-center text-3xl md:text-5xl text-[var(--primary)] font-bold">
         {store.data.name}
+        {isOwner && (
+          <button type="button" onClick={() => setIsEditOpen(true)}>
+            <Edit2 className="w-8 h-8  text-teal-700 ml-3 " />
+          </button>
+        )}
       </div>
 
       <div className="flex flex-row w-full mt-2 items-center justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]">
         <FaLocationDot />
         {store.data.address}
+      </div>
+
+      <div className="flex flex-row w-full mt-2 items-center justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]">
+        {store.data.phone}
       </div>
 
       <div className="flex flex-row w-full mt-2 items-center justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]">
@@ -149,6 +164,18 @@ export default function StorePage() {
         description={store.data?.aboutUs || ''}
         outfits={validOutfits}
       />
+
+      {isOwner && (
+        <StoreEditModal
+          open={isEditOpen}
+          close={setIsEditOpen}
+          store={store.data}
+          storeId={params.id}
+          onUpdated={(updatedStore) => {
+            store.setData(updatedStore);
+          }}
+        />
+      )}
     </div>
   ) : (
     <NotFoundText message="No se pudo encontrar la tienda que buscabas..." />

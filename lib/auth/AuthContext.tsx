@@ -1,188 +1,111 @@
 ﻿'use client';
 
 import type { UserResponseDTO } from '@/lib/types/auth/authDto';
-import { pick } from 'lodash';
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  useSyncExternalStore,
-  type ReactNode,
-} from 'react';
-import { useActiveFetcher } from '../api/fetcher';
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 
-const LOCAL_STORAGE_KEY = 'auth_user';
-let lastStoredUserRaw: string | null = null;
-let lastStoredUserSnapshot: UserResponseDTO | null = null;
+const LOCAL_STORAGE_KEY = 'auth_user_v2';
+const AUTH_TOKEN_KEY = 'auth_token_v2';
 
-/**
- * Sets the non-HttpOnly "session" cookie.
- *
- * This is intentionally unsigned and not verified â€” use only for routing
- * decisions (guards), never for security-critical logic.
- */
-export async function setServerSession(user: UserResponseDTO) {
-  const { expiresAt } = user;
-
-  const cookie = btoa(JSON.stringify(pick(user, ['id', 'email', 'roles', 'expiresAt'])));
-  document.cookie = `session=${cookie}; expires=${expiresAt}`;
-}
-
-/**
- * Clears the non-HttpOnly "session" cookie.
- *
- * This is intentionally unsigned and not verified â€” use only for routing
- * decisions (guards), never for security-critical logic.
- */
-export async function clearServerSession() {
-  document.cookie = 'session=; expires=Thu, 01 Jan 1970 00:00:00';
-}
+const ONE_HOUR_MS = 60 * 60 * 1000;
 
 interface AuthContextValue {
   /**
    * Returns the currently authenticated user, or null if not logged in
-   * (or if the stored token has expired).
+   * (or if the stored token expires within 1 hour).
    */
   getCurrentUser: () => UserResponseDTO | null;
 
   /**
    * Persists the given UserInfo to state and localStorage.
-   * Call this after a successful /login or /me response.
+   * Call this after a successful /login response.
    */
-  registerInfo: (user: UserResponseDTO) => void;
+  registerInfo: (user: UserResponseDTO, token: string) => void;
 
   /**
    * Clears the auth state from memory and localStorage.
-   * Does NOT contact the backend â€” you must call your logout endpoint separately.
+   * Logout is now purely client-side — no backend call is made.
    */
   deleteInfo: () => void;
+
+  /**
+   * Returns the raw JWT from localStorage, or null if not present or near-expiry.
+   * If the token is about to expire (within 1 hour), clears auth state and
+   * redirects to /login.
+   */
+  getAuthToken: () => string | null;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-function isExpired(user: Pick<UserResponseDTO, 'expiresAt'>): boolean {
-  return new Date(user.expiresAt) <= new Date();
-}
-
-function getStoredUserSnapshot(): UserResponseDTO | null {
-  if (typeof window === 'undefined') {
-    return null;
-  }
-
-  const rawUser = localStorage.getItem(LOCAL_STORAGE_KEY);
-  if (rawUser === lastStoredUserRaw) {
-    return lastStoredUserSnapshot;
-  }
-
-  if (!rawUser) {
-    lastStoredUserRaw = null;
-    lastStoredUserSnapshot = null;
-    return null;
-  }
-
+function readFromStorage(): UserResponseDTO | null {
+  if (typeof window === 'undefined') return null;
   try {
-    const storedUser = JSON.parse(rawUser) as UserResponseDTO;
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as UserResponseDTO;
 
-    if (isExpired(storedUser)) {
+    // Drop the stored value if the token expires within 1 hour.
+    if (new Date(parsed.expiresAt) <= new Date(Date.now() + ONE_HOUR_MS)) {
       localStorage.removeItem(LOCAL_STORAGE_KEY);
-      lastStoredUserRaw = null;
-      lastStoredUserSnapshot = null;
+      localStorage.removeItem(AUTH_TOKEN_KEY);
       return null;
     }
 
-    lastStoredUserRaw = rawUser;
-    lastStoredUserSnapshot = storedUser;
-    return storedUser;
+    return parsed;
   } catch {
-    localStorage.removeItem(LOCAL_STORAGE_KEY);
-    lastStoredUserRaw = null;
-    lastStoredUserSnapshot = null;
     return null;
   }
 }
 
-function subscribeToStoredUser(onStoreChange: () => void) {
-  if (typeof window === 'undefined') {
-    return () => undefined;
-  }
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<UserResponseDTO | null>(readFromStorage());
+  const router = useRouter();
 
-  const handleStorageChange = (event: StorageEvent) => {
-    if (event.key === LOCAL_STORAGE_KEY) {
-      onStoreChange();
-    }
-  };
-
-  window.addEventListener('storage', handleStorageChange);
-  return () => window.removeEventListener('storage', handleStorageChange);
-}
-
-export function AuthProvider({
-  children,
-  initialUser = null,
-}: {
-  children: ReactNode;
-  initialUser?: UserResponseDTO | null;
-}) {
-  const [user, setUser] = useState<UserResponseDTO | null>(() => {
-    if (!initialUser || isExpired(initialUser)) {
-      return null;
-    }
-
-    return initialUser;
-  });
-  const storedUser = useSyncExternalStore(
-    subscribeToStoredUser,
-    getStoredUserSnapshot,
-    () => initialUser
-  );
-  const logOut = useActiveFetcher<void>({ url: 'auth/logout', method: 'POST' });
-
-  const registerInfo = useCallback((newUser: UserResponseDTO) => {
-    setUser(newUser);
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newUser));
-    setServerSession(newUser);
-  }, []);
-
-  const deleteInfo = useCallback(async () => {
+  const deleteInfo = useCallback(() => {
     setUser(null);
     localStorage.removeItem(LOCAL_STORAGE_KEY);
-    clearServerSession();
-    await logOut.fetch();
-  }, [logOut]);
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+  }, []);
 
-  const resolvedUser = useMemo(() => {
-    if (!user) {
-      return storedUser;
-    }
+  const registerInfo = useCallback((newUser: UserResponseDTO, token: string) => {
+    setUser(newUser);
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newUser));
+    localStorage.setItem(AUTH_TOKEN_KEY, token);
+  }, []);
 
-    if (!storedUser || user.id !== storedUser.id) {
-      return user;
-    }
-
-    const missingStore = !user.store && !!storedUser.store;
-    const missingClient = !user.client && !!storedUser.client;
-
-    if (missingStore || missingClient) {
-      return storedUser;
-    }
-
-    return user;
-  }, [storedUser, user]);
+  const redirectIfExpired = useCallback(
+    (user: UserResponseDTO) => {
+      if (new Date(user.expiresAt) <= new Date(Date.now() + ONE_HOUR_MS)) {
+        deleteInfo();
+        router.replace('/login');
+        return true;
+      }
+      return false;
+    },
+    [deleteInfo, router]
+  );
 
   const getCurrentUser = useCallback((): UserResponseDTO | null => {
-    if (!resolvedUser) return null;
-    if (isExpired(resolvedUser)) {
-      void deleteInfo();
-      return null;
-    }
-    return resolvedUser;
-  }, [resolvedUser, deleteInfo]);
+    // Re-check expiry on every call so a long-lived session is evicted lazily.
+    if (!user) return null;
+    if (redirectIfExpired(user)) return null;
+    return user;
+  }, [user, redirectIfExpired]);
+
+  const getAuthToken = useCallback((): string | null => {
+    // Re-check expiry on every call so a long-lived session is evicted lazily.
+    if (!user) return null;
+    if (redirectIfExpired(user)) return null;
+
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+    if (!token) return null;
+    return token;
+  }, [user, redirectIfExpired]);
 
   const value = useMemo(
-    () => ({ getCurrentUser, registerInfo, deleteInfo }),
-    [getCurrentUser, registerInfo, deleteInfo]
+    () => ({ getCurrentUser, registerInfo, deleteInfo, getAuthToken }),
+    [getCurrentUser, registerInfo, deleteInfo, getAuthToken]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

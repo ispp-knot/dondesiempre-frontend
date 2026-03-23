@@ -1,14 +1,11 @@
 'use client';
 
-import { initClientConfig } from '@/lib/config';
+import { useEffect } from 'react';
+import { notifyServiceWorker } from '@/lib/config';
 
-interface Props {
-  backendUrl: string;
-  webUrl: string;
-  children: React.ReactNode;
-}
-
-export function ConfigProvider({ backendUrl, webUrl, children }: Props) {
-  initClientConfig(backendUrl, webUrl);
+export function ConfigProvider({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    notifyServiceWorker();
+  }, []);
   return <>{children}</>;
 }

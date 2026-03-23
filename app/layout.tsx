@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from 'next';
-import type { UserResponseDTO } from '@/lib/types/auth/authDto';
 import type { ReactNode } from 'react';
-import { getServerSession } from '@/lib/auth/serverSession';
 import { Quicksand } from 'next/font/google';
+import Script from 'next/script';
 import { Providers } from './providers';
 import { ConfigProvider } from './config-provider';
 import './globals.css';
@@ -68,23 +67,17 @@ export const viewport: Viewport = {
   themeColor: '#FFFFFF',
 };
 
-export default async function RootLayout({ children }: { children: ReactNode }) {
-  const session = await getServerSession();
-  const initialUser: UserResponseDTO | null = session
-    ? { ...session, store: null, client: null }
-    : null;
-
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="es" dir="ltr" className={quicksand.variable}>
-      <head />
+      <head>
+        <Script src="/config.js" strategy="beforeInteractive" />
+      </head>
       <body
         className={`${quicksand.className} max-sm:[&::-webkit-scrollbar]:hidden flex flex-col min-h-screen`}
       >
-        <ConfigProvider
-          backendUrl={process.env.BACKEND_URL ?? ''}
-          webUrl={process.env.WEB_URL ?? ''}
-        >
-          <Providers initialUser={initialUser}>
+        <ConfigProvider>
+          <Providers>
             <Navbar />
             <div className="flex flex-1 flex-col">
               <div className="flex flex-1 flex-col pb-20 sm:pb-0">{children}</div>
