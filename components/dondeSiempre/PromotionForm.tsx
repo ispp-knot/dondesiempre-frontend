@@ -55,8 +55,8 @@ const promotionSchema = z.object({
     .refine((data) => !data.from || !data.to || data.from < data.to, {
       message: 'La fecha de fin debe ser posterior a la fecha de inicio',
     })
-    .refine((data) => !data.to || data.to.getTime() > Date.now(), {
-      message: 'La fecha de finalización debe de ser posterior a la fecha actual',
+    .refine((data) => !data.to || data.to.getTime() >= Date.now(), {
+      message: 'La fecha de finalización debe de ser posterior o igual a la fecha actual',
     }),
   // Para la imagen, validamos que no sea null
   promotionImage: z.any().nullable().optional(),
