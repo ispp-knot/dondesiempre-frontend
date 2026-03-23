@@ -4,7 +4,8 @@ export const dynamic = 'force-dynamic';
 import { useState } from 'react';
 
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
-import { StoreDTO, StoreSocialNetworkDTO } from '@/lib/types/stores/storesDto';
+import { StoreDTO } from '@/lib/types/stores/storesDto';
+import { StoreSocialNetworkDTO } from '@/lib/types/stores/storesSocialDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
@@ -27,6 +28,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Edit2 } from 'lucide-react';
 import StoreEditModal from './store-edit-modal';
+import StoreSocialNetworksModal from './store-social-edit-modal';
 
 const getSocialIcon = (name: string) => {
   const lowerName = name.toLowerCase();
@@ -50,6 +52,7 @@ export default function StorePage() {
 
   const isOwner = !!user?.store?.id && user.store.id === params.id;
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isSocialModalOpen, setIsSocialModalOpen] = useState(false);
 
   const isFollowing = usePassiveFetcher<{ isFollowing: boolean }>({
     url: `stores/${params.id}/follow`,
@@ -143,9 +146,9 @@ export default function StorePage() {
             {isFollowing.data?.isFollowing ? 'Dejar de seguir' : '+ Seguir'}
           </Button>
         )}
-        {socialNetworks.map((social: StoreSocialNetworkDTO, index: number) => (
+        {socialNetworks.map((social: StoreSocialNetworkDTO) => (
           <a
-            key={index}
+            key={social.id}
             href={social.link}
             target="_blank"
             rel="noopener noreferrer"
@@ -156,6 +159,8 @@ export default function StorePage() {
           </a>
         ))}
       </div>
+
+      {isOwner && <Button onClick={() => setIsSocialModalOpen(true)}>Editar redes</Button>}
 
       <StoreTabs
         store={store.data}
@@ -171,6 +176,20 @@ export default function StorePage() {
           storeId={params.id}
           onUpdated={(updatedStore) => {
             store.setData(updatedStore);
+          }}
+        />
+      )}
+      {isOwner && (
+        <StoreSocialNetworksModal
+          open={isSocialModalOpen}
+          onOpenChange={setIsSocialModalOpen}
+          storeId={params.id}
+          socialNetworks={socialNetworks}
+          onUpdated={(updated) => {
+            store.setData({
+              ...store.data,
+              socialNetworks: updated,
+            });
           }}
         />
       )}
