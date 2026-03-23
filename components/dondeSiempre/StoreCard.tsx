@@ -125,7 +125,7 @@ export function StoreCard({
         </Button>
       )}
       {/* Image */}
-      <div className="relative w-32 h-32 md:w-32 md:h-32 rounded-xl md:rounded-3xl overflow-hidden bg-gray-100 mr-8 flex-shrink-0 shadow-inner">
+      <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-xl md:rounded-3xl overflow-hidden bg-gray-100 mr-4 sm:mr-8 flex-shrink-0 shadow-inner">
         {store.storefront?.bannerImageUrl ? (
           <Image
             src={store.storefront.bannerImageUrl}
