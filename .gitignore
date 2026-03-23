@@ -44,6 +44,9 @@ next-env.d.ts
 public/sw*
 public/swe-worker*
 
+# Runtime config (generated at server startup)
+public/config.js
+
 .idea/
 
 # Playwright
