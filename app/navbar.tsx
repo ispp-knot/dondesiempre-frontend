@@ -33,26 +33,22 @@ export default function Navbar() {
             )}
           </div>
           <div className="flex flex-row items-center gap-5 text-2xl font-primary">
-            {!isAdmin && (
+            {isAdmin ? (
               <>
-                <FaRegHeart
-                  className="cursor-pointer"
-                  onClick={() => (window.location.href = '/following')}
-                />
-                <LuPackage
-                  className="cursor-pointer"
-                  onClick={() => (window.location.href = '/orders')}
-                />
-                <UserNavButton isActive={isUserActive} />
-              </>
-            )}
-            {isAdmin && (
-              <>
-                <LuPackage
-                  className="cursor-pointer"
-                  onClick={() => (window.location.href = '/orders')}
-                />
+                <Link href="/orders" aria-label="Pedidos">
+                  <LuPackage className="cursor-pointer" strokeWidth={1.5} />
+                </Link>
                 <AiOutlineShop />
+              </>
+            ) : (
+              <>
+                <Link href="/following" aria-label="Favoritos">
+                  <FaRegHeart className="cursor-pointer" />
+                </Link>
+                <Link href="/orders" aria-label="Pedidos">
+                  <LuPackage className="cursor-pointer" strokeWidth={1.5} />
+                </Link>
+                <UserNavButton isActive={isUserActive} />
               </>
             )}
           </div>
