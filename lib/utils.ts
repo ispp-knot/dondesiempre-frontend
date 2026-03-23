@@ -11,6 +11,6 @@ export function convertPrice(priceInCents: number): number {
 
 export function discountPrice(priceInCents: number, discountPercentage: number | null): number {
   return discountPercentage
-    ? (convertPrice(priceInCents * ((100 - discountPercentage) / 100)))
-    : (convertPrice(priceInCents));
+    ? convertPrice(priceInCents * ((100 - discountPercentage) / 100))
+    : convertPrice(priceInCents);
 }
