@@ -22,6 +22,9 @@ export interface ClientOutfitDetailsPageProps {
 }
 
 export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPageProps) {
+  const buttonLinkClass =
+    'w-full inline-flex items-center justify-center h-9 px-4 py-2 rounded-md cursor-pointer text-sm font-medium tracking-normal whitespace-nowrap font-[inherit]';
+
   const [selectedProduct, setSelectedProduct] = useState(0);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
 
@@ -203,13 +206,13 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
             <div className="flex flex-col w-full gap-3">
               <Link
                 href="/login"
-                className="w-full bg-secondary hover:bg-dark-secondary text-white font-bold flex items-center justify-center h-10 rounded-md cursor-pointer"
+                className={`${buttonLinkClass} bg-secondary hover:bg-dark-secondary text-white font-bold`}
               >
                 Iniciar sesión
               </Link>
               <Link
                 href="/register"
-                className="w-full bg-primary hover:bg-dark-primary text-white font-bold flex items-center justify-center h-10 rounded-md cursor-pointer"
+                className={`${buttonLinkClass} bg-primary hover:bg-dark-primary text-white font-bold`}
               >
                 Registrarme
               </Link>
@@ -235,7 +238,7 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
             <div className="flex flex-col w-full gap-3">
               <Link
                 href="/orders"
-                className="w-full bg-secondary hover:bg-dark-secondary text-white font-bold flex items-center justify-center h-10 rounded-md cursor-pointer text-sm"
+                className={`${buttonLinkClass} bg-secondary hover:bg-dark-secondary text-white font-bold`}
               >
                 Ver mis pedidos
               </Link>
