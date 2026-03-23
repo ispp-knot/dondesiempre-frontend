@@ -108,6 +108,22 @@ export function StoreCard({
         className
       )}
     >
+      {isLoggedIn && (
+        <Button
+          onClick={handleFollowClick}
+          className="w-7 h-7 absolute top-3 right-3 p-1.5 rounded-md bg-primary/10 hover:bg-primary/20 transition-colors disabled:opacity-50"
+          title={isFollowing.data?.isFollowing ? 'Dejar de seguir' : 'Seguir'}
+          disabled={isFollowing.isLoading}
+          onAnimationEnd={() => setHeartAnimating(false)}
+        >
+          <Heart
+            size={24}
+            className={`transition-colors duration-200 ${
+              isFollowing.data?.isFollowing ? 'fill-primary text-primary' : 'text-primary'
+            } ${heartAnimating ? 'animate-heart-pop' : ''}`}
+          />
+        </Button>
+      )}
       {/* Image */}
       <div className="relative w-32 h-32 md:w-32 md:h-32 rounded-xl md:rounded-3xl overflow-hidden bg-gray-100 mr-8 flex-shrink-0 shadow-inner">
         {store.storefront?.bannerImageUrl ? (
@@ -162,7 +178,7 @@ export function StoreCard({
         </p>
 
         {distanceToUser != null && (
-          <div className="flex items-center">
+          <div className="flex items-center pb-2">
             <span className="md:hidden text-xs font-semibold bg-secondary/10 text-secondary px-2 py-0.5 rounded-full">
               {distanceToUser.toFixed(1)} km
             </span>
@@ -184,23 +200,6 @@ export function StoreCard({
           <p className={'hidden sm:block'}>Cómo llegar</p>
           <LuRoute size={24} />
         </Button>
-
-        {isLoggedIn && (
-          <Button
-            onClick={handleFollowClick}
-            className="p-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors disabled:opacity-50"
-            title={isFollowing.data?.isFollowing ? 'Dejar de seguir' : 'Seguir'}
-            disabled={isFollowing.isLoading}
-            onAnimationEnd={() => setHeartAnimating(false)}
-          >
-            <Heart
-              size={24}
-              className={`transition-colors duration-200 ${
-                isFollowing.data?.isFollowing ? 'fill-primary text-primary' : 'text-primary'
-              } ${heartAnimating ? 'animate-heart-pop' : ''}`}
-            />
-          </Button>
-        )}
 
         <Button
           onClick={handleGoToStore}
