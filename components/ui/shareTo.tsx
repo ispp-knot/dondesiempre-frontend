@@ -38,7 +38,7 @@ function checkType(item: Props['item']) {
 
 function getBackgroundImage(item: Props['item'], images?: string[]): string {
   if (images && images.length > 0) return images[0];
-  if ('image' in item && item.image) return item.image;
+  if ('image' in item && item.image) return item.image; // 👈 ¡Ya tenías esta lógica!
   return '/static/img/promotion_placeholder.png';
 }
 

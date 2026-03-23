@@ -65,8 +65,6 @@ export default function StorePage() {
     method: 'DELETE',
   });
 
-  const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
-  const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
   const promotionsDto = usePassiveFetcher<PromotionDTO[]>({
     url: `stores/${params.id}/promotions`,
   });
