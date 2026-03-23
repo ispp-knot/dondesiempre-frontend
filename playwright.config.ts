@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { defineConfig, devices } from '@playwright/test';
 import { DEFAULT_MAP_LOCATION } from './lib/mapUtils';
 
@@ -14,12 +15,21 @@ export default defineConfig({
   retries: 0,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
+
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   webServer: [
     {
       command:
-        'npm run build && cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static && node .next/standalone/server.js',
+        'npm run build && node tests/scripts/copy-standalone.js && node .next/standalone/server.js',
       url: 'http://localhost:3000',
+      reuseExistingServer: !process.env.CI,
+      timeout: 180 * 1000,
+      // stdout: 'pipe', // <--- Verás los logs del Frontend
+      // stderr: 'pipe',
+    },
+    {
+      command: `cd ${process.env.DIR_BACKEND} && docker compose down -v postgres-test && docker compose up -d postgres-test && ${process.platform === 'win32' ? 'mvnw.cmd' : './mvnw'} clean spring-boot:run -D spring-boot.run.profiles=test`,
+      url: 'http://localhost:8080',
       reuseExistingServer: !process.env.CI,
       timeout: 180 * 1000,
       // stdout: 'pipe', // <--- Verás los logs del Frontend
@@ -77,14 +87,27 @@ export default defineConfig({
     //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
     // },
     {
-      name: 'chromium',
+      name: 'setup-registro',
+      testMatch: /.*\.setup\.ts/, // Ejecutará archivos que terminen en .setup.ts
       use: {
         ...devices['Desktop Chrome'],
-        screenshot: 'only-on-failure',
+        screenshot: 'on',
         ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
           ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
           : {}),
       },
+    },
+    {
+      name: 'tests',
+      timeout: 300 * 1000,
+      use: {
+        ...devices['Desktop Chrome'],
+        screenshot: 'on',
+        ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+          ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
+          : {}),
+      },
+      dependencies: ['setup-registro'],
     },
   ],
 
