@@ -8,7 +8,6 @@ import StoreOptions from './options';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { ShareTo } from '@/components/ui/shareTo';
-import { FiShare } from 'react-icons/fi';
 
 type Tab = 'catalogo' | 'sobre' | 'opciones';
 
