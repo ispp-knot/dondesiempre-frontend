@@ -155,6 +155,8 @@ export default function StoreTabs({
     }
   };
 
+
+  console.log("Activo",activePromotions)
   return (
     <>
       {/* Banner Principal (Ahora siempre visible o con slide de creación) */}
@@ -280,7 +282,7 @@ export default function StoreTabs({
             {/* Cabecera dinámica */}
             <div className="relative h-40 w-full shrink-0">
               <Image
-                src={selectedPromo.promotionImageUrl || '/static/img/outfit_placeholder.jpg'}
+                src={selectedPromo.promotionImageUrl || selectedPromo.products[0].image ||'/static/img/outfit_placeholder.jpg'}
                 alt={selectedPromo.name}
                 fill
                 className="object-cover"
@@ -331,7 +333,7 @@ export default function StoreTabs({
                         </h4>
                         <div className="flex items-center gap-2">
                           <span className="text-primary font-bold text-sm">
-                            {product.discountedPriceInCents / 100}€
+                            {Math.round(product.priceInCents * (1 - (selectedPromo.discountPercentage / 100))) / 100}€
                           </span>
                           <span className="text-gray-400 text-xs line-through">
                             {product.priceInCents / 100}€
