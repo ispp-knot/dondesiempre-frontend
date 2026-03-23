@@ -52,3 +52,9 @@ export function outfitWithDiscount(
 ): boolean {
   return getOutfitDiscountPercentage(outfit) > 0;
 }
+
+export function discountPrice(priceInCents: number, discountPercentage: number | null): number {
+  return discountPercentage
+    ? convertPrice(priceInCents * ((100 - discountPercentage) / 100))
+    : convertPrice(priceInCents);
+}
