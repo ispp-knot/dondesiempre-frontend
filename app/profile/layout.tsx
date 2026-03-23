@@ -1,5 +1,7 @@
-import { ServerLoggedInGuard } from '@/components/guards/ServerLoggedInGuard';
+'use client';
+
+import { LoggedInGuard } from '@/components/guards/LoggedInGuard';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <ServerLoggedInGuard>{children}</ServerLoggedInGuard>;
+  return <LoggedInGuard>{children}</LoggedInGuard>;
 }
