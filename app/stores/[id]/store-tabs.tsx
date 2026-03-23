@@ -139,7 +139,7 @@ export default function StoreTabs({
           >
             Ver productos
           </button>
-          <div className="mt-4 w-full">
+          {user?.email == store.email && <div className="mt-4 w-full">
             <ShareTo
               item={{
                 ...currentPromo,
@@ -149,7 +149,7 @@ export default function StoreTabs({
               }}
               className="bg-secondary text-white font-medium py-2 px-4 rounded mt-4 w-[95%] shadow-sm hover:bg-secondary/90 hover:cursor-pointer transition"
             />
-          </div>
+          </div>}
         </div>
       );
     }
