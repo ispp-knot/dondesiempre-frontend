@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function convertPrice(priceInCents: number): number {
-  return Number((priceInCents / 100).toFixed(2));
+  return priceInCents / 100;
 }
 
 export function discountPrice(priceInCents: number, discountPercentage: number | null): number {

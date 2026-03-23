@@ -1,7 +1,7 @@
 'use client';
 
 import { getWebUrl } from '@/lib/config';
-import { PromotionDTO, PromotionMockDTO } from '@/lib/types/promotions/promotionsDto';
+import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { ProductDTO } from '@/lib/types/products/productsDto';
 import {
@@ -19,7 +19,7 @@ import Image from 'next/image';
 import { drawShareImage } from '@/lib/utils/canvas';
 
 interface Props {
-  item: ProductDTO | OutfitDTO | PromotionDTO | PromotionMockDTO;
+  item: ProductDTO | OutfitDTO | PromotionDTO;
   images?: string[];
   className?: string;
 }
@@ -32,16 +32,13 @@ enum itemType {
 
 function checkType(item: Props['item']) {
   const res =
-    'active' in item ? itemType.PROMOTION : 'index' in item ? itemType.OUTFIT : itemType.PRODUCT;
+    'isActive' in item ? itemType.PROMOTION : 'index' in item ? itemType.OUTFIT : itemType.PRODUCT;
   return res;
 }
 
 function getBackgroundImage(item: Props['item'], images?: string[]): string {
   if (images && images.length > 0) return images[0];
   if ('image' in item && item.image) return item.image;
-  if ('products' in item && typeof item.products[0] === 'object' && 'image' in item.products[0]) {
-    if (item.products[0].image !== null) return item.products[0].image;
-  }
   return '/static/img/promotion_placeholder.png';
 }
 

@@ -30,15 +30,11 @@ export default function NavbarBottom() {
       icon: <IoSearch />,
       activeIcon: <FaSearch />,
     },
-    ...(user && !user?.roles.includes('STORE')
-      ? [
-          {
-            href: '/following',
-            icon: <FaRegHeart />,
-            activeIcon: <FaHeart />,
-          },
-        ]
-      : []),
+    {
+      href: '/following',
+      icon: <FaRegHeart />,
+      activeIcon: <FaHeart />,
+    },
     {
       href: '/stores',
       icon: <HiOutlineLocationMarker />,
