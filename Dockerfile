@@ -9,11 +9,7 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY ./app ./app
-COPY ./components ./components
-COPY ./lib ./lib
-COPY ./public ./public
-COPY ./components.json ./eslint.config.mjs ./next-env.d.ts ./next.config.ts ./package.json ./package-lock.json ./postcss.config.mjs ./tsconfig.json ./
+COPY . .
 
 RUN npm run build
 
