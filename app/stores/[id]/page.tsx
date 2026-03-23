@@ -48,12 +48,13 @@ export default function StorePage() {
   const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
   const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
 
+  const isStore = user?.roles.includes('STORE');
   const isOwner = !!user?.store?.id && user.store.id === params.id;
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   const isFollowing = usePassiveFetcher<{ isFollowing: boolean }>({
     url: `stores/${params.id}/follow`,
-    enabled: !!user,
+    enabled: !!user && !isStore,
   });
   const followStore = useActiveFetcher<void>({
     url: `stores/${params.id}/followers`,
@@ -125,7 +126,7 @@ export default function StorePage() {
       </div>
 
       <div className="flex gap-3 mt-3 flex-wrap justify-center mb-2">
-        {!!user && (
+        {!!user && !isStore && (
           <Button
             variant="outline"
             className="flex items-center w-fit gap-1.5 border border-primary rounded-sm px-3 py-1.5 text-xs text-primary hover:bg-primary hover:text-white transition"
