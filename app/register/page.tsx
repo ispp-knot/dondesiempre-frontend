@@ -1,13 +1,15 @@
+'use client';
+
 import { GlassCenterCard } from '@/components/dondeSiempre/GlassCenterCard';
-import { ServerLoggedOutGuard } from '@/components/guards/ServerLoggedOutGuard';
+import { LoggedOutGuard } from '@/components/guards/LoggedOutGuard';
 import { RegisterForm } from './registerForm';
 
 export default function RegisterPage() {
   return (
-    <ServerLoggedOutGuard redirectTo="/profile">
+    <LoggedOutGuard redirectTo="/profile">
       <GlassCenterCard logo>
         <RegisterForm />
       </GlassCenterCard>
-    </ServerLoggedOutGuard>
+    </LoggedOutGuard>
   );
 }

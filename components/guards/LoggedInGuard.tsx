@@ -16,7 +16,7 @@ interface Props {
  * Client-side guard that blocks unauthenticated users.
  * By default redirects to /login; if `fallback` is provided it renders that instead.
  *
- * For server-side protection use ServerLoggedInGuard instead.
+ * Use this guard in client components (pages with 'use client').
  */
 export function LoggedInGuard({ children, redirectTo = '/login', fallback }: Props) {
   const { getCurrentUser } = useAuth();
