@@ -93,12 +93,12 @@ export default function StoreTabs({
         )}
       </div>
 
-      <div className="flex flex-col gap-10 sm:items-center">
+      <div className="flex flex-col gap-10 sm:items-center min-h-96">
         {activeTab === 'catalogo' && <Outfits storeId={store.id} outfits={outfits} />}
 
         {activeTab === 'sobre' && <AboutUs description={description} />}
 
-        {activeTab === 'opciones' && (
+        {activeTab === 'opciones' && isOwner && (
           <StoreOptions storefrontId={storefrontId} initialStore={store} />
         )}
       </div>

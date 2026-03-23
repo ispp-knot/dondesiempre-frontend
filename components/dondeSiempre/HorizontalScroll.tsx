@@ -49,7 +49,8 @@ export default function HorizontalScroll({ title, viewMoreHref, children }: Prop
 
         <div
           ref={scrollRef}
-          className="flex flex-row gap-2 md:gap-4 overflow-x-scroll py-2 mb-2 storefront-listing select-none"
+          className="flex flex-row gap-2 md:gap-4 overflow-x-auto pt-2 storefront-listing select-none"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {children}
         </div>
