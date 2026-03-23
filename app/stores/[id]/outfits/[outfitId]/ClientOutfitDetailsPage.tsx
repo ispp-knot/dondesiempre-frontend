@@ -114,7 +114,10 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
                   {props.outfit.products[selectedProduct].name}
                 </h1>
               </div>
-              <div className="pt-8 pb-6 flex flex-row w-fit max-w-11/12 self-center overflow-x-scroll items-center gap-4">
+              <div
+                className="pt-8 pb-6 flex flex-row w-fit max-w-11/12 self-center overflow-x-auto items-center gap-4"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
                 {props.outfit.products.map((p, i) => (
                   <Button
                     key={p.id}
@@ -126,7 +129,7 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
                     style={{
                       backgroundImage: `url(${p.image || '/static/img/product_placeholder.png'})`,
                     }}
-                  ></Button>
+                  />
                 ))}
               </div>
               <div className="flex flex-row gap-4 flex-wrap">
