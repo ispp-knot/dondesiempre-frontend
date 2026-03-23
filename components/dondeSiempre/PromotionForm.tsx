@@ -85,7 +85,7 @@ export default function PromotionForm({
     handleSubmit,
     control,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<PromotionFormData>({
     resolver: zodResolver(promotionSchema),
     defaultValues: {
@@ -102,6 +102,7 @@ export default function PromotionForm({
     },
   });
 
+  const [isPending, setPending] = useState<boolean>(false);
   const selectedProducts =
     useWatch({
       control,
@@ -113,14 +114,17 @@ export default function PromotionForm({
     name: 'dateRange',
   });
 
-  const onFormSubmit = (data: PromotionFormData) => {
+  const onFormSubmit = async (data: PromotionFormData) => {
+    if (isLoading || isSubmitting) return;
+    setPending(true);
     // Formateamos las fechas al formato que espera tu API antes de enviar
     const formattedData = {
       ...data,
       startDate: data.dateRange.from ? format(data.dateRange.from, 'yyyy-MM-dd') : null,
       endDate: data.dateRange.to ? format(data.dateRange.to, 'yyyy-MM-dd') : null,
     };
-    onSubmit(formattedData);
+
+    await onSubmit(formattedData);
   };
 
   const removeProduct = (id: string) => {
@@ -368,16 +372,14 @@ export default function PromotionForm({
 
       <Button
         type="submit"
-        disabled={isLoading}
+        disabled={isPending}
         className="bg-secondary text-white font-bold py-8 rounded-lg text-xl mt-4 w-full"
       >
-        {isLoading ? 'Cargando...' : isEditMode ? 'Guardar cambios' : 'Lanzar promoción'}
+        {isPending ? 'Cargando...' : isEditMode ? 'Guardar cambios' : 'Lanzar promoción'}
       </Button>
     </form>
   );
 }
-
-// Nota: El componente ProductSelector se mantiene igual pero recibe onSelect para actualizar el estado de RHF.
 
 function ProductSelector({
   onSelect,

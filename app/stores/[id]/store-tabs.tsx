@@ -12,6 +12,7 @@ import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { ShareTo } from '@/components/ui/shareTo';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
+import { convertPrice, discountPrice } from '@/lib/utils';
 
 type Tab = 'catalogo' | 'sobre' | 'opciones';
 
@@ -139,24 +140,25 @@ export default function StoreTabs({
           >
             Ver productos
           </button>
-          {user?.email == store.email && <div className="mt-4 w-full">
-            <ShareTo
-              item={{
-                ...currentPromo,
-                name: currentPromo.name,
-                id: currentPromo.id,
-                image: currentPromo.promotionImageUrl,
-              }}
-              className="bg-secondary text-white font-medium py-2 px-4 rounded mt-4 w-[95%] shadow-sm hover:bg-secondary/90 hover:cursor-pointer transition"
-            />
-          </div>}
+          {user?.email == store.email && (
+            <div className="mt-4 w-full">
+              <ShareTo
+                item={{
+                  ...currentPromo,
+                  name: currentPromo.name,
+                  id: currentPromo.id,
+                  image: currentPromo.promotionImageUrl,
+                }}
+                className="bg-secondary text-white font-medium py-2 px-4 rounded mt-4 w-[95%] shadow-sm hover:bg-secondary/90 hover:cursor-pointer transition"
+              />
+            </div>
+          )}
         </div>
       );
     }
   };
 
-
-  console.log("Activo",activePromotions)
+  console.log('Activo', activePromotions);
   return (
     <>
       {/* Banner Principal (Ahora siempre visible o con slide de creación) */}
@@ -282,7 +284,11 @@ export default function StoreTabs({
             {/* Cabecera dinámica */}
             <div className="relative h-40 w-full shrink-0">
               <Image
-                src={selectedPromo.promotionImageUrl || selectedPromo.products[0].image ||'/static/img/outfit_placeholder.jpg'}
+                src={
+                  selectedPromo.promotionImageUrl ||
+                  selectedPromo.products[0].image ||
+                  '/static/img/outfit_placeholder.jpg'
+                }
                 alt={selectedPromo.name}
                 fill
                 className="object-cover"
@@ -333,10 +339,10 @@ export default function StoreTabs({
                         </h4>
                         <div className="flex items-center gap-2">
                           <span className="text-primary font-bold text-sm">
-                            {Math.round(product.priceInCents * (1 - (selectedPromo.discountPercentage / 100))) / 100}€
+                            {discountPrice(product.priceInCents, selectedPromo.discountPercentage)}€
                           </span>
                           <span className="text-gray-400 text-xs line-through">
-                            {product.priceInCents / 100}€
+                            {convertPrice(product.priceInCents)}€
                           </span>
                         </div>
                       </div>

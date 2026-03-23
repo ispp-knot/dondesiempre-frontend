@@ -17,10 +17,9 @@ export default function CreatePromotionPage() {
   const createPromotion = useActiveFetcher<void>({ url: 'promotions', method: 'POST' });
 
   const handleSubmit = async (formData: PromotionFormData) => {
+    if (isLoading) return;
     // Nota: Usamos 'any' o un tipo extendido aquí porque el Form ya formateó
     // las fechas a string (startDate/endDate) y eliminó el dateRange.
-
-    console.log('Form data received in CreatePromotionPage:', formData);
     setIsLoading(true);
     setStatus(null);
 
@@ -49,16 +48,13 @@ export default function CreatePromotionPage() {
       setStatus({ type: 'success', message: '¡Promoción lanzada con éxito!' });
 
       // Pequeño delay para que el usuario vea el mensaje de éxito antes de redirigir
-      setTimeout(() => {
-        router.push(`/stores/${storeId}`);
-      }, 1500);
+      router.push(`/stores/${storeId}`);
     } catch (error) {
       console.error('Error creating promotion:', error);
       setStatus({
         type: 'error',
         message: `Error al crear la promoción. Verifica los datos e intenta de nuevo.`,
       });
-    } finally {
       setIsLoading(false);
     }
   };
