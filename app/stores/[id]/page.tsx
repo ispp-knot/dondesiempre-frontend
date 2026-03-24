@@ -27,6 +27,7 @@ import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Edit2, Heart } from 'lucide-react';
 import StoreEditModal from './store-edit-modal';
+import { Button } from '@/components/ui/button';
 
 const getSocialIcon = (name: string) => {
   const lowerName = name.toLowerCase();
@@ -107,7 +108,7 @@ export default function StorePage() {
         />
 
         {!!user && !isOwner && (
-          <button
+          <Button
             type="button"
             disabled={isFollowing.isLoading || followStore.isPending || unfollowStore.isPending}
             onClick={async () => {
@@ -121,28 +122,27 @@ export default function StorePage() {
             }}
             style={{ '--primary': primaryColor } as React.CSSProperties}
             className={`
-  absolute top-4 right-4 z-10
-  flex items-center justify-center gap-2
-  px-3 py-2.5 md:px-5 md:py-2.5 rounded-full
-  w-11 h-11 md:w-36 md:h-auto aspect-square md:aspect-auto
-  text-sm font-bold shadow-lg bg-white
-  border-2 border-[var(--primary)] text-[var(--primary)]
-  transition-all duration-200 disabled:opacity-50 cursor-pointer
-  active:scale-95 hover:shadow-xl
-`}
+              absolute top-4 right-4 z-10
+              flex items-center justify-center gap-2
+              px-3 py-2.5 md:px-5 md:py-2.5 rounded-full
+              w-11 h-11 md:w-36 md:h-auto aspect-square md:aspect-auto
+              text-sm font-bold shadow-lg bg-white
+              border-2 border-[var(--primary)] text-[var(--primary)]
+              hover:bg-[var(--primary)] hover:text-white
+              transition-all duration-200 disabled:opacity-50 cursor-pointer
+              active:scale-95 hover:shadow-xl
+            `}
           >
             <Heart
               size={16}
               className={`flex-shrink-0 transition-colors duration-200 ${
-                isFollowing.data?.isFollowing
-                  ? 'fill-[var(--primary)] text-[var(--primary)]'
-                  : 'text-[var(--primary)]'
+                isFollowing.data?.isFollowing ? 'fill-current' : ''
               }`}
             />
             <span className="hidden md:inline">
               {isFollowing.data?.isFollowing ? 'Siguiendo' : 'Seguir'}
             </span>
-          </button>
+          </Button>
         )}
       </div>
 

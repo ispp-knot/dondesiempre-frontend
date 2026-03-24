@@ -55,7 +55,7 @@ export function UserNavButton({ isActive = false, className }: Props) {
         )}
         {user?.store?.id && (
           <Button asChild variant="outline" size="sm" className="w-full cursor-pointer">
-            <Link href={`/stores/${user.store!.id}`}>Mi tienda</Link>
+            <Link href={`/stores/${user.store.id}`}>Mi tienda</Link>
           </Button>
         )}
         <Button asChild variant="outline" size="sm" className="w-full cursor-pointer">
