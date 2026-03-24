@@ -2,7 +2,6 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -29,7 +28,6 @@ function FieldError({ message }: { message?: string }) {
 
 export function LoginForm() {
   const [apiError, setApiError] = useState<string | null>(null);
-  const router = useRouter();
   const { registerInfo } = useAuth();
 
   const login = useActiveFetcher<LoginResponseDTO>({ url: 'auth/login', method: 'POST' });
@@ -47,7 +45,7 @@ export function LoginForm() {
     try {
       const loginResponse = await login.fetch({ body: data });
       registerInfo({ ...loginResponse.user }, loginResponse.token);
-      router.push('/');
+      // No need to redirect. The auth guard for this page will redirect
     } catch (err: unknown) {
       if (err instanceof FetchError && err.response?.status === 403) {
         setApiError('Credenciales incorrectos.');

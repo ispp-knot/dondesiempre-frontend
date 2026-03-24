@@ -1,5 +1,3 @@
-'use client';
-
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { HiOutlineLocationMarker } from 'react-icons/hi';
@@ -20,10 +18,12 @@ export function StoreCard({
   store,
   userLocation,
   className = '',
+  onUnfollow = () => {},
 }: {
   store: StoreDTO;
   userLocation?: { lat: number; lng: number } | null;
   className?: string;
+  onUnfollow?: () => void;
 }) {
   const distanceToUser =
     userLocation != null
@@ -39,7 +39,7 @@ export function StoreCard({
 
   const isFollowing = usePassiveFetcher<StoreFollowerDTO>({ url: `stores/${store.id}/follow` });
   const followStore = useActiveFetcher<void>({
-    url: `stores/${store.id}/followers`,
+    url: `stores/${store.id}/follow`,
     method: 'POST',
   });
   const unfollowStore = useActiveFetcher<void>({
@@ -59,6 +59,7 @@ export function StoreCard({
     if (isFollowing.data?.isFollowing) {
       await unfollowStore.fetch();
       isFollowing.setData({ ...isFollowing.data, isFollowing: false });
+      onUnfollow();
     } else if (isFollowing.data?.isFollowing === false) {
       await followStore.fetch();
       isFollowing.setData({ ...isFollowing.data, isFollowing: true });
@@ -115,6 +116,7 @@ export function StoreCard({
           title={isFollowing.data?.isFollowing ? 'Dejar de seguir' : 'Seguir'}
           disabled={isFollowing.isLoading}
           onAnimationEnd={() => setHeartAnimating(false)}
+          aria-label="Dejar de seguir"
         >
           <Heart
             size={24}
