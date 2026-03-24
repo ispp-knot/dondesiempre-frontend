@@ -2,9 +2,10 @@ import { authorizedOfetch } from './authorizedOfetch';
 import { getBackendUrl } from '../config';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, Dispatch, SetStateAction } from 'react';
+import { useAuth } from '@/lib/auth/AuthContext';
 
-function buildQueryKey(url: string): string[] {
-  return url.split('/');
+function buildQueryKey(url: string, ...extra: unknown[]): unknown[] {
+  return [...url.split('/'), ...extra];
 }
 
 async function executeFetch<T>({
@@ -12,11 +13,13 @@ async function executeFetch<T>({
   method = 'GET',
   body,
   formPayload,
+  getToken,
 }: {
   url: string;
   method?: string;
   body?: unknown;
   formPayload?: Record<string, string | Blob | undefined>;
+  getToken?: () => string | null;
 }): Promise<T> {
   let fetchBody: BodyInit | undefined;
 
@@ -34,10 +37,16 @@ async function executeFetch<T>({
     }
   }
 
-  return (await authorizedOfetch(getBackendUrl() + '/api/v1/' + url, {
-    method,
-    body: fetchBody,
-  })) as T;
+  const token = getToken?.();
+
+  return (await authorizedOfetch(
+    getBackendUrl() + '/api/v1/' + url,
+    {
+      method,
+      body: fetchBody,
+    },
+    token
+  )) as T;
 }
 
 // --- usePassiveFetcher ---
@@ -64,11 +73,12 @@ export function usePassiveFetcher<T>({
   enabled = true,
 }: UsePassiveFetcherOptions): UsePassiveFetcherResult<T> {
   const queryClient = useQueryClient();
-  const queryKey = buildQueryKey(url);
+  const { getAuthToken } = useAuth();
+  const queryKey = buildQueryKey(url, getAuthToken);
 
   const query = useQuery<T>({
     queryKey,
-    queryFn: () => executeFetch<T>({ url }),
+    queryFn: () => executeFetch<T>({ url, getToken: getAuthToken }),
     enabled,
   });
 
@@ -126,6 +136,7 @@ export function useActiveFetcher<T>({
   onSettled,
 }: UseActiveFetcherOptions<T> = {}): UseActiveFetcherResult<T> {
   const [data, setData] = useState<T | null>(null);
+  const { getAuthToken } = useAuth();
 
   const mutation = useMutation<T, Error, ActiveFetchCallOptions>({
     mutationFn: (opts: ActiveFetchCallOptions = {}) => {
@@ -133,7 +144,13 @@ export function useActiveFetcher<T>({
       const method = opts.method ?? defaultMethod;
       if (!url) throw new Error('useActiveFetcher: url is required');
       if (!method) throw new Error('useActiveFetcher: method is required');
-      return executeFetch<T>({ url, method, body: opts.body, formPayload: opts.formPayload });
+      return executeFetch<T>({
+        url,
+        method,
+        body: opts.body,
+        formPayload: opts.formPayload,
+        getToken: getAuthToken,
+      });
     },
     onSuccess: (result) => {
       setData(result);

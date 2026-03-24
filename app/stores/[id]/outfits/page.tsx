@@ -3,8 +3,11 @@
 import OutfitCard from '@/components/dondeSiempre/OutfitCard';
 import SortableOutfitCard from '@/components/dondeSiempre/SortableOutfitCard';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { OutfitDTO, OutfitSortDTO } from '@/lib/types/outfits/outfitsDto';
+import { hasMinimumOutfitProducts } from '@/lib/types/outfits/outfitsRules';
 import { move } from '@dnd-kit/helpers';
 import { DragDropProvider } from '@dnd-kit/react';
 import Link from 'next/link';
@@ -19,7 +22,9 @@ import ClientOutfitsPage from './ClientOutfitsPage';
 
 export default function OutfitsPage() {
   const params = useParams<{ id: string }>();
-
+  const [cleanupStatus, setCleanupStatus] = useState<string | null>(null);
+  const [cleanupError, setCleanupError] = useState<string | null>(null);
+  const [isCleaningInvalidOutfits, setIsCleaningInvalidOutfits] = useState(false);
   const [isOrdering, setIsOrdering] = useState(false);
 
   const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
@@ -31,14 +36,41 @@ export default function OutfitsPage() {
 
   if (outfits.isLoading) {
     return <LoadingText />;
-  } else if (outfits.isError) {
+  }
+
+  if (outfits.isError) {
     return <ErrorText error={outfits.error} />;
   }
+
+  const validOutfits = (outfits.data ?? []).filter(hasMinimumOutfitProducts);
+  const invalidOutfits = (outfits.data ?? []).filter((outfit) => !hasMinimumOutfitProducts(outfit));
+
+  const deleteInvalidOutfits = async () => {
+    setCleanupStatus(null);
+    setCleanupError(null);
+    setIsCleaningInvalidOutfits(true);
+
+    try {
+      for (const outfit of invalidOutfits) {
+        await deleteOutfit.fetch({ url: `outfits/${outfit.id}` });
+      }
+
+      outfits.setData(validOutfits);
+      setCleanupStatus(
+        invalidOutfits.length === 1
+          ? 'Se ha eliminado 1 outfit con una unica prenda.'
+          : `Se han eliminado ${invalidOutfits.length} outfits con una unica prenda.`
+      );
+    } catch {
+      setCleanupError('No se pudieron eliminar todos los outfits invalidos. Intentalo de nuevo.');
+    } finally {
+      setIsCleaningInvalidOutfits(false);
+    }
+  };
 
   const renderClientPage = (): ReactNode => {
     return <ClientOutfitsPage storeId={params.id} outfits={outfits.data} />;
   };
-
   return (
     <StoreOwnerGuard
       storeId={params.id}
@@ -68,7 +100,34 @@ export default function OutfitsPage() {
       >
         <div className="flex flex-col items-center">
           <div className="w-full md:w-8/12">
-            <div className="flex flex-row justify-between w-full gap-2 p-4">
+            {invalidOutfits.length > 0 && (
+              <Card className="m-4 space-y-4 border-destructive/30 bg-destructive/5 p-4 shadow-xl">
+                <div className="space-y-2">
+                  <h2 className="text-xl font-bold text-primary">Outfits inválidos detectados</h2>
+                  <p className="text-sm text-secondary">
+                    Hay {invalidOutfits.length} outfit
+                    {invalidOutfits.length === 1 ? '' : 's'} con única prenda. No deberían
+                    mantenerse publicados.
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {invalidOutfits.map((outfit) => outfit.name).join(', ')}
+                  </p>
+                </div>
+                {cleanupStatus && <p className="text-sm text-secondary">{cleanupStatus}</p>}
+                {cleanupError && <p className="text-sm text-destructive">{cleanupError}</p>}
+                <Button
+                  type="button"
+                  onClick={() => void deleteInvalidOutfits()}
+                  disabled={isCleaningInvalidOutfits || deleteOutfit.isPending}
+                  className="bg-primary text-white hover:bg-dark-primary"
+                >
+                  {isCleaningInvalidOutfits
+                    ? 'Eliminando outfits invalidos...'
+                    : 'Eliminar outfits invalidos'}
+                </Button>
+              </Card>
+            )}
+            <div className="flex flex-col sm:flex-row justify-between w-full gap-2 p-4">
               <div className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12">
                 <Link href={`/stores/${params.id}/create-outfit/`} className="flex flex-row gap-2">
                   <IoMdAddCircleOutline className="mt-0.5 text-white text-center text-2xl" />
@@ -108,9 +167,9 @@ export default function OutfitsPage() {
                 </div>
               )}
             </div>
-            {outfits.data && outfits.data.length > 0 && (
+            {validOutfits.length > 0 && (
               <>
-                {outfits.data.map((outfit, index) =>
+                {validOutfits.map((outfit, index) =>
                   isOrdering ? (
                     <SortableOutfitCard
                       key={outfit.id}

@@ -54,24 +54,19 @@ export function UserNavButton({ isActive = false, className }: Props) {
           <p className="text-sm font-medium truncate text-center border-b pb-2">{displayName}</p>
         )}
         {user?.store?.id && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full"
-            onClick={() => router.push(`/stores/${user.store!.id}`)} // Safe because we check that it exists above
-          >
-            Mi tienda
+          <Button asChild variant="outline" size="sm" className="w-full cursor-pointer">
+            <Link href={`/stores/${user.store.id}`}>Mi tienda</Link>
           </Button>
         )}
+        <Button asChild variant="outline" size="sm" className="w-full cursor-pointer">
+          <Link href="/profile">Mi perfil</Link>
+        </Button>
         <Button
           variant="outline"
           size="sm"
-          className="w-full"
-          onClick={() => router.push('/profile')}
+          className="w-full cursor-pointer"
+          onClick={handleLogout}
         >
-          Mi perfil
-        </Button>
-        <Button variant="outline" size="sm" className="w-full" onClick={handleLogout}>
           Cerrar sesión
         </Button>
       </PopoverContent>

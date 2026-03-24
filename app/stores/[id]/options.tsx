@@ -120,18 +120,16 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
             <AlertCircle className="w-5 h-5" />
             <span className="text-sm font-semibold">Tienes cambios pendientes de confirmar</span>
           </div>
-
           <button
             onClick={handleSave}
-            className="w-full bg-[#19756a] text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-2 hover:bg-teal-800 transition"
+            className="w-full bg-[#19756a] text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-2 hover:bg-teal-800 transition cursor-pointer"
           >
             <Save className="w-5 h-5" />
             Confirmar cambios
           </button>
-
           <button
             onClick={handleCancel}
-            className="w-full bg-gray-100 text-gray-600 font-bold py-3 rounded-xl hover:bg-gray-200 transition flex items-center justify-center gap-2"
+            className="w-full bg-gray-100 text-gray-600 font-bold py-3 rounded-xl hover:bg-gray-200 transition flex items-center justify-center gap-2 cursor-pointer"
           >
             <X className="w-4 h-4" />
             Descartar
