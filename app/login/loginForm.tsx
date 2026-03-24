@@ -47,7 +47,7 @@ export function LoginForm() {
     try {
       const loginResponse = await login.fetch({ body: data });
       registerInfo({ ...loginResponse.user }, loginResponse.token);
-      router.push('/');
+      // No need to redirect. The auth guard for this page will redirect
     } catch (err: unknown) {
       if (err instanceof FetchError && err.response?.status === 403) {
         setApiError('Credenciales incorrectos.');

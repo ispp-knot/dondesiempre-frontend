@@ -6,7 +6,7 @@ import { LoginForm } from './loginForm';
 
 export default function LoginPage() {
   return (
-    <LoggedOutGuard redirectTo="/profile">
+    <LoggedOutGuard redirectTo="/">
       <GlassCenterCard logo>
         <LoginForm />
       </GlassCenterCard>

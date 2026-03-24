@@ -62,7 +62,7 @@ export default function StorePage() {
     enabled: !!user,
   });
   const followStore = useActiveFetcher<void>({
-    url: `stores/${params.id}/followers`,
+    url: `stores/${params.id}/follow`,
     method: 'POST',
   });
   const unfollowStore = useActiveFetcher<void>({
