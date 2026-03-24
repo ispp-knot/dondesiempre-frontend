@@ -30,15 +30,11 @@ export default function NavbarBottom() {
       icon: <IoSearch />,
       activeIcon: <FaSearch />,
     },
-    ...(user && !user?.roles.includes('STORE')
-      ? [
-          {
-            href: '/following',
-            icon: <FaRegHeart />,
-            activeIcon: <FaHeart />,
-          },
-        ]
-      : []),
+    {
+      href: '/following',
+      icon: <FaRegHeart />,
+      activeIcon: <FaHeart />,
+    },
     {
       href: '/stores',
       icon: <HiOutlineLocationMarker />,
@@ -82,7 +78,7 @@ export default function NavbarBottom() {
   ];
 
   return (
-    <div className="flex fixed flex-row items-center justify-around sm:hidden bottom-0 left-0 w-full h-20 bg-primary text-white text-2xl z-20">
+    <div className="flex fixed flex-row items-center justify-around sm:hidden bottom-0 left-0 w-full h-20 bg-primary text-white text-2xl z-50">
       {(isAdmin ? navItemsAdmin : navItemsClient).map((item) => {
         const matches = item.activeMatches ?? [item.href];
         const isActive = matches.some((m) => pathname.startsWith(m));

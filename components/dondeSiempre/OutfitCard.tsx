@@ -54,7 +54,7 @@ export default function OutfitCard(props: OutfitCardProps) {
         </h1>
       )}
       {props.isOwner ? (
-        <div className="self-center grid grid-cols-3 w-11/12 gap-2">
+        <div className="self-center grid grid-cols-1 sm:grid-cols-3 w-11/12 gap-2">
           <Link
             href={`/stores/${props.outfit.storeId}/outfits/${props.outfit.id}`}
             className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"

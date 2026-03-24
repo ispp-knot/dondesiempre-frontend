@@ -1,9 +1,5 @@
 import { NIL as NIL_UUID } from 'uuid';
-
-export interface StoreSocialNetworkDTO {
-  name: string;
-  link: string;
-}
+import { StoreSocialNetworkDTO } from './storesSocialDto';
 
 export interface StorefrontDTO {
   id: typeof NIL_UUID;
