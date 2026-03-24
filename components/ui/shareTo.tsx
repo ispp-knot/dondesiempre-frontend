@@ -88,7 +88,11 @@ export function ShareTo({ item, images, className }: Props) {
 
   useEffect(() => {
     if (open) {
-      setTimeout(() => drawCanvas(), 100);
+      const timeoutId = window.setTimeout(() => {
+        void drawCanvas();
+      }, 100);
+
+      return () => window.clearTimeout(timeoutId);
     } else {
       setPreviewUrl('');
       setLoading(false);

@@ -9,7 +9,7 @@ export function createEmptyOutfitDTO(): OutfitDTO {
     description: null,
     image: null,
     priceInCents: 0,
-    discountPercentage: 0,
+    discountPercentage: null,
     index: 0,
     storeId: NIL_UUID,
     tags: [],

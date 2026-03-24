@@ -145,7 +145,13 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
               <div>
                 <h1 className="mt-4 mb-4 text-primary text-2xl">
                   <strong>Total: </strong>
-                  {`${discountPrice(props.outfit.priceInCents, props.outfit.discountPercentage).toFixed(2).toString().replace('.', ',')}€ con IVA`}
+                  {`${discountPrice(
+                    props.outfit.priceInCents,
+                    props.outfit.discountPercentage ?? null
+                  )
+                    .toFixed(2)
+                    .toString()
+                    .replace('.', ',')}€ con IVA`}
                 </h1>
               </div>
               <Button
@@ -168,7 +174,13 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
             {props.outfit && (
               <p className="text-secondary text-center">
                 Vas a realizar un pedido por un total de{' '}
-                <strong>{`${discountPrice(props.outfit.priceInCents, props.outfit.discountPercentage).toFixed(2).toString().replace('.', ',')}€`}</strong>
+                <strong>{`${discountPrice(
+                  props.outfit.priceInCents,
+                  props.outfit.discountPercentage ?? null
+                )
+                  .toFixed(2)
+                  .toString()
+                  .replace('.', ',')}€`}</strong>
                 .
               </p>
             )}

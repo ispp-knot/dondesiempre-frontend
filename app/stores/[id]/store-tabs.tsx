@@ -1,13 +1,14 @@
 'use client';
 
-import { JSX, useState } from 'react';
-import Image from 'next/image';
-import AboutUs from './about-us';
-import Outfits from './outfits';
-import StoreOptions from './options';
-import { StoreDTO } from '@/lib/types/stores/storesDto';
-import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { ShareTo } from '@/components/ui/shareTo';
+import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
+import { StoreDTO } from '@/lib/types/stores/storesDto';
+import { outfitWithDiscount } from '@/lib/utils';
+import Image from 'next/image';
+import { JSX, useState } from 'react';
+import AboutUs from './about-us';
+import StoreOptions from './options';
+import Outfits from './outfits';
 
 type Tab = 'catalogo' | 'sobre' | 'opciones';
 
@@ -26,10 +27,9 @@ export default function StoreTabs({
 }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
 
-  const promoOutfit = outfits.find((o) => o.discountPercentage);
+  const promoOutfit = outfits.find((outfit) => outfitWithDiscount(outfit));
 
   const storefrontId = store?.storefront?.id;
-
   return (
     <>
       {promoOutfit && (

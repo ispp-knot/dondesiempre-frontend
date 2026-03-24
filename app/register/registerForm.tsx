@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -367,7 +367,7 @@ function StoreStep2Form({
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<StoreStep2InputValues, unknown, StoreStep2Values>({
@@ -379,9 +379,11 @@ function StoreStep2Form({
     },
   });
 
-  const primaryColor = watch('primaryColor');
-  const secondaryColor = watch('secondaryColor');
-  const acceptsShipping = watch('acceptsShipping');
+  const primaryColor = useWatch({ control, name: 'primaryColor' });
+  const secondaryColor = useWatch({ control, name: 'secondaryColor' });
+  const acceptsShipping = useWatch({ control, name: 'acceptsShipping' });
+  const latitude = useWatch({ control, name: 'latitude' });
+  const longitude = useWatch({ control, name: 'longitude' });
 
   async function onSubmit(data: StoreStep2Values) {
     setApiError(null);
@@ -413,8 +415,8 @@ function StoreStep2Form({
       <div className="space-y-1">
         <Label>Ubicación</Label>
         <LocationPickerMap
-          latitude={watch('latitude') || undefined}
-          longitude={watch('longitude') || undefined}
+          latitude={latitude || undefined}
+          longitude={longitude || undefined}
           onChange={(lat, lng) => {
             setValue('latitude', lat, { shouldValidate: true });
             setValue('longitude', lng, { shouldValidate: true });
