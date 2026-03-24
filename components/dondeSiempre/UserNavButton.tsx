@@ -61,12 +61,7 @@ export function UserNavButton({ isActive = false, className }: Props) {
         <Button asChild variant="outline" size="sm" className="w-full">
           <Link href="/profile">Mi perfil</Link>
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full"
-          onClick={handleLogout}
-        >
+        <Button variant="outline" size="sm" className="w-full" onClick={handleLogout}>
           Cerrar sesión
         </Button>
       </PopoverContent>
