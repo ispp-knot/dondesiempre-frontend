@@ -1,33 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { IoSearch } from 'react-icons/io5';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { usePassiveFetcher } from '@/lib/api/fetcher';
 import { useDebounce } from 'use-debounce';
 import { StoreCard } from '@/components/dondeSiempre/StoreCard';
+import { useUserLocation } from '@/lib/useGeolocation';
 
 export default function StoreList() {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
 
-  // Get location on mount to allow personalized sorting from backend
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lon: position.coords.longitude,
-          });
-        },
-        () => {
-          console.warn('Location access denied or failed, using backend default sorting.');
-        }
-      );
-    }
-  }, []);
+  const userLocation = useUserLocation();
 
   // Build query params for the new fetcher
   const queryParams = new URLSearchParams();

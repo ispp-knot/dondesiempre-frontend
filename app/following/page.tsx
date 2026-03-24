@@ -1,7 +1,7 @@
 'use client';
 
-import FollowPage from './followPage';
 import { ClientGuard } from '@/components/guards/ClientGuard';
+import FollowPage from './followPage';
 
 export default function Page() {
   return (
