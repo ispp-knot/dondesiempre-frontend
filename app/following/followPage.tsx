@@ -1,6 +1,6 @@
 'use client';
 
-import ErrorText from '@/components/dondeSiempre/ErrorText';
+import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { StoreCard } from '@/components/dondeSiempre/StoreCard';
@@ -25,7 +25,7 @@ export default function FollowPage(): JSX.Element {
   }
 
   if (followedStores.isError) {
-    return <ErrorText error={followedStores.error}></ErrorText>;
+    return <ErrorView />;
   }
 
   const stores = followedStores.data;

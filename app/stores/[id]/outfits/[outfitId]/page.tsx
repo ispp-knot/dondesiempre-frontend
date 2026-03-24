@@ -1,6 +1,5 @@
 'use client';
 
-import ErrorText from '@/components/dondeSiempre/ErrorText';
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
@@ -37,6 +36,7 @@ import { FaTag } from 'react-icons/fa6';
 import { IoIosCloseCircle } from 'react-icons/io';
 import { z } from 'zod';
 import ClientOutfitDetailsPage from './ClientOutfitDetailsPage';
+import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 
 type EditOutfitSchema = ReturnType<typeof createEditOutfitFormSchema>;
 type EditOutfitFormInput = z.input<EditOutfitSchema>;
@@ -457,7 +457,13 @@ export default function OutfitDetailsPage() {
   }
 
   if (outfit.isError) {
-    return <ErrorText error={outfit.error} />;
+    return (
+      <ErrorView
+        title="Outfit no encontrado"
+        description="No pudimos encontrar este outfit. Puede que se haya eliminado o que el enlace ya no sea válido."
+        buttonText="Volver atrás"
+      />
+    );
   }
 
   const saveOutfit = async (dto: OutfitUpdateDTO, imageFile: File | null) => {
