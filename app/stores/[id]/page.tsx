@@ -24,10 +24,10 @@ import StoreTabs from './store-tabs';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import ErrorText from '@/components/dondeSiempre/ErrorText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth/AuthContext';
-import { Edit2 } from 'lucide-react';
+import { Edit2, Heart } from 'lucide-react';
 import StoreEditModal from './store-edit-modal';
+import { Button } from '@/components/ui/button';
 
 const getSocialIcon = (name: string) => {
   const lowerName = name.toLowerCase();
@@ -101,6 +101,44 @@ export default function StorePage() {
           priority
           unoptimized
         />
+
+        {!!user && !isOwner && (
+          <Button
+            type="button"
+            disabled={isFollowing.isLoading || followStore.isPending || unfollowStore.isPending}
+            onClick={async () => {
+              if (isFollowing.data?.isFollowing) {
+                await unfollowStore.fetch();
+                isFollowing.setData({ isFollowing: false });
+              } else {
+                await followStore.fetch();
+                isFollowing.setData({ isFollowing: true });
+              }
+            }}
+            style={{ '--primary': primaryColor } as React.CSSProperties}
+            className={`
+              absolute top-4 right-4 z-10
+              flex items-center justify-center gap-2
+              px-3 py-2.5 md:px-5 md:py-2.5 rounded-full
+              w-11 h-11 md:w-36 md:h-auto aspect-square md:aspect-auto
+              text-sm font-bold shadow-lg bg-white
+              border-2 border-[var(--primary)] text-[var(--primary)]
+              hover:bg-[var(--primary)] hover:text-white
+              transition-all duration-200 disabled:opacity-50 cursor-pointer
+              active:scale-95 hover:shadow-xl
+            `}
+          >
+            <Heart
+              size={16}
+              className={`flex-shrink-0 transition-colors duration-200 ${
+                isFollowing.data?.isFollowing ? 'fill-current' : ''
+              }`}
+            />
+            <span className="hidden md:inline">
+              {isFollowing.data?.isFollowing ? 'Siguiendo' : 'Seguir'}
+            </span>
+          </Button>
+        )}
       </div>
 
       <div className="w-full mt-5 text-center text-3xl md:text-5xl text-[var(--primary)] font-bold">
@@ -127,24 +165,6 @@ export default function StorePage() {
       </div>
 
       <div className="flex gap-3 mt-3 flex-wrap justify-center mb-2">
-        {!!user && (
-          <Button
-            variant="outline"
-            className="flex items-center w-fit gap-1.5 border border-primary rounded-sm px-3 py-1.5 text-xs text-primary hover:bg-primary hover:text-white transition"
-            disabled={isFollowing.isLoading || followStore.isPending || unfollowStore.isPending}
-            onClick={async () => {
-              if (isFollowing.data?.isFollowing) {
-                await unfollowStore.fetch();
-                isFollowing.setData({ isFollowing: false });
-              } else {
-                await followStore.fetch();
-                isFollowing.setData({ isFollowing: true });
-              }
-            }}
-          >
-            {isFollowing.data?.isFollowing ? 'Dejar de seguir' : '+ Seguir'}
-          </Button>
-        )}
         {socialNetworks.map((social: StoreSocialNetworkDTO, index: number) => (
           <a
             key={index}
@@ -163,6 +183,7 @@ export default function StorePage() {
         store={store.data}
         description={store.data?.aboutUs || ''}
         outfits={validOutfits}
+        isOwner={isOwner}
       />
 
       {isOwner && (

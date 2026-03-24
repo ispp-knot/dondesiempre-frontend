@@ -16,9 +16,15 @@ type Props = {
   description?: string;
   outfits?: OutfitDTO[];
   store: StoreDTO;
+  isOwner: boolean;
 };
 
-export default function StoreTabs({ description = '', outfits = [], store }: Props): JSX.Element {
+export default function StoreTabs({
+  description = '',
+  outfits = [],
+  store,
+  isOwner,
+}: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
 
   const promoOutfit = outfits.find((outfit) => outfitWithDiscount(outfit));
@@ -52,38 +58,47 @@ export default function StoreTabs({ description = '', outfits = [], store }: Pro
       <div className="flex mx-4 mt-5 mb-5 self-center rounded-md overflow-hidden border border-gray-200 w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5">
         <button
           onClick={() => setActiveTab('catalogo')}
-          className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
-            activeTab === 'catalogo' ? 'bg-secondary text-white' : 'bg-white text-secondary'
-          }`}
+          className="flex-1 py-2.5 text-sm font-semibold transition-colors cursor-pointer"
+          style={
+            activeTab === 'catalogo'
+              ? { backgroundColor: 'var(--secondary)', color: 'white' }
+              : { backgroundColor: 'white', color: 'var(--secondary)' }
+          }
         >
           Catálogo
         </button>
-
         <button
           onClick={() => setActiveTab('sobre')}
-          className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
-            activeTab === 'sobre' ? 'bg-secondary text-white' : 'bg-white text-secondary'
-          }`}
+          className="flex-1 py-2.5 text-sm font-semibold transition-colors cursor-pointer"
+          style={
+            activeTab === 'sobre'
+              ? { backgroundColor: 'var(--secondary)', color: 'white' }
+              : { backgroundColor: 'white', color: 'var(--secondary)' }
+          }
         >
           Sobre nosotros
         </button>
-
-        <button
-          onClick={() => setActiveTab('opciones')}
-          className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
-            activeTab === 'opciones' ? 'bg-secondary text-white' : 'bg-white text-secondary'
-          }`}
-        >
-          Opciones
-        </button>
+        {isOwner && (
+          <button
+            onClick={() => setActiveTab('opciones')}
+            className="flex-1 py-2.5 text-sm font-semibold transition-colors cursor-pointer"
+            style={
+              activeTab === 'opciones'
+                ? { backgroundColor: 'var(--secondary)', color: 'white' }
+                : { backgroundColor: 'white', color: 'var(--secondary)' }
+            }
+          >
+            Opciones
+          </button>
+        )}
       </div>
 
-      <div className="flex flex-col gap-10 sm:items-center">
+      <div className="flex flex-col gap-10 sm:items-center min-h-96">
         {activeTab === 'catalogo' && <Outfits storeId={store.id} outfits={outfits} />}
 
         {activeTab === 'sobre' && <AboutUs description={description} />}
 
-        {activeTab === 'opciones' && (
+        {activeTab === 'opciones' && isOwner && (
           <StoreOptions storefrontId={storefrontId} initialStore={store} />
         )}
       </div>
