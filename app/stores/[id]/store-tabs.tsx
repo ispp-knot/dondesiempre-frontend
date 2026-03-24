@@ -5,7 +5,7 @@ import { es } from 'date-fns/locale';
 import { ShareTo } from '@/components/ui/shareTo';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
-import { convertPrice, discountPrice, outfitWithDiscount } from '@/lib/utils';
+import { convertPrice, discountPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { JSX, useState } from 'react';
 import AboutUs from './about-us';
@@ -35,8 +35,7 @@ export default function StoreTabs({
   const activePromotions = promotions.filter((p) => p.active);
   const [currentPromoIndex, setCurrentPromoIndex] = useState(0);
   const [selectedPromo, setSelectedPromo] = useState<PromotionDTO | null>(null);
-  const totalSlides =
-    isOwner ? activePromotions.length + 1 : activePromotions.length;
+  const totalSlides = isOwner ? activePromotions.length + 1 : activePromotions.length;
 
   const formatDateRange = (start?: string, end?: string) => {
     if (!start || !end) return '¡Por tiempo limitado!';
@@ -55,8 +54,6 @@ export default function StoreTabs({
   const prevPromo = () => {
     setCurrentPromoIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
-
-  const promoOutfit = outfits.find((outfit) => outfitWithDiscount(outfit));
 
   const renderBannerContent = () => {
     // Si el índice actual es igual a la longitud, mostramos la tarjeta de "Crear"
@@ -159,7 +156,7 @@ export default function StoreTabs({
   const storefrontId = store?.storefront?.id;
   return (
     <>
-    {totalSlides > 0 && (
+      {totalSlides > 0 && (
         <div className="relative mx-4 mt-5 flex flex-col items-center justify-center border-2 border-secondary/30 rounded-xl p-6 overflow-hidden w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5 min-h-[300px] transition-all bg-gray-50">
           {/* Fondo Dinámico (Solo si hay promo, si no, un fondo neutro para 'Crear') */}
           <div className="absolute inset-0 z-0 w-full h-full">
@@ -285,103 +282,103 @@ export default function StoreTabs({
         )}
       </div>
       {selectedPromo && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                <div className="bg-white rounded-2xl max-w-md w-full max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200">
-                  {/* Cabecera dinámica */}
-                  <div className="relative h-40 w-full shrink-0">
-                    <Image
-                      src={
-                        selectedPromo.promotionImageUrl ||
-                        selectedPromo.products[0].image ||
-                        '/static/img/outfit_placeholder.jpg'
-                      }
-                      alt={selectedPromo.name}
-                      fill
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                    <button
-                      onClick={() => setSelectedPromo(null)} // Cerramos reseteando a null
-                      className="absolute top-3 right-3 text-white bg-black/20 hover:bg-black/40 p-1.5 rounded-full backdrop-blur-md transition"
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl max-w-md w-full max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200">
+            {/* Cabecera dinámica */}
+            <div className="relative h-40 w-full shrink-0">
+              <Image
+                src={
+                  selectedPromo.promotionImageUrl ||
+                  selectedPromo.products[0].image ||
+                  '/static/img/outfit_placeholder.jpg'
+                }
+                alt={selectedPromo.name}
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+              <button
+                onClick={() => setSelectedPromo(null)} // Cerramos reseteando a null
+                className="absolute top-3 right-3 text-white bg-black/20 hover:bg-black/40 p-1.5 rounded-full backdrop-blur-md transition"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+              <h2 className="absolute bottom-4 left-5 text-white text-xl font-bold">
+                {selectedPromo.name}
+              </h2>
+            </div>
+
+            {/* Lista de productos de ESTA promoción específica */}
+            <div className="p-5 overflow-y-auto">
+              <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+                {selectedPromo.description}
+              </p>
+
+              <div className="space-y-3">
+                {selectedPromo.products && selectedPromo.products.length > 0 ? (
+                  selectedPromo.products.map((product, index) => (
+                    <div
+                      key={`${selectedPromo.id}-prod-${index}`}
+                      className="flex items-center gap-3 p-2 border border-gray-100 rounded-xl hover:bg-gray-50 transition"
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M6 18L18 6M6 6l12 12"
+                      <div className="relative h-14 w-14 rounded-lg overflow-hidden shrink-0 border">
+                        <Image
+                          src={product.image || '/static/img/outfit_placeholder.jpg'}
+                          alt={product.name}
+                          fill
+                          className="object-cover"
                         />
-                      </svg>
-                    </button>
-                    <h2 className="absolute bottom-4 left-5 text-white text-xl font-bold">
-                      {selectedPromo.name}
-                    </h2>
-                  </div>
-      
-                  {/* Lista de productos de ESTA promoción específica */}
-                  <div className="p-5 overflow-y-auto">
-                    <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                      {selectedPromo.description}
-                    </p>
-      
-                    <div className="space-y-3">
-                      {selectedPromo.products && selectedPromo.products.length > 0 ? (
-                        selectedPromo.products.map((product, index) => (
-                          <div
-                            key={`${selectedPromo.id}-prod-${index}`}
-                            className="flex items-center gap-3 p-2 border border-gray-100 rounded-xl hover:bg-gray-50 transition"
-                          >
-                            <div className="relative h-14 w-14 rounded-lg overflow-hidden shrink-0 border">
-                              <Image
-                                src={product.image || '/static/img/outfit_placeholder.jpg'}
-                                alt={product.name}
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h4 className="font-semibold text-gray-800 text-sm truncate">
-                                {product.name}
-                              </h4>
-                              <div className="flex items-center gap-2">
-                                <span className="text-primary font-bold text-sm">
-                                  {discountPrice(product.priceInCents, selectedPromo.discountPercentage)}€
-                                </span>
-                                <span className="text-gray-400 text-xs line-through">
-                                  {convertPrice(product.priceInCents)}€
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <p className="text-center text-gray-400 py-4 text-sm italic">
-                          Esta promoción no tiene productos asociados.
-                        </p>
-                      )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-gray-800 text-sm truncate">
+                          {product.name}
+                        </h4>
+                        <div className="flex items-center gap-2">
+                          <span className="text-primary font-bold text-sm">
+                            {discountPrice(product.priceInCents, selectedPromo.discountPercentage)}€
+                          </span>
+                          <span className="text-gray-400 text-xs line-through">
+                            {convertPrice(product.priceInCents)}€
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-      
-                  {/* Footer con el descuento de esta promo */}
-                  <div className="p-5 border-t bg-gray-50">
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                        Descuento
-                      </span>
-                      <span className="text-xl font-black text-primary">
-                        -{selectedPromo.discountPercentage}%
-                      </span>
-                    </div>
-                    <button
-                      onClick={() => setSelectedPromo(null)}
-                      className="w-full bg-secondary text-white font-bold py-3 rounded-xl hover:brightness-110 transition shadow-md"
-                    >
-                      Volver a la tienda
-                    </button>
-                  </div>
-                </div>
+                  ))
+                ) : (
+                  <p className="text-center text-gray-400 py-4 text-sm italic">
+                    Esta promoción no tiene productos asociados.
+                  </p>
+                )}
               </div>
-            )}
+            </div>
+
+            {/* Footer con el descuento de esta promo */}
+            <div className="p-5 border-t bg-gray-50">
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                  Descuento
+                </span>
+                <span className="text-xl font-black text-primary">
+                  -{selectedPromo.discountPercentage}%
+                </span>
+              </div>
+              <button
+                onClick={() => setSelectedPromo(null)}
+                className="w-full bg-secondary text-white font-bold py-3 rounded-xl hover:brightness-110 transition shadow-md"
+              >
+                Volver a la tienda
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
