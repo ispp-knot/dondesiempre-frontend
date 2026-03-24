@@ -15,8 +15,8 @@ import { DragDropProvider } from '@dnd-kit/react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import ErrorText from '../../../../../../components/dondeSiempre/ErrorText';
 import LoadingText from '../../../../../../components/dondeSiempre/LoadingText';
+import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 
 export default function OutfitProductsPage() {
   const params = useParams<{ id: string; outfitId: string }>();
@@ -44,10 +44,11 @@ export default function OutfitProductsPage() {
 
   if (products.isError || outfit.isError) {
     return (
-      <>
-        {products.isError && <ErrorText error={products.error} />}
-        {outfit.isError && <ErrorText error={outfit.error} />}
-      </>
+      <ErrorView
+        title="Outfit no encontrado"
+        description="No pudimos encontrar este outfit. Puede que se haya eliminado o que el enlace ya no sea válido."
+        buttonText="Volver atrás"
+      />
     );
   }
 

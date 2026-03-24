@@ -1,6 +1,6 @@
 'use client';
 
-import ErrorText from '@/components/dondeSiempre/ErrorText';
+import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
@@ -165,8 +165,7 @@ export default function OutfitCreationPage() {
   if (products.isError || store.isError) {
     return (
       <>
-        <ErrorText error={products.error} />
-        <ErrorText error={store.error} />
+        <ErrorView />
       </>
     );
   }
