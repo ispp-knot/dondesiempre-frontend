@@ -23,7 +23,6 @@ import { FaLocationDot, FaWhatsapp } from 'react-icons/fa6';
 import { MdAccessTimeFilled } from 'react-icons/md';
 import StoreTabs from './store-tabs';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
-import ErrorText from '@/components/dondeSiempre/ErrorText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Edit2, Heart } from 'lucide-react';
@@ -31,6 +30,7 @@ import StoreEditModal from './store-edit-modal';
 import StoreSocialNetworksModal from './store-social-edit-modal';
 import { Button } from '@/components/ui/button';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
+import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 
 const getSocialIcon = (name: string) => {
   const lowerName = name.toLowerCase();
@@ -79,8 +79,13 @@ export default function StorePage() {
   } else if (store.isError || outfits.isError) {
     return (
       <>
-        <ErrorText error={store.error} />
-        <ErrorText error={outfits.error} />
+        {(store.error || outfits.error) && (
+          <ErrorView
+            title="Tienda no encontrada"
+            description="No pudimos encontrar esta tienda. Puede que se haya eliminado o que el enlace ya no sea válido."
+            buttonText="Volver atrás"
+          />
+        )}
       </>
     );
   }
