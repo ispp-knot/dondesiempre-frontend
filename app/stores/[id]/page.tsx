@@ -49,13 +49,12 @@ export default function StorePage() {
   const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
   const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
 
-  const isStore = user?.roles.includes('STORE');
   const isOwner = !!user?.store?.id && user.store.id === params.id;
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   const isFollowing = usePassiveFetcher<{ isFollowing: boolean }>({
     url: `stores/${params.id}/follow`,
-    enabled: !!user && !isStore,
+    enabled: !!user,
   });
   const followStore = useActiveFetcher<void>({
     url: `stores/${params.id}/followers`,
@@ -64,10 +63,6 @@ export default function StorePage() {
   const unfollowStore = useActiveFetcher<void>({
     url: `stores/${params.id}/follow`,
     method: 'DELETE',
-  });
-
-  const promotionsDto = usePassiveFetcher<PromotionDTO[]>({
-    url: `stores/${params.id}/promotions`,
   });
 
   if (store.isLoading || outfits.isLoading) {
@@ -81,7 +76,6 @@ export default function StorePage() {
     );
   }
 
-  const promotionData: PromotionDTO[] = promotionsDto.data || [];
   const socialNetworks: Array<StoreSocialNetworkDTO> = store.data?.socialNetworks || [];
   const primaryColor = store.data?.storefront?.primaryColor || '#000000';
   const secondaryColor = store.data?.storefront?.secondaryColor || '#000000';
@@ -187,7 +181,6 @@ export default function StorePage() {
       <StoreTabs
         store={store.data}
         description={store.data?.aboutUs || ''}
-        promotions={promotionData}
         outfits={outfits.data}
         isOwner={isOwner}
       />

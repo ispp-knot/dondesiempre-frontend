@@ -22,7 +22,6 @@ export default function ImageUpload({
   const [preview, setPreview] = useState<string | null>(existingImageUrl ?? null);
   const [hasFile, setHasFile] = useState(false);
 
-  const currentPreview = preview ?? existingImageUrl ?? null;
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
     if (file) {
@@ -59,13 +58,13 @@ export default function ImageUpload({
         className
       )}
     >
-      {currentPreview && (
+      {preview && (
         <Image
-          src={currentPreview}
+          src={preview}
           alt="Preview"
           fill
           unoptimized
-          className={cn('object-cover', disabled ? 'opacity-50 grayscale' : 'opacity-50')}
+          className={cn('object-cover', disabled ? 'opacity-30 grayscale' : 'opacity-30')}
         />
       )}
       <div
