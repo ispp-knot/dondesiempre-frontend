@@ -1,10 +1,12 @@
-import { ServerLoggedInGuard } from '@/components/guards/ServerLoggedInGuard';
+'use client';
+
+import { LoggedInGuard } from '@/components/guards/LoggedInGuard';
 import FollowPage from './followPage';
 
 export default function Page() {
   return (
-    <ServerLoggedInGuard>
+    <LoggedInGuard>
       <FollowPage />;
-    </ServerLoggedInGuard>
+    </LoggedInGuard>
   );
 }

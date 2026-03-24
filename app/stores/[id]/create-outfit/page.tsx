@@ -8,25 +8,60 @@ import SortableProduct from '@/components/dondeSiempre/SortableProduct';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { OutfitCreationDTO, OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { productDTOToOufitCreationProductDTO } from '@/lib/types/outfits/outfitsHelper';
+import {
+  createOutfitFormSchema,
+  getMissingOutfitProductsCount,
+  MAX_OUTFIT_DESCRIPTION_LENGTH,
+  MAX_OUTFIT_NAME_LENGTH,
+  MAX_OUTFIT_TAG_LENGTH,
+  MIN_OUTFIT_PRODUCTS,
+  normalizeOutfitTag,
+  outfitTagSchema,
+} from '@/lib/types/outfits/outfitsRules';
 import { ProductDTO } from '@/lib/types/products/productsDto';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
-import { convertPrice } from '@/lib/utils';
+import {
+  calculatePriceWithPercentageDiscount,
+  convertPrice,
+  getOutfitDiscountPercentage,
+} from '@/lib/utils';
 import { move } from '@dnd-kit/helpers';
 import { DragDropProvider } from '@dnd-kit/react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
-import { redirect, useParams } from 'next/navigation';
-import { useState } from 'react';
-import { FaTag } from 'react-icons/fa';
+import { useParams, useRouter } from 'next/navigation';
+import { FetchError } from 'ofetch';
+import { useRef, useState } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import { FaPlus, FaTag } from 'react-icons/fa';
+import { z } from 'zod';
+
+const outfitSchema = createOutfitFormSchema();
+
+type OutfitFormInput = z.input<typeof outfitSchema>;
+type OutfitFormValues = z.infer<typeof outfitSchema>;
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) return null;
+  return <p className="text-sm text-destructive">{message}</p>;
+}
 
 export default function OutfitCreationPage() {
   const params = useParams<{ id: string }>();
+  const router = useRouter();
 
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [outfitProducts, setOutfitProducts] = useState(new Array<ProductDTO>());
-  const [outfitTags, setOutfitTags] = useState(new Array<string>());
+  const [outfitProducts, setOutfitProducts] = useState<ProductDTO[]>([]);
+  const [tagInput, setTagInput] = useState('');
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [isCreateLocked, setIsCreateLocked] = useState(false);
+  const submitLockRef = useRef(false);
 
   const products = usePassiveFetcher<ProductDTO[]>({ url: `stores/${params.id}/products` });
   const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
@@ -34,6 +69,94 @@ export default function OutfitCreationPage() {
     url: `stores/${params.id}/outfits`,
     method: 'POST',
   });
+  const updateOutfit = useActiveFetcher<OutfitDTO>({
+    method: 'PUT',
+  });
+
+  const {
+    control,
+    register,
+    handleSubmit,
+    setValue,
+    setError,
+    clearErrors,
+    formState: { errors, isSubmitting },
+  } = useForm<OutfitFormInput, unknown, OutfitFormValues>({
+    resolver: zodResolver(outfitSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+      discountPercentage: 0,
+      tags: [],
+      productIds: [],
+    },
+    mode: 'onBlur',
+    reValidateMode: 'onChange',
+  });
+
+  const selectedTags = useWatch({ control, name: 'tags' }) ?? [];
+  const nameValue = useWatch({ control, name: 'name' }) ?? '';
+  const descriptionValue = useWatch({ control, name: 'description' }) ?? '';
+  const discountPercentageValue = useWatch({ control, name: 'discountPercentage' }) ?? 0;
+  const normalizedTagInput = normalizeOutfitTag(tagInput);
+  const discountPercentage = Number(discountPercentageValue ?? 0);
+
+  const syncProducts = (nextProducts: ProductDTO[]) => {
+    setOutfitProducts(nextProducts);
+    setValue(
+      'productIds',
+      nextProducts.map((product) => product.id),
+      {
+        shouldDirty: true,
+        shouldValidate: true,
+      }
+    );
+
+    if (nextProducts.length >= MIN_OUTFIT_PRODUCTS) {
+      clearErrors('productIds');
+    }
+  };
+
+  const addTag = () => {
+    const parsedTag = outfitTagSchema.safeParse(normalizedTagInput);
+
+    if (!parsedTag.success) {
+      setError('tags', {
+        type: 'manual',
+        message: parsedTag.error.issues[0]?.message ?? 'La etiqueta no es válida.',
+      });
+      return;
+    }
+
+    if (selectedTags.some((tag) => tag.toLowerCase() === parsedTag.data.toLowerCase())) {
+      setError('tags', {
+        type: 'manual',
+        message: 'Esta etiqueta ya está añadida.',
+      });
+      return;
+    }
+
+    const nextTags = [...selectedTags, parsedTag.data];
+    setValue('tags', nextTags, { shouldDirty: true, shouldValidate: true });
+    clearErrors('tags');
+    setTagInput('');
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    const nextTags = selectedTags.filter((tag) => tag !== tagToRemove);
+    setValue('tags', nextTags, { shouldDirty: true, shouldValidate: true });
+    clearErrors('tags');
+  };
+
+  const totalPriceInCents = outfitProducts.reduce(
+    (accumulator, product) => accumulator + product.priceInCents,
+    0
+  );
+  const hasOutfitDiscount = discountPercentage > 0;
+  const discountedOutfitPrice = hasOutfitDiscount
+    ? calculatePriceWithPercentageDiscount(totalPriceInCents, discountPercentage)
+    : convertPrice(totalPriceInCents);
+  const discountedOutfitPriceInCents = Math.round(discountedOutfitPrice * 100);
 
   if (products.isLoading || store.isLoading) {
     return <LoadingText />;
@@ -48,186 +171,353 @@ export default function OutfitCreationPage() {
     );
   }
 
-  const submitForm = async (event: React.SyntheticEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const missingProductsCount = getMissingOutfitProductsCount(outfitProducts.length);
+  const submitDisabled =
+    isSubmitting ||
+    createOutfit.isPending ||
+    updateOutfit.isPending ||
+    isCreateLocked ||
+    missingProductsCount > 0;
+
+  const onSubmit = async (data: OutfitFormValues) => {
+    if (!store.data) {
+      return;
+    }
+
+    if (submitLockRef.current) {
+      return;
+    }
+
+    setApiError(null);
+    submitLockRef.current = true;
+    setIsCreateLocked(true);
 
     const dto: OutfitCreationDTO = {
-      name: (document.getElementById('form-name') as HTMLInputElement).value,
-      description: (document.getElementById('form-description') as HTMLInputElement).value || null,
-      storefrontId: store.data!.storefront.id,
-      tags: outfitTags,
+      name: data.name,
+      description: data.description,
+      discountPercentage: data.discountPercentage > 0 ? data.discountPercentage : null,
+      discountedPriceInCents: hasOutfitDiscount ? discountedOutfitPriceInCents : totalPriceInCents,
+      storefrontId: store.data.storefront.id,
+      tags: data.tags,
       products: outfitProducts.map((product, index) =>
         productDTOToOufitCreationProductDTO(product, index)
       ),
     };
-    await createOutfit.fetch({
-      formPayload: {
-        dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
-        image: imageFile ?? undefined,
-      },
-    });
-    redirect(`/stores/${params.id}/outfits`);
-  };
 
+    try {
+      const createdOutfit = await createOutfit.fetch({
+        formPayload: {
+          dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
+          image: imageFile ?? undefined,
+        },
+      });
+
+      if (discountPercentage > 0 && getOutfitDiscountPercentage(createdOutfit) === 0) {
+        await updateOutfit.fetch({
+          url: `outfits/${createdOutfit.id}`,
+          formPayload: {
+            dto: new Blob(
+              [
+                JSON.stringify({
+                  name: data.name,
+                  description: data.description,
+                  discountPercentage: data.discountPercentage,
+                  discountedPriceInCents: discountedOutfitPriceInCents,
+                }),
+              ],
+              { type: 'application/json' }
+            ),
+          },
+        });
+      }
+
+      router.push(`/stores/${params.id}/outfits`);
+    } catch (error: unknown) {
+      if (error instanceof FetchError && error.response?.status === 409) {
+        setApiError(
+          'Ya hay una creación de outfit en curso. Espera un momento antes de reintentar.'
+        );
+      } else if (error instanceof Error && error.message) {
+        setApiError(error.message);
+      } else {
+        setApiError('No se pudo crear el outfit. Revisa los campos e inténtalo de nuevo.');
+      }
+    } finally {
+      submitLockRef.current = false;
+      setIsCreateLocked(false);
+    }
+  };
   return (
     <StoreOwnerGuard storeId={params.id}>
-      {products.data ? (
+      {products.data && products.data.length > 0 ? (
         <DragDropProvider
           onDragEnd={(event) => {
             if (event.canceled) {
               return;
             }
-            setOutfitProducts(move(outfitProducts, event));
+            const nextProducts = move(outfitProducts, event);
+            syncProducts(nextProducts);
           }}
         >
-          <div className="flex flex-col items-center">
-            <div className="w-full md:w-8/12">
-              <Card className="p-4 pt-8 m-4 mb-8 shadow-xl">
-                <h1 className="mb-3 font-bold text-primary text-center text-3xl">Crear outfit</h1>
-                <div className="w-full flex flex-col items-center">
-                  <form
-                    action={`/stores/${params.id}/outfits`}
-                    method="GET"
-                    onSubmit={submitForm}
-                    className="w-10/12"
-                  >
-                    <div className="flex flex-col gap-4">
-                      <label htmlFor="form-name" className="font-bold text-lg text-secondary">
-                        Nombre:{' '}
-                      </label>
-                      <input
-                        type="text"
-                        name="name"
-                        id="form-name"
-                        minLength={1}
-                        maxLength={255}
-                        required
-                        className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
-                      />
-                      <label
-                        htmlFor="form-description"
-                        className="font-bold text-lg text-secondary"
-                      >
-                        Descripción:{' '}
-                      </label>
-                      <input
-                        type="text"
-                        name="description"
-                        minLength={0}
-                        maxLength={5000}
-                        id="form-description"
-                        className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
-                      />
-                      <label className="font-bold text-lg text-secondary">Imagen:</label>
-                      <ImageUpload onChange={setImageFile} />
-                      <label htmlFor="form-tags" className="font-bold text-lg text-secondary">
-                        Etiquetas:{' '}
-                      </label>
-                      <input
-                        type="text"
-                        name="tags"
-                        id="form-tags"
-                        onChange={async () => {
-                          const element = document.getElementById('form-tags') as HTMLInputElement;
+          <div className="flex flex-col items-center px-4 py-6">
+            <div className="w-full max-w-6xl">
+              <Card className="mb-8 p-4 shadow-xl sm:p-6 md:p-8">
+                <h1 className="mb-6 text-center text-3xl font-bold text-primary">Crear outfit</h1>
 
-                          if (element.value.includes(' ')) {
-                            setOutfitTags([...outfitTags, element.value.trim()]);
-                            element.value = '';
-                          }
-                        }}
-                        className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="form-name" className="text-base font-bold text-secondary">
+                        Nombre
+                      </Label>
+                      <Input
+                        id="form-name"
+                        maxLength={MAX_OUTFIT_NAME_LENGTH}
+                        aria-invalid={!!errors.name}
+                        {...register('name')}
                       />
+                      <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+                        <FieldError message={errors.name?.message} />
+                        <p className="shrink-0 text-xs text-muted-foreground">
+                          {nameValue.length}/{MAX_OUTFIT_NAME_LENGTH}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex flex-row gap-4 flex-wrap">
-                      {outfitTags.map((t, i) => (
-                        <Button
-                          key={i}
-                          onClick={async () => {
-                            setOutfitTags(outfitTags.filter((tag, index) => index != i));
-                          }}
-                          className="p-2 rounded-lg bg-secondary hover:bg-dark-secondary flex flex-row gap-1 shrink-0"
+
+                    <div className="space-y-2 md:col-span-2">
+                      <Label
+                        htmlFor="form-description"
+                        className="text-base font-bold text-secondary"
+                      >
+                        Descripción
+                      </Label>
+                      <Textarea
+                        id="form-description"
+                        maxLength={MAX_OUTFIT_DESCRIPTION_LENGTH}
+                        rows={5}
+                        aria-invalid={!!errors.description}
+                        className="resize-y break-words"
+                        {...register('description')}
+                      />
+                      <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+                        <FieldError message={errors.description?.message} />
+                        <p className="shrink-0 text-xs text-muted-foreground">
+                          {descriptionValue.length}/{MAX_OUTFIT_DESCRIPTION_LENGTH}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="form-image" className="text-base font-bold text-secondary">
+                        Imagen
+                      </Label>
+                      <div id="form-image">
+                        <ImageUpload onChange={setImageFile} />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 md:col-span-2">
+                      <div className="max-w-xs space-y-2">
+                        <Label
+                          htmlFor="form-discount-percentage"
+                          className="text-base font-bold text-secondary"
                         >
-                          <FaTag className="text-white"></FaTag>
-                          <p className="font-bold text-white text-center text-xs">{t}</p>
-                        </Button>
-                      ))}
+                          Descuento
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <Input
+                            id="form-discount-percentage"
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="1"
+                            inputMode="numeric"
+                            aria-invalid={!!errors.discountPercentage}
+                            className="w-24 sm:w-28"
+                            {...register('discountPercentage')}
+                          />
+                          <span className="text-base font-semibold text-secondary">%</span>
+                        </div>
+                        <FieldError message={errors.discountPercentage?.message} />
+                      </div>
                     </div>
-                    <div className="flex flex-row w-full self-center overflow-x-auto items-center gap-4 p-4">
-                      {outfitProducts.map((p, i) => (
+
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="form-tags" className="text-base font-bold text-secondary">
+                        Etiquetas
+                      </Label>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <Input
+                          id="form-tags"
+                          value={tagInput}
+                          maxLength={MAX_OUTFIT_TAG_LENGTH}
+                          placeholder="Ej. Primavera, oficina, evento especial..."
+                          className="min-w-0"
+                          onChange={(event) => {
+                            setTagInput(event.target.value);
+                            if (errors.tags?.message) {
+                              clearErrors('tags');
+                            }
+                          }}
+                          onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ',') {
+                              event.preventDefault();
+                              addTag();
+                            }
+                          }}
+                        />
+                        <Button
+                          type="button"
+                          onClick={addTag}
+                          disabled={normalizedTagInput.length === 0}
+                          className="w-full bg-secondary text-white hover:bg-dark-secondary sm:w-auto"
+                        >
+                          <FaPlus className="mr-2" />
+                          Añadir etiqueta
+                        </Button>
+                      </div>
+                      <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+                        <p className="text-xs text-muted-foreground">
+                          Pulsa Enter o &quot;,&quot; para añadir una etiqueta.
+                        </p>
+                        <p className="shrink-0 text-xs text-muted-foreground">
+                          {tagInput.length}/{MAX_OUTFIT_TAG_LENGTH}
+                        </p>
+                      </div>
+                      <FieldError message={errors.tags?.message} />
+                      <div className="flex flex-wrap gap-2">
+                        {selectedTags.map((tag) => (
+                          <Button
+                            key={tag}
+                            type="button"
+                            onClick={() => removeTag(tag)}
+                            className="h-auto max-w-full whitespace-normal break-words rounded-lg bg-secondary px-3 py-2 text-left hover:bg-dark-secondary"
+                          >
+                            <FaTag className="mr-2 shrink-0 text-white" />
+                            <span className="break-words text-xs font-bold text-white sm:text-sm">
+                              {tag}
+                            </span>
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex flex-col gap-1">
+                      <h2 className="text-xl font-bold text-primary">Productos del outfit</h2>
+                      <p
+                        className={
+                          missingProductsCount > 0
+                            ? 'text-sm font-medium text-destructive'
+                            : 'text-sm text-muted-foreground'
+                        }
+                      >
+                        {missingProductsCount > 0
+                          ? `Añade ${
+                              missingProductsCount === 1
+                                ? '1 prenda más'
+                                : `${missingProductsCount} prendas más`
+                            } para poder crear el outfit.`
+                          : 'Añade al menos dos prendas y arrástralas para definir el orden del outfit.'}
+                      </p>
+                    </div>
+                    <FieldError message={errors.productIds?.message} />
+                    <div className="flex w-full items-center gap-4 overflow-x-auto pb-2">
+                      {outfitProducts.map((product, index) => (
                         <SortableProduct
-                          key={p.id}
-                          index={i}
-                          product={p}
+                          key={product.id}
+                          index={index}
+                          product={product}
                           removable={true}
-                          onClick={async () => {
-                            setOutfitProducts(
-                              outfitProducts.filter((product) => product.id !== p.id)
+                          onClick={() => {
+                            syncProducts(
+                              outfitProducts.filter(
+                                (currentProduct) => currentProduct.id !== product.id
+                              )
                             );
                           }}
                         />
                       ))}
                     </div>
-                    <div>
-                      <h1 className="mt-2 mb-4 text-primary text-center text-3xl">
-                        <strong>Total: </strong>
-                        {`${convertPrice(
-                          outfitProducts.length > 0
-                            ? outfitProducts
-                                .map((product) => product.priceInCents)
-                                .reduce((a, b) => a + b)
-                            : 0
-                        )
-                          .toFixed(2)
-                          .toString()
-                          .replace('.', ',')}€`}
-                      </h1>
-                    </div>
-                    <div className="flex flex-row justify-center mb-8">
-                      <Button
-                        type="submit"
-                        className="self-center bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md h-12 md:w-1/3 mt-8"
-                        disabled={outfitProducts.length <= 0}
-                      >
-                        Crear outfit
-                      </Button>
-                    </div>
-                  </form>
-                </div>
+                    {outfitProducts.length > 0 && (
+                      <p className="text-xs text-muted-foreground">
+                        Pulsa la X de una prenda para quitarla del outfit antes de crearlo.
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <h2 className="text-center text-3xl font-bold text-primary">
+                      <strong>Precio original: </strong>
+                      {`${convertPrice(totalPriceInCents).toFixed(2).toString().replace('.', ',')}€`}
+                    </h2>
+                    <p className="mt-2 text-center text-sm text-muted-foreground">
+                      Precio final del outfit:{' '}
+                      {`${discountedOutfitPrice.toFixed(2).toString().replace('.', ',')}€`}
+                    </p>
+                    {hasOutfitDiscount && (
+                      <p className="text-center text-sm font-semibold text-secondary">
+                        Descuento aplicado al outfit: -{discountPercentage.toFixed(0)}%
+                      </p>
+                    )}
+                  </div>
+
+                  {apiError && <p className="text-sm text-destructive">{apiError}</p>}
+
+                  <div className="flex justify-center">
+                    <Button
+                      type="submit"
+                      className="mt-2 h-12 w-full bg-secondary text-base font-bold text-white hover:bg-dark-secondary md:w-1/3"
+                      disabled={submitDisabled}
+                    >
+                      {isSubmitting ||
+                      createOutfit.isPending ||
+                      updateOutfit.isPending ||
+                      isCreateLocked
+                        ? 'Creando outfit...'
+                        : missingProductsCount > 0
+                          ? `Selecciona ${MIN_OUTFIT_PRODUCTS} prendas`
+                          : 'Crear outfit'}
+                    </Button>
+                  </div>
+                </form>
               </Card>
-              <Card className="p-4 m-4 pt-8">
-                <h1 className="md:mb-3 font-bold text-primary text-center text-3xl">Productos</h1>
-                <div className="grid grid-cols-2 md:gap-2">
+
+              <Card className="p-4 shadow-xl sm:p-6 md:p-8">
+                <h1 className="mb-6 text-center text-3xl font-bold text-primary">Productos</h1>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {products.data
-                    .filter((p) => !outfitProducts.map((product) => product.id).includes(p.id))
-                    .map((p) => (
-                      <Card key={p.id} className="p-2 md:p-4 md:pt-8 m-1 shadow-xl gap-2 md:gap-4">
-                        <div>
-                          <h1 className="md:mb-3 font-bold text-primary text-center text-lg md:text-2xl">
-                            {p.name}
-                          </h1>
-                        </div>
-                        <div className="flex flex-row justify-center">
+                    .filter(
+                      (product) => !outfitProducts.some((selected) => selected.id === product.id)
+                    )
+                    .map((product) => (
+                      <Card
+                        key={product.id}
+                        className="flex h-full flex-col gap-4 p-3 shadow-xl sm:p-4 md:p-6"
+                      >
+                        <h2 className="text-center text-lg font-bold text-primary break-words sm:text-2xl">
+                          {product.name}
+                        </h2>
+                        <div className="flex flex-1 justify-center">
                           <Image
-                            src={p.image || '/static/img/product_placeholder.png'}
-                            alt={p.name}
+                            src={product.image || '/static/img/product_placeholder.png'}
+                            alt={product.name}
                             width={512}
                             height={512}
-                            className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg"
-                          ></Image>
+                            className="aspect-square w-full max-w-[220px] rounded-lg object-cover shadow-lg"
+                          />
                         </div>
-                        <h1 className="font-bold text-primary text-center text-lg md:text-2xl">
-                          {`${convertPrice(p.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
-                        </h1>
-                        <div className="flex flex-row justify-center">
-                          <Button
-                            onClick={() => {
-                              setOutfitProducts([...outfitProducts, p]);
-                            }}
-                            className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl h-12 w-11/12 md:w-1/2"
-                          >
-                            Añadir
-                          </Button>
-                        </div>
+                        <h3 className="text-center text-lg font-bold text-primary sm:text-2xl">
+                          {`${convertPrice(product.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
+                        </h3>
+                        <Button
+                          type="button"
+                          onClick={() => syncProducts([...outfitProducts, product])}
+                          className="flex w-full items-center justify-center rounded-lg bg-secondary text-base font-bold text-white hover:bg-dark-secondary sm:text-lg"
+                        >
+                          Añadir
+                        </Button>
                       </Card>
                     ))}
                 </div>

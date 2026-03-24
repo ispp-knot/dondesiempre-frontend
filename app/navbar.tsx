@@ -8,10 +8,13 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { UserNavButton } from '@/components/dondeSiempre/UserNavButton';
+import { useAuth } from '@/lib/auth/AuthContext';
 
 export default function Navbar() {
   const [isAdmin, _setIsAdmin] = useState<boolean>(false);
   const pathname = usePathname();
+  const { getCurrentUser } = useAuth();
+  const user = getCurrentUser();
 
   const userActiveMatches = ['/profile', '/login', '/register'];
   const isUserActive = userActiveMatches.some((m) => pathname.startsWith(m));
@@ -33,26 +36,24 @@ export default function Navbar() {
             )}
           </div>
           <div className="flex flex-row items-center gap-5 text-2xl font-primary">
-            {!isAdmin && (
+            {isAdmin ? (
               <>
-                <FaRegHeart
-                  className="cursor-pointer"
-                  onClick={() => (window.location.href = '/following')}
-                />
-                <LuPackage
-                  className="cursor-pointer"
-                  onClick={() => (window.location.href = '/orders')}
-                />
-                <UserNavButton isActive={isUserActive} />
-              </>
-            )}
-            {isAdmin && (
-              <>
-                <LuPackage
-                  className="cursor-pointer"
-                  onClick={() => (window.location.href = '/orders')}
-                />
+                <Link href="/orders" aria-label="Pedidos">
+                  <LuPackage className="cursor-pointer" strokeWidth={1.5} />
+                </Link>
                 <AiOutlineShop />
+              </>
+            ) : (
+              <>
+                {user && !user?.roles.includes('STORE') && (
+                  <Link href="/following" aria-label="Favoritos">
+                    <FaRegHeart className="cursor-pointer" />
+                  </Link>
+                )}
+                <Link href="/orders" aria-label="Pedidos">
+                  <LuPackage className="cursor-pointer" strokeWidth={1.5} />
+                </Link>
+                <UserNavButton isActive={isUserActive} />
               </>
             )}
           </div>

@@ -3,10 +3,10 @@
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaRegUser, FaUser } from 'react-icons/fa';
-import { RiLoginCircleLine, RiLoginCircleFill } from 'react-icons/ri';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { RiUserSharedLine, RiUserSharedFill } from 'react-icons/ri';
 
 interface Props {
   /** Whether this button is currently in its active/selected state */
@@ -37,7 +37,7 @@ export function UserNavButton({ isActive = false, className }: Props) {
   if (!user) {
     return (
       <Link href="/login" aria-label="Iniciar sesión" className={className}>
-        {isActive ? <RiLoginCircleFill /> : <RiLoginCircleLine />}
+        {isActive ? <RiUserSharedFill /> : <RiUserSharedLine />}
       </Link>
     );
   }
@@ -54,24 +54,19 @@ export function UserNavButton({ isActive = false, className }: Props) {
           <p className="text-sm font-medium truncate text-center border-b pb-2">{displayName}</p>
         )}
         {user?.store?.id && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full"
-            onClick={() => router.push(`/stores/${user.store!.id}`)} // Safe because we check that it exists above
-          >
-            Mi tienda
+          <Button asChild variant="outline" size="sm" className="w-full">
+            <Link href={`/stores/${user.store.id}`}>Mi tienda</Link>
           </Button>
         )}
+        <Button asChild variant="outline" size="sm" className="w-full">
+          <Link href="/profile">Mi perfil</Link>
+        </Button>
         <Button
           variant="outline"
           size="sm"
           className="w-full"
-          onClick={() => router.push('/profile')}
+          onClick={handleLogout}
         >
-          Mi perfil
-        </Button>
-        <Button variant="outline" size="sm" className="w-full" onClick={handleLogout}>
           Cerrar sesión
         </Button>
       </PopoverContent>

@@ -7,7 +7,7 @@ import { OrderDTO } from '@/lib/types/orders/orderDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { discountPrice } from '@/lib/utils';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useState } from 'react';
 import { FaTag } from 'react-icons/fa';
 import { GoDotFill } from 'react-icons/go';
@@ -22,7 +22,8 @@ export interface ClientOutfitDetailsPageProps {
 }
 
 export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPageProps) {
-  const router = useRouter();
+  const buttonLinkClass =
+    'w-full inline-flex items-center justify-center h-9 px-4 py-2 rounded-md cursor-pointer text-sm font-medium tracking-normal whitespace-nowrap font-[inherit]';
 
   const [selectedProduct, setSelectedProduct] = useState(0);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
@@ -103,8 +104,9 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
                 {props.outfit.products.map((_, i) => (
                   <GoDotFill
                     key={i}
-                    className={i === selectedProduct ? 'text-secondary' : 'text-ring'}
-                  ></GoDotFill>
+                    onClick={() => setSelectedProduct(i)}
+                    className={`cursor-pointer ${i === selectedProduct ? 'text-secondary' : 'text-ring'}`}
+                  />
                 ))}
               </div>
             </div>
@@ -114,19 +116,22 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
                   {props.outfit.products[selectedProduct].name}
                 </h1>
               </div>
-              <div className="pt-8 pb-6 flex flex-row w-fit max-w-11/12 self-center overflow-x-scroll items-center gap-4">
+              <div
+                className="pt-8 pb-6 flex flex-row w-fit max-w-11/12 self-center overflow-x-auto items-center gap-4"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
                 {props.outfit.products.map((p, i) => (
                   <Button
                     key={p.id}
                     onClick={() => setSelectedProduct(i)}
                     className={
-                      'w-20 h-20 md:w-40 md:h-40 object-cover shrink-0 bg-cover bg-center rounded-lg shadow-lg ' +
+                      'w-20 h-20 md:w-40 md:h-40 object-cover shrink-0 bg-cover bg-center rounded-lg shadow-lg cursor-pointer ' +
                       (i === selectedProduct ? 'border-4 border-ring' : '')
                     }
                     style={{
                       backgroundImage: `url(${p.image || '/static/img/product_placeholder.png'})`,
                     }}
-                  ></Button>
+                  />
                 ))}
               </div>
               <div className="flex flex-row gap-4 flex-wrap">
@@ -140,12 +145,18 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
               <div>
                 <h1 className="mt-4 mb-4 text-primary text-2xl">
                   <strong>Total: </strong>
-                  {`${discountPrice(props.outfit.priceInCents, props.outfit.discountPercentage).toFixed(2).toString().replace('.', ',')}€ con IVA`}
+                  {`${discountPrice(
+                    props.outfit.priceInCents,
+                    props.outfit.discountPercentage ?? null
+                  )
+                    .toFixed(2)
+                    .toString()
+                    .replace('.', ',')}€ con IVA`}
                 </h1>
               </div>
               <Button
                 onClick={() => setIsConfirmModalOpen(true)}
-                className="self-center bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-xl h-12 w-11/12 md:w-1/3"
+                className="self-center bg-secondary hover:bg-dark-secondary text-white font-bold text-xl h-12 w-11/12 md:w-1/3"
               >
                 Hacer pedido
               </Button>
@@ -163,7 +174,13 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
             {props.outfit && (
               <p className="text-secondary text-center">
                 Vas a realizar un pedido por un total de{' '}
-                <strong>{`${discountPrice(props.outfit.priceInCents, props.outfit.discountPercentage).toFixed(2).toString().replace('.', ',')}€`}</strong>
+                <strong>{`${discountPrice(
+                  props.outfit.priceInCents,
+                  props.outfit.discountPercentage ?? null
+                )
+                  .toFixed(2)
+                  .toString()
+                  .replace('.', ',')}€`}</strong>
                 .
               </p>
             )}
@@ -199,18 +216,18 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
               plataforma.
             </p>
             <div className="flex flex-col w-full gap-3">
-              <Button
-                onClick={() => router.push('/login')}
-                className="w-full bg-secondary hover:bg-dark-secondary text-white font-bold"
+              <Link
+                href="/login"
+                className={`${buttonLinkClass} bg-secondary hover:bg-dark-secondary text-white font-bold`}
               >
                 Iniciar sesión
-              </Button>
-              <Button
-                onClick={() => router.push('/register')}
-                className="w-full bg-primary hover:bg-dark-primary text-white font-bold"
+              </Link>
+              <Link
+                href="/register"
+                className={`${buttonLinkClass} bg-primary hover:bg-dark-primary text-white font-bold`}
               >
                 Registrarme
-              </Button>
+              </Link>
               <Button
                 onClick={() => setIsAuthModalOpen(false)}
                 variant="outline"
@@ -231,20 +248,12 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
             </h2>
             <p className="text-secondary text-center">¿Qué te gustaría hacer ahora?</p>
             <div className="flex flex-col w-full gap-3">
-              <Button
-                onClick={() => {
-                  console.log('Abrir chat con la tienda');
-                }}
-                className="w-full bg-primary hover:bg-dark-primary text-white font-bold"
-              >
-                Chatea con la tienda
-              </Button>
-              <Button
-                onClick={() => router.push('/orders')}
-                className="w-full bg-secondary hover:bg-dark-secondary text-white font-bold"
+              <Link
+                href="/orders"
+                className={`${buttonLinkClass} bg-secondary hover:bg-dark-secondary text-white font-bold`}
               >
                 Ver mis pedidos
-              </Button>
+              </Link>
               <Button
                 onClick={() => setIsSuccessModalOpen(false)}
                 variant="outline"

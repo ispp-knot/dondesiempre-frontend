@@ -17,13 +17,17 @@ export default function SortableProduct(props: Readonly<SortableProductProps>) {
   const { ref } = useSortable({ id: props.product.id, index: props.index });
 
   return (
-    <div ref={ref} className="inline-block relative">
-      <Card className="p-2 gap-2 shrink-0">
+    <div ref={ref} className="relative inline-block">
+      <Card className="gap-2 p-2 shrink-0">
         {props.removable && (
-          <IoIosCloseCircle
+          <button
+            type="button"
+            aria-label={`Quitar ${props.product.name} del outfit`}
             onClick={props.onClick}
-            className="text-2xl text-secondary hover:text-dark-secondary"
-          />
+            className="absolute -right-2 -top-2 z-10 rounded-full bg-background text-secondary shadow-sm transition-colors hover:cursor-pointer hover:text-dark-secondary"
+          >
+            <IoIosCloseCircle className="text-3xl" />
+          </button>
         )}
         <Image
           src={props.product.image || '/static/img/product_placeholder.png'}
