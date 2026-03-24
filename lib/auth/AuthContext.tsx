@@ -69,9 +69,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const registerInfo = useCallback((newUser: UserResponseDTO, token: string) => {
-    setUser(newUser);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newUser));
     localStorage.setItem(AUTH_TOKEN_KEY, token);
+    setUser(newUser);
   }, []);
 
   const redirectIfExpired = useCallback(

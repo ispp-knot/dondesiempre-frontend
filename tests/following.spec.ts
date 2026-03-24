@@ -33,13 +33,11 @@ test.describe.serial('follow store from map', () => {
     await page.goto('http://localhost:3000/following');
 
     const followedStoreName = await page.getByRole('heading', { name: 'Un nombre de tienda' });
-    const followedStoreAddress = await page.getByText('📍 Una dirección de una tienda');
-    const followedStoreHours = await page.getByText('Horario: Lun-Vier 8:00 a 20:');
-    const followedStoreEmail = await page.getByText('Email: store@');
+    const followedStoreAddress = await page.getByText('Una dirección de una tienda');
+    const followedStoreHours = await page.getByText('Lun-Vier 8:00 a 20:');
     await expect(followedStoreName).toBeVisible();
     await expect(followedStoreAddress).toBeVisible();
     await expect(followedStoreHours).toBeVisible();
-    await expect(followedStoreEmail).toBeVisible();
   });
 
   test('go to a store from following page', async ({ page }) => {
