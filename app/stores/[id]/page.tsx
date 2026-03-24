@@ -141,27 +141,22 @@ export default function StorePage() {
         )}
       </div>
 
-      <div className="w-full mt-5 text-center text-3xl md:text-5xl text-[var(--primary)] font-bold">
-        {store.data.name}
-        {isOwner && (
-          <button type="button" onClick={() => setIsEditOpen(true)}>
-            <Edit2 className="w-8 h-8  text-teal-700 ml-3 " />
-          </button>
-        )}
-      </div>
+      <div className="flex flex-col items-center gap-2 mt-5 px-4">
+        <div className="text-center text-3xl md:text-5xl text-[var(--primary)] font-bold">
+          {store.data.name}
+        </div>
 
-      <div className="flex flex-row w-full mt-2 items-center justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]">
-        <FaLocationDot />
-        {store.data.address}
-      </div>
+        <div className="flex items-start justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]">
+          <FaLocationDot className="flex-shrink-0 mt-1" />
+          <span className="text-center">{store.data.address}</span>
+        </div>
 
-      <div className="flex flex-row w-full mt-2 items-center justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]">
-        {store.data.phone}
-      </div>
+        <div className="sm:text-lg md:text-xl text-[var(--secondary)]">{store.data.phone}</div>
 
-      <div className="flex flex-row w-full mt-2 items-center justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]">
-        <MdAccessTimeFilled />
-        {store.data.openingHours}
+        <div className="flex items-start justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]">
+          <MdAccessTimeFilled className="flex-shrink-0 mt-1" />
+          <span className="text-center">{store.data.openingHours}</span>
+        </div>
       </div>
 
       <div className="flex gap-3 mt-3 flex-wrap justify-center mb-2">
@@ -178,6 +173,15 @@ export default function StorePage() {
           </a>
         ))}
       </div>
+
+      {isOwner && (
+        <div className="flex justify-center mt-3 mb-2">
+          <Button type="button" onClick={() => setIsEditOpen(true)}>
+            <Edit2 className="w-5 h-5" />
+            Editar tienda
+          </Button>
+        </div>
+      )}
 
       <StoreTabs
         store={store.data}
