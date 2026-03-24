@@ -20,7 +20,7 @@ export default function Outfits({ storeId = undefined, outfits = [] }: Readonly<
         <Link
           href={`/stores/${storeId}/outfits/${out.id}`}
           key={out.id}
-          className="relative flex h-60 w-[45%] shrink-0 flex-col justify-end rounded-lg border-2 border-gray-200 bg-cover bg-center shadow-sm sm:h-80 md:w-1/4"
+          className="relative flex h-60 w-[45%] shrink-0 flex-col justify-end rounded-lg border-2 border-gray-200 bg-cover bg-center shadow-sm sm:h-80 md:w-1/4 md:min-w-70"
           style={{
             backgroundImage: `url(${out.image || '/static/img/outfit_placeholder.jpg'})`,
           }}

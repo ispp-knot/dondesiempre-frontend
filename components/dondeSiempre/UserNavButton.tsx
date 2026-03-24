@@ -3,10 +3,10 @@
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaRegUser, FaUser } from 'react-icons/fa';
-import { RiLoginCircleLine, RiLoginCircleFill } from 'react-icons/ri';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { RiUserSharedLine, RiUserSharedFill } from 'react-icons/ri';
 
 interface Props {
   /** Whether this button is currently in its active/selected state */
@@ -37,7 +37,7 @@ export function UserNavButton({ isActive = false, className }: Props) {
   if (!user) {
     return (
       <Link href="/login" aria-label="Iniciar sesión" className={className}>
-        {isActive ? <RiLoginCircleFill /> : <RiLoginCircleLine />}
+        {isActive ? <RiUserSharedFill /> : <RiUserSharedLine />}
       </Link>
     );
   }
