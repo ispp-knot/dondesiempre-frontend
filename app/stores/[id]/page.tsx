@@ -30,6 +30,7 @@ import { Edit2, Heart } from 'lucide-react';
 import StoreEditModal from './store-edit-modal';
 import StoreSocialNetworksModal from './store-social-edit-modal';
 import { Button } from '@/components/ui/button';
+import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 
 const getSocialIcon = (name: string) => {
   const lowerName = name.toLowerCase();
@@ -69,6 +70,9 @@ export default function StorePage() {
     url: `stores/${params.id}/follow`,
     method: 'DELETE',
   });
+  const promotionsDto = usePassiveFetcher<PromotionDTO[]>({
+    url: `stores/${params.id}/promotions`,
+  });
 
   if (store.isLoading || outfits.isLoading) {
     return <LoadingText />;
@@ -81,6 +85,7 @@ export default function StorePage() {
     );
   }
 
+  const promotionData: PromotionDTO[] = promotionsDto.data || [];
   const socialNetworks: Array<StoreSocialNetworkDTO> = store.data?.socialNetworks || [];
   const primaryColor = store.data?.storefront?.primaryColor || '#000000';
   const secondaryColor = store.data?.storefront?.secondaryColor || '#000000';
@@ -195,6 +200,7 @@ export default function StorePage() {
       <StoreTabs
         store={store.data}
         description={store.data?.aboutUs || ''}
+        promotions={promotionData}
         outfits={validOutfits}
         isOwner={isOwner}
       />
