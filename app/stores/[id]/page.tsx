@@ -23,7 +23,6 @@ import StoreTabs from './store-tabs';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import ErrorText from '@/components/dondeSiempre/ErrorText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
-import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Edit2, Heart } from 'lucide-react';
 import StoreEditModal from './store-edit-modal';

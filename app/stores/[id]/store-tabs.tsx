@@ -8,14 +8,12 @@ import StoreOptions from './options';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { ShareTo } from '@/components/ui/shareTo';
-import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 
 type Tab = 'catalogo' | 'sobre' | 'opciones';
 
 type Props = {
   description?: string;
   outfits?: OutfitDTO[];
-  promotions?: PromotionDTO[];
   store: StoreDTO;
   isOwner: boolean;
 };
@@ -23,7 +21,6 @@ type Props = {
 export default function StoreTabs({
   description = '',
   outfits = [],
-  promotions = [],
   store,
   isOwner,
 }: Props): JSX.Element {
