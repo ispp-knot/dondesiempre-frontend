@@ -468,7 +468,7 @@ export default function OutfitCreationPage() {
                   <div className="flex justify-center">
                     <Button
                       type="submit"
-                      className="mt-2 h-12 w-full bg-secondary text-base font-bold text-white hover:cursor-pointer hover:bg-dark-secondary md:w-1/3"
+                      className="mt-2 h-12 w-full bg-secondary text-base font-bold text-white hover:bg-dark-secondary md:w-1/3"
                       disabled={submitDisabled}
                     >
                       {isSubmitting ||
@@ -514,7 +514,7 @@ export default function OutfitCreationPage() {
                         <Button
                           type="button"
                           onClick={() => syncProducts([...outfitProducts, product])}
-                          className="flex w-full items-center justify-center rounded-lg bg-secondary text-base font-bold text-white hover:cursor-pointer hover:bg-dark-secondary sm:text-lg"
+                          className="flex w-full items-center justify-center rounded-lg bg-secondary text-base font-bold text-white hover:bg-dark-secondary sm:text-lg"
                         >
                           Añadir
                         </Button>

@@ -4,7 +4,8 @@ export const dynamic = 'force-dynamic';
 import { useState } from 'react';
 
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
-import { StoreDTO, StoreSocialNetworkDTO } from '@/lib/types/stores/storesDto';
+import { StoreDTO } from '@/lib/types/stores/storesDto';
+import { StoreSocialNetworkDTO } from '@/lib/types/stores/storesSocialDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { hasMinimumOutfitProducts } from '@/lib/types/outfits/outfitsRules';
 import Image from 'next/image';
@@ -27,6 +28,7 @@ import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Edit2, Heart } from 'lucide-react';
 import StoreEditModal from './store-edit-modal';
+import StoreSocialNetworksModal from './store-social-edit-modal';
 import { Button } from '@/components/ui/button';
 
 const getSocialIcon = (name: string) => {
@@ -49,8 +51,11 @@ export default function StorePage() {
   const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
   const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
 
+  const isClient = Boolean(user?.client);
+
   const isOwner = !!user?.store?.id && user.store.id === params.id;
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isSocialModalOpen, setIsSocialModalOpen] = useState(false);
 
   const isFollowing = usePassiveFetcher<{ isFollowing: boolean }>({
     url: `stores/${params.id}/follow`,
@@ -102,7 +107,7 @@ export default function StorePage() {
           unoptimized
         />
 
-        {!!user && !isOwner && (
+        {isClient ? (
           <Button
             type="button"
             disabled={isFollowing.isLoading || followStore.isPending || unfollowStore.isPending}
@@ -124,7 +129,7 @@ export default function StorePage() {
               text-sm font-bold shadow-lg bg-white
               border-2 border-[var(--primary)] text-[var(--primary)]
               hover:bg-[var(--primary)] hover:text-white
-              transition-all duration-200 disabled:opacity-50 cursor-pointer
+              transition-all duration-200 disabled:opacity-50
               active:scale-95 hover:shadow-xl
             `}
           >
@@ -138,7 +143,7 @@ export default function StorePage() {
               {isFollowing.data?.isFollowing ? 'Siguiendo' : 'Seguir'}
             </span>
           </Button>
-        )}
+        ) : undefined}
       </div>
 
       <div className="flex flex-col items-center gap-2 mt-5 px-4">
@@ -160,9 +165,9 @@ export default function StorePage() {
       </div>
 
       <div className="flex gap-3 mt-3 flex-wrap justify-center mb-2">
-        {socialNetworks.map((social: StoreSocialNetworkDTO, index: number) => (
+        {socialNetworks.map((social: StoreSocialNetworkDTO) => (
           <a
-            key={index}
+            key={social.id}
             href={social.link}
             target="_blank"
             rel="noopener noreferrer"
@@ -175,10 +180,14 @@ export default function StorePage() {
       </div>
 
       {isOwner && (
-        <div className="flex justify-center mt-3 mb-2">
+        <div className="flex justify-center gap-3 mt-3 mb-2">
           <Button type="button" onClick={() => setIsEditOpen(true)}>
             <Edit2 className="w-5 h-5" />
             Editar tienda
+          </Button>
+          <Button type="button" onClick={() => setIsSocialModalOpen(true)}>
+            <Edit2 className="w-5 h-5" />
+            Editar redes
           </Button>
         </div>
       )}
@@ -198,6 +207,20 @@ export default function StorePage() {
           storeId={params.id}
           onUpdated={(updatedStore) => {
             store.setData(updatedStore);
+          }}
+        />
+      )}
+      {isOwner && (
+        <StoreSocialNetworksModal
+          open={isSocialModalOpen}
+          onOpenChange={setIsSocialModalOpen}
+          storeId={params.id}
+          socialNetworks={socialNetworks}
+          onUpdated={(updated) => {
+            store.setData({
+              ...store.data,
+              socialNetworks: updated,
+            });
           }}
         />
       )}

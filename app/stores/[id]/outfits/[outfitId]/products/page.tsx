@@ -152,7 +152,7 @@ export default function OutfitProductsPage() {
                       }
                       router.push(`/stores/${params.id}/outfits`);
                     }}
-                    className="mt-8 h-12 w-full self-center rounded-lg bg-secondary text-center text-md font-bold text-white hover:cursor-pointer hover:bg-dark-secondary sm:w-1/2"
+                    className="mt-8 h-12 w-full self-center rounded-lg bg-secondary text-center text-md font-bold text-white hover:bg-dark-secondary sm:w-1/2"
                   >
                     Confirmar cambios
                   </Button>

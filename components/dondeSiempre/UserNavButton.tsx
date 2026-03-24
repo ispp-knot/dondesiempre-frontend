@@ -54,19 +54,14 @@ export function UserNavButton({ isActive = false, className }: Props) {
           <p className="text-sm font-medium truncate text-center border-b pb-2">{displayName}</p>
         )}
         {user?.store?.id && (
-          <Button asChild variant="outline" size="sm" className="w-full cursor-pointer">
+          <Button asChild variant="outline" size="sm" className="w-full">
             <Link href={`/stores/${user.store.id}`}>Mi tienda</Link>
           </Button>
         )}
-        <Button asChild variant="outline" size="sm" className="w-full cursor-pointer">
+        <Button asChild variant="outline" size="sm" className="w-full">
           <Link href="/profile">Mi perfil</Link>
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full cursor-pointer"
-          onClick={handleLogout}
-        >
+        <Button variant="outline" size="sm" className="w-full" onClick={handleLogout}>
           Cerrar sesión
         </Button>
       </PopoverContent>

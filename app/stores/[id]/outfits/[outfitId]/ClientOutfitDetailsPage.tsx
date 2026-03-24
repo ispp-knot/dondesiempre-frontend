@@ -156,7 +156,7 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
               </div>
               <Button
                 onClick={() => setIsConfirmModalOpen(true)}
-                className="self-center bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-xl h-12 w-11/12 md:w-1/3 cursor-pointer"
+                className="self-center bg-secondary hover:bg-dark-secondary text-white font-bold text-xl h-12 w-11/12 md:w-1/3"
               >
                 Hacer pedido
               </Button>
@@ -188,7 +188,7 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
               <Button
                 onClick={confirmAndCreateOrder}
                 disabled={isCreatingOrder}
-                className="w-full bg-secondary hover:bg-dark-secondary disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-bold cursor-pointer"
+                className="w-full bg-secondary hover:bg-dark-secondary disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-bold"
               >
                 {isCreatingOrder ? 'Procesando...' : 'Confirmar pedido'}
               </Button>
@@ -196,7 +196,7 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
                 onClick={() => setIsConfirmModalOpen(false)}
                 disabled={isCreatingOrder}
                 variant="outline"
-                className="w-full font-bold cursor-pointer"
+                className="w-full font-bold"
               >
                 Cancelar
               </Button>
@@ -231,7 +231,7 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
               <Button
                 onClick={() => setIsAuthModalOpen(false)}
                 variant="outline"
-                className="w-full font-bold cursor-pointer"
+                className="w-full font-bold"
               >
                 Cancelar
               </Button>
@@ -257,7 +257,7 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
               <Button
                 onClick={() => setIsSuccessModalOpen(false)}
                 variant="outline"
-                className="w-full font-bold cursor-pointer"
+                className="w-full font-bold"
               >
                 Seguir explorando
               </Button>

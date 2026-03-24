@@ -40,7 +40,7 @@ export default function CreatePromotionPage() {
         router.push(`/stores/${storeId}`);
       }, 2000);
     } catch (error) {
-      console.error('Error creating promotion:', error);
+      console.error('Error al crear la promoción:', error);
       setStatus({ type: 'error', message: 'Error al crear la promoción. Verifica los datos.' });
     } finally {
       setIsLoading(false);

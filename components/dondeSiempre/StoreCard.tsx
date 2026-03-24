@@ -31,7 +31,7 @@ export function StoreCard({
       : null;
   const router = useRouter();
   const { getCurrentUser } = useAuth();
-  const isLoggedIn = getCurrentUser() !== null;
+  const isClient = Boolean(getCurrentUser()?.client);
 
   const clickCount = useRef(0);
   const clickTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -76,7 +76,7 @@ export function StoreCard({
     } else {
       clearTimeout(clickTimer.current);
       clickCount.current = 0;
-      if (isLoggedIn) toggleFollow();
+      if (isClient) toggleFollow();
     }
   };
 
@@ -108,7 +108,7 @@ export function StoreCard({
         className
       )}
     >
-      {isLoggedIn && (
+      {isClient && (
         <Button
           onClick={handleFollowClick}
           className="w-7 h-7 absolute top-3 right-3 p-1.5 rounded-md bg-primary/10 hover:bg-primary/20 transition-colors disabled:opacity-50"
