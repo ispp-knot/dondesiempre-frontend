@@ -2,7 +2,6 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -29,7 +28,6 @@ function FieldError({ message }: { message?: string }) {
 
 export function LoginForm() {
   const [apiError, setApiError] = useState<string | null>(null);
-  const router = useRouter();
   const { registerInfo } = useAuth();
 
   const login = useActiveFetcher<LoginResponseDTO>({ url: 'auth/login', method: 'POST' });

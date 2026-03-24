@@ -2,19 +2,19 @@
 
 import { FaRegHeart } from 'react-icons/fa';
 import { LuPackage } from 'react-icons/lu';
-import { AiOutlineShop } from 'react-icons/ai';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { UserNavButton } from '@/components/dondeSiempre/UserNavButton';
 import { useAuth } from '@/lib/auth/AuthContext';
 
 export default function Navbar() {
-  const [isAdmin, _setIsAdmin] = useState<boolean>(false);
   const pathname = usePathname();
   const { getCurrentUser } = useAuth();
   const user = getCurrentUser();
+
+  const isLoggedIn = Boolean(user);
+  const isClient = Boolean(user?.client);
 
   const userActiveMatches = ['/profile', '/login', '/register'];
   const isUserActive = userActiveMatches.some((m) => pathname.startsWith(m));
@@ -28,34 +28,29 @@ export default function Navbar() {
               <Image src="/static/logo-svg.svg" alt="Logo" width={35} height={45} />
               <p className="text-2xl font-bold">DondeSiempre</p>
             </Link>
-            {!isAdmin && (
-              <div className="flex flex-row items-center gap-6 text-secondary">
-                <Link href="/search">Tiendas</Link>
-                <Link href="/stores">Mapa</Link>
-              </div>
-            )}
+
+            <div className="flex flex-row items-center gap-6 text-secondary">
+              <Link href="/search">Tiendas</Link>
+              <Link href="/stores">Mapa</Link>
+            </div>
           </div>
           <div className="flex flex-row items-center gap-5 text-2xl font-primary">
-            {isAdmin ? (
-              <>
-                <Link href="/orders" aria-label="Pedidos">
-                  <LuPackage className="cursor-pointer" strokeWidth={1.5} />
-                </Link>
-                <AiOutlineShop />
-              </>
+            {isClient ? (
+              <Link href="/following" aria-label="Favoritos">
+                <FaRegHeart className="cursor-pointer" />
+              </Link>
             ) : (
-              <>
-                {user && !user?.roles.includes('STORE') && (
-                  <Link href="/following" aria-label="Favoritos">
-                    <FaRegHeart className="cursor-pointer" />
-                  </Link>
-                )}
-                <Link href="/orders" aria-label="Pedidos">
-                  <LuPackage className="cursor-pointer" strokeWidth={1.5} />
-                </Link>
-                <UserNavButton isActive={isUserActive} />
-              </>
+              <></>
             )}
+
+            {isLoggedIn ? (
+              <Link href="/orders" aria-label="Pedidos">
+                <LuPackage className="cursor-pointer" strokeWidth={1.5} />
+              </Link>
+            ) : (
+              <></>
+            )}
+            <UserNavButton isActive={isUserActive} />
           </div>
         </div>
       </div>
