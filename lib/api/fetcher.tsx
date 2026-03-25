@@ -12,14 +12,12 @@ async function executeFetch<T>({
   url,
   method = 'GET',
   body,
-  headers = undefined,
   formPayload,
   getToken,
 }: {
   url: string;
   method?: string;
   body?: unknown;
-  headers?: Record<string, string> | undefined;
   formPayload?: Record<string, string | Blob | undefined>;
   getToken?: () => string | null;
 }): Promise<T> {
@@ -35,15 +33,7 @@ async function executeFetch<T>({
       });
       fetchBody = formData;
     } else if (body !== undefined) {
-      if (
-        !headers ||
-        (Object.keys(headers).includes('Content-Type') &&
-          Object.values(headers).includes('application/json'))
-      ) {
-        fetchBody = JSON.stringify(body);
-      } else {
-        fetchBody = body as BodyInit;
-      }
+      fetchBody = JSON.stringify(body);
     }
   }
 
@@ -54,7 +44,6 @@ async function executeFetch<T>({
     {
       method,
       body: fetchBody,
-      headers,
     },
     token
   )) as T;
@@ -118,7 +107,6 @@ type ActiveFetchCallOptions = {
   url?: string;
   method?: MutationMethod;
   body?: unknown;
-  headers?: Record<string, string> | undefined;
   formPayload?: Record<string, string | Blob | undefined>;
 };
 
@@ -138,6 +126,7 @@ type UseActiveFetcherResult<T> = ReturnType<
  *
  * You can specify URL and method on creation but are not forced to.
  * You can update them when calling fetch.
+ * Will throw if you try to DELETE with a body, and this throw is NOT HANDLED by isError.
  */
 export function useActiveFetcher<T>({
   url: defaultUrl,
@@ -159,7 +148,6 @@ export function useActiveFetcher<T>({
         url,
         method,
         body: opts.body,
-        headers: opts.headers,
         formPayload: opts.formPayload,
         getToken: getAuthToken,
       });
