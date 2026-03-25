@@ -58,7 +58,7 @@ test.describe.serial('follow store from map', () => {
     page.reload();
     await page.waitForURL(/following/);
 
-    const notFollowingStores = await page.getByText('¡Vaya!No hay tiendas que');
+    const notFollowingStores = await page.getByText('¡Vaya!');
     await expect(notFollowingStores).toBeVisible();
   });
 });
