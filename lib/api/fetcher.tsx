@@ -12,17 +12,18 @@ async function executeFetch<T>({
   url,
   method = 'GET',
   body,
+  headers = undefined,
   formPayload,
   getToken,
 }: {
   url: string;
   method?: string;
   body?: unknown;
+  headers?: Record<string, string> | undefined;
   formPayload?: Record<string, string | Blob | undefined>;
   getToken?: () => string | null;
 }): Promise<T> {
   let fetchBody: BodyInit | undefined;
-  let headers: Record<string, string> | undefined;
 
   if (method !== 'GET') {
     if (formPayload) {
@@ -34,12 +35,14 @@ async function executeFetch<T>({
       });
       fetchBody = formData;
     } else if (body !== undefined) {
-      if (typeof body === 'string') {
-        fetchBody = body;
-        headers = { 'Content-Type': 'text/plain;charset=UTF-8' };
-      } else {
+      if (
+        !headers ||
+        (Object.keys(headers).includes('Content-Type') &&
+          Object.values(headers).includes('application/json'))
+      ) {
         fetchBody = JSON.stringify(body);
-        headers = { 'Content-Type': 'application/json' };
+      } else {
+        fetchBody = body as BodyInit;
       }
     }
   }
@@ -115,6 +118,7 @@ type ActiveFetchCallOptions = {
   url?: string;
   method?: MutationMethod;
   body?: unknown;
+  headers?: Record<string, string> | undefined;
   formPayload?: Record<string, string | Blob | undefined>;
 };
 
@@ -155,6 +159,7 @@ export function useActiveFetcher<T>({
         url,
         method,
         body: opts.body,
+        headers: opts.headers,
         formPayload: opts.formPayload,
         getToken: getAuthToken,
       });

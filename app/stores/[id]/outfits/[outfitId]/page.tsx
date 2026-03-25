@@ -489,7 +489,10 @@ export default function OutfitDetailsPage() {
   };
 
   const deleteTag = async (tag: string) => {
-    await removeTag.fetch({ body: tag });
+    await removeTag.fetch({
+      body: tag,
+      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+    });
     if (!outfit.data) {
       return;
     }
