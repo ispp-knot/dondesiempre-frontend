@@ -33,36 +33,36 @@ const step1Schema = z
   });
 
 const clientStep2Schema = z.object({
-  name: z.string().min(1, 'Requerido').max(255),
-  surname: z.string().min(1, 'Requerido').max(255),
+  name: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
+  surname: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
   phone: z
     .string()
     .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
-      message: 'Invalid phone number',
+      message: 'Número de teléfono no válido',
     })
     .transform((value) => (value === '' ? null : value)),
   address: z
     .string()
-    .max(255)
+    .max(255, 'Máximo 255 caracteres')
     .transform((value) => (value === '' ? null : value)),
 });
 
 const storeStep2Schema = z.object({
-  name: z.string().min(1, 'Requerido').max(255),
+  name: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
   latitude: z.number({ error: 'Selecciona una ubicación en el mapa' }),
   longitude: z.number({ error: 'Selecciona una ubicación en el mapa' }),
-  address: z.string().min(1, 'Requerido').max(255),
-  openingHours: z.string().min(1, 'Requerido').max(255),
+  address: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
+  openingHours: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
   acceptsShipping: z.boolean(),
   phone: z
     .string()
     .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
-      message: 'Invalid phone number',
+      message: 'Número de teléfono no válido',
     })
     .transform((value) => (value === '' ? null : value)),
   aboutUs: z
     .string()
-    .max(5000)
+    .max(5000, 'Máximo 5000 caracteres')
     .transform((value) => (value === '' ? null : value)),
   primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Color inválido (ej: #FF0000)'),
   secondaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Color inválido (ej: #FF0000)'),
@@ -398,7 +398,7 @@ function StoreStep2Form({
       onSuccess();
     } catch (err: unknown) {
       if (err instanceof FetchError && err.response?.status === 409) {
-        setApiError('Nombre de usuario ya tomado.');
+        setApiError('Nombre de usuario ya está en uso.');
       } else {
         setApiError('Ha ocurrido un error.');
       }
