@@ -33,8 +33,8 @@ const step1Schema = z
   });
 
 const clientStep2Schema = z.object({
-  name: z.string().min(1, 'Requerido').max(255),
-  surname: z.string().min(1, 'Requerido').max(255),
+  name: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
+  surname: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
   phone: z
     .string()
     .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
@@ -43,16 +43,16 @@ const clientStep2Schema = z.object({
     .transform((value) => (value === '' ? null : value)),
   address: z
     .string()
-    .max(255)
+    .max(255, 'Máximo 255 caracteres')
     .transform((value) => (value === '' ? null : value)),
 });
 
 const storeStep2Schema = z.object({
-  name: z.string().min(1, 'Requerido').max(255),
+  name: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
   latitude: z.number({ error: 'Selecciona una ubicación en el mapa' }),
   longitude: z.number({ error: 'Selecciona una ubicación en el mapa' }),
-  address: z.string().min(1, 'Requerido').max(255),
-  openingHours: z.string().min(1, 'Requerido').max(255),
+  address: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
+  openingHours: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
   acceptsShipping: z.boolean(),
   phone: z
     .string()
