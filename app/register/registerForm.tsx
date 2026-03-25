@@ -38,7 +38,7 @@ const clientStep2Schema = z.object({
   phone: z
     .string()
     .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
-      message: 'Número de telefono no válido',
+      message: 'Número de teléfono no válido',
     })
     .transform((value) => (value === '' ? null : value)),
   address: z
@@ -57,7 +57,7 @@ const storeStep2Schema = z.object({
   phone: z
     .string()
     .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
-      message: 'Número de telefono no valido',
+      message: 'Número de teléfono no válido',
     })
     .transform((value) => (value === '' ? null : value)),
   aboutUs: z
@@ -398,7 +398,7 @@ function StoreStep2Form({
       onSuccess();
     } catch (err: unknown) {
       if (err instanceof FetchError && err.response?.status === 409) {
-        setApiError('Nombre de usuario ya tomado.');
+        setApiError('Nombre de usuario ya está en uso.');
       } else {
         setApiError('Ha ocurrido un error.');
       }
