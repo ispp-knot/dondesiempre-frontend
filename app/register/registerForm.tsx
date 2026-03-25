@@ -62,7 +62,7 @@ const storeStep2Schema = z.object({
     .transform((value) => (value === '' ? null : value)),
   aboutUs: z
     .string()
-    .max(5000)
+    .max(5000, 'Máximo 5000 caracteres')
     .transform((value) => (value === '' ? null : value)),
   primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Color inválido (ej: #FF0000)'),
   secondaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Color inválido (ej: #FF0000)'),
