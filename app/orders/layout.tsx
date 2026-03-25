@@ -1,7 +1,7 @@
 'use client';
 
-import { StoreGuard } from '@/components/guards/StoreGuard';
+import { LoggedInGuard } from '@/components/guards/LoggedInGuard';
 
 export default function Page({ children }: { children: React.ReactNode }) {
-  return <StoreGuard>{children}</StoreGuard>;
+  return <LoggedInGuard>{children}</LoggedInGuard>;
 }
