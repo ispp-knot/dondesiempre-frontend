@@ -38,7 +38,7 @@ const clientStep2Schema = z.object({
   phone: z
     .string()
     .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
-      message: 'Invalid phone number',
+      message: 'Número de telefono no válido',
     })
     .transform((value) => (value === '' ? null : value)),
   address: z
