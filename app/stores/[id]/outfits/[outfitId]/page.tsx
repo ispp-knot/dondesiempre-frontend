@@ -1,5 +1,6 @@
 'use client';
 
+import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
@@ -15,10 +16,7 @@ import {
   createEditOutfitFormSchema,
   MAX_OUTFIT_DESCRIPTION_LENGTH,
   MAX_OUTFIT_NAME_LENGTH,
-  MAX_OUTFIT_TAG_LENGTH,
   MIN_OUTFIT_PRODUCTS,
-  normalizeOutfitTag,
-  outfitTagSchema,
 } from '@/lib/types/outfits/outfitsRules';
 import {
   calculatePriceWithPercentageDiscount,
@@ -31,12 +29,9 @@ import { useParams, useRouter } from 'next/navigation';
 import { FetchError } from 'ofetch';
 import { ReactNode, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import { FaPlus } from 'react-icons/fa';
-import { FaTag } from 'react-icons/fa6';
 import { IoIosCloseCircle } from 'react-icons/io';
 import { z } from 'zod';
 import ClientOutfitDetailsPage from './ClientOutfitDetailsPage';
-import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 
 type EditOutfitSchema = ReturnType<typeof createEditOutfitFormSchema>;
 type EditOutfitFormInput = z.input<EditOutfitSchema>;
@@ -90,18 +85,12 @@ function getFetchErrorMessage(
 function OutfitAdminForm({
   outfit,
   onSave,
-  onAddTag,
-  onRemoveTag,
   onRemoveProduct,
   isSaving,
-  isAddingTag,
-  isRemovingTag,
   isRemovingProduct,
 }: Readonly<OutfitAdminFormProps>) {
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [tagInput, setTagInput] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
-  const [tagError, setTagError] = useState<string | null>(null);
   const [productError, setProductError] = useState<string | null>(null);
   const editOutfitSchema = createEditOutfitFormSchema();
 
@@ -124,7 +113,6 @@ function OutfitAdminForm({
   const nameValue = useWatch({ control, name: 'name' }) ?? '';
   const descriptionValue = useWatch({ control, name: 'description' }) ?? '';
   const discountPercentageValue = useWatch({ control, name: 'discountPercentage' }) ?? 0;
-  const normalizedTagInput = normalizeOutfitTag(tagInput);
   const discountPercentage = Number(discountPercentageValue ?? 0);
   const hasOutfitDiscount = discountPercentage > 0;
   const outfitDisplayPrice = hasOutfitDiscount
@@ -132,49 +120,6 @@ function OutfitAdminForm({
     : convertPrice(outfit.priceInCents);
   const sortedProducts = [...outfit.products].sort((a, b) => a.index - b.index);
   const canRemoveProducts = sortedProducts.length > MIN_OUTFIT_PRODUCTS;
-
-  const handleAddTag = async () => {
-    const parsedTag = outfitTagSchema.safeParse(normalizedTagInput);
-
-    if (!parsedTag.success) {
-      setTagError(parsedTag.error.issues[0]?.message ?? 'La etiqueta no es válida.');
-      return;
-    }
-
-    if (outfit.tags.some((tag) => tag.toLowerCase() === parsedTag.data.toLowerCase())) {
-      setTagError('Esta etiqueta ya está añadida.');
-      return;
-    }
-
-    try {
-      await onAddTag(parsedTag.data);
-      setTagInput('');
-      setTagError(null);
-    } catch (error: unknown) {
-      setTagError(
-        getFetchErrorMessage(
-          error,
-          'No se pudo añadir la etiqueta. Inténtalo de nuevo.',
-          'Solo la tienda propietaria puede modificar las etiquetas.'
-        )
-      );
-    }
-  };
-
-  const handleRemoveTag = async (tag: string) => {
-    try {
-      await onRemoveTag(tag);
-      setTagError(null);
-    } catch (error: unknown) {
-      setTagError(
-        getFetchErrorMessage(
-          error,
-          'No se pudo eliminar la etiqueta. Inténtalo de nuevo.',
-          'Solo la tienda propietaria puede modificar las etiquetas.'
-        )
-      );
-    }
-  };
 
   const handleRemoveProduct = async (productId: string) => {
     if (!canRemoveProducts) {
@@ -356,65 +301,6 @@ function OutfitAdminForm({
             </div>
             <FieldError message={productError} />
           </div>
-
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="form-tags" className="text-base font-bold text-secondary">
-              Etiquetas
-            </Label>
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <Input
-                id="form-tags"
-                value={tagInput}
-                maxLength={MAX_OUTFIT_TAG_LENGTH}
-                placeholder="Ej. Primavera, oficina, evento especial..."
-                className="min-w-0"
-                onChange={(event) => {
-                  setTagInput(event.target.value);
-                  if (tagError) {
-                    setTagError(null);
-                  }
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ',') {
-                    event.preventDefault();
-                    void handleAddTag();
-                  }
-                }}
-              />
-              <Button
-                type="button"
-                onClick={() => void handleAddTag()}
-                disabled={isAddingTag || isRemovingTag || normalizedTagInput.length === 0}
-                className="w-full bg-secondary text-white hover:bg-dark-secondary sm:w-auto"
-              >
-                <FaPlus className="mr-2" />
-                Añadir etiqueta
-              </Button>
-            </div>
-            <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
-              <p className="text-xs text-muted-foreground">
-                Pulsa Enter o &quot;,&quot; para añadir una etiqueta.
-              </p>
-              <p className="shrink-0 text-xs text-muted-foreground">
-                {tagInput.length}/{MAX_OUTFIT_TAG_LENGTH}
-              </p>
-            </div>
-            <FieldError message={tagError} />
-            <div className="flex flex-wrap gap-2">
-              {outfit.tags.map((tag) => (
-                <Button
-                  key={tag}
-                  type="button"
-                  onClick={() => void handleRemoveTag(tag)}
-                  disabled={isAddingTag || isRemovingTag}
-                  className="h-auto max-w-full whitespace-normal break-words rounded-lg bg-secondary px-3 py-2 text-left hover:bg-dark-secondary"
-                >
-                  <FaTag className="mr-2 shrink-0 text-white" />
-                  <span className="break-words text-xs font-bold text-white sm:text-sm">{tag}</span>
-                </Button>
-              ))}
-            </div>
-          </div>
         </div>
 
         {formError && <p className="text-sm text-destructive">{formError}</p>}
@@ -479,7 +365,6 @@ export default function OutfitDetailsPage() {
   const saveAddedTag = async (tag: string) => {
     const createdTag = await addTag.fetch({
       body: tag,
-      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
     });
     if (!outfit.data) {
       return;
@@ -494,7 +379,6 @@ export default function OutfitDetailsPage() {
   const deleteTag = async (tag: string) => {
     await removeTag.fetch({
       body: tag,
-      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
     });
     if (!outfit.data) {
       return;
