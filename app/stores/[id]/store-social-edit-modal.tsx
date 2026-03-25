@@ -232,7 +232,11 @@ export default function StoreSocialNetworksModal({
               aria-invalid={!!addError}
             />
             {addError && <p className="text-xs text-destructive">{addError}</p>}
-            <Button className="bg-primary hover:opacity-90 text-white" onClick={handleAdd}>
+            <Button
+              className="bg-primary hover:opacity-90 text-white"
+              onClick={handleAdd}
+              disabled={addSocial.isPending}
+            >
               <Plus className="w-4 h-4" />
             </Button>
           </div>
