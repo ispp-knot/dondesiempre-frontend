@@ -9,7 +9,7 @@ import { discountPrice } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-import { FaTag } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaTag } from 'react-icons/fa';
 import { GoDotFill } from 'react-icons/go';
 
 interface FetchError {
@@ -31,6 +31,8 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
 
   const createOrder = useActiveFetcher<OrderDTO>({
     url: 'orders',
@@ -81,11 +83,6 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
                 <h1 className="mb-1 font-bold text-primary text-center text-3xl">
                   {props.outfit.name}
                 </h1>
-                {props.outfit.description ? (
-                  <p className="text-secondary text-center text-md">{props.outfit.description}</p>
-                ) : (
-                  <></>
-                )}
               </div>
             </div>
             <div className="flex flex-row justify-center relative">
@@ -142,6 +139,25 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
                   </div>
                 ))}
               </div>
+
+              {props.outfit.description && (
+                <div className="text-center max-w-3xl mx-auto py-4">
+                  <p className="text-secondary text-md">
+                    {descriptionExpanded
+                      ? props.outfit.description
+                      : props.outfit.description.slice(0, 300) + '...'}
+                  </p>
+
+                  {props.outfit.description.length > 300 && (
+                    <div
+                      onClick={() => setDescriptionExpanded(!descriptionExpanded)}
+                      className="flex justify-center mt-2 cursor-pointer text-primary"
+                    >
+                      {descriptionExpanded ? <FaChevronUp /> : <FaChevronDown />}
+                    </div>
+                  )}
+                </div>
+              )}
               <div>
                 <h1 className="mt-4 mb-4 text-primary text-2xl">
                   <strong>Total: </strong>
