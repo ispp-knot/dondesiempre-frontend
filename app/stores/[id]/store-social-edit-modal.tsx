@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { z } from 'zod';
 
 const socialNetworkSchema = z.object({
-  link: z.string().min(1, 'El link es obligatorio').max(500, 'Máximo 500 caracteres'),
+  link: z.string().min(1, 'El enlace es obligatorio').max(500, 'Máximo 500 caracteres'),
 });
 
 type Props = {
