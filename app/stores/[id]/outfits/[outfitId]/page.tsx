@@ -477,7 +477,10 @@ export default function OutfitDetailsPage() {
   };
 
   const saveAddedTag = async (tag: string) => {
-    const createdTag = await addTag.fetch({ body: tag });
+    const createdTag = await addTag.fetch({
+      body: tag,
+      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+    });
     if (!outfit.data) {
       return;
     }
@@ -489,7 +492,10 @@ export default function OutfitDetailsPage() {
   };
 
   const deleteTag = async (tag: string) => {
-    await removeTag.fetch({ body: tag });
+    await removeTag.fetch({
+      body: tag,
+      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+    });
     if (!outfit.data) {
       return;
     }
