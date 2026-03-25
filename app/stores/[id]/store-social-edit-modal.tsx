@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { z } from 'zod';
 
 const socialNetworkSchema = z.object({
-  link: z.string().min(1, 'El link es obligatorio').max(500, 'Máximo 500 caracteres'),
+  link: z.string().min(1, 'El enlace es obligatorio').max(500, 'Máximo 500 caracteres'),
 });
 
 type Props = {
@@ -80,11 +80,11 @@ export default function StoreSocialNetworksModal({
 
       setNewName('');
       setNewLink('');
-      setStatus({ type: 'success', message: 'Social network added correctly' });
+      setStatus({ type: 'success', message: 'Red social añadida correctamente' });
     } catch {
       setStatus({
         type: 'error',
-        message: 'Error adding social network.',
+        message: 'Error añadiendo red social.',
       });
     }
   };
@@ -133,11 +133,11 @@ export default function StoreSocialNetworksModal({
       const next = localNetworks.map((s) => (s.id === id ? updated : s));
       setLocalNetworks(next);
       onUpdated(next);
-      setStatus({ type: 'success', message: 'Social network updated correctly' });
+      setStatus({ type: 'success', message: 'Red social actualizada correctamente' });
     } catch {
       setStatus({
         type: 'error',
-        message: 'Error updating social network.',
+        message: 'Error actualizando red social.',
       });
     }
   };
@@ -151,11 +151,11 @@ export default function StoreSocialNetworksModal({
       const next = localNetworks.filter((s) => s.id !== id);
       setLocalNetworks(next);
       onUpdated(next);
-      setStatus({ type: 'success', message: 'Social network deleted correctly' });
+      setStatus({ type: 'success', message: 'Red social eliminada correctamente' });
     } catch {
       setStatus({
         type: 'error',
-        message: 'Error deleting social network.',
+        message: 'Error eliminando red social.',
       });
     }
   };
@@ -226,13 +226,17 @@ export default function StoreSocialNetworksModal({
               ))}
             </select>
             <Input
-              placeholder="Link"
+              placeholder="Enlace"
               value={newLink}
               onChange={(e) => setNewLink(e.target.value)}
               aria-invalid={!!addError}
             />
             {addError && <p className="text-xs text-destructive">{addError}</p>}
-            <Button className="bg-primary hover:opacity-90 text-white" onClick={handleAdd}>
+            <Button
+              className="bg-primary hover:opacity-90 text-white"
+              onClick={handleAdd}
+              disabled={addSocial.isPending}
+            >
               <Plus className="w-4 h-4" />
             </Button>
           </div>

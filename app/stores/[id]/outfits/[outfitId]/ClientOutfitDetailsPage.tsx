@@ -3,6 +3,7 @@
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { Button } from '@/components/ui/button';
 import { useActiveFetcher } from '@/lib/api/fetcher';
+import { useAuth } from '@/lib/auth/AuthContext';
 import { OrderDTO } from '@/lib/types/orders/orderDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { discountPrice } from '@/lib/utils';
@@ -33,6 +34,10 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  const { getCurrentUser } = useAuth();
+  const user = getCurrentUser();
+
+  const isClient = Boolean(user?.client?.id);
 
   const createOrder = useActiveFetcher<OrderDTO>({
     url: 'orders',
@@ -170,12 +175,14 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
                     .replace('.', ',')}€ con IVA`}
                 </h1>
               </div>
-              <Button
-                onClick={() => setIsConfirmModalOpen(true)}
-                className="self-center bg-secondary hover:bg-dark-secondary text-white font-bold text-xl h-12 w-11/12 md:w-1/3"
-              >
-                Hacer pedido
-              </Button>
+              {isClient && (
+                <Button
+                  onClick={() => setIsConfirmModalOpen(true)}
+                  className="self-center bg-secondary hover:bg-dark-secondary text-white font-bold text-xl h-12 w-11/12 md:w-1/3"
+                >
+                  Hacer pedido
+                </Button>
+              )}
             </div>
           </>
         ) : (
