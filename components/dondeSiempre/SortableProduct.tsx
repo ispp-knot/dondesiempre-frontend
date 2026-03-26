@@ -3,10 +3,8 @@ import { ProductDTO } from '@/lib/types/products/productsDto';
 import { convertPrice } from '@/lib/utils';
 import { useSortable } from '@dnd-kit/react/sortable';
 import { IoIosCloseCircle } from 'react-icons/io';
-import { MdEdit } from 'react-icons/md';
 import { Card } from '../ui/card';
 import Image from 'next/image';
-import Link from 'next/link';
 
 export type SortableProductProps = {
   index: number;
@@ -21,21 +19,18 @@ export default function SortableProduct(props: Readonly<SortableProductProps>) {
   const { ref } = useSortable({ id: props.product.id, index: props.index });
 
   return (
-    <div ref={ref} className="inline-block relative">
-      <Card className="p-2 gap-2 shrink-0">
-        <div className="flex flex-row justify-between items-start gap-1">
-          {props.removable && (
-            <IoIosCloseCircle
-              onClick={props.onClick}
-              className="text-2xl text-secondary hover:text-dark-secondary cursor-pointer"
-            />
-          )}
-          {props.isOwner && props.storeId && (
-            <Link href={`/stores/${props.storeId}/products/${props.product.id}/edit`}>
-              <MdEdit className="text-2xl text-secondary hover:text-dark-secondary cursor-pointer" />
-            </Link>
-          )}
-        </div>
+    <div ref={ref} className="relative inline-block">
+      <Card className="gap-2 p-2 shrink-0">
+        {props.removable && (
+          <button
+            type="button"
+            aria-label={`Quitar ${props.product.name} del outfit`}
+            onClick={props.onClick}
+            className="absolute -right-2 -top-2 z-10 rounded-full bg-background text-secondary shadow-sm transition-colors hover:cursor-pointer hover:text-dark-secondary"
+          >
+            <IoIosCloseCircle className="text-3xl" />
+          </button>
+        )}
         <Image
           src={props.product.image || '/static/img/product_placeholder.png'}
           alt={props.product.name}
