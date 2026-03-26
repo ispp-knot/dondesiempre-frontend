@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/card';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { ProductCreationDTO, ProductDTO } from '@/lib/types/products/productsDto';
 import { ProductTypeDTO } from '@/lib/types/producttypes/productTypesDto';
-import { useParams } from 'next/navigation';
+import { redirect, useParams } from 'next/navigation';
 import { useState } from 'react';
 
 export default function ProductCreationPage() {
@@ -32,7 +32,6 @@ export default function ProductCreationPage() {
 
   const submitForm = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(productTypes.data);
     const dto: ProductCreationDTO = {
       name: (document.getElementById('form-name') as HTMLInputElement).value,
       description: (document.getElementById('form-description') as HTMLInputElement).value || null,
@@ -48,7 +47,7 @@ export default function ProductCreationPage() {
         image: imageFile ?? undefined,
       },
     });
-    //redirect(`/stores/${params.id}/products`);
+    redirect(`/stores/${params.id}/products`);
   };
 
   return (
