@@ -8,7 +8,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
-import ErrorText from '@/components/dondeSiempre/ErrorText';
 import {
   FaCalendarAlt,
   FaHashtag,
@@ -23,6 +22,7 @@ import {
 import { MdOutlinePayments } from 'react-icons/md';
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 
 type OrderStatus = 'ALL' | 'PENDING' | 'CONFIRMED' | 'REJECTED' | 'PICKED';
 
@@ -87,7 +87,7 @@ export default function OrdersPage() {
         </div>
       );
     }
-    return <ErrorText error={orders.error} />;
+    return <ErrorView />;
   }
 
   const formatDisplayPrice = (cents: number) =>

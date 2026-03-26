@@ -1,9 +1,5 @@
 import { NIL as NIL_UUID } from 'uuid';
-
-export interface StoreSocialNetworkDTO {
-  name: string;
-  link: string;
-}
+import { StoreSocialNetworkDTO } from './storesSocialDto';
 
 export interface StorefrontDTO {
   id: typeof NIL_UUID;
@@ -25,7 +21,6 @@ export interface StoreDTO {
   latitude: number;
   longitude: number;
   aboutUs: string | null;
-  // TODO: En Pr Claudia #64: Añadir primaryColor, secondaryColor, bannerImageUrl
   storefront: StorefrontDTO;
   socialNetworks: StoreSocialNetworkDTO[];
 }

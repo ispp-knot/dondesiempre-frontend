@@ -20,7 +20,7 @@ interface Props {
  * Client-side guard that ensures the current user is a store owner.
  * By default redirects when the check fails; if a fallback is provided it renders that instead.
  *
- * For server-side protection use ServerStoreGuard instead.
+ * Use this guard in client components (pages with 'use client').
  */
 export function StoreGuard({
   children,

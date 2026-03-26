@@ -31,8 +31,8 @@ export interface RegisterClientDTO {
 }
 
 /**
- * The full user context returned by /login and /me, stored in the AuthContext
- * and in localStorage under the key "auth_user".
+ * The full user context stored in the AuthContext and in localStorage under the
+ * key "auth_user". Populated from a LoginResponseDTO after login.
  */
 export interface UserResponseDTO {
   id: string;
@@ -43,4 +43,10 @@ export interface UserResponseDTO {
   expiresAt: string;
   store: StoreDTO | null;
   client: ClientDTO | null;
+}
+
+/** Shape returned by POST /api/v1/auth/login */
+export interface LoginResponseDTO {
+  user: UserResponseDTO;
+  token: string;
 }

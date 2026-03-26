@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { Quicksand } from 'next/font/google';
+import Script from 'next/script';
 import { Providers } from './providers';
 import { ConfigProvider } from './config-provider';
 import './globals.css';
@@ -12,8 +13,6 @@ const quicksand = Quicksand({
   weight: ['300', '400', '500', '600', '700'],
   variable: '--font-quicksand',
 });
-
-import './globals.css';
 
 const APP_NAME = 'Donde Siempre';
 const APP_DEFAULT_TITLE = 'Donde Siempre';
@@ -71,14 +70,13 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="es" dir="ltr" className={quicksand.variable}>
-      <head />
+      <head>
+        <Script src="/config.js" strategy="beforeInteractive" />
+      </head>
       <body
         className={`${quicksand.className} max-sm:[&::-webkit-scrollbar]:hidden flex flex-col min-h-screen`}
       >
-        <ConfigProvider
-          backendUrl={process.env.BACKEND_URL ?? ''}
-          webUrl={process.env.WEB_URL ?? ''}
-        >
+        <ConfigProvider>
           <Providers>
             <Navbar />
             <div className="flex flex-1 flex-col">
