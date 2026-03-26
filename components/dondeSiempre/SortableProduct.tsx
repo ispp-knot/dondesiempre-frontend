@@ -3,10 +3,8 @@ import { ProductDTO } from '@/lib/types/products/productsDto';
 import { convertPrice } from '@/lib/utils';
 import { useSortable } from '@dnd-kit/react/sortable';
 import { IoIosCloseCircle } from 'react-icons/io';
-import { MdEdit } from 'react-icons/md';
 import { Card } from '../ui/card';
 import Image from 'next/image';
-import Link from 'next/link';
 
 export type SortableProductProps = {
   index: number;
