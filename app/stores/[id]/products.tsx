@@ -3,6 +3,7 @@ import HorizontalScroll from '@/components/dondeSiempre/HorizontalScroll';
 import { usePassiveFetcher } from '@/lib/api/fetcher';
 import { ProductDTO } from '@/lib/types/products/productsDto';
 import { Percent } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 type Props = {
@@ -30,11 +31,16 @@ export default function Products({ storeId = undefined }: Readonly<Props>) {
           <Link
             href={`/stores/${storeId}/products/${product.id}`}
             key={product.id}
-            className="relative flex flex-col shrink-0 border-2 border-gray-200 w-[52%] md:w-[28%] h-72 sm:h-80 md:h-96 bg-cover bg-center justify-end rounded-lg shadow-sm"
-            style={{
-              backgroundImage: `url(${product.image || `/static/img/product_placeholder.png`})`,
-            }}
+            className="relative flex flex-col shrink-0 border-2 border-gray-200 w-[42%] md:w-[22%] rounded-lg shadow-sm overflow-hidden"
           >
+            <div className="w-full h-52 sm:h-60 md:h-72 relative">
+              <Image
+                src={product.image || '/static/img/product_placeholder.png'}
+                alt={product.name}
+                fill
+                className="object-contain"
+              />
+            </div>
             {hasDiscount && (
               <div className="absolute top-2 left-2 bg-primary rounded-full p-0.5 md:p-1 flex items-center justify-center shadow-md">
                 <Percent className="w-4 h-4 md:w-5 md:h-5 text-white stroke-3" />

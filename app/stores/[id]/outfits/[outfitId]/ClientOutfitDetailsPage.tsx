@@ -8,24 +8,19 @@ import { OrderDTO } from '@/lib/types/orders/orderDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { discountPrice } from '@/lib/utils';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useState } from 'react';
 import { FaChevronDown, FaChevronUp, FaTag } from 'react-icons/fa';
 import { GoDotFill } from 'react-icons/go';
-
-interface FetchError {
-  status?: number;
-  message?: string;
-}
+import { FetchError } from 'ofetch';
+import AuthModal from '@/components/modals/AuthModal';
+import OrderSuccessModal from '@/components/modals/OrderSuccessModal';
+import { ConfirmOrderModal } from '@/components/modals/ConfirmOrderModal';
 
 export interface ClientOutfitDetailsPageProps {
   outfit?: OutfitDTO;
 }
 
 export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPageProps) {
-  const buttonLinkClass =
-    'w-full inline-flex items-center justify-center h-9 px-4 py-2 rounded-md cursor-pointer text-sm font-medium tracking-normal whitespace-nowrap font-[inherit]';
-
   const [selectedProduct, setSelectedProduct] = useState(0);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
 
@@ -184,110 +179,36 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
                 </Button>
               )}
             </div>
+
+            {isConfirmModalOpen && (
+              <ConfirmOrderModal
+                price={discountPrice(
+                  props.outfit.priceInCents,
+                  props.outfit.discountPercentage ?? null
+                )}
+                isCreatingOrder={isCreatingOrder}
+                onConfirm={confirmAndCreateOrder}
+                onClose={() => setIsConfirmModalOpen(false)}
+              >
+                {/* Include product variants */}
+              </ConfirmOrderModal>
+            )}
           </>
         ) : (
           <NotFoundText message="El outfit que buscas no existe..." />
         )}
       </div>
 
-      {isConfirmModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-background p-8 rounded-lg shadow-xl flex flex-col items-center gap-6 max-w-md w-full">
-            <h2 className="text-2xl font-bold text-primary text-center">¿Confirmar pedido?</h2>
-            {props.outfit && (
-              <p className="text-secondary text-center">
-                Vas a realizar un pedido por un total de{' '}
-                <strong>{`${discountPrice(
-                  props.outfit.priceInCents,
-                  props.outfit.discountPercentage ?? null
-                )
-                  .toFixed(2)
-                  .toString()
-                  .replace('.', ',')}€`}</strong>
-                .
-              </p>
-            )}
-            <div className="flex flex-col w-full gap-3">
-              <Button
-                onClick={confirmAndCreateOrder}
-                disabled={isCreatingOrder}
-                className="w-full bg-secondary hover:bg-dark-secondary disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-bold"
-              >
-                {isCreatingOrder ? 'Procesando...' : 'Confirmar pedido'}
-              </Button>
-              <Button
-                onClick={() => setIsConfirmModalOpen(false)}
-                disabled={isCreatingOrder}
-                variant="outline"
-                className="w-full font-bold"
-              >
-                Cancelar
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {isAuthModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-background p-8 rounded-lg shadow-xl flex flex-col items-center gap-6 max-w-md w-full">
-            <h2 className="text-2xl font-bold text-primary text-center">
-              ¡Ups! No estás registrado
-            </h2>
-            <p className="text-secondary text-center">
-              Para poder hacer un pedido necesitas iniciar sesión o crear una cuenta en la
-              plataforma.
-            </p>
-            <div className="flex flex-col w-full gap-3">
-              <Link
-                href="/login"
-                className={`${buttonLinkClass} bg-secondary hover:bg-dark-secondary text-white font-bold`}
-              >
-                Iniciar sesión
-              </Link>
-              <Link
-                href="/register"
-                className={`${buttonLinkClass} bg-primary hover:bg-dark-primary text-white font-bold`}
-              >
-                Registrarme
-              </Link>
-              <Button
-                onClick={() => setIsAuthModalOpen(false)}
-                variant="outline"
-                className="w-full font-bold"
-              >
-                Cancelar
-              </Button>
-            </div>
-          </div>
-        </div>
+        <AuthModal
+          message={
+            'Para poder hacer un pedido necesitas iniciar sesión o crear una cuenta en la plataforma.'
+          }
+          setOpenModal={setIsAuthModalOpen}
+        />
       )}
 
-      {isSuccessModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-background p-8 rounded-lg shadow-xl flex flex-col items-center gap-6 max-w-md w-full">
-            <h2 className="text-2xl font-bold text-primary text-center">
-              ¡Pedido creado con éxito!
-            </h2>
-            <p className="text-secondary text-center">¿Qué te gustaría hacer ahora?</p>
-            <div className="flex flex-col w-full gap-3">
-              <Link
-                href="/orders"
-                className={`${buttonLinkClass} bg-secondary hover:bg-dark-secondary text-white font-bold`}
-              >
-                Ver mis pedidos
-              </Link>
-              <Button
-                onClick={() => setIsSuccessModalOpen(false)}
-                variant="outline"
-                className="w-full font-bold"
-              >
-                Seguir explorando
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      {isSuccessModalOpen && <OrderSuccessModal setOpenModal={setIsSuccessModalOpen} />}
     </>
   );
 }

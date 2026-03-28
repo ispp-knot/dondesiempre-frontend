@@ -4,6 +4,7 @@ import { Card } from '../ui/card';
 import { convertPrice } from '@/lib/utils';
 import { RiDiscountPercentFill } from 'react-icons/ri';
 import { Button } from '../ui/button';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export interface ProductCardProps {
@@ -23,19 +24,21 @@ export default function ProductCard(props: ProductCardProps) {
       {hasDiscount && (
         <RiDiscountPercentFill className="absolute top-3 left-3 z-10 text-4xl text-primary drop-shadow" />
       )}
-      <div
-        className="w-full h-52 sm:h-64 md:h-72 bg-cover bg-center shrink-0"
-        style={{
-          backgroundImage: `url(${product.image || '/static/img/product_placeholder.png'})`,
-        }}
-      />
+
+      <div className="relative w-full h-52 sm:h-64 md:h-72 shrink-0">
+        <Image
+          src={product.image || '/static/img/product_placeholder.png'}
+          alt={product.name}
+          fill
+          className="object-contain"
+        />
+      </div>
+
       <div className="flex flex-col flex-1 p-3 gap-1.5">
         <h2 className="font-bold text-primary text-lg md:text-xl truncate">{product.name}</h2>
-
         <p className="text-sm text-muted-foreground line-clamp-2 leading-snug min-h-[2.5rem]">
           {product.description ?? ''}
         </p>
-
         <div className="mt-auto pt-1">
           {hasDiscount ? (
             <div className="flex flex-row items-baseline gap-2">
@@ -51,7 +54,6 @@ export default function ProductCard(props: ProductCardProps) {
               {formatPrice(product.priceInCents)}
             </span>
           )}
-
           {props.isOwner ? (
             <div className="grid grid-cols-2 gap-2 mt-2">
               <Link
