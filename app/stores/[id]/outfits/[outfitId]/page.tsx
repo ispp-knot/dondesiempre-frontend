@@ -21,6 +21,7 @@ import {
 import {
   calculatePriceWithPercentageDiscount,
   convertPrice,
+  formatDisplayPrice,
   getOutfitDiscountPercentage,
 } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -246,9 +247,7 @@ function OutfitAdminForm({
           <div className="space-y-1 md:col-span-2">
             <p className="text-sm text-muted-foreground">
               Precio original del outfit:{' '}
-              <strong>
-                {`${convertPrice(outfit.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
-              </strong>
+              <strong>{formatDisplayPrice(convertPrice(outfit.priceInCents))}</strong>
             </p>
             {hasOutfitDiscount && (
               <p className="text-sm font-semibold text-secondary">
@@ -256,8 +255,7 @@ function OutfitAdminForm({
               </p>
             )}
             <p className="text-sm text-muted-foreground">
-              Precio final del outfit:{' '}
-              <strong>{`${outfitDisplayPrice.toFixed(2).toString().replace('.', ',')}€`}</strong>
+              Precio final del outfit: <strong>{formatDisplayPrice(outfitDisplayPrice)}</strong>
             </p>
           </div>
 
@@ -291,7 +289,7 @@ function OutfitAdminForm({
                       <div className="min-w-0">
                         <p className="break-words font-semibold text-primary">{product.name}</p>
                         <p className="text-sm text-muted-foreground">
-                          {`${convertPrice(product.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
+                          {formatDisplayPrice(convertPrice(product.priceInCents))}
                         </p>
                       </div>
                     </div>

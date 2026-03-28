@@ -10,7 +10,7 @@ export function convertPrice(priceInCents: number): number {
   return Number((priceInCents / 100).toFixed(2));
 }
 
-export function formatPrice(price: number): string {
+export function formatDisplayPrice(price: number): string {
   return `${price.toFixed(2).replace('.', ',')}€`;
 }
 

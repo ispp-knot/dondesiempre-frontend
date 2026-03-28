@@ -6,7 +6,7 @@ import { useActiveFetcher } from '@/lib/api/fetcher';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { OrderDTO } from '@/lib/types/orders/orderDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
-import { discountPrice } from '@/lib/utils';
+import { discountPrice, formatDisplayPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { useState } from 'react';
 import { FaChevronDown, FaChevronUp, FaTag } from 'react-icons/fa';
@@ -161,13 +161,12 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
               <div>
                 <h1 className="mt-4 mb-4 text-primary text-2xl">
                   <strong>Total: </strong>
-                  {`${discountPrice(
-                    props.outfit.priceInCents,
-                    props.outfit.discountPercentage ?? null
-                  )
-                    .toFixed(2)
-                    .toString()
-                    .replace('.', ',')}€ (IVA incluido)`}
+                  {`${formatDisplayPrice(
+                    discountPrice(
+                      props.outfit.priceInCents,
+                      props.outfit.discountPercentage ?? null
+                    )
+                  )} (IVA incluido)`}
                 </h1>
               </div>
               {isClient && (

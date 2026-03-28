@@ -39,9 +39,6 @@ export default function DeliverOrderPage() {
   });
   const pickFetcher = useActiveFetcher<void>({ method: 'PATCH' });
 
-  const formatDisplayPrice = (cents: number) =>
-    `${convertPrice(cents).toFixed(2).replace('.', ',')}€`;
-
   const getStatusStyles = (status: string) => {
     switch (status) {
       case 'PENDING':

@@ -1,7 +1,7 @@
 'use client';
 
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
-import { convertPrice, discountPrice } from '@/lib/utils';
+import { convertPrice, discountPrice, formatDisplayPrice } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { RiDiscountPercentFill } from 'react-icons/ri';
@@ -44,15 +44,17 @@ export default function SortableOutfitCard(props: OutfitCardProps) {
       {props.outfit.discountPercentage ? (
         <div className="flex flex-row self-center gap-3">
           <h1 className="text-primary text-center line-through text-3xl">
-            {`${convertPrice(props.outfit.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
+            {formatDisplayPrice(convertPrice(props.outfit.priceInCents))}
           </h1>
           <h1 className="font-bold text-primary text-center text-3xl">
-            {`${discountPrice(props.outfit.priceInCents, props.outfit.discountPercentage).toFixed(2).toString().replace('.', ',')}€`}
+            {formatDisplayPrice(
+              discountPrice(props.outfit.priceInCents, props.outfit.discountPercentage)
+            )}
           </h1>
         </div>
       ) : (
         <h1 className="font-bold text-primary text-center text-3xl">
-          {`${convertPrice(props.outfit.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
+          {formatDisplayPrice(convertPrice(props.outfit.priceInCents))}
         </h1>
       )}
       <div className="self-center grid grid-cols-3 w-11/12 gap-2">

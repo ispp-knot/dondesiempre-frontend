@@ -1,7 +1,7 @@
 'use client';
 import { ProductDTO } from '@/lib/types/products/productsDto';
 import { Card } from '../ui/card';
-import { convertPrice } from '@/lib/utils';
+import { convertPrice, formatDisplayPrice } from '@/lib/utils';
 import { RiDiscountPercentFill } from 'react-icons/ri';
 import { Button } from '../ui/button';
 import Image from 'next/image';
@@ -16,8 +16,7 @@ export interface ProductCardProps {
 export default function ProductCard(props: ProductCardProps) {
   const product = props.product;
   const hasDiscount = product.discountedPriceInCents !== product.priceInCents;
-  const formatPrice = (cents: number) =>
-    `${convertPrice(cents).toFixed(2).toString().replace('.', ',')}€`;
+  const formatPrice = (cents: number) => formatDisplayPrice(convertPrice(cents));
 
   return (
     <Card key={product.id} className="relative flex flex-col overflow-hidden shadow-xl pt-0">

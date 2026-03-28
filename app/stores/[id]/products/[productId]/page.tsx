@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { ProductDTO } from '@/lib/types/products/productsDto';
 import { OrderDTO } from '@/lib/types/orders/orderDto';
-import { convertPrice } from '@/lib/utils';
+import { convertPrice, formatDisplayPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
@@ -95,7 +95,7 @@ const MOCK_VARIANTS: ProductVariantDTO[] = [
 ];
 
 function ProductPrice({ product }: { product: ProductDTO }) {
-  const fmt = (cents: number) => `${convertPrice(cents).toFixed(2).replace('.', ',')}€`;
+  const fmt = (cents: number) => formatDisplayPrice(convertPrice(cents));
 
   return (
     <div className="text-primary text-2xl">
