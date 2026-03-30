@@ -109,23 +109,6 @@ export function StoreCard({
         className
       )}
     >
-      {isClient && (
-        <Button
-          onClick={handleFollowClick}
-          className="w-7 h-7 absolute top-3 right-3 p-1.5 rounded-md bg-primary/10 hover:bg-primary/20 transition-colors disabled:opacity-50"
-          title={isFollowing.data?.isFollowing ? 'Dejar de seguir' : 'Seguir'}
-          disabled={isFollowing.isLoading}
-          onAnimationEnd={() => setHeartAnimating(false)}
-          aria-label="Dejar de seguir"
-        >
-          <Heart
-            size={24}
-            className={`transition-colors duration-200 ${
-              isFollowing.data?.isFollowing ? 'fill-primary text-primary' : 'text-primary'
-            } ${heartAnimating ? 'animate-heart-pop' : ''}`}
-          />
-        </Button>
-      )}
       {/* Image */}
       <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-xl md:rounded-3xl overflow-hidden bg-gray-100 mr-4 sm:mr-8 flex-shrink-0 shadow-inner">
         {store.storefront?.bannerImageUrl ? (
@@ -144,28 +127,37 @@ export function StoreCard({
 
       {/* Info */}
       <div className="flex flex-col flex-1 min-w-0 justify-start">
-        <div className="flex flex-col md:flex-row items-start md:gap-5 md:mb-1 justify-between">
+        <div className="flex flex-row items-start gap-2 md:gap-5 md:mb-1 justify-between w-full">
           <h3
-            className="text-md md:text-lg font-bold md:font-extrabold text-dark-blue group-hover:text-primary transition-colors tracking-tight pr-8 md:pr-0"
+            className="text-md md:text-lg font-bold md:font-extrabold text-dark-blue group-hover:text-primary transition-colors tracking-tight flex-1 min-w-0"
             style={{ color: convertToBrightness(store.storefront.primaryColor, 40) }}
           >
             {store.name}
           </h3>
-
-          {/* Mobile Promotions Badge */}
-          {store.hasActivePromotions && (
-            <div className="md:hidden absolute top-4 right-4 text-primary bg-primary/10 p-1.5 rounded-full shadow-sm">
-              <BadgePercent size={20} />
-            </div>
-          )}
-
-          {/* Desktop Promotions Badge */}
-          {store.hasActivePromotions && (
-            <div className="hidden md:inline-flex items-center justify-center text-primary bg-primary/10 px-2 py-1 rounded-full text-xs font-black tracking-wider animate-pulse-subtle border border-primary/20 whitespace-nowrap">
-              <BadgePercent size={17} className="mr-1.5 flex-shrink-0" />
-              <span>¡PROMOCIÓN DISPONIBLE!</span>
-            </div>
-          )}
+          <div className="flex flex-row gap-1 flex-shrink-0">
+            {store.hasActivePromotions && (
+              <div className="text-primary bg-primary/10 rounded-full shadow-sm w-7 h-7 p-1.5 hover:bg-primary/20 transition-colors disabled:opacity-50 flex items-center justify-center">
+                <BadgePercent size={20} />
+              </div>
+            )}
+            {isClient && (
+              <Button
+                onClick={handleFollowClick}
+                className="w-7 h-7 p-1.5 rounded-md bg-primary/10 hover:bg-primary/20 transition-colors disabled:opacity-50"
+                title={isFollowing.data?.isFollowing ? 'Dejar de seguir' : 'Seguir'}
+                disabled={isFollowing.isLoading}
+                onAnimationEnd={() => setHeartAnimating(false)}
+                aria-label="Dejar de seguir"
+              >
+                <Heart
+                  size={24}
+                  className={`transition-colors duration-200 ${
+                    isFollowing.data?.isFollowing ? 'fill-primary text-primary' : 'text-primary'
+                  } ${heartAnimating ? 'animate-heart-pop' : ''}`}
+                />
+              </Button>
+            )}
+          </div>
         </div>
 
         <p
