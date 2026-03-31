@@ -93,7 +93,7 @@ test.describe.serial('follow store from map', () => {
 
     await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 30000 });
     await page.getByTestId('store-pin').first().click();
-    
+
     await page.getByRole('button', { name: 'Dejar de seguir' }).click();
     await page.getByRole('button', { name: 'Ir a la tienda' }).click();
 
