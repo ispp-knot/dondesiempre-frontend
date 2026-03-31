@@ -109,6 +109,18 @@ export default defineConfig({
       },
       dependencies: ['setup-registro'],
     },
+    {
+      name: 'failures',
+      testMatch: /.*\.fail\.ts/, // Ejecutará archivos que terminen en .fail.ts
+      use: {
+        ...devices['Desktop Chrome'],
+        screenshot: 'on',
+        ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+          ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
+          : {}),
+      },
+      dependencies: ['setup-registro'],
+    }
   ],
 
   /* Run your local dev server before starting the tests */
