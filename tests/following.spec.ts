@@ -21,9 +21,6 @@ test.describe.serial('follow store from map', () => {
     await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 30000 });
     await page.getByTestId('store-pin').first().click();
 
-    // const store = await page.getByRole('link', { name: 'Un nombre de tienda Lun-Vier' });
-    // await expect(store).toBeVisible({ timeout: 1000 });
-
     await page.getByRole('button', { name: 'Dejar de seguir' }).click();
     await page.getByRole('img').nth(1).click();
     await expect(page).toHaveURL('http://localhost:3000/following');
@@ -84,6 +81,25 @@ test.describe.serial('follow store from map', () => {
 
     await page.getByRole('button', { name: 'Siguiendo' }).click();
 
+    await expect(followButton).toBeVisible({ timeout: 10000 });
+  });
+
+  test('Following a store in the map updates the store page', async ({ page }) => {
+    await page.goto('http://localhost:3000/stores');
+
+    await page.context().grantPermissions(['geolocation']);
+
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 30000 });
+    await page.getByTestId('store-pin').first().click();
+    
+    await page.getByRole('button', { name: 'Dejar de seguir' }).click();
+    await page.getByRole('button', { name: 'Ir a la tienda' }).click();
+
+    await page.waitForURL(/stores\/.*/);
+
+    const followButton = await page.getByRole('button', { name: 'Siguiendo' });
     await expect(followButton).toBeVisible({ timeout: 10000 });
   });
 });
