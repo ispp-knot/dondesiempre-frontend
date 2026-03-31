@@ -12,77 +12,77 @@ test.beforeEach(async ({ context }) => {
 
 test.describe.serial('failures store logged in', () => {
   test.use({ storageState: './tests/scripts/auth.store.json' });
-  test('Fail going to following page',async ({ page }) => {
-        await page.goto('http://localhost:3000/following');
+  test('Fail going to following page', async ({ page }) => {
+    await page.goto('http://localhost:3000/following');
 
-        await expect(page).toHaveURL('http://localhost:3000/stores');
-    })
-  
-    test('Follow button not visible in map', async ({page}) => {
-        await page.goto('http://localhost:3000/stores');
+    await expect(page).toHaveURL('http://localhost:3000/stores');
+  });
 
-        await page.context().grantPermissions(['geolocation']);
+  test('Follow button not visible in map', async ({ page }) => {
+    await page.goto('http://localhost:3000/stores');
 
-        await page.waitForLoadState('networkidle');
-        await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 30000 });
-        await page.getByTestId('store-pin').first().click();
+    await page.context().grantPermissions(['geolocation']);
 
-        // const store = await page.getByRole('link', { name: 'Un nombre de tienda Lun-Vier' });
-        // await expect(store).toBeVisible({ timeout: 1000 });
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 30000 });
+    await page.getByTestId('store-pin').first().click();
 
-       const followButton = await page.getByRole('button', { name: 'Dejar de seguir' });
-       await expect(followButton).toBeHidden();
-    })
+    // const store = await page.getByRole('link', { name: 'Un nombre de tienda Lun-Vier' });
+    // await expect(store).toBeVisible({ timeout: 1000 });
 
-    test('Follow button not visible in store page', async ({page}) => {
-        await page.goto('http://localhost:3000/stores');
-        await page.context().grantPermissions(['geolocation']);
+    const followButton = await page.getByRole('button', { name: 'Dejar de seguir' });
+    await expect(followButton).toBeHidden();
+  });
 
-        await page.waitForLoadState('networkidle');
-        await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 30000 });
-        await page.getByTestId('store-pin').first().click();
+  test('Follow button not visible in store page', async ({ page }) => {
+    await page.goto('http://localhost:3000/stores');
+    await page.context().grantPermissions(['geolocation']);
 
-        await page.getByRole('button', { name: 'Ir a la tienda' }).click();
-        await page.waitForURL(/stores\/.*/);
-        const followButton = await page.getByRole('button', { name: 'Seguir' });
-        await expect(followButton).toBeHidden();
-    });
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 30000 });
+    await page.getByTestId('store-pin').first().click();
+
+    await page.getByRole('button', { name: 'Ir a la tienda' }).click();
+    await page.waitForURL(/stores\/.*/);
+    const followButton = await page.getByRole('button', { name: 'Seguir' });
+    await expect(followButton).toBeHidden();
+  });
 });
 
 test.describe.serial('failures as not logged in', () => {
-    test('Fail going to following page',async ({ page }) => {
-        await page.goto('http://localhost:3000/following');
+  test('Fail going to following page', async ({ page }) => {
+    await page.goto('http://localhost:3000/following');
 
-        await expect(page).toHaveURL('http://localhost:3000/login');
-    });
+    await expect(page).toHaveURL('http://localhost:3000/login');
+  });
 
-    test('Follow button not visible in map', async ({page}) => {
-        await page.goto('http://localhost:3000/stores');
+  test('Follow button not visible in map', async ({ page }) => {
+    await page.goto('http://localhost:3000/stores');
 
-        await page.context().grantPermissions(['geolocation']);
+    await page.context().grantPermissions(['geolocation']);
 
-        await page.waitForLoadState('networkidle');
-        await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 30000 });
-        await page.getByTestId('store-pin').first().click();
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 30000 });
+    await page.getByTestId('store-pin').first().click();
 
-        // const store = await page.getByRole('link', { name: 'Un nombre de tienda Lun-Vier' });
-        // await expect(store).toBeVisible({ timeout: 1000 });
+    // const store = await page.getByRole('link', { name: 'Un nombre de tienda Lun-Vier' });
+    // await expect(store).toBeVisible({ timeout: 1000 });
 
-       const followButton = await page.getByRole('button', { name: 'Dejar de seguir' });
-       await expect(followButton).toBeHidden();
-    });
+    const followButton = await page.getByRole('button', { name: 'Dejar de seguir' });
+    await expect(followButton).toBeHidden();
+  });
 
-    test('Follow button not visible in store page', async ({page}) => {
-        await page.goto('http://localhost:3000/stores');
-        await page.context().grantPermissions(['geolocation']);
+  test('Follow button not visible in store page', async ({ page }) => {
+    await page.goto('http://localhost:3000/stores');
+    await page.context().grantPermissions(['geolocation']);
 
-        await page.waitForLoadState('networkidle');
-        await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 30000 });
-        await page.getByTestId('store-pin').first().click();
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByRole('region', { name: 'Map' })).toBeVisible({ timeout: 30000 });
+    await page.getByTestId('store-pin').first().click();
 
-        await page.getByRole('button', { name: 'Ir a la tienda' }).click();
-        await page.waitForURL(/stores\/.*/);
-        const followButton = await page.getByRole('button', { name: 'Seguir' });
-        await expect(followButton).toBeHidden();
-    });
+    await page.getByRole('button', { name: 'Ir a la tienda' }).click();
+    await page.waitForURL(/stores\/.*/);
+    const followButton = await page.getByRole('button', { name: 'Seguir' });
+    await expect(followButton).toBeHidden();
+  });
 });

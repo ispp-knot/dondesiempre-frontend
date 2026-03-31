@@ -120,7 +120,7 @@ export default defineConfig({
           : {}),
       },
       dependencies: ['setup-registro'],
-    }
+    },
   ],
 
   /* Run your local dev server before starting the tests */
