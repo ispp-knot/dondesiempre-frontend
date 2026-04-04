@@ -114,6 +114,19 @@ export default function PricingPage() {
         <span style={{ color: '#c65a3a' }}>impulse tu tienda</span>
       </h1>
 
+      {/* New features banner */}
+      <div
+        className="relative z-10 mb-6 px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2"
+        style={{
+          background: 'rgba(77, 184, 176, 0.1)',
+          color: '#4db8b0',
+          border: '1px solid rgba(77, 184, 176, 0.2)',
+        }}
+      >
+        <Sparkles size={14} />
+        Nuevas funcionalidades tras lanzamiento: estadísticas de ventas y más
+      </div>
+
       {/* Subtitle */}
       <p
         className="relative z-10 text-center text-sm mb-14 max-w-sm leading-relaxed"
