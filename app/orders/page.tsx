@@ -23,6 +23,7 @@ import { MdOutlinePayments } from 'react-icons/md';
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
+import { PayButton } from '@/components/dondeSiempre/PayButton';
 
 type OrderStatus = 'ALL' | 'PENDING' | 'CONFIRMED' | 'REJECTED' | 'PICKED';
 
@@ -280,6 +281,9 @@ export default function OrdersPage() {
                             <FaTimesCircle /> Rechazar
                           </button>
                         </>
+                      )}
+                      {!isStore && !order.isPaid && order.orderStatus === 'CONFIRMED' && (
+                        <PayButton orderId={order.id} />
                       )}
                     </div>
                   </div>
