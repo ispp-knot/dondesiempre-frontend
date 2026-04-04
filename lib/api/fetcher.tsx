@@ -14,12 +14,14 @@ async function executeFetch<T>({
   body,
   formPayload,
   getToken,
+  timeout,
 }: {
   url: string;
   method?: string;
   body?: unknown;
   formPayload?: Record<string, string | Blob | undefined>;
   getToken?: () => string | null;
+  timeout?: number;
 }): Promise<T> {
   let fetchBody: BodyInit | undefined;
 
@@ -44,6 +46,7 @@ async function executeFetch<T>({
     {
       method,
       body: fetchBody,
+      timeout: timeout,
     },
     token
   )) as T;
@@ -54,6 +57,7 @@ async function executeFetch<T>({
 type UsePassiveFetcherOptions = {
   url: string;
   enabled?: boolean;
+  timeout?: number;
 };
 
 type UsePassiveFetcherResult<T> = ReturnType<typeof useQuery<T>> & {
@@ -71,14 +75,15 @@ type UsePassiveFetcherResult<T> = ReturnType<typeof useQuery<T>> & {
 export function usePassiveFetcher<T>({
   url,
   enabled = true,
+  timeout,
 }: UsePassiveFetcherOptions): UsePassiveFetcherResult<T> {
   const queryClient = useQueryClient();
   const { getAuthToken } = useAuth();
-  const queryKey = buildQueryKey(url, getAuthToken);
+  const queryKey = buildQueryKey(url, getAuthToken, timeout);
 
   const query = useQuery<T>({
     queryKey,
-    queryFn: () => executeFetch<T>({ url, getToken: getAuthToken }),
+    queryFn: () => executeFetch<T>({ url, getToken: getAuthToken, timeout: timeout }),
     enabled,
   });
 
@@ -98,6 +103,7 @@ type MutationMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 type UseActiveFetcherOptions<T> = {
   url?: string;
   method?: MutationMethod;
+  timeout?: number;
   onSuccess?: (data: T) => void;
   onError?: (error: Error) => void;
   onSettled?: (data: T | undefined, error: Error | null) => void;
@@ -108,6 +114,7 @@ type ActiveFetchCallOptions = {
   method?: MutationMethod;
   body?: unknown;
   formPayload?: Record<string, string | Blob | undefined>;
+  timeout?: number;
 };
 
 type UseActiveFetcherResult<T> = ReturnType<
@@ -131,6 +138,7 @@ type UseActiveFetcherResult<T> = ReturnType<
 export function useActiveFetcher<T>({
   url: defaultUrl,
   method: defaultMethod,
+  timeout: defaultTimeout,
   onSuccess,
   onError,
   onSettled,
@@ -142,6 +150,7 @@ export function useActiveFetcher<T>({
     mutationFn: (opts: ActiveFetchCallOptions = {}) => {
       const url = opts.url ?? defaultUrl;
       const method = opts.method ?? defaultMethod;
+      const timeout = opts.timeout ?? defaultTimeout;
       if (!url) throw new Error('useActiveFetcher: url is required');
       if (!method) throw new Error('useActiveFetcher: method is required');
       return executeFetch<T>({
@@ -150,6 +159,7 @@ export function useActiveFetcher<T>({
         body: opts.body,
         formPayload: opts.formPayload,
         getToken: getAuthToken,
+        timeout: timeout,
       });
     },
     onSuccess: (result) => {

@@ -283,7 +283,11 @@ function ClientStep2Form({
   onSuccess: () => void;
 }) {
   const [apiError, setApiError] = useState<string | null>(null);
-  const registerClient = useActiveFetcher<void>({ url: 'auth/register/client', method: 'POST' });
+  const registerClient = useActiveFetcher<void>({
+    url: 'auth/register/client',
+    method: 'POST',
+    timeout: 10000,
+  });
 
   const {
     register,
