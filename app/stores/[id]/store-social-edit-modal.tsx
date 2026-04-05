@@ -10,7 +10,23 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { z } from 'zod';
 
 const socialNetworkSchema = z.object({
-  link: z.string().min(1, 'El enlace es obligatorio').max(500, 'Máximo 500 caracteres'),
+  name: z.string().min(1, 'Debes seleccionar una red social'),
+  link: z
+    .string()
+    .min(1, 'El enlace o teléfono es obligatorio')
+    .max(500, 'Máximo 500 caracteres')
+    .refine(
+      (val) => {
+        const urlRegex =
+          /^(https?:\/\/)?(([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}|localhost|(?:\d{1,3}\.){3}\d{1,3})(:\d+)?(\/[^\s]*)?$/;
+        const phoneRegex = /^(\+?[1-9]\d{1,14}$|^[0-9]{9,15})$/;
+        const cleanPhone = val.replace(/\s+/g, '');
+        return urlRegex.test(val) || phoneRegex.test(cleanPhone);
+      },
+      {
+        message: 'Formato inválido (URL o teléfono)',
+      }
+    ),
 });
 
 type Props = {
@@ -56,7 +72,7 @@ export default function StoreSocialNetworksModal({
   } | null>(null);
 
   const handleAdd = async () => {
-    const result = socialNetworkSchema.safeParse({ link: newLink });
+    const result = socialNetworkSchema.safeParse({ name: newName, link: newLink });
 
     if (!result.success) {
       setAddError(result.error.issues[0].message);
@@ -64,8 +80,6 @@ export default function StoreSocialNetworksModal({
     }
 
     setAddError(null);
-
-    if (!newName) return;
 
     try {
       const created = await addSocial.fetch({
@@ -88,6 +102,7 @@ export default function StoreSocialNetworksModal({
       });
     }
   };
+
   const socialNetworkNames = usePassiveFetcher<string[]>({
     url: 'social-networks/names',
     enabled: open,
@@ -108,7 +123,7 @@ export default function StoreSocialNetworksModal({
   }, [availableNames, newName]);
 
   const handleUpdate = async (id: string, link: string) => {
-    const result = socialNetworkSchema.safeParse({ link });
+    const result = socialNetworkSchema.safeParse({ name: 'valid', link });
 
     if (!result.success) {
       setUpdateErrors((prev) => ({
@@ -162,7 +177,7 @@ export default function StoreSocialNetworksModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] max-w-[95vw] rounded-lg">
         <DialogHeader>
           <DialogTitle className="text-teal-700">Redes sociales</DialogTitle>
         </DialogHeader>
@@ -179,66 +194,78 @@ export default function StoreSocialNetworksModal({
         )}
         <div className="flex flex-col gap-4">
           {localNetworks.map((social) => (
-            <div key={social.id} className="flex gap-2 items-center">
-              <div className="w-32 text-sm font-medium text-primary">{social.name}</div>
+            <div key={social.id} className="flex flex-col gap-1">
+              <div className="flex gap-2 items-center">
+                <div className="w-20 sm:w-32 text-xs sm:text-sm font-medium text-primary truncate">
+                  {social.name}
+                </div>
 
-              <Input
-                value={social.link ?? ''}
-                onChange={(e) =>
-                  setLocalNetworks((prev) =>
-                    prev.map((s) => (s.id === social.id ? { ...s, link: e.target.value } : s))
-                  )
-                }
-                className="flex-1 text-muted-foreground"
-                aria-invalid={!!updateErrors[social.id]}
-              />
+                <Input
+                  value={social.link ?? ''}
+                  onChange={(e) =>
+                    setLocalNetworks((prev) =>
+                      prev.map((s) => (s.id === social.id ? { ...s, link: e.target.value } : s))
+                    )
+                  }
+                  className={`flex-1 text-xs sm:text-sm text-muted-foreground ${updateErrors[social.id] ? 'border-destructive' : ''}`}
+                  aria-invalid={!!updateErrors[social.id]}
+                />
+
+                <Button
+                  size="icon"
+                  className="bg-secondary hover:opacity-90 text-white shrink-0 h-9 w-9"
+                  onClick={() => handleUpdate(social.id, social.link)}
+                >
+                  <Save className="w-4 h-4" />
+                </Button>
+
+                <Button
+                  size="icon"
+                  className="bg-primary hover:opacity-90 text-white shrink-0 h-9 w-9"
+                  onClick={() => handleDelete(social.id)}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
               {updateErrors[social.id] && (
-                <p className="text-xs text-destructive">{updateErrors[social.id]}</p>
+                <p className="text-[10px] text-destructive ml-20 sm:ml-32">
+                  {updateErrors[social.id]}
+                </p>
               )}
-
-              <Button
-                className="bg-secondary hover:opacity-90 text-white"
-                onClick={() => handleUpdate(social.id, social.link)}
-              >
-                <Save className="w-4 h-4" />
-              </Button>
-
-              <Button
-                className="bg-primary hover:opacity-90 text-white"
-                onClick={() => handleDelete(social.id)}
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
             </div>
           ))}
 
-          <div className="flex gap-2 items-center">
-            <select
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm text-muted-foreground font-sans"
-            >
-              <option value="">Selecciona una red social</option>
-              {availableNames.map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-            </select>
-            <Input
-              placeholder="Enlace"
-              value={newLink}
-              onChange={(e) => setNewLink(e.target.value)}
-              aria-invalid={!!addError}
-            />
-            {addError && <p className="text-xs text-destructive">{addError}</p>}
-            <Button
-              className="bg-primary hover:opacity-90 text-white"
-              onClick={handleAdd}
-              disabled={addSocial.isPending}
-            >
-              <Plus className="w-4 h-4" />
-            </Button>
+          <div className="flex flex-col gap-1">
+            <div className="flex gap-2 items-center">
+              <select
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                className={`h-10 w-24 sm:w-40 rounded-md border bg-background px-2 py-2 text-xs sm:text-sm text-muted-foreground font-sans shrink-0 ${addError?.includes('seleccionar') ? 'border-destructive' : 'border-input'}`}
+              >
+                <option value="">Red...</option>
+                {availableNames.map((name) => (
+                  <option key={name} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+              <Input
+                placeholder="Enlace o teléfono"
+                value={newLink}
+                onChange={(e) => setNewLink(e.target.value)}
+                className={`flex-1 text-xs sm:text-sm ${addError && !addError.includes('seleccionar') ? 'border-destructive' : ''}`}
+                aria-invalid={!!addError}
+              />
+              <Button
+                size="icon"
+                className="bg-primary hover:opacity-90 text-white shrink-0 h-9 w-9"
+                onClick={handleAdd}
+                disabled={addSocial.isPending}
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+            {addError && <p className="text-[10px] text-destructive ml-2">{addError}</p>}
           </div>
         </div>
       </DialogContent>
