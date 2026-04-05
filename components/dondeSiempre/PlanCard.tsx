@@ -1,7 +1,7 @@
 'use client';
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ArrowRight, CheckCircle2, X, Mail } from 'lucide-react';
+import { ArrowRight, CheckCircle2, X, Mail, Clipboard } from 'lucide-react';
 import { ReactNode, useState } from 'react';
 
 export interface Feature {
@@ -91,6 +91,14 @@ function FeatureRow({ feature }: { feature: Feature }) {
 export function PlanCard({ plan }: { plan: Plan }) {
   const [showModal, setShowModal] = useState(false);
 
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText('dondesiempreispp+ventas@gmail.com');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <>
       {/* ── Modal Premium ── */}
@@ -130,20 +138,30 @@ export function PlanCard({ plan }: { plan: Plan }) {
             </p>
 
             {/* Botón email */}
-            <a
-              href="mailto:dondesiempreispp+ventas@gmail.com"
-              className="w-full h-11 flex items-center justify-center gap-2 rounded-xl text-sm font-bold transition-all duration-150"
-              style={{ background: '#e07050', color: '#fff' }}
+            <button
+              className="w-full h-11 flex items-center justify-center gap-1.5 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer px-3"
+              style={{ background: '#e07050', color: '#fff', border: 'none' }}
+              onClick={handleCopy}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.background = '#d05f3f';
+                if (!copied) (e.currentTarget as HTMLButtonElement).style.background = '#d05f3f';
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.background = '#e07050';
+                if (!copied) (e.currentTarget as HTMLButtonElement).style.background = '#e07050';
               }}
             >
-              <Mail size={15} />
-              dondesiempreispp+ventas@gmail.com
-            </a>
+              {copied ? (
+                <>
+                  <CheckCircle2 size={14} />
+                  ¡Copiado!
+                </>
+              ) : (
+                <>
+                  <Mail size={14} />
+                  <span className="truncate">dondesiempreispp+ventas@gmail.com</span>
+                  <Clipboard size={14} style={{ opacity: 0.75 }} /> Copiar{' '}
+                </>
+              )}
+            </button>
           </div>
         </div>
       )}

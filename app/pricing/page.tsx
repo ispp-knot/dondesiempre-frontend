@@ -94,16 +94,6 @@ export default function PricingPage() {
         }}
       />
 
-      {/* Eyebrow */}
-      <p
-        className="relative z-10 flex items-center gap-2 mb-4 text-xs font-semibold tracking-widest uppercase"
-        style={{ color: '#4db8b0' }}
-      >
-        <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: '#4db8b0' }} />
-        Planes y precios
-        <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: '#4db8b0' }} />
-      </p>
-
       {/* Title */}
       <h1
         className="relative z-10 text-center font-extrabold tracking-tight mb-4 leading-tight"
