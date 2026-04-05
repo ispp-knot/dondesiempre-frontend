@@ -19,7 +19,7 @@ const socialNetworkSchema = z.object({
       (val) => {
         const urlRegex =
           /^(https?:\/\/)?(([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}|localhost|(?:\d{1,3}\.){3}\d{1,3})(:\d+)?(\/[^\s]*)?$/;
-        const phoneRegex = /^(\+?[1-9]\d{1,14}$|^[0-9]{9,15})$/;
+        const phoneRegex = /^\+?[1-9]\d{8,14}$/;
         const cleanPhone = val.replace(/\s+/g, '');
         return urlRegex.test(val) || phoneRegex.test(cleanPhone);
       },
@@ -207,7 +207,9 @@ export default function StoreSocialNetworksModal({
                       prev.map((s) => (s.id === social.id ? { ...s, link: e.target.value } : s))
                     )
                   }
-                  className={`flex-1 text-xs sm:text-sm text-muted-foreground ${updateErrors[social.id] ? 'border-destructive' : ''}`}
+                  className={`flex-1 text-xs sm:text-sm text-muted-foreground ${
+                    updateErrors[social.id] ? 'border-destructive' : ''
+                  }`}
                   aria-invalid={!!updateErrors[social.id]}
                 />
 
@@ -240,7 +242,9 @@ export default function StoreSocialNetworksModal({
               <select
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                className={`h-10 w-24 sm:w-40 rounded-md border bg-background px-2 py-2 text-xs sm:text-sm text-muted-foreground font-sans shrink-0 ${addError?.includes('seleccionar') ? 'border-destructive' : 'border-input'}`}
+                className={`h-10 w-24 sm:w-40 rounded-md border bg-background px-2 py-2 text-xs sm:text-sm text-muted-foreground font-sans shrink-0 ${
+                  addError?.includes('seleccionar') ? 'border-destructive' : 'border-input'
+                }`}
               >
                 <option value="">Red...</option>
                 {availableNames.map((name) => (
@@ -253,7 +257,9 @@ export default function StoreSocialNetworksModal({
                 placeholder="Enlace o teléfono"
                 value={newLink}
                 onChange={(e) => setNewLink(e.target.value)}
-                className={`flex-1 text-xs sm:text-sm ${addError && !addError.includes('seleccionar') ? 'border-destructive' : ''}`}
+                className={`flex-1 text-xs sm:text-sm ${
+                  addError && !addError.includes('seleccionar') ? 'border-destructive' : ''
+                }`}
                 aria-invalid={!!addError}
               />
               <Button
