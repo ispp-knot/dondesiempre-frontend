@@ -63,6 +63,15 @@ export function ProfilePage({}) {
           variant="outline"
           className="w-full"
           onClick={() => {
+            router.push('/pricing');
+          }}
+        >
+          Planes y precios
+        </Button>
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => {
             deleteInfo();
             router.push('/login');
           }}
