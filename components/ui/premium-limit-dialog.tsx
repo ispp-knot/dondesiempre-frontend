@@ -33,7 +33,7 @@ export function PremiumLimitDialog({ open, onOpenChange }: PremiumLimitDialogPro
           <AlertDialogAction
             onClick={() => {
               onOpenChange(false);
-              router.push('/profile');
+              router.push('/pricing');
             }}
           >
             Ver Premium
