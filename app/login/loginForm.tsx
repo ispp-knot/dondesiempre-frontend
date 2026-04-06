@@ -13,6 +13,7 @@ import { useActiveFetcher } from '@/lib/api/fetcher';
 import { FetchError } from 'ofetch';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { LoginResponseDTO } from '@/lib/types/auth/authDto';
+import { Eye, EyeOff } from 'lucide-react';
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -28,6 +29,7 @@ function FieldError({ message }: { message?: string }) {
 
 export function LoginForm() {
   const [apiError, setApiError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const { registerInfo } = useAuth();
 
   const login = useActiveFetcher<LoginResponseDTO>({ url: 'auth/login', method: 'POST' });
@@ -71,13 +73,24 @@ export function LoginForm() {
 
       <div className="space-y-1">
         <Label htmlFor="password">Contraseña</Label>
-        <Input
-          id="password"
-          type="password"
-          placeholder="••••••••"
-          aria-invalid={!!errors.password}
-          {...register('password')}
-        />
+        <div className="relative">
+          <Input
+            id="password"
+            type={showPassword ? 'text' : 'password'}
+            placeholder="••••••••"
+            aria-invalid={!!errors.password}
+            className="pr-10"
+            {...register('password')}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+            tabIndex={-1}
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
         <FieldError message={errors.password?.message} />
       </div>
 
