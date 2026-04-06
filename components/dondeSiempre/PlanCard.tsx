@@ -3,6 +3,8 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ArrowRight, CheckCircle2, X, Mail, Clipboard } from 'lucide-react';
 import { ReactNode, useState } from 'react';
+import { useAuth } from '../../lib/auth/AuthContext'; // ajusta la ruta si es diferente
+import Link from 'next/link';
 
 export interface Feature {
   label: string;
@@ -92,6 +94,9 @@ export function PlanCard({ plan }: { plan: Plan }) {
   const [showModal, setShowModal] = useState(false);
 
   const [copied, setCopied] = useState(false);
+
+  const { getCurrentUser } = useAuth();
+  const isLoggedIn = !!getCurrentUser();
 
   const handleCopy = () => {
     navigator.clipboard.writeText('dondesiempreispp+ventas@gmail.com');
@@ -247,7 +252,7 @@ export function PlanCard({ plan }: { plan: Plan }) {
               {plan.cta}
               <ArrowRight size={15} />
             </button>
-          ) : (
+          ) : isLoggedIn ? (
             <div
               className="w-full h-11 flex items-center justify-center gap-2 rounded-xl text-sm font-semibold"
               style={{ color: '#4db8b0', border: '1.5px solid #4db8b0', background: '#4db8b010' }}
@@ -255,6 +260,21 @@ export function PlanCard({ plan }: { plan: Plan }) {
               <CheckCircle2 size={15} />
               {plan.cta}
             </div>
+          ) : (
+            <Link
+              href="/register"
+              className="w-full h-11 flex items-center justify-center gap-2 rounded-xl text-sm font-bold transition-all duration-150"
+              style={{ background: '#4db8b0', color: '#fff', textDecoration: 'none' }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.background = '#3aa39b';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.background = '#4db8b0';
+              }}
+            >
+              Crear cuenta gratis
+              <ArrowRight size={15} />
+            </Link>
           )}
         </div>
       </div>
