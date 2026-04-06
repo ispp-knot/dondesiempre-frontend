@@ -35,7 +35,7 @@ export function PayButton({ orderId, disabled, onPayStart, onPayEnd }: PayButton
       variant={'secondary'}
     >
       <MdOutlinePayments />
-      {initiatePayment.isPending ? 'Redirigiendo...' : 'Pagar con Stripe'}
+      {initiatePayment.isPending ? 'Redirigiendo...' : 'Pagar'}
     </Button>
   );
 }
