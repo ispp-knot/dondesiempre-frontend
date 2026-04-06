@@ -247,6 +247,7 @@ export default function OutfitCreationPage() {
       setIsCreateLocked(false);
     }
   };
+
   return (
     <StoreOwnerGuard storeId={params.id}>
       {products.data && products.data.length > 0 ? (
@@ -274,6 +275,7 @@ export default function OutfitCreationPage() {
                         id="form-name"
                         maxLength={MAX_OUTFIT_NAME_LENGTH}
                         aria-invalid={!!errors.name}
+                        className="break-words"
                         {...register('name')}
                       />
                       <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
@@ -352,7 +354,7 @@ export default function OutfitCreationPage() {
                           value={tagInput}
                           maxLength={MAX_OUTFIT_TAG_LENGTH}
                           placeholder="Ej. Primavera, oficina, evento especial..."
-                          className="min-w-0"
+                          className="min-w-0 break-words"
                           onChange={(event) => {
                             setTagInput(event.target.value);
                             if (errors.tags?.message) {
@@ -385,16 +387,16 @@ export default function OutfitCreationPage() {
                         </p>
                       </div>
                       <FieldError message={errors.tags?.message} />
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2 max-w-full">
                         {selectedTags.map((tag) => (
                           <Button
                             key={tag}
                             type="button"
                             onClick={() => removeTag(tag)}
-                            className="h-auto max-w-full whitespace-normal break-words rounded-lg bg-secondary px-3 py-2 text-left hover:bg-dark-secondary"
+                            className="h-auto max-w-full whitespace-normal break-all rounded-lg bg-secondary px-3 py-2 text-left hover:bg-dark-secondary"
                           >
                             <FaTag className="mr-2 shrink-0 text-white" />
-                            <span className="break-words text-xs font-bold text-white sm:text-sm">
+                            <span className="break-all text-xs font-bold text-white sm:text-sm">
                               {tag}
                             </span>
                           </Button>
@@ -495,7 +497,7 @@ export default function OutfitCreationPage() {
                         key={product.id}
                         className="flex h-full flex-col gap-4 p-3 shadow-xl sm:p-4 md:p-6"
                       >
-                        <h2 className="text-center text-lg font-bold text-primary break-words sm:text-2xl">
+                        <h2 className="text-center text-lg font-bold text-primary break-all sm:text-2xl">
                           {product.name}
                         </h2>
                         <div className="flex flex-1 justify-center">

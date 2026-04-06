@@ -29,6 +29,8 @@ test.describe.serial('search page', () => {
     await expect(storeHours).toBeVisible();
   });
 
+  test.use({ storageState: './tests/scripts/auth.store.json' });
+
   test('the store displays options of the store', async ({ page }) => {
     await page.goto(storeUrl);
 

@@ -55,7 +55,7 @@ test.describe.serial('private navbar', () => {
     await page.goto('http://localhost:3000/stores');
     await page.getByRole('button', { name: 'Usuario' }).click();
 
-    await page.getByRole('button', { name: 'Mi perfil' }).click();
+    await page.getByRole('link', { name: 'Mi perfil' }).click();
 
     await expect(page).toHaveURL('http://localhost:3000/profile');
   });

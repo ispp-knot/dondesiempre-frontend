@@ -40,3 +40,5 @@ List all affected pages and how to test them locally:
 - [ ] I used ShadCN components when needed
 - [ ] I checked responsiveness
 - [ ] No console errors
+
+> Recuerda revisar que la notificación de la pull request llega a Discord en el canal de #github

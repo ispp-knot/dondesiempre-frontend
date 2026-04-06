@@ -1,5 +1,7 @@
 'use client';
 
+import StoreLocationModal from '@/app/stores/[id]/store-edit-location-modal';
+
 export const dynamic = 'force-dynamic';
 import { useState } from 'react';
 
@@ -57,6 +59,7 @@ export default function StorePage() {
   const isOwner = !!user?.store?.id && user.store.id === params.id;
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isSocialModalOpen, setIsSocialModalOpen] = useState(false);
+  const [locationSuccessMsg, setLocationSuccessMsg] = useState<string | null>(null);
 
   const isFollowing = usePassiveFetcher<{ isFollowing: boolean }>({
     url: `stores/${params.id}/follow`,
@@ -89,6 +92,15 @@ export default function StorePage() {
       </>
     );
   }
+
+  const handleLocationSaved = async () => {
+    await store.refetch();
+
+    setLocationSuccessMsg('¡Ubicación actualizada con éxito!');
+    setTimeout(() => {
+      setLocationSuccessMsg(null);
+    }, 4000);
+  };
 
   const promotionData: PromotionDTO[] = promotionsDto.data || [];
   const socialNetworks: Array<StoreSocialNetworkDTO> = store.data?.socialNetworks || [];
@@ -161,6 +173,12 @@ export default function StorePage() {
           {store.data.name}
         </div>
 
+        {locationSuccessMsg && (
+          <div className="px-4 py-2 bg-green-100 text-green-800 text-sm rounded-md border border-green-200 text-center animate-in fade-in slide-in-from-top-2 duration-300 w-full max-w-md my-2">
+            {locationSuccessMsg}
+          </div>
+        )}
+
         <div className="flex items-start justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]">
           <FaLocationDot className="flex-shrink-0 mt-1" />
           <span className="text-center">{store.data.address}</span>
@@ -190,13 +208,21 @@ export default function StorePage() {
       </div>
 
       {isOwner && (
-        <div className="flex justify-center gap-3 mt-3 mb-2">
+        <div className="flex justify-center gap-3 mt-3 mb-2 flex-wrap px-4">
           <Button type="button" onClick={() => setIsEditOpen(true)}>
-            <Edit2 className="w-5 h-5" />
+            <Edit2 className="w-5 h-5 mr-1" />
             Editar tienda
           </Button>
+
+          <StoreLocationModal
+            storeId={params.id}
+            initialLat={store.data.latitude}
+            initialLng={store.data.longitude}
+            onSavedAction={handleLocationSaved}
+          />
+
           <Button type="button" onClick={() => setIsSocialModalOpen(true)}>
-            <Edit2 className="w-5 h-5" />
+            <Edit2 className="w-5 h-5 mr-1" />
             Editar redes
           </Button>
         </div>
