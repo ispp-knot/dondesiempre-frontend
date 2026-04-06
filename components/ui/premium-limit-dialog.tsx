@@ -23,24 +23,25 @@ export function PremiumLimitDialog({ open, onOpenChange }: PremiumLimitDialogPro
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Llegaste al limite de uso gratis</AlertDialogTitle>
+          <AlertDialogTitle>¡Has alcanzado el límite para tu plan!</AlertDialogTitle>
           <AlertDialogDescription>
-            Para seguir compartiendo promociones, necesitas activar Premium.
+            Únete a nuestro plan Premium para disfrutar de ventajas como esta.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogAction className={'bg-secondary hover:bg-secondary/90'}>Ahora no</AlertDialogAction>
+          <AlertDialogAction className={'bg-secondary hover:bg-secondary/90'}>
+            Cerrar
+          </AlertDialogAction>
           <AlertDialogAction
             onClick={() => {
               onOpenChange(false);
               router.push('/pricing');
             }}
           >
-            Ver Premium
+            Unirse
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
 }
-
