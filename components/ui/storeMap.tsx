@@ -12,18 +12,13 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { useDebouncedCallback } from 'use-debounce';
 import Supercluster, { ClusterFeature, PointFeature } from 'supercluster';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 type StoreProperties = { store: StoreDTO };
 
 type ClusterPin =
   | { type: 'cluster'; id: number; lng: number; lat: number; count: number; expansionZoom: number }
   | { type: 'point'; lng: number; lat: number; store: StoreDTO };
 
-// ─── Cluster Marker ───────────────────────────────────────────────────────────
-
 function ClusterMarker({ count, onClick }: { count: number; onClick: () => void }) {
-  // Scale size with count
   const size = count < 10 ? 36 : count < 50 ? 44 : 52;
   const fontSize = count < 10 ? 13 : count < 50 ? 14 : 15;
 
@@ -44,8 +39,6 @@ function ClusterMarker({ count, onClick }: { count: number; onClick: () => void 
   );
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
-
 export function StoreMap({
   startingLocation = DEFAULT_MAP_LOCATION,
   userLocation,
@@ -60,7 +53,6 @@ export function StoreMap({
   const mapRef = useRef<MapRef | null>(null);
   const stores = useActiveFetcher<StoreDTO[]>({ url: 'stores', method: 'GET' });
 
-  // Track viewport to recompute clusters on move
   const [viewport, setViewport] = useState({
     zoom: 13,
     bounds: [-180, -90, 180, 90] as [number, number, number, number],
@@ -69,7 +61,6 @@ export function StoreMap({
   const [, forceUpdate] = useReducer((n: number) => n + 1, 0);
   const debouncedForceUpdate = useDebouncedCallback(forceUpdate, 50);
 
-  // ── Supercluster instance, rebuilt when store data changes ─────────────────
   const supercluster = useMemo(() => {
     if (!stores.data?.length) return null;
 
@@ -85,7 +76,6 @@ export function StoreMap({
     return sc;
   }, [stores.data]);
 
-  // ── Compute visible clusters from current viewport ─────────────────────────
   const clusterPins = useMemo((): ClusterPin[] => {
     if (!supercluster) return [];
 
@@ -117,7 +107,6 @@ export function StoreMap({
     });
   }, [supercluster, viewport]);
 
-  // ── Fetch stores for current map bounds ────────────────────────────────────
   const fetchStores = useCallback(
     async (_: MapEvent) => {
       const boundary = mapRef.current?.getBounds();
@@ -134,7 +123,6 @@ export function StoreMap({
 
   const debouncedFetchStores = useDebouncedCallback(fetchStores, 100);
 
-  // ── Sync viewport state after every move ──────────────────────────────────
   const syncViewport = useCallback(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -153,7 +141,6 @@ export function StoreMap({
 
   const debouncedSyncViewport = useDebouncedCallback(syncViewport, 50);
 
-  // ── Controls ───────────────────────────────────────────────────────────────
   const handleZoomIn = () => mapRef.current?.zoomIn();
   const handleZoomOut = () => mapRef.current?.zoomOut();
   const handleResetNorth = () => mapRef.current?.resetNorth();
@@ -163,7 +150,6 @@ export function StoreMap({
     mapRef.current?.flyTo({ center: [loc.lng, loc.lat], zoom: 15 });
   };
 
-  // ── Click cluster → zoom to expand ────────────────────────────────────────
   const handleClusterClick = (pin: Extract<ClusterPin, { type: 'cluster' }>) => {
     mapRef.current?.flyTo({
       center: [pin.lng, pin.lat],
@@ -171,7 +157,6 @@ export function StoreMap({
     });
   };
 
-  // ── Render markers ─────────────────────────────────────────────────────────
   const markers = clusterPins.map((pin, index) => {
     if (pin.type === 'cluster') {
       return (
@@ -233,7 +218,6 @@ export function StoreMap({
         )}
       </Map>
 
-      {/* Custom Map Controls */}
       <div className="absolute top-4 left-4 flex flex-col gap-2">
         <div className="bg-background/80 backdrop-blur rounded-md p-1 shadow-lg">
           <Button variant="ghost" size="icon" onClick={handleGeolocate}>
