@@ -13,6 +13,7 @@ import { LocationPickerMap } from '@/components/ui/locationPickerMap';
 import { Switch } from '@/components/ui/switch';
 import { useActiveFetcher } from '@/lib/api/fetcher';
 import { FetchError } from 'ofetch';
+import { Eye, EyeOff } from 'lucide-react';
 
 // ── Schemas ────────────────────────────────────────────────────────────────────
 
@@ -212,6 +213,9 @@ function Step1Form({
   onComplete: (data: Step1Values) => void;
   onFirstSubmit: () => void;
 }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -242,25 +246,47 @@ function Step1Form({
 
       <div className="space-y-1">
         <Label htmlFor="password">Contraseña</Label>
-        <Input
-          id="password"
-          type="password"
-          placeholder="••••••••"
-          aria-invalid={!!errors.password}
-          {...register('password')}
-        />
+        <div className="relative">
+          <Input
+            id="password"
+            type={showPassword ? 'text' : 'password'}
+            placeholder="••••••••"
+            aria-invalid={!!errors.password}
+            className="pr-10"
+            {...register('password')}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+            tabIndex={-1}
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
         <FieldError message={errors.password?.message} />
       </div>
 
       <div className="space-y-1">
         <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
-        <Input
-          id="confirmPassword"
-          type="password"
-          placeholder="••••••••"
-          aria-invalid={!!errors.confirmPassword}
-          {...register('confirmPassword')}
-        />
+        <div className="relative">
+          <Input
+            id="confirmPassword"
+            type={showConfirmPassword ? 'text' : 'password'}
+            placeholder="••••••••"
+            aria-invalid={!!errors.confirmPassword}
+            className="pr-10"
+            {...register('confirmPassword')}
+          />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+            tabIndex={-1}
+          >
+            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
         <FieldError message={errors.confirmPassword?.message} />
       </div>
 
