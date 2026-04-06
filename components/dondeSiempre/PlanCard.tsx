@@ -107,11 +107,17 @@ export function PlanCard({ plan }: { plan: Plan }) {
           className="fixed inset-0 z-50 flex items-center justify-center px-4"
           style={{ background: 'rgba(0,0,0,0.35)' }}
           onClick={() => setShowModal(false)}
+          onKeyDown={(e) => e.key === 'Escape' && setShowModal(false)}
+          role="button"
+          tabIndex={0}
         >
           <div
             className="relative w-full max-w-sm rounded-2xl p-8 flex flex-col items-center text-center gap-4"
             style={{ background: '#fff', boxShadow: '0 24px 60px rgba(0,0,0,0.15)' }}
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
           >
             {/* Cerrar */}
             <button
