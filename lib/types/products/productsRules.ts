@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const MAX_PRODUCT_NAME_LENGTH = 255;
 export const MAX_PRODUCT_DESCRIPTION_LENGTH = 5000;
 export const MIN_PRODUCT_PRICE = 0;
+export const MAX_PRODUCT_PRICE = 9999;
 
 const baseProductFormSchema = z.object({
   name: z
@@ -24,10 +25,11 @@ const baseProductFormSchema = z.object({
       return trimmedValue.length === 0 ? null : trimmedValue;
     })
     .nullable(),
-  priceInCents: z
+  price: z
     .number({ error: 'El precio es obligatorio.' })
-    .min(MIN_PRODUCT_PRICE, 'El precio no puede ser negativo.'),
-  productTypeId: z.string().min(1, 'El tipo de producto es obligatorio.'),
+    .min(MIN_PRODUCT_PRICE, 'El precio no puede ser negativo.')
+    .max(MAX_PRODUCT_PRICE, `El precio no puede ser mayor a ${MAX_PRODUCT_PRICE}.`),
+  productTypeId: z.string().min(1, 'La categoría es obligatoria.'),
 });
 
 export function createProductFormSchema() {

@@ -26,6 +26,7 @@ export default function ProductCreationPage() {
   const router = useRouter();
 
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const productTypes = usePassiveFetcher<ProductTypeDTO[]>({ url: `product-types` });
   const createProduct = useActiveFetcher<ProductDTO>({
@@ -42,7 +43,7 @@ export default function ProductCreationPage() {
     defaultValues: {
       name: '',
       description: '',
-      priceInCents: 0,
+      price: 0,
       productTypeId: '',
     },
   });
@@ -56,22 +57,29 @@ export default function ProductCreationPage() {
   }
 
   const submitForm = async (data: ProductFormValues) => {
+    setApiError(null);
     const dto: ProductCreationDTO = {
       name: data.name,
       description: data.description,
-      priceInCents: data.priceInCents,
+      priceInCents: Math.round(data.price * 100),
       typeId: data.productTypeId,
     };
 
-    await createProduct.fetch({
-      formPayload: {
-        dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
-        image: imageFile ?? undefined,
-      },
-    });
+    try {
+      await createProduct.fetch({
+        formPayload: {
+          dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
+          image: imageFile ?? undefined,
+        },
+      });
 
-    if (!createProduct.isError) {
-      router.push(`/stores/${params.id}/products`);
+      if (!createProduct.isError) {
+        router.push(`/stores/${params.id}/products`);
+      } else {
+        setApiError('Hubo un error al crear el producto. Por favor, intenta de nuevo.');
+      }
+    } catch (err: unknown) {
+      setApiError('Hubo un error al crear el producto. Por favor, intenta de nuevo.');
     }
   };
 
@@ -116,23 +124,25 @@ export default function ProductCreationPage() {
 
                 <div className="space-y-1">
                   <Label htmlFor="form-price" className="font-bold text-lg text-secondary">
-                    Precio (en céntimos):{' '}
+                    Precio:{' '}
                   </Label>
                   <Input
                     type="number"
                     id="form-price"
                     min="0"
-                    step="1"
-                    aria-invalid={!!errors.priceInCents}
-                    {...register('priceInCents', { valueAsNumber: true })}
+                    max="9999"
+                    step="0.01"
+                    placeholder="0,00"
+                    aria-invalid={!!errors.price}
+                    {...register('price', { valueAsNumber: true })}
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                   />
-                  <FieldError message={errors.priceInCents?.message} />
+                  <FieldError message={errors.price?.message} />
                 </div>
 
                 <div className="space-y-1">
                   <Label htmlFor="form-type" className="font-bold text-lg text-secondary">
-                    Tipo:{' '}
+                    Categoría:{' '}
                   </Label>
                   <select
                     id="form-type"
@@ -140,7 +150,7 @@ export default function ProductCreationPage() {
                     {...register('productTypeId')}
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                   >
-                    <option value="">Seleccionar tipo...</option>
+                    <option value="">Seleccionar categoría...</option>
                     {productTypes.data?.map((type) => (
                       <option key={type.id} value={type.id}>
                         {type.name}
@@ -166,7 +176,7 @@ export default function ProductCreationPage() {
                 </Button>
               </div>
 
-              {createProduct.isError && <ErrorText error={createProduct.error} />}
+              {apiError && <p className="text-xs text-destructive text-center">{apiError}</p>}
             </form>
           </div>
         </Card>

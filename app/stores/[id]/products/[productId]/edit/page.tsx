@@ -34,6 +34,7 @@ export default function ProductEditPage() {
   const router = useRouter();
 
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const product = usePassiveFetcher<ProductDTO>({ url: `products/${params.productId}` });
   const productTypes = usePassiveFetcher<ProductTypeDTO[]>({ url: `product-types` });
@@ -56,7 +57,7 @@ export default function ProductEditPage() {
       reset({
         name: product.data.name,
         description: product.data.description || '',
-        priceInCents: product.data.priceInCents,
+        price: product.data.priceInCents / 100,
         productTypeId: product.data.typeId,
       });
     }
@@ -80,22 +81,29 @@ export default function ProductEditPage() {
   }
 
   const submitForm = async (data: ProductFormValues) => {
+    setApiError(null);
     const dto: ProductUpdateDTO = {
       name: data.name || undefined,
       description: data.description || null,
-      priceInCents: data.priceInCents || undefined,
+      priceInCents: Math.round(data.price * 100) || undefined,
       productTypeId: data.productTypeId || undefined,
     };
 
-    await updateProduct.fetch({
-      formPayload: {
-        product: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
-        image: imageFile ?? undefined,
-      },
-    });
+    try {
+      await updateProduct.fetch({
+        formPayload: {
+          product: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
+          image: imageFile ?? undefined,
+        },
+      });
 
-    if (!updateProduct.isError) {
-      router.push(`/stores/${params.id}/products`);
+      if (!updateProduct.isError) {
+        router.push(`/stores/${params.id}/products`);
+      } else {
+        setApiError('Hubo un error al actualizar el producto. Por favor, intenta de nuevo.');
+      }
+    } catch (err: unknown) {
+      setApiError('Hubo un error al actualizar el producto. Por favor, intenta de nuevo.');
     }
   };
 
@@ -141,23 +149,25 @@ export default function ProductEditPage() {
 
                   <div className="space-y-1">
                     <Label htmlFor="form-price" className="font-bold text-lg text-secondary">
-                      Precio (en céntimos):{' '}
+                      Precio:{' '}
                     </Label>
                     <Input
                       type="number"
                       id="form-price"
                       min="0"
-                      step="1"
-                      aria-invalid={!!errors.priceInCents}
-                      {...register('priceInCents', { valueAsNumber: true })}
+                      max="9999"
+                      step="0.01"
+                      placeholder="0,00"
+                      aria-invalid={!!errors.price}
+                      {...register('price', { valueAsNumber: true })}
                       className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                     />
-                    <FieldError message={errors.priceInCents?.message} />
+                    <FieldError message={errors.price?.message} />
                   </div>
 
                   <div className="space-y-1">
                     <Label htmlFor="form-type" className="font-bold text-lg text-secondary">
-                      Tipo:{' '}
+                      Categoría:{' '}
                     </Label>
                     <select
                       id="form-type"
@@ -165,7 +175,7 @@ export default function ProductEditPage() {
                       {...register('productTypeId')}
                       className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                     >
-                      <option value="">Seleccionar tipo...</option>
+                      <option value="">Seleccionar categoría...</option>
                       {productTypes.data?.map((type) => (
                         <option key={type.id} value={type.id}>
                           {type.name}
@@ -207,7 +217,7 @@ export default function ProductEditPage() {
                   </Button>
                 </div>
 
-                {updateProduct.isError && <ErrorText error={updateProduct.error} />}
+                {apiError && <p className="text-xs text-destructive text-center">{apiError}</p>}
               </form>
             </div>
           </Card>
