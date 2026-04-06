@@ -17,10 +17,12 @@ export interface OutfitCardProps {
 
 export default function OutfitCard(props: OutfitCardProps) {
   return (
-    <Card key={props.outfit.id} className="p-4 m-4 pt-8 shadow-xl">
+    <Card key={props.outfit.id} className="p-4 m-4 pt-8 shadow-xl" data-testid="outfit-card">
       <div className="flex flex-row justify-between ps-4 pe-4">
         <div></div>
-        <h1 className="mb-3 font-bold text-primary text-center text-3xl">{props.outfit.name}</h1>
+        <h1 className="mb-3 font-bold text-primary text-center text-3xl" data-testid="outfit-name">
+          {props.outfit.name}
+        </h1>
         {props.outfit.discountPercentage ? (
           <RiDiscountPercentFill className="text-4xl" />
         ) : (
@@ -58,18 +60,21 @@ export default function OutfitCard(props: OutfitCardProps) {
           <Link
             href={`/stores/${props.outfit.storeId}/outfits/${props.outfit.id}`}
             className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
+            data-testid="outfit-edit-link"
           >
             Editar
           </Link>
           <Link
             href={`/stores/${props.outfit.storeId}/outfits/${props.outfit.id}/products`}
             className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
+            data-testid="outfit-products-link"
           >
             Productos
           </Link>
           <Button
             onClick={props.onDelete}
             className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-primary hover:bg-dark-primary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
+            data-testid="outfit-delete-button"
           >
             Eliminar
           </Button>
