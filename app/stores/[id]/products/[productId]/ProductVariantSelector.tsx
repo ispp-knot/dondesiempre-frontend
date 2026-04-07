@@ -1,4 +1,4 @@
-interface ProductVariantDTO {
+export interface ProductVariantDTO {
   id: string;
   size: { id: string; name: string };
   color: { id: string; name: string; hexCode?: string };

@@ -10,89 +10,34 @@ import { OrderDTO } from '@/lib/types/orders/orderDto';
 import { convertPrice, formatDisplayPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { FetchError } from 'ofetch';
-import ProductVariantSelector from './ProductVariantSelector';
+import ProductVariantSelector, { ProductVariantDTO } from './ProductVariantSelector';
 import AuthModal from '@/components/modals/AuthModal';
 import { useAuth } from '@/lib/auth/AuthContext';
 import OrderSuccessModal from '@/components/modals/OrderSuccessModal';
 import { ConfirmOrderModal } from '@/components/modals/ConfirmOrderModal';
+import ProductVariantForm, { ProductVariantFormData } from './ProductVariantForm';
+import { DeleteVariantsModal, UpdateVariantsModal } from './VariantManagementModals';
 
-interface ProductVariantDTO {
+interface ProductVariantBackendDTO {
   id: string;
-  size: { id: string; name: string };
-  color: { id: string; name: string; hexCode?: string };
+  productId: string;
+  sizeId: string;
+  colorId: string;
   isAvailable: boolean;
 }
 
-const MOCK_VARIANTS: ProductVariantDTO[] = [
-  {
-    id: 'v1',
-    size: { id: 's', name: 'S' },
-    color: { id: 'black', name: 'Negro', hexCode: '#1a1a1a' },
-    isAvailable: true,
-  },
-  {
-    id: 'v2',
-    size: { id: 's', name: 'S' },
-    color: { id: 'white', name: 'Blanco', hexCode: '#f5f5f5' },
-    isAvailable: true,
-  },
-  {
-    id: 'v3',
-    size: { id: 's', name: 'S' },
-    color: { id: 'navy', name: 'Marino', hexCode: '#1e3a5f' },
-    isAvailable: false,
-  },
-  {
-    id: 'v4',
-    size: { id: 'm', name: 'M' },
-    color: { id: 'black', name: 'Negro', hexCode: '#1a1a1a' },
-    isAvailable: true,
-  },
-  {
-    id: 'v5',
-    size: { id: 'm', name: 'M' },
-    color: { id: 'white', name: 'Blanco', hexCode: '#f5f5f5' },
-    isAvailable: true,
-  },
-  {
-    id: 'v6',
-    size: { id: 'm', name: 'M' },
-    color: { id: 'navy', name: 'Marino', hexCode: '#1e3a5f' },
-    isAvailable: true,
-  },
-  {
-    id: 'v7',
-    size: { id: 'l', name: 'L' },
-    color: { id: 'black', name: 'Negro', hexCode: '#1a1a1a' },
-    isAvailable: true,
-  },
-  {
-    id: 'v8',
-    size: { id: 'l', name: 'L' },
-    color: { id: 'white', name: 'Blanco', hexCode: '#f5f5f5' },
-    isAvailable: false,
-  },
-  {
-    id: 'v9',
-    size: { id: 'l', name: 'L' },
-    color: { id: 'red', name: 'Rojo', hexCode: '#c0392b' },
-    isAvailable: true,
-  },
-  {
-    id: 'v10',
-    size: { id: 'xl', name: 'XL' },
-    color: { id: 'black', name: 'Negro', hexCode: '#1a1a1a' },
-    isAvailable: true,
-  },
-  {
-    id: 'v11',
-    size: { id: 'xl', name: 'XL' },
-    color: { id: 'red', name: 'Rojo', hexCode: '#c0392b' },
-    isAvailable: true,
-  },
-];
+interface ProductSize {
+  id: string;
+  name: string;
+}
+
+interface ProductColor {
+  id: string;
+  name: string;
+  hexCode: string;
+}
 
 function ProductPrice({ product }: { product: ProductDTO }) {
   const fmt = (cents: number) => formatDisplayPrice(convertPrice(cents));
@@ -122,9 +67,67 @@ export default function ProductDetailsPage() {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isCreateVariantModalOpen, setIsCreateVariantModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isSubmittingVariant, setIsSubmittingVariant] = useState(false);
+  const [isDeletingVariants, setIsDeletingVariants] = useState(false);
+  const [isUpdatingVariants, setIsUpdatingVariants] = useState(false);
 
   const product = usePassiveFetcher<ProductDTO>({ url: `products/${params.productId}` });
-  const variants = { data: MOCK_VARIANTS }; // TODO: reemplazar con variantes reales
+  const variantsBackend = usePassiveFetcher<ProductVariantBackendDTO[]>({
+    url: `product-variants/product/${params.productId}/available`,
+  });
+  const allVariantsBackend = usePassiveFetcher<ProductVariantBackendDTO[]>({
+    url: `product-variants/product/${params.productId}`,
+  });
+  const sizes = usePassiveFetcher<ProductSize[]>({ url: 'product-sizes' });
+  const colors = usePassiveFetcher<ProductColor[]>({ url: 'product-colors' });
+
+  const variants = useMemo(() => {
+    if (!variantsBackend.data || !sizes.data || !colors.data) {
+      return { ...variantsBackend, data: undefined };
+    }
+
+    const mappedData: ProductVariantDTO[] = variantsBackend.data.map((v) => {
+      const size = sizes.data.find((s) => s.id === v.sizeId);
+      const color = colors.data.find((c) => c.id === v.colorId);
+      return {
+        id: v.id,
+        size: size || { id: v.sizeId, name: 'Unknown' },
+        color: color || { id: v.colorId, name: 'Unknown', hexCode: '#cccccc' },
+        isAvailable: v.isAvailable,
+      };
+    });
+
+    return { ...variantsBackend, data: mappedData };
+  }, [variantsBackend, sizes.data, colors.data]);
+
+  const allVariants = useMemo(() => {
+    if (!allVariantsBackend.data || !sizes.data || !colors.data) {
+      return { ...allVariantsBackend, data: undefined };
+    }
+
+    const mappedData: ProductVariantDTO[] = allVariantsBackend.data.map((v) => {
+      const size = sizes.data.find((s) => s.id === v.sizeId);
+      const color = colors.data.find((c) => c.id === v.colorId);
+      return {
+        id: v.id,
+        size: size || { id: v.sizeId, name: 'Unknown' },
+        color: color || { id: v.colorId, name: 'Unknown', hexCode: '#cccccc' },
+        isAvailable: v.isAvailable,
+      };
+    });
+
+    return { ...allVariantsBackend, data: mappedData };
+  }, [allVariantsBackend, sizes.data, colors.data]);
+
+  const createVariant = useActiveFetcher<ProductVariantDTO>({
+    url: 'product-variants',
+    method: 'POST',
+  });
+  const deleteVariant = useActiveFetcher({ method: 'DELETE' });
+  const updateVariant = useActiveFetcher({ method: 'PUT' });
 
   const createOrder = useActiveFetcher<OrderDTO>({ url: 'orders', method: 'POST' });
 
@@ -132,8 +135,17 @@ export default function ProductDetailsPage() {
   const user = getCurrentUser();
 
   const isClient = Boolean(user?.client?.id);
+  const isStoreOwner = user?.store?.id === params.id;
 
-  if (product.isLoading) return <LoadingText />;
+  if (
+    product.isLoading ||
+    variantsBackend.isLoading ||
+    allVariantsBackend.isLoading ||
+    sizes.isLoading ||
+    colors.isLoading
+  ) {
+    return <LoadingText />;
+  }
   if (product.isError) return <ErrorText error={product.error} />;
   if (!product.data) return <NotFoundText message="El producto que buscas no existe..." />;
 
@@ -143,6 +155,7 @@ export default function ProductDetailsPage() {
     ) ?? null;
 
   const hasVariants = (variants.data?.length ?? 0) > 0;
+  const hasAnyVariants = (allVariants.data?.length ?? 0) > 0;
   const canOrder = !hasVariants || selectedVariant !== null;
 
   const handleSizeChange = (sizeId: string) => {
@@ -172,6 +185,66 @@ export default function ProductDetailsPage() {
       }
     } finally {
       setIsCreatingOrder(false);
+    }
+  };
+
+  const handleCreateVariant = async (data: ProductVariantFormData) => {
+    setIsSubmittingVariant(true);
+    try {
+      await createVariant.fetch({
+        body: {
+          productId: params.productId,
+          sizeId: data.sizeId,
+          colorId: data.colorId,
+          isAvailable: data.isAvailable,
+        },
+      });
+      await variants.refetch();
+      setIsCreateVariantModalOpen(false);
+    } catch (error) {
+      console.error('Error creating variant:', error);
+      alert('Hubo un problema al crear la variante.');
+    } finally {
+      setIsSubmittingVariant(false);
+    }
+  };
+
+  const handleDeleteVariants = async (variantIds: string[]) => {
+    setIsDeletingVariants(true);
+    try {
+      await Promise.all(
+        variantIds.map((id) => deleteVariant.fetch({ url: `product-variants/${id}` }))
+      );
+      await variantsBackend.refetch();
+      await allVariantsBackend.refetch();
+      setIsDeleteModalOpen(false);
+    } catch (error) {
+      console.error('Error deleting variants:', error);
+      alert('Hubo un problema al eliminar las variantes.');
+    } finally {
+      setIsDeletingVariants(false);
+    }
+  };
+
+  const handleUpdateVariants = async (variantIds: string[], isAvailable: boolean) => {
+    setIsUpdatingVariants(true);
+    try {
+      await Promise.all(
+        variantIds.map((id) =>
+          updateVariant.fetch({
+            url: `product-variants/${id}`,
+            body: { isAvailable },
+          })
+        )
+      );
+      await variantsBackend.refetch();
+      await allVariantsBackend.refetch();
+      setIsUpdateModalOpen(false);
+    } catch (error) {
+      console.error('Error updating variants:', error);
+      alert('Hubo un problema al actualizar las variantes.');
+    } finally {
+      setIsUpdatingVariants(false);
     }
   };
 
@@ -230,6 +303,12 @@ export default function ProductDetailsPage() {
               />
             )}
 
+            {!hasVariants && !isStoreOwner && (
+              <p className="text-sm text-muted-foreground">
+                Este producto no tiene variantes disponibles.
+              </p>
+            )}
+
             {isClient && (
               <Button
                 onClick={() => setIsConfirmModalOpen(true)}
@@ -238,6 +317,44 @@ export default function ProductDetailsPage() {
               >
                 Hacer pedido
               </Button>
+            )}
+
+            {isStoreOwner && (
+              <div className="flex flex-col gap-3 mt-4 pt-4 border-t">
+                <h3 className="font-bold text-primary text-lg">Gestión de Variantes</h3>
+                {hasAnyVariants && allVariants.data && (
+                  <div className="mb-2">
+                    <p className="text-sm text-muted-foreground">
+                      {allVariants.data.length} variante(s) total(es) ·{' '}
+                      {allVariants.data.filter((v) => v.isAvailable).length} disponible(s)
+                    </p>
+                  </div>
+                )}
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    onClick={() => setIsCreateVariantModalOpen(true)}
+                    className="bg-secondary hover:bg-dark-secondary text-white font-bold"
+                  >
+                    Crear Variante
+                  </Button>
+                  <Button
+                    onClick={() => setIsDeleteModalOpen(true)}
+                    disabled={!hasAnyVariants}
+                    variant="outline"
+                    className="font-bold border-destructive text-destructive hover:bg-destructive hover:text-white disabled:opacity-50"
+                  >
+                    Eliminar Variantes
+                  </Button>
+                  <Button
+                    onClick={() => setIsUpdateModalOpen(true)}
+                    disabled={!hasAnyVariants}
+                    variant="outline"
+                    className="font-bold disabled:opacity-50"
+                  >
+                    Habilitar/Deshabilitar
+                  </Button>
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -267,6 +384,33 @@ export default function ProductDetailsPage() {
         />
       )}
       {isSuccessModalOpen && <OrderSuccessModal setOpenModal={setIsSuccessModalOpen} />}
+
+      <ProductVariantForm
+        isOpen={isCreateVariantModalOpen}
+        onClose={() => setIsCreateVariantModalOpen(false)}
+        onSubmit={handleCreateVariant}
+        isSubmitting={isSubmittingVariant}
+      />
+
+      {allVariants.data && (
+        <>
+          <DeleteVariantsModal
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            variants={allVariants.data}
+            onDelete={handleDeleteVariants}
+            isDeleting={isDeletingVariants}
+          />
+
+          <UpdateVariantsModal
+            isOpen={isUpdateModalOpen}
+            onClose={() => setIsUpdateModalOpen(false)}
+            variants={allVariants.data}
+            onUpdate={handleUpdateVariants}
+            isUpdating={isUpdatingVariants}
+          />
+        </>
+      )}
     </>
   );
 }
