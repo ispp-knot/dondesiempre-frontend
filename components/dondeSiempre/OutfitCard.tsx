@@ -20,7 +20,7 @@ export default function OutfitCard(props: OutfitCardProps) {
   return (
     <Card className="relative flex flex-col gap-6 p-4 pt-8 shadow-xl overflow-hidden m-4">
       {hasDiscount && (
-        <RiDiscountPercentFill className="absolute top-3 left-3 text-4xl text-primary drop-shadow" />
+        <RiDiscountPercentFill className="absolute top-3 right-3 text-4xl text-primary drop-shadow" />
       )}
       <h2 className="font-bold text-primary text-center text-3xl px-8 truncate">{outfit.name}</h2>
       <div className="flex flex-row w-fit max-w-full self-center overflow-x-auto items-center gap-4 p-4">
