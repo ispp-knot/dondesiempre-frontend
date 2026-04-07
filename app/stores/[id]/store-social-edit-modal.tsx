@@ -143,6 +143,17 @@ export default function StoreSocialNetworksModal({
   const updateSocial = useActiveFetcher<StoreSocialNetworkDTO>({ method: 'PUT' });
   const deleteSocial = useActiveFetcher({ method: 'DELETE' });
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      setStatus(null);
+      setNewName('');
+      setNewLink('');
+      setAddError(null);
+      setUpdateErrors({});
+    }
+    onOpenChange(isOpen);
+  };
+
   const formatLinkForBackend = (name: string, link: string) => {
     const clean = link.trim();
     const nameLower = name.toLowerCase();
@@ -249,7 +260,7 @@ export default function StoreSocialNetworksModal({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[600px] max-w-[95vw] rounded-lg overflow-y-auto max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="text-teal-700">Redes sociales</DialogTitle>
