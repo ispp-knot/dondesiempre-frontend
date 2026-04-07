@@ -9,7 +9,7 @@ import { ProductDTO } from '@/lib/types/products/productsDto';
 import { OrderDTO } from '@/lib/types/orders/orderDto';
 import { convertPrice, formatDisplayPrice } from '@/lib/utils';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FetchError } from 'ofetch';
 import ProductVariantSelector from './ProductVariantSelector';
@@ -125,7 +125,18 @@ export default function ProductDetailsPage() {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
+  const router = useRouter();
+
   const product = usePassiveFetcher<ProductDTO>({ url: `products/${params.productId}` });
+  const deleteProduct = useActiveFetcher({
+    method: 'DELETE',
+    onError: (error) => {
+      if (error.data?.includes('outfits')) {
+        alert('No se puede eliminar un producto con outfits asociados.');
+      }
+    },
+  });
+
   const variants = { data: MOCK_VARIANTS }; // TODO: reemplazar con variantes reales
 
   const createOrder = useActiveFetcher<OrderDTO>({ url: 'orders', method: 'POST' });
@@ -231,7 +242,10 @@ export default function ProductDetailsPage() {
                 </Link>
 
                 <Button
-                  onClick={() => {}}
+                  onClick={async () => {
+                    await deleteProduct.fetch({ url: `products/${product.data?.id}` });
+                    router.push(`/stores/${params.id}/products`);
+                  }}
                   className="flex-1 flex items-center justify-center rounded-lg bg-primary hover:bg-dark-primary text-white font-semibold text-sm md:text-base h-11 transition-colors"
                 >
                   Eliminar
