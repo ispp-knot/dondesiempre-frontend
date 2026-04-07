@@ -3,7 +3,6 @@
 import ErrorText from '@/components/dondeSiempre/ErrorText';
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
-import { StoreGuard } from '@/components/guards/StoreGuard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';

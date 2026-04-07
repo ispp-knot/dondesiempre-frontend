@@ -19,6 +19,8 @@ import OrderSuccessModal from '@/components/modals/OrderSuccessModal';
 import { ConfirmOrderModal } from '@/components/modals/ConfirmOrderModal';
 import ProductVariantForm, { ProductVariantFormData } from './ProductVariantForm';
 import { DeleteVariantsModal, UpdateVariantsModal } from './VariantManagementModals';
+import Link from 'next/link';
+import { buttonLinkClass } from '@/lib/utils/buttonLinkClass';
 
 interface ProductVariantBackendDTO {
   id: string;
@@ -133,6 +135,8 @@ export default function ProductDetailsPage() {
 
   const { getCurrentUser } = useAuth();
   const user = getCurrentUser();
+  const isStore = user?.roles.includes('STORE') ?? false;
+  const isStoreOwner = (user?.store && user?.store.id === product.data?.storeId) ?? false;
 
   const isClient = Boolean(user?.client?.id);
   const isStoreOwner = user?.store?.id === params.id;
@@ -275,7 +279,7 @@ export default function ProductDetailsPage() {
       <div className="flex flex-col items-center relative">
         <MobileTitle />
 
-        <div className="w-full md:max-w-5xl md:flex md:flex-row md:gap-10 md:px-10 md:py-10">
+        <div className="w-full md:max-w-5xl md:flex md:flex-row md:gap-10 md:px-10 md:py-10 md:pt-4">
           <div className="md:w-1/2 shrink-0">
             <Image
               src={product.data.image || '/static/img/product_placeholder.png'}
@@ -289,6 +293,24 @@ export default function ProductDetailsPage() {
 
           <div className="md:w-1/2 flex flex-col gap-5 pt-4 pb-8 px-8 md:px-0 md:py-0 md:justify-center">
             <DesktopTitle />
+
+            {isStore && isStoreOwner && (
+              <div className="flex gap-3">
+                <Link
+                  href={`/stores/${product.data?.storeId}/products/${params.productId}/edit`}
+                  className={`${buttonLinkClass} flex-1 flex items-center justify-center rounded-lg bg-secondary hover:bg-dark-secondary text-white font-semibold text-sm md:text-base h-11 transition-colors`}
+                >
+                  Editar
+                </Link>
+
+                <Button
+                  onClick={() => {}}
+                  className="flex-1 flex items-center justify-center rounded-lg bg-primary hover:bg-dark-primary text-white font-semibold text-sm md:text-base h-11 transition-colors"
+                >
+                  Eliminar
+                </Button>
+              </div>
+            )}
 
             <ProductPrice product={product.data} />
 

@@ -276,8 +276,8 @@ export default function StoreTabs({
       <div className="flex flex-col gap-10 sm:items-center min-h-96">
         {activeTab === 'catalogo' && (
           <>
-            <Products storeId={store.id} />
             <Outfits storeId={store.id} outfits={outfits} />
+            <Products storeId={store.id} />
           </>
         )}
 

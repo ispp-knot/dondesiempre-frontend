@@ -3,25 +3,28 @@ import { ProductDTO } from '@/lib/types/products/productsDto';
 import { Card } from '../ui/card';
 import { convertPrice, formatDisplayPrice } from '@/lib/utils';
 import { RiDiscountPercentFill } from 'react-icons/ri';
-import { Button } from '../ui/button';
 import Image from 'next/image';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export interface ProductCardProps {
   product: ProductDTO;
-  isOwner: boolean;
-  onDelete: () => void;
 }
 
 export default function ProductCard(props: ProductCardProps) {
   const product = props.product;
   const hasDiscount = product.discountedPriceInCents !== product.priceInCents;
   const formatPrice = (cents: number) => formatDisplayPrice(convertPrice(cents));
+  const router = useRouter();
 
   return (
-    <Card key={product.id} className="relative flex flex-col overflow-hidden shadow-xl pt-0">
+    <Card
+      className="relative flex flex-col overflow-hidden shadow-sm pt-0 w-full py-0 cursor-pointer"
+      onClick={() => router.push(`/stores/${product.storeId}/products/${product.id}`)}
+    >
       {hasDiscount && (
-        <RiDiscountPercentFill className="absolute top-3 left-3 z-10 text-4xl text-primary drop-shadow" />
+        <div className="absolute top-2 left-2 z-10 bg-primary rounded-full p-0.5 md:p-1 flex items-center justify-center shadow-md">
+          <RiDiscountPercentFill className="text-3xl text-white" />
+        </div>
       )}
 
       <div className="relative w-full h-52 sm:h-64 md:h-72 shrink-0">
@@ -52,29 +55,6 @@ export default function ProductCard(props: ProductCardProps) {
             <span className="text-xl font-bold text-primary">
               {formatPrice(product.priceInCents)}
             </span>
-          )}
-          {props.isOwner ? (
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              <Link
-                href={`/stores/${product.storeId}/products/${product.id}/edit`}
-                className="flex items-center justify-center rounded-lg bg-secondary hover:bg-dark-secondary text-white font-bold text-sm h-10"
-              >
-                Editar
-              </Link>
-              <Button
-                onClick={props.onDelete}
-                className="flex items-center justify-center rounded-lg bg-primary hover:bg-dark-primary text-white font-bold text-sm h-10"
-              >
-                Eliminar
-              </Button>
-            </div>
-          ) : (
-            <Link
-              href={`/stores/${product.storeId}/products/${product.id}`}
-              className="mt-2 flex items-center justify-center rounded-lg bg-secondary hover:bg-dark-secondary text-white font-bold text-sm h-10"
-            >
-              Ver más
-            </Link>
           )}
         </div>
       </div>
