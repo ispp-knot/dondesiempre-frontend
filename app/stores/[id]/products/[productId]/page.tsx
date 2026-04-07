@@ -139,7 +139,6 @@ export default function ProductDetailsPage() {
   const isStoreOwner = (user?.store && user?.store.id === product.data?.storeId) ?? false;
 
   const isClient = Boolean(user?.client?.id);
-  const isStoreOwner = user?.store?.id === params.id;
 
   if (
     product.isLoading ||
