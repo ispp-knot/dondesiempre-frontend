@@ -17,6 +17,8 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 import { Share2, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { drawShareImage } from '@/lib/utils/canvas';
+import { useActiveFetcher } from '@/lib/api/fetcher';
+import { PremiumLimitDialog } from './premium-limit-dialog';
 
 interface Props {
   item: ProductDTO | OutfitDTO | PromotionDTO;
@@ -63,6 +65,12 @@ export function ShareTo({ item, images, className }: Props) {
   const [sharing, setSharing] = useState(false);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [premiumIsOpen, setPremiumIsOpen] = useState(false);
+  const createShare = useActiveFetcher<void>({
+    url: `promotions/${item.id}/share`,
+    method: 'POST',
+    onError: () => setPremiumIsOpen(true),
+  });
 
   const backgroundImage = getBackgroundImage(item, images);
   const shareUrl = `${getWebUrl()}/stores/${item.storeId}`; // LO SUYO SERÁ CAMBIARLO POR LA URL DEL PRODUCTO, OUTFIT O PROMO
@@ -104,6 +112,12 @@ export function ShareTo({ item, images, className }: Props) {
 
   const handleShare = async () => {
     if (!canvasRef.current) return;
+    try {
+      await createShare.fetch();
+    } catch (_err) {
+      console.log('Free limit reached!');
+      return;
+    }
     setSharing(true);
     try {
       const blob = await new Promise<Blob>((resolve, reject) =>
@@ -132,78 +146,81 @@ export function ShareTo({ item, images, className }: Props) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="secondary" className={className}>
-          Compartir {typeValue == itemType.PROMOTION ? 'promoción' : 'descuento'}
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="flex flex-col w-full max-w-sm mx-auto max-h-[90dvh] p-0 gap-0 overflow-hidden">
-        <div className="flex flex-col gap-3 overflow-y-auto p-4 flex-1">
-          <DialogHeader>
-            <DialogTitle className="text-base">Vista previa de publicación</DialogTitle>
-          </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button variant="secondary" className={className}>
+            Compartir {typeValue == itemType.PROMOTION ? 'promoción' : 'descuento'}
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="flex flex-col w-full max-w-sm mx-auto max-h-[90dvh] p-0 gap-0 overflow-hidden">
+          <div className="flex flex-col gap-3 overflow-y-auto p-4 flex-1">
+            <DialogHeader>
+              <DialogTitle className="text-base">Vista previa de publicación</DialogTitle>
+            </DialogHeader>
 
-          <canvas ref={canvasRef} className="fixed -left-2499.75 -top-2499.75" />
+            <canvas ref={canvasRef} className="fixed -left-2499.75 -top-2499.75" />
 
-          <div
-            className="relative overflow-hidden rounded-xl bg-black mx-auto"
-            style={{ width: 'min(100%, 45dvh)', aspectRatio: '9/16' }}
-          >
-            {loading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-white/50 text-sm z-10">
-                <Loader2 size={32} className="animate-spin text-white/70" />
-                <span>Generando imagen...</span>
-              </div>
-            )}
+            <div
+              className="relative overflow-hidden rounded-xl bg-black mx-auto"
+              style={{ width: 'min(100%, 45dvh)', aspectRatio: '9/16' }}
+            >
+              {loading && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-white/50 text-sm z-10">
+                  <Loader2 size={32} className="animate-spin text-white/70" />
+                  <span>Generando imagen...</span>
+                </div>
+              )}
+              {previewUrl && !loading && (
+                <>
+                  <div
+                    className="absolute inset-0 bg-cover bg-center scale-110"
+                    style={{
+                      backgroundImage: `url(${previewUrl})`,
+                      filter: 'blur(16px) brightness(0.5)',
+                    }}
+                  />
+                  <Image
+                    src={previewUrl}
+                    alt="Vista previa"
+                    className="relative w-full h-full object-contain"
+                    width={1080}
+                    height={1920}
+                  />
+                </>
+              )}
+            </div>
+
+            <p>Enlace a la tienda:</p>
             {previewUrl && !loading && (
-              <>
-                <div
-                  className="absolute inset-0 bg-cover bg-center scale-110"
-                  style={{
-                    backgroundImage: `url(${previewUrl})`,
-                    filter: 'blur(16px) brightness(0.5)',
-                  }}
-                />
-                <Image
-                  src={previewUrl}
-                  alt="Vista previa"
-                  className="relative w-full h-full object-contain"
-                  width={1080}
-                  height={1920}
-                />
-              </>
+              <button
+                onClick={() => navigator.clipboard.writeText(shareUrl)}
+                className="flex items-center gap-2 w-full px-3 py-2 rounded-lg bg-zinc-100 hover:bg-zinc-200 transition-colors text-xs text-zinc-600"
+              >
+                <span className="truncate flex-1 text-left">{shareUrl}</span>
+                <span className="shrink-0 font-medium text-zinc-400">📋 Copiar</span>
+              </button>
             )}
           </div>
 
-          <p>Enlace a la tienda:</p>
-          {previewUrl && !loading && (
-            <button
-              onClick={() => navigator.clipboard.writeText(shareUrl)}
-              className="flex items-center gap-2 w-full px-3 py-2 rounded-lg bg-zinc-100 hover:bg-zinc-200 transition-colors text-xs text-zinc-600"
+          <div className="flex gap-2 p-4 border-t border-zinc-100 shrink-0">
+            <DialogClose asChild>
+              <Button variant="secondary" className="flex-1">
+                Cerrar
+              </Button>
+            </DialogClose>
+            <Button
+              onClick={handleShare}
+              disabled={!previewUrl || sharing || loading}
+              className="flex-1 gap-2 text-white"
             >
-              <span className="truncate flex-1 text-left">{shareUrl}</span>
-              <span className="shrink-0 font-medium text-zinc-400">📋 Copiar</span>
-            </button>
-          )}
-        </div>
-
-        <div className="flex gap-2 p-4 border-t border-zinc-100 shrink-0">
-          <DialogClose asChild>
-            <Button variant="secondary" className="flex-1">
-              Cerrar
+              {sharing ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
+              {sharing ? 'Compartiendo...' : 'Compartir'}
             </Button>
-          </DialogClose>
-          <Button
-            onClick={handleShare}
-            disabled={!previewUrl || sharing || loading}
-            className="flex-1 gap-2 text-white"
-          >
-            {sharing ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
-            {sharing ? 'Compartiendo...' : 'Compartir'}
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+          </div>
+        </DialogContent>
+      </Dialog>
+      <PremiumLimitDialog open={premiumIsOpen} onOpenChange={setPremiumIsOpen} />
+    </>
   );
 }
