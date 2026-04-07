@@ -19,16 +19,18 @@ export interface OutfitCardProps {
 export default function SortableOutfitCard(props: OutfitCardProps) {
   const { ref } = useSortable({ id: props.outfit.id, index: props.index });
   return (
-    <Card key={props.outfit.id} ref={ref} className="p-4 m-4 pt-8 shadow-xl">
-      <div className="flex flex-row justify-between ps-4 pe-4">
-        <MdDragIndicator className="text-4xl" />
-        <h1 className="mb-3 font-bold text-primary text-center text-3xl">{props.outfit.name}</h1>
-        {props.outfit.discountPercentage ? (
-          <RiDiscountPercentFill className="text-4xl" />
-        ) : (
-          <div></div>
-        )}
-      </div>
+    <Card
+      key={props.outfit.id}
+      ref={ref}
+      className="relative p-4 m-4 pt-8 shadow-xl overflow-visible"
+    >
+      <MdDragIndicator className="absolute top-3 left-3 text-4xl" />
+      {props.outfit.discountPercentage && (
+        <RiDiscountPercentFill className="absolute top-3 right-3 text-4xl text-primary drop-shadow" />
+      )}
+      <h1 className="font-bold text-primary text-center text-3xl px-8 truncate">
+        {props.outfit.name}
+      </h1>
       <div className="flex flex-row w-fit max-w-11/12 self-center overflow-x-auto items-center gap-4 p-4">
         {props.outfit.products.map((p) => (
           <div key={p.id} className="rounded-2xl overflow-hidden shadow-md shrink-0">
