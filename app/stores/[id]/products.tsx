@@ -1,10 +1,10 @@
 'use client';
-import HorizontalScroll from '@/components/dondeSiempre/HorizontalScroll';
+import ProductCard from '@/components/dondeSiempre/ProductCard';
 import { usePassiveFetcher } from '@/lib/api/fetcher';
+import { useAuth } from '@/lib/auth/AuthContext';
 import { ProductDTO } from '@/lib/types/products/productsDto';
-import { Percent } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
+import { IoMdAddCircleOutline } from 'react-icons/io';
 
 type Props = {
   storeId?: string;
@@ -14,72 +14,32 @@ type Props = {
 export default function Products({ storeId = undefined }: Readonly<Props>) {
   const products = usePassiveFetcher<ProductDTO[]>({ url: `stores/${storeId}/products` });
 
+  const { getCurrentUser } = useAuth();
+
+  const user = getCurrentUser();
+  const isStore = user?.roles.includes('STORE') ?? false;
+  const isStoreOwner = (user?.store && user?.store.id === storeId) ?? false;
+
   return (
-    <HorizontalScroll title="Nuestros productos" viewMoreHref={`/stores/${storeId}/products`}>
-      {products.data?.map((product) => {
-        const hasDiscount = product.discountedPriceInCents !== product.priceInCents;
-        const discountPct = hasDiscount
-          ? (
-              ((product.priceInCents - product.discountedPriceInCents) / product.priceInCents) *
-              100
-            ).toFixed(0)
-          : null;
-        const formatPrice = (cents: number) =>
-          (cents / 100).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
-
-        return (
+    <div className="flex flex-col px-5 sm:w-10/12">
+      <div className="flex flex-row items-center justify-between w-full mb-4">
+        <h1 className="text-primary text-xl md:text-2xl font-bold">Nuestros productos</h1>
+        {isStore && isStoreOwner && (
           <Link
-            href={`/stores/${storeId}/products/${product.id}`}
-            key={product.id}
-            className="relative flex flex-col shrink-0 border-2 border-gray-200 w-[42%] md:w-[22%] rounded-lg shadow-sm overflow-hidden"
+            href={`/stores/${storeId}/create-product/`}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary hover:bg-dark-secondary text-white font-bold text-sm whitespace-nowrap"
           >
-            <div className="w-full h-52 sm:h-60 md:h-72 relative">
-              <Image
-                src={product.image || '/static/img/product_placeholder.png'}
-                alt={product.name}
-                fill
-                className="object-contain"
-              />
-            </div>
-            {hasDiscount && (
-              <div className="absolute top-2 left-2 bg-primary rounded-full p-0.5 md:p-1 flex items-center justify-center shadow-md">
-                <Percent className="w-4 h-4 md:w-5 md:h-5 text-white stroke-3" />
-              </div>
-            )}
-
-            <div className="flex flex-col w-full self-end bg-white px-3 py-2.5 gap-1">
-              <span className="truncate text-sm md:text-base font-medium">{product.name}</span>
-
-              {product.description && (
-                <span className="text-xs text-gray-500 line-clamp-2 leading-snug">
-                  {product.description}
-                </span>
-              )}
-
-              <div className="flex flex-row items-center justify-between gap-2 mt-1">
-                <div className="flex items-baseline gap-1.5">
-                  {hasDiscount && (
-                    <span className="text-xs text-gray-400 line-through">
-                      {formatPrice(product.priceInCents)}
-                    </span>
-                  )}
-                  <span
-                    className={`text-sm font-semibold ${hasDiscount ? 'text-primary' : 'text-gray-800'}`}
-                  >
-                    {formatPrice(product.discountedPriceInCents)}
-                  </span>
-                </div>
-
-                {hasDiscount && (
-                  <span className="text-primary font-bold bg-primary/10 px-1.5 py-0.5 rounded-md text-xs shrink-0">
-                    -{discountPct}%
-                  </span>
-                )}
-              </div>
-            </div>
+            <IoMdAddCircleOutline className="text-lg shrink-0" />
+            <span className="hidden sm:inline">Crear producto</span>
+            <span className="sm:hidden">Crear</span>
           </Link>
-        );
-      })}
-    </HorizontalScroll>
+        )}
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-4">
+        {products.data?.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+    </div>
   );
 }
