@@ -244,7 +244,7 @@ export default function ProductDetailsPage() {
                 <Button
                   onClick={async () => {
                     await deleteProduct.fetch({ url: `products/${product.data?.id}` });
-                    router.push(`/stores/${params.id}/products`);
+                    router.push(`/stores/${params.id}`);
                   }}
                   className="flex-1 flex items-center justify-center rounded-lg bg-primary hover:bg-dark-primary text-white font-semibold text-sm md:text-base h-11 transition-colors"
                 >

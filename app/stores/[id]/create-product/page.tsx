@@ -75,7 +75,7 @@ export default function ProductCreationPage() {
       });
 
       if (!createProduct.isError) {
-        router.push(`/stores/${params.id}/products`);
+        router.push(`/stores/${params.id}`);
       } else {
         setApiError('Hubo un error al crear el producto. Por favor, intenta de nuevo.');
       }
