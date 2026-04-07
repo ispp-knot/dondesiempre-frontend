@@ -15,6 +15,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
@@ -84,6 +85,7 @@ export default function ProductCreationPage() {
   };
 
   return (
+    <StoreOwnerGuard storeId={params.id}>
     <div className="flex flex-col items-center">
       <div className="w-full md:w-8/12">
         <Card className="p-4 pt-8 m-4 mb-8 shadow-xl">
@@ -138,7 +140,7 @@ export default function ProductCreationPage() {
                     {...register('price', { valueAsNumber: true })}
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                   />
-                  <span className="text-base font-semibold text-secondary">%</span>
+                  <span className="text-base font-semibold text-secondary">€</span>
                   </div>
                   <FieldError message={errors.price?.message} />
                 </div>
@@ -185,5 +187,6 @@ export default function ProductCreationPage() {
         </Card>
       </div>
     </div>
+    </StoreOwnerGuard>
   );
 }
