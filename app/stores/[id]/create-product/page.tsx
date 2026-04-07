@@ -86,107 +86,107 @@ export default function ProductCreationPage() {
 
   return (
     <StoreOwnerGuard storeId={params.id}>
-    <div className="flex flex-col items-center">
-      <div className="w-full md:w-8/12">
-        <Card className="p-4 pt-8 m-4 mb-8 shadow-xl">
-          <h1 className="mb-3 font-bold text-primary text-center text-3xl">Crear producto</h1>
-          <div className="w-full flex flex-col items-center">
-            <form onSubmit={handleSubmit(submitForm)} className="w-10/12" noValidate>
-              <div className="flex flex-col gap-4">
-                <div className="space-y-1">
-                  <Label htmlFor="form-name" className="font-bold text-lg text-secondary">
-                    Nombre:{' '}
-                  </Label>
-                  <Input
-                    type="text"
-                    id="form-name"
-                    minLength={1}
-                    maxLength={255}
-                    aria-invalid={!!errors.name}
-                    {...register('name')}
-                    className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
-                  />
-                  <FieldError message={errors.name?.message} />
-                </div>
-
-                <div className="space-y-1">
-                  <Label htmlFor="form-description" className="font-bold text-lg text-secondary">
-                    Descripción:{' '}
-                  </Label>
-                  <textarea
-                    minLength={0}
-                    maxLength={5000}
-                    id="form-description"
-                    {...register('description')}
-                    className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline resize-vertical"
-                    rows={4}
-                  />
-                  <FieldError message={errors.description?.message} />
-                </div>
-
-                <div className="space-y-1">
-                  <Label htmlFor="form-price" className="font-bold text-lg text-secondary">
-                    Precio:{' '}
-                  </Label>
-                  <div className="flex items-center gap-2">
-                  <Input
-                    type="number"
-                    id="form-price"
-                    min="0"
-                    max="9999"
-                    step="0.01"
-                    placeholder="0,00"
-                    aria-invalid={!!errors.price}
-                    {...register('price', { valueAsNumber: true })}
-                    className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
-                  />
-                  <span className="text-base font-semibold text-secondary">€</span>
+      <div className="flex flex-col items-center">
+        <div className="w-full md:w-8/12">
+          <Card className="p-4 pt-8 m-4 mb-8 shadow-xl">
+            <h1 className="mb-3 font-bold text-primary text-center text-3xl">Crear producto</h1>
+            <div className="w-full flex flex-col items-center">
+              <form onSubmit={handleSubmit(submitForm)} className="w-10/12" noValidate>
+                <div className="flex flex-col gap-4">
+                  <div className="space-y-1">
+                    <Label htmlFor="form-name" className="font-bold text-lg text-secondary">
+                      Nombre:{' '}
+                    </Label>
+                    <Input
+                      type="text"
+                      id="form-name"
+                      minLength={1}
+                      maxLength={255}
+                      aria-invalid={!!errors.name}
+                      {...register('name')}
+                      className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
+                    />
+                    <FieldError message={errors.name?.message} />
                   </div>
-                  <FieldError message={errors.price?.message} />
+
+                  <div className="space-y-1">
+                    <Label htmlFor="form-description" className="font-bold text-lg text-secondary">
+                      Descripción:{' '}
+                    </Label>
+                    <textarea
+                      minLength={0}
+                      maxLength={5000}
+                      id="form-description"
+                      {...register('description')}
+                      className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline resize-vertical"
+                      rows={4}
+                    />
+                    <FieldError message={errors.description?.message} />
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label htmlFor="form-price" className="font-bold text-lg text-secondary">
+                      Precio:{' '}
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="number"
+                        id="form-price"
+                        min="0"
+                        max="9999"
+                        step="0.01"
+                        placeholder="0,00"
+                        aria-invalid={!!errors.price}
+                        {...register('price', { valueAsNumber: true })}
+                        className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
+                      />
+                      <span className="text-base font-semibold text-secondary">€</span>
+                    </div>
+                    <FieldError message={errors.price?.message} />
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label htmlFor="form-type" className="font-bold text-lg text-secondary">
+                      Categoría:{' '}
+                    </Label>
+                    <select
+                      id="form-type"
+                      aria-invalid={!!errors.productTypeId}
+                      {...register('productTypeId')}
+                      className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
+                    >
+                      <option value="">Seleccionar categoría...</option>
+                      {productTypes.data?.map((type) => (
+                        <option key={type.id} value={type.id}>
+                          {type.name}
+                        </option>
+                      ))}
+                    </select>
+                    <FieldError message={errors.productTypeId?.message} />
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label className="font-bold text-lg text-secondary">Imagen:</Label>
+                    <ImageUpload onChange={setImageFile} />
+                  </div>
                 </div>
 
-                <div className="space-y-1">
-                  <Label htmlFor="form-type" className="font-bold text-lg text-secondary">
-                    Categoría:{' '}
-                  </Label>
-                  <select
-                    id="form-type"
-                    aria-invalid={!!errors.productTypeId}
-                    {...register('productTypeId')}
-                    className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
+                <div className="flex flex-row justify-center mb-8">
+                  <Button
+                    type="submit"
+                    className="self-center bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md h-12 md:w-1/3 mt-8"
+                    disabled={isSubmitting}
                   >
-                    <option value="">Seleccionar categoría...</option>
-                    {productTypes.data?.map((type) => (
-                      <option key={type.id} value={type.id}>
-                        {type.name}
-                      </option>
-                    ))}
-                  </select>
-                  <FieldError message={errors.productTypeId?.message} />
+                    {isSubmitting ? 'Creando...' : 'Crear producto'}
+                  </Button>
                 </div>
 
-                <div className="space-y-1">
-                  <Label className="font-bold text-lg text-secondary">Imagen:</Label>
-                  <ImageUpload onChange={setImageFile} />
-                </div>
-              </div>
-
-              <div className="flex flex-row justify-center mb-8">
-                <Button
-                  type="submit"
-                  className="self-center bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md h-12 md:w-1/3 mt-8"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Creando...' : 'Crear producto'}
-                </Button>
-              </div>
-
-              {apiError && <p className="text-xs text-destructive text-center">{apiError}</p>}
-            </form>
-          </div>
-        </Card>
+                {apiError && <p className="text-xs text-destructive text-center">{apiError}</p>}
+              </form>
+            </div>
+          </Card>
+        </div>
       </div>
-    </div>
     </StoreOwnerGuard>
   );
 }
