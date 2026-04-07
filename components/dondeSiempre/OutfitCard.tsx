@@ -1,6 +1,6 @@
 'use client';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
-import { convertPrice, discountPrice, formatPrice } from '@/lib/utils';
+import { convertPrice, discountPrice, formatDisplayPrice } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { RiDiscountPercentFill } from 'react-icons/ri';
@@ -30,30 +30,30 @@ export default function OutfitCard(props: OutfitCardProps) {
 
       <div className="flex flex-row flex-nowrap justify-center gap-3 px-2">
         {outfit.products.map((p) => (
-          <Image
-            key={p.id}
-            src={p.image || '/static/img/product_placeholder.png'}
-            alt={p.name}
-            width={512}
-            height={512}
-            className="w-24 h-24 md:w-55 md:h-55 object-contain shrink-0 rounded-lg drop-shadow-lg"
-          />
+          <div key={p.id} className="rounded-2xl overflow-hidden shadow-md shrink-0">
+            <Image
+              src={p.image || '/static/img/product_placeholder.png'}
+              alt={p.name}
+              width={512}
+              height={512}
+              className="object-contain h-24 md:h-55 w-auto"
+            />
+          </div>
         ))}
       </div>
-
       <div className="flex flex-row items-baseline justify-center gap-3">
         {hasDiscount ? (
           <>
             <span className="text-2xl md:text-3xl text-muted-foreground line-through">
-              {formatPrice(convertPrice(outfit.priceInCents))}
+              {formatDisplayPrice(convertPrice(outfit.priceInCents))}
             </span>
             <span className="text-2xl md:text-3xl font-bold text-primary">
-              {formatPrice(discountPrice(outfit.priceInCents, outfit.discountPercentage!))}
+              {formatDisplayPrice(discountPrice(outfit.priceInCents, outfit.discountPercentage!))}
             </span>
           </>
         ) : (
           <span className="text-2xl md:text-3xl font-bold text-primary">
-            {formatPrice(convertPrice(outfit.priceInCents))}
+            {formatDisplayPrice(convertPrice(outfit.priceInCents))}
           </span>
         )}
       </div>
@@ -62,13 +62,13 @@ export default function OutfitCard(props: OutfitCardProps) {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <Link
             href={`/stores/${outfit.storeId}/outfits/${outfit.id}`}
-            className={`${buttonLinkClass} bg-secondary hover:bg-dark-secondary`}
+            className={`${buttonLinkClass} bg-secondary hover:bg-dark-secondary text-white`}
           >
             Editar
           </Link>
           <Link
             href={`/stores/${outfit.storeId}/outfits/${outfit.id}/products`}
-            className={`${buttonLinkClass} bg-secondary hover:bg-dark-secondary`}
+            className={`${buttonLinkClass} bg-secondary hover:bg-dark-secondary text-white`}
           >
             Productos
           </Link>

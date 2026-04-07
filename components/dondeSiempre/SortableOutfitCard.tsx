@@ -31,14 +31,15 @@ export default function SortableOutfitCard(props: OutfitCardProps) {
       </div>
       <div className="flex flex-row w-fit max-w-11/12 self-center overflow-x-auto items-center gap-4 p-4">
         {props.outfit.products.map((p) => (
-          <Image
-            key={p.id}
-            src={p.image || '/static/img/product_placeholder.png'}
-            alt={p.name}
-            width={512}
-            height={512}
-            className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg"
-          />
+          <div key={p.id} className="rounded-2xl overflow-hidden shadow-md shrink-0">
+            <Image
+              src={p.image || '/static/img/product_placeholder.png'}
+              alt={p.name}
+              width={512}
+              height={512}
+              className="object-contain h-30 md:h-50 w-auto"
+            />
+          </div>
         ))}
       </div>
       {props.outfit.discountPercentage ? (
