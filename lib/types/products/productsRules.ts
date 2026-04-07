@@ -26,9 +26,10 @@ const baseProductFormSchema = z.object({
     })
     .nullable(),
   price: z
-    .number({ error: 'El precio es obligatorio.' })
+    .number({ error: 'El precio debe aparecer y ser un número.' })
     .min(MIN_PRODUCT_PRICE, 'El precio no puede ser negativo.')
-    .max(MAX_PRODUCT_PRICE, `El precio no puede ser mayor a ${MAX_PRODUCT_PRICE}.`),
+    .max(MAX_PRODUCT_PRICE, `El precio no puede ser mayor a ${MAX_PRODUCT_PRICE}€.`)
+    .multipleOf(0.01, 'El precio debe tener como máximo dos decimales.'),
   productTypeId: z.string().min(1, 'La categoría es obligatoria.'),
 });
 
