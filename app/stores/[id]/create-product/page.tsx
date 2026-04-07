@@ -126,6 +126,7 @@ export default function ProductCreationPage() {
                   <Label htmlFor="form-price" className="font-bold text-lg text-secondary">
                     Precio:{' '}
                   </Label>
+                  <div className="flex items-center gap-2">
                   <Input
                     type="number"
                     id="form-price"
@@ -137,6 +138,8 @@ export default function ProductCreationPage() {
                     {...register('price', { valueAsNumber: true })}
                     className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
                   />
+                  <span className="text-base font-semibold text-secondary">%</span>
+                  </div>
                   <FieldError message={errors.price?.message} />
                 </div>
 
