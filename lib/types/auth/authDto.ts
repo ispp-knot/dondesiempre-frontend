@@ -14,7 +14,6 @@ export interface RegisterStoreDTO {
   longitude: number;
   address: string;
   openingHours: string;
-  acceptsShipping: boolean;
   phone: string | null;
   aboutUs: string | null;
   primaryColor: string;
