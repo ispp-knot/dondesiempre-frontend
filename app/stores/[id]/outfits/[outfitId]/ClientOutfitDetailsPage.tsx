@@ -55,7 +55,10 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
     });
 
     try {
-      await createOrder.fetch({ body: payload });
+      await createOrder.fetch({
+        url: `orders?outfitId=${props.outfit.id}`,
+        body: payload,
+      });
       setIsConfirmModalOpen(false);
       setIsSuccessModalOpen(true);
     } catch (error: unknown) {
