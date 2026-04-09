@@ -2,6 +2,7 @@
 
 import { FaRegHeart } from 'react-icons/fa';
 import { LuPackage } from 'react-icons/lu';
+import { LuCrown } from 'react-icons/lu';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -50,6 +51,9 @@ export default function Navbar() {
             ) : (
               <></>
             )}
+            <Link href="/pricing" aria-label="Planes y precios">
+              <LuCrown className="cursor-pointer" strokeWidth={1.5} />
+            </Link>
             <UserNavButton isActive={isUserActive} />
           </div>
         </div>
