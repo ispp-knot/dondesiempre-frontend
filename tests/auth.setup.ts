@@ -83,7 +83,6 @@ test.describe.serial('store auth setup', () => {
     await page.getByRole('textbox', { name: 'Teléfono' }).fill('123456789');
     await page.getByRole('textbox', { name: 'Sobre nosotros' }).click();
     await page.getByRole('textbox', { name: 'Sobre nosotros' }).fill('Somos una tienda de testing');
-    await page.getByRole('switch', { name: 'Acepta envíos' }).click();
     await page.getByRole('textbox', { name: 'Color primario' }).click();
     await page.getByRole('textbox', { name: 'Color primario' }).fill('#532508');
     await page.getByRole('textbox', { name: 'Color secundario' }).click();
