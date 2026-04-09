@@ -143,7 +143,7 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
                 {props.outfit.tags.map((t, i) => (
                   <div key={i} className="p-2 rounded-lg bg-secondary flex flex-row gap-1 shrink-0">
                     <FaTag className="text-white text-xl"></FaTag>
-                    <p className="font-bold text-white text-center text-sm">{t}</p>
+                    <p className="font-bold text-white text-center text-sm">{t.name}</p>
                   </div>
                 ))}
               </div>
