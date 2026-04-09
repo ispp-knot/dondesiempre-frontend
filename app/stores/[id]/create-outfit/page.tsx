@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
-import { OutfitCreationDTO, OutfitDTO } from '@/lib/types/outfits/outfitsDto';
+import { OutfitCreationDTO, OutfitDTO, OutfitTagDTO } from '@/lib/types/outfits/outfitsDto';
 import { productDTOToOufitCreationProductDTO } from '@/lib/types/outfits/outfitsHelper';
 import {
   createOutfitFormSchema,
@@ -156,7 +156,6 @@ export default function OutfitCreationPage() {
   const discountedOutfitPrice = hasOutfitDiscount
     ? calculatePriceWithPercentageDiscount(totalPriceInCents, discountPercentage)
     : convertPrice(totalPriceInCents);
-  const discountedOutfitPriceInCents = Math.round(discountedOutfitPrice * 100);
 
   if (products.isLoading || store.isLoading) {
     return <LoadingText />;
@@ -195,9 +194,10 @@ export default function OutfitCreationPage() {
       name: data.name,
       description: data.description,
       discountPercentage: data.discountPercentage > 0 ? data.discountPercentage : null,
-      discountedPriceInCents: hasOutfitDiscount ? discountedOutfitPriceInCents : totalPriceInCents,
       storefrontId: store.data.storefront.id,
-      tags: data.tags,
+      tags: data.tags.map((tag) => {
+        return { name: tag } as OutfitTagDTO;
+      }),
       products: outfitProducts.map((product, index) =>
         productDTOToOufitCreationProductDTO(product, index)
       ),
@@ -221,7 +221,6 @@ export default function OutfitCreationPage() {
                   name: data.name,
                   description: data.description,
                   discountPercentage: data.discountPercentage,
-                  discountedPriceInCents: discountedOutfitPriceInCents,
                 }),
               ],
               { type: 'application/json' }
