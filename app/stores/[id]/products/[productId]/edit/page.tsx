@@ -98,7 +98,7 @@ export default function ProductEditPage() {
       });
 
       if (!updateProduct.isError) {
-        router.push(`/stores/${params.id}/products`);
+        router.push(`/stores/${params.id}/products/${params.productId}`);
       } else {
         setApiError('Hubo un error al actualizar el producto. Por favor, intenta de nuevo.');
       }
@@ -213,7 +213,7 @@ export default function ProductEditPage() {
                   </Button>
                   <Button
                     type="button"
-                    onClick={() => router.push(`/stores/${params.id}/products`)}
+                    onClick={() => router.push(`/stores/${params.id}/products/${params.productId}`)}
                     className="self-center bg-gray-400 hover:bg-gray-500 hover:cursor-pointer text-white font-bold text-md h-12 md:w-1/3 mt-8"
                   >
                     Cancelar

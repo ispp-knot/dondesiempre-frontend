@@ -9,7 +9,7 @@ import { ProductDTO } from '@/lib/types/products/productsDto';
 import { OrderDTO } from '@/lib/types/orders/orderDto';
 import { convertPrice, formatDisplayPrice } from '@/lib/utils';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useState, useMemo } from 'react';
 import { FetchError } from 'ofetch';
 import ProductVariantSelector, { ProductVariantDTO } from './ProductVariantSelector';
@@ -76,7 +76,10 @@ export default function ProductDetailsPage() {
   const [isDeletingVariants, setIsDeletingVariants] = useState(false);
   const [isUpdatingVariants, setIsUpdatingVariants] = useState(false);
 
+  const router = useRouter();
+
   const product = usePassiveFetcher<ProductDTO>({ url: `products/${params.productId}` });
+
   const variantsBackend = usePassiveFetcher<ProductVariantBackendDTO[]>({
     url: `product-variants/product/${params.productId}/available`,
   });
@@ -130,6 +133,15 @@ export default function ProductDetailsPage() {
   });
   const deleteVariant = useActiveFetcher({ method: 'DELETE' });
   const updateVariant = useActiveFetcher({ method: 'PUT' });
+
+  const deleteProduct = useActiveFetcher({
+    method: 'DELETE',
+    onError: (error) => {
+      if (error.data?.includes('outfits')) {
+        alert('No se puede eliminar un producto con outfits asociados.');
+      }
+    },
+  });
 
   const createOrder = useActiveFetcher<OrderDTO>({ url: 'orders', method: 'POST' });
 
@@ -303,7 +315,10 @@ export default function ProductDetailsPage() {
                 </Link>
 
                 <Button
-                  onClick={() => {}}
+                  onClick={async () => {
+                    await deleteProduct.fetch({ url: `products/${product.data?.id}` });
+                    router.push(`/stores/${params.id}`);
+                  }}
                   className="flex-1 flex items-center justify-center rounded-lg bg-primary hover:bg-dark-primary text-white font-semibold text-sm md:text-base h-11 transition-colors"
                 >
                   Eliminar

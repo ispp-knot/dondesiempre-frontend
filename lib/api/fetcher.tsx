@@ -3,6 +3,7 @@ import { getBackendUrl } from '../config';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, Dispatch, SetStateAction } from 'react';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { FetchError } from 'ofetch';
 
 function buildQueryKey(url: string, ...extra: unknown[]): unknown[] {
   return [...url.split('/'), ...extra];
@@ -100,7 +101,7 @@ type UseActiveFetcherOptions<T> = {
   url?: string;
   method?: MutationMethod;
   onSuccess?: (data: T) => void;
-  onError?: (error: Error) => void;
+  onError?: (error: FetchError) => void;
   onSettled?: (data: T | undefined, error: Error | null) => void;
 };
 
