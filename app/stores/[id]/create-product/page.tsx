@@ -79,7 +79,7 @@ export default function ProductCreationPage() {
       } else {
         setApiError('Hubo un error al crear el producto. Por favor, intenta de nuevo.');
       }
-    } catch (err: unknown) {
+    } catch (_err: unknown) {
       setApiError('Hubo un error al crear el producto. Por favor, intenta de nuevo.');
     }
   };

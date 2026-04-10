@@ -3,7 +3,6 @@
 import ErrorText from '@/components/dondeSiempre/ErrorText';
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
-import { StoreGuard } from '@/components/guards/StoreGuard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -103,7 +102,7 @@ export default function ProductEditPage() {
       } else {
         setApiError('Hubo un error al actualizar el producto. Por favor, intenta de nuevo.');
       }
-    } catch (err: unknown) {
+    } catch (_err: unknown) {
       setApiError('Hubo un error al actualizar el producto. Por favor, intenta de nuevo.');
     }
   };
