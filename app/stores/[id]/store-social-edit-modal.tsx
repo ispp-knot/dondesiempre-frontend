@@ -24,6 +24,8 @@ const socialNetworkSchema = z
 
     const isPhone = PHONE_NETWORKS.includes(val.name);
     const cleanLink = val.link.startsWith('tel:') ? val.link.replace('tel:', '') : val.link;
+    const nameLower = val.name.toLowerCase();
+
     const phoneRegex = /^\+?[1-9]\d{8,14}$/;
     const urlRegex =
       /^(https?:\/\/)?(([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}|localhost|(?:\d{1,3}\.){3}\d{1,3})(:\d+)?(\/[^\s]*)?$/;
@@ -32,17 +34,65 @@ const socialNetworkSchema = z
       const digits = cleanLink.replace(/\s+/g, '');
       if (!phoneRegex.test(digits)) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           path: ['link'],
           message: 'Debe ser un número de teléfono válido, 9-15 dígitos (opcional prefijo "+").',
         });
       }
     } else {
-      if (!urlRegex.test(cleanLink)) {
+      const digits = cleanLink.replace(/\s+/g, '');
+      const isWhatsappPhone = nameLower === 'whatsapp' && phoneRegex.test(digits);
+
+      if (!isWhatsappPhone && !urlRegex.test(cleanLink)) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           path: ['link'],
           message: 'Debe ser un enlace web válido (por ejemplo: https://www.ejemplo.com).',
+        });
+        return;
+      }
+
+      const linkLower = cleanLink.toLowerCase();
+
+      const instagramRegex = /^(https?:\/\/)?(www\.)?(instagram\.com|ig\.me)(\/.*)?$/;
+      const tiktokRegex = /^(https?:\/\/)?(www\.)?tiktok\.com(\/.*)?$/;
+      const facebookRegex = /^(https?:\/\/)?(www\.)?facebook\.com(\/.*)?$/;
+      const xTwitterRegex = /^(https?:\/\/)?(www\.)?(x\.com|twitter\.com)(\/.*)?$/;
+      const whatsappUrlRegex = /^(https?:\/\/)?(www\.)?(wa\.me|whatsapp\.com)(\/.*)?$/;
+
+      if (nameLower === 'instagram' && !instagramRegex.test(linkLower)) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['link'],
+          message: 'El enlace debe corresponder a una URL de Instagram (instagram.com o ig.me).',
+        });
+      } else if (nameLower === 'tiktok' && !tiktokRegex.test(linkLower)) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['link'],
+          message: 'El enlace debe corresponder a una URL válida de TikTok.',
+        });
+      } else if (nameLower === 'facebook' && !facebookRegex.test(linkLower)) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['link'],
+          message: 'El enlace debe corresponder a una URL válida de Facebook.',
+        });
+      } else if ((nameLower === 'x' || nameLower === 'twitter') && !xTwitterRegex.test(linkLower)) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['link'],
+          message: 'El enlace debe corresponder a una URL válida de X (Twitter).',
+        });
+      } else if (
+        nameLower === 'whatsapp' &&
+        !isWhatsappPhone &&
+        !whatsappUrlRegex.test(linkLower)
+      ) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['link'],
+          message: 'Debe ser un enlace de WhatsApp (wa.me) o un número de teléfono válido.',
         });
       }
     }
@@ -94,9 +144,32 @@ export default function StoreSocialNetworksModal({
   const updateSocial = useActiveFetcher<StoreSocialNetworkDTO>({ method: 'PUT' });
   const deleteSocial = useActiveFetcher({ method: 'DELETE' });
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      setStatus(null);
+      setNewName('');
+      setNewLink('');
+      setAddError(null);
+      setUpdateErrors({});
+
+      setLocalNetworks(
+        socialNetworks.map((s) => ({
+          ...s,
+          link: s.link?.startsWith('tel:') ? s.link.replace('tel:', '') : s.link,
+        }))
+      );
+    }
+    onOpenChange(isOpen);
+  };
+
   const formatLinkForBackend = (name: string, link: string) => {
     const clean = link.trim();
-    if (PHONE_NETWORKS.includes(name)) {
+    const nameLower = name.toLowerCase();
+    const phoneRegex = /^\+?[1-9]\d{8,14}$/;
+
+    const isWhatsappPhone = nameLower === 'whatsapp' && phoneRegex.test(clean.replace(/\s+/g, ''));
+
+    if (PHONE_NETWORKS.includes(name) || isWhatsappPhone) {
       const rawDigits = clean.startsWith('tel:') ? clean.replace('tel:', '') : clean;
       return `tel:${rawDigits.replace(/\s+/g, '')}`;
     }
@@ -195,7 +268,7 @@ export default function StoreSocialNetworksModal({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[600px] max-w-[95vw] rounded-lg overflow-y-auto max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="text-teal-700">Redes sociales</DialogTitle>
