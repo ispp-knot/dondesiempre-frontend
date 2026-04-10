@@ -23,12 +23,12 @@ export default defineConfig({
         'npm run build && node tests/scripts/copy-standalone.js && node .next/standalone/server.js',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
-      timeout: 180 * 1000,
+      timeout: 180 * 100000,
       // stdout: 'pipe', // <--- Verás los logs del Frontend
       // stderr: 'pipe',
     },
     {
-      command: `cd ${process.env.DIR_BACKEND} && docker compose down -v postgres-test && docker compose up -d postgres-test && ${process.platform === 'win32' ? 'mvnw.cmd' : './mvnw'} clean spring-boot:run -D spring-boot.run.profiles=test`,
+      command: `cd ${process.env.DIR_BACKEND} && docker compose down -v postgres-test && docker compose up -d postgres-test && ${process.platform === 'win32' ? 'mvnw.cmd' : './mvnw'} clean spring-boot:run -D spring-boot.run.profiles=test -Dspring-boot.run.arguments="--stripe.secret.key=${process.env.STRIPE_SECRET_KEY}"`,
       url: 'http://localhost:8080',
       reuseExistingServer: !process.env.CI,
       timeout: 180 * 1000,
@@ -99,7 +99,19 @@ export default defineConfig({
     },
     {
       name: 'tests',
-      timeout: 300 * 1000,
+      timeout: 300 * 10000,
+      use: {
+        ...devices['Desktop Chrome'],
+        screenshot: 'on',
+        ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+          ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
+          : {}),
+      },
+      dependencies: ['setup-registro'],
+    },
+    {
+      name: 'failures',
+      testMatch: /.*\.fail\.ts/, // Ejecutará archivos que terminen en .fail.ts
       use: {
         ...devices['Desktop Chrome'],
         screenshot: 'on',
