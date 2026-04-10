@@ -54,7 +54,7 @@ const socialNetworkSchema = z
 
       const linkLower = cleanLink.toLowerCase();
 
-      const instagramRegex = /^(https?:\/\/)?(www\.)?instagram\.com(\/.*)?$/;
+      const instagramRegex = /^(https?:\/\/)?(www\.)?(instagram\.com|ig\.me)(\/.*)?$/;
       const tiktokRegex = /^(https?:\/\/)?(www\.)?tiktok\.com(\/.*)?$/;
       const facebookRegex = /^(https?:\/\/)?(www\.)?facebook\.com(\/.*)?$/;
       const xTwitterRegex = /^(https?:\/\/)?(www\.)?(x\.com|twitter\.com)(\/.*)?$/;
@@ -64,7 +64,7 @@ const socialNetworkSchema = z
         ctx.addIssue({
           code: 'custom',
           path: ['link'],
-          message: 'El enlace debe corresponder a una URL válida de Instagram.',
+          message: 'El enlace debe corresponder a una URL de Instagram (instagram.com o ig.me).',
         });
       } else if (nameLower === 'tiktok' && !tiktokRegex.test(linkLower)) {
         ctx.addIssue({
@@ -151,6 +151,13 @@ export default function StoreSocialNetworksModal({
       setNewLink('');
       setAddError(null);
       setUpdateErrors({});
+
+      setLocalNetworks(
+        socialNetworks.map((s) => ({
+          ...s,
+          link: s.link?.startsWith('tel:') ? s.link.replace('tel:', '') : s.link,
+        }))
+      );
     }
     onOpenChange(isOpen);
   };
