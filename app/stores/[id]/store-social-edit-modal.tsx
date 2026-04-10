@@ -54,29 +54,31 @@ const socialNetworkSchema = z
 
       const linkLower = cleanLink.toLowerCase();
 
-      if (nameLower === 'instagram' && !linkLower.includes('instagram.com')) {
+      const instagramRegex = /^(https?:\/\/)?(www\.)?instagram\.com(\/.*)?$/;
+      const tiktokRegex = /^(https?:\/\/)?(www\.)?tiktok\.com(\/.*)?$/;
+      const facebookRegex = /^(https?:\/\/)?(www\.)?facebook\.com(\/.*)?$/;
+      const xTwitterRegex = /^(https?:\/\/)?(www\.)?(x\.com|twitter\.com)(\/.*)?$/;
+      const whatsappUrlRegex = /^(https?:\/\/)?(www\.)?(wa\.me|whatsapp\.com)(\/.*)?$/;
+
+      if (nameLower === 'instagram' && !instagramRegex.test(linkLower)) {
         ctx.addIssue({
           code: 'custom',
           path: ['link'],
           message: 'El enlace debe corresponder a una URL válida de Instagram.',
         });
-      } else if (nameLower === 'tiktok' && !linkLower.includes('tiktok.com')) {
+      } else if (nameLower === 'tiktok' && !tiktokRegex.test(linkLower)) {
         ctx.addIssue({
           code: 'custom',
           path: ['link'],
           message: 'El enlace debe corresponder a una URL válida de TikTok.',
         });
-      } else if (nameLower === 'facebook' && !linkLower.includes('facebook.com')) {
+      } else if (nameLower === 'facebook' && !facebookRegex.test(linkLower)) {
         ctx.addIssue({
           code: 'custom',
           path: ['link'],
           message: 'El enlace debe corresponder a una URL válida de Facebook.',
         });
-      } else if (
-        (nameLower === 'x' || nameLower === 'twitter') &&
-        !linkLower.includes('x.com') &&
-        !linkLower.includes('twitter.com')
-      ) {
+      } else if ((nameLower === 'x' || nameLower === 'twitter') && !xTwitterRegex.test(linkLower)) {
         ctx.addIssue({
           code: 'custom',
           path: ['link'],
@@ -85,8 +87,7 @@ const socialNetworkSchema = z
       } else if (
         nameLower === 'whatsapp' &&
         !isWhatsappPhone &&
-        !linkLower.includes('wa.me') &&
-        !linkLower.includes('whatsapp.com')
+        !whatsappUrlRegex.test(linkLower)
       ) {
         ctx.addIssue({
           code: 'custom',
