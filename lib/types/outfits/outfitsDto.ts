@@ -1,3 +1,7 @@
+export interface OutfitTagDTO {
+  name: string;
+}
+
 export interface OutfitDTO {
   id: string;
   name: string;
@@ -5,10 +9,9 @@ export interface OutfitDTO {
   image: string | null;
   priceInCents: number;
   discountPercentage?: number | null;
-  discountedPriceInCents?: number | null;
   index: number;
   storeId: string;
-  tags: string[];
+  tags: OutfitTagDTO[];
   products: OutfitProductDTO[];
 }
 
@@ -34,8 +37,7 @@ export interface OutfitCreationDTO {
   name: string;
   description: string | null;
   discountPercentage?: number | null;
-  discountedPriceInCents?: number | null;
-  tags: string[];
+  tags: OutfitTagDTO[];
   products: OutfitCreationProductDTO[];
 }
 
