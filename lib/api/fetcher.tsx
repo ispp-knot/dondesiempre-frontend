@@ -44,6 +44,7 @@ async function executeFetch<T>({
     {
       method,
       body: fetchBody,
+      timeout: 100000,
     },
     token
   )) as T;
