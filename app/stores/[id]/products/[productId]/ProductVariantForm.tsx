@@ -123,9 +123,7 @@ export default function ProductVariantForm({
                 )}
               />
             )}
-            {errors.sizeId && (
-              <p className="text-destructive text-sm">{errors.sizeId.message}</p>
-            )}
+            {errors.sizeId && <p className="text-destructive text-sm">{errors.sizeId.message}</p>}
           </div>
 
           {/* Color Selection */}
@@ -164,9 +162,7 @@ export default function ProductVariantForm({
                 )}
               />
             )}
-            {errors.colorId && (
-              <p className="text-destructive text-sm">{errors.colorId.message}</p>
-            )}
+            {errors.colorId && <p className="text-destructive text-sm">{errors.colorId.message}</p>}
           </div>
 
           {/* Availability */}

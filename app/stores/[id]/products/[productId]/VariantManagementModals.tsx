@@ -61,9 +61,7 @@ export function DeleteVariantsModal({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-primary">
-            Eliminar Variantes
-          </DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-primary">Eliminar Variantes</DialogTitle>
           <DialogDescription>
             Selecciona las variantes que deseas eliminar ({selectedIds.size} seleccionadas)
           </DialogDescription>
