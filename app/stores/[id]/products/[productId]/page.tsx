@@ -290,7 +290,7 @@ export default function ProductDetailsPage() {
           {product.data.name}
         </h1>
         {product.data.description && (
-          <p className="text-secondary text-md">{product.data.description}</p>
+          <p className="text-secondary text-md break-words">{product.data.description}</p>
         )}
       </div>
     );
@@ -303,7 +303,7 @@ export default function ProductDetailsPage() {
           {product.data.name}
         </h1>
         {product.data.description && (
-          <p className="text-secondary text-md">{product.data.description}</p>
+          <p className="text-secondary text-md break-words">{product.data.description}</p>
         )}
       </div>
     );
