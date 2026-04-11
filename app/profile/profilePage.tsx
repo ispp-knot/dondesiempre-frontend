@@ -13,6 +13,8 @@ import { UserResponseDTO } from '@/lib/types/auth/authDto';
 import { useEffect, useState } from 'react';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import UserEditPassword from '@/app/profile/user-edit-password-modal';
+import { StripeOnBoardingButton } from '@/components/dondeSiempre/StripeOnBoardingButton'; // ajusta path
+import { StripeDashboardLinkDTO } from '@/lib/types/payment/stripeDashboardLinkDto';
 
 export function ProfilePage({}) {
   const router = useRouter();
@@ -22,6 +24,11 @@ export function ProfilePage({}) {
 
   const meQuery = usePassiveFetcher<UserResponseDTO>({
     url: 'auth/me',
+  });
+
+  const dashboard = usePassiveFetcher<StripeDashboardLinkDTO>({
+    url: `stores/${meQuery?.data?.store?.id}/stripe/dashboard`,
+    enabled: !!meQuery?.data?.store?.id,
   });
 
   useEffect(() => {
@@ -37,7 +44,6 @@ export function ProfilePage({}) {
 
   const user = meQuery.data;
 
-  // Evitar crasheos si por algún motivo la petición falla
   if (!user) {
     return null;
   }
@@ -67,7 +73,6 @@ export function ProfilePage({}) {
           </div>
           <CardTitle className="text-lg">{fullName}</CardTitle>
         </div>
-
         <UserEditPassword onSuccessAction={handlePasswordChanged} />
       </CardHeader>
 
@@ -94,7 +99,10 @@ export function ProfilePage({}) {
             <span>{address}</span>
           </div>
         )}
+
+        {user?.store?.id && <StripeOnBoardingButton storeId={user.store.id} variant="full" />}
       </CardContent>
+
       <CardFooter className="border-t mt-3 flex flex-col gap-3">
         {user.client && (
           <ClientEditModal
@@ -106,20 +114,27 @@ export function ProfilePage({}) {
           <Button
             variant="outline"
             className="w-full"
-            onClick={() => {
-              router.push(`/stores/${user.store!.id}`);
-            }}
+            onClick={() => router.push(`/stores/${user.store!.id}`)}
           >
             Mi tienda
           </Button>
         )}
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => {
-            router.push('/pricing');
-          }}
-        >
+        {user?.store?.id && (
+          <Button
+            variant="outline"
+            className="w-full flex items-center gap-2"
+            disabled={dashboard.isLoading}
+            onClick={
+              dashboard.data?.dashboardLink
+                ? () => router.push(dashboard.data.dashboardLink)
+                : () => dashboard.refetch()
+            }
+          >
+            Dashboard
+            {!dashboard.isLoading && !dashboard.data?.dashboardLink && 'No disponible, reintentar'}
+          </Button>
+        )}
+        <Button variant="outline" className="w-full" onClick={() => router.push('/pricing')}>
           Planes y precios
         </Button>
         <Button
