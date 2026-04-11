@@ -81,12 +81,10 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
       <div className="flex flex-col items-center relative">
         {props.outfit ? (
           <>
-            <div className="pt-8 pl-8 pr-8 pb-4">
-              <div>
-                <h1 className="mb-1 font-bold text-primary text-center text-3xl">
-                  {props.outfit.name}
-                </h1>
-              </div>
+            <div className="pt-8 pl-8 pr-8 pb-4 w-full max-w-2xl">
+              <h1 className="mb-1 font-bold text-primary text-center text-3xl wrap-break-word">
+                {props.outfit.name}
+              </h1>
             </div>
             <div className="flex flex-row justify-center relative">
               <Image
