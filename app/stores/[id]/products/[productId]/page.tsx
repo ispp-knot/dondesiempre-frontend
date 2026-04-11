@@ -266,7 +266,9 @@ export default function ProductDetailsPage() {
   const MobileTitle = () => {
     return (
       <div className="md:hidden pt-8 px-8 pb-4 w-full text-center">
-        <h1 className="mb-1 font-bold text-primary text-3xl">{product.data.name}</h1>
+        <h1 className="mb-1 font-bold text-primary text-3xl wrap-break-word">
+          {product.data.name}
+        </h1>
         {product.data.description && (
           <p className="text-secondary text-md">{product.data.description}</p>
         )}
@@ -277,7 +279,9 @@ export default function ProductDetailsPage() {
   const DesktopTitle = () => {
     return (
       <div className="hidden md:block">
-        <h1 className="font-bold text-primary text-3xl mb-1">{product.data.name}</h1>
+        <h1 className="font-bold text-primary text-3xl mb-1 wrap-break-word">
+          {product.data.name}
+        </h1>
         {product.data.description && (
           <p className="text-secondary text-md">{product.data.description}</p>
         )}
