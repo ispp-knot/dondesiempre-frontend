@@ -142,6 +142,9 @@ export default function ProductDetailsPage() {
       if (error.data?.includes('outfits')) {
         setActiveFetchingError('No se puede eliminar un producto con outfits asociados.');
       }
+      if (error.data?.includes('promotions')) {
+        setActiveFetchingError('No se puede eliminar un producto con promociones asociadas.');
+      }
     },
   });
 
