@@ -35,12 +35,6 @@ const step1Schema = z
 const clientStep2Schema = z.object({
   name: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
   surname: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
-  phone: z
-    .string()
-    .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
-      message: 'Número de teléfono no válido',
-    })
-    .transform((value) => (value === '' ? null : value)),
   address: z
     .string()
     .max(255, 'Máximo 255 caracteres')
@@ -53,12 +47,6 @@ const storeStep2Schema = z.object({
   longitude: z.number({ error: 'Selecciona una ubicación en el mapa' }),
   address: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
   openingHours: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
-  phone: z
-    .string()
-    .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
-      message: 'Número de teléfono no válido',
-    })
-    .transform((value) => (value === '' ? null : value)),
   aboutUs: z
     .string()
     .max(5000, 'Máximo 5000 caracteres')
@@ -355,11 +343,6 @@ function ClientStep2Form({
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-1">
-          <Label htmlFor="phone">Teléfono</Label>
-          <Input id="phone" type="tel" aria-invalid={!!errors.phone} {...register('phone')} />
-          <FieldError message={errors.phone?.message} />
-        </div>
-        <div className="space-y-1">
           <Label htmlFor="address">Dirección</Label>
           <Input id="address" aria-invalid={!!errors.address} {...register('address')} />
           <FieldError message={errors.address?.message} />
@@ -456,11 +439,6 @@ function StoreStep2Form({
               {...register('openingHours')}
             />
             <FieldError message={errors.openingHours?.message} />
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor="phone">Teléfono</Label>
-            <Input id="phone" type="tel" aria-invalid={!!errors.phone} {...register('phone')} />
-            <FieldError message={errors.phone?.message} />
           </div>
         </div>
 
