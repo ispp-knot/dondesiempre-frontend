@@ -420,9 +420,7 @@ export default function ProductDetailsPage() {
 
       {isConfirmModalOpen && (
         <ConfirmOrderModal
-          price={convertPrice(
-            discountPrice(product.data.priceInCents, product.data.discountPercentage)
-          )}
+          price={discountPrice(product.data.priceInCents, product.data.discountPercentage)}
           isCreatingOrder={isCreatingOrder}
           onConfirm={confirmAndCreateOrder}
           onClose={() => setIsConfirmModalOpen(false)}
