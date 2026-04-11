@@ -27,7 +27,7 @@ export default function Products({ storeId = undefined }: Readonly<Props>) {
         {isStore && isStoreOwner && (
           <Link
             href={`/stores/${storeId}/create-product/`}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary hover:bg-dark-secondary text-white font-bold text-sm whitespace-nowrap"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary hover:scale-105 transition-transform text-white font-bold text-sm whitespace-nowrap"
           >
             <IoMdAddCircleOutline className="text-lg shrink-0" />
             <span className="hidden sm:inline">Crear producto</span>
