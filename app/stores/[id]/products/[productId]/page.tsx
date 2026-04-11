@@ -176,8 +176,10 @@ export default function ProductDetailsPage() {
   const canOrder = hasVariants && selectedVariant && selectedVariant.isAvailable;
 
   const handleSizeChange = (sizeId: string) => {
-    setSelectedSize(sizeId);
-    setSelectedColor(null);
+    if (selectedSize !== sizeId) {
+      setSelectedSize(sizeId);
+      setSelectedColor(null);
+    }
   };
 
   const confirmAndCreateOrder = async () => {
