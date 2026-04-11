@@ -29,6 +29,8 @@ interface ProductVariantFormProps {
   onClose: () => void;
   onSubmit: (data: ProductVariantFormData) => Promise<void>;
   isSubmitting: boolean;
+  error?: string | null;
+  onErrorClear?: () => void;
 }
 
 interface ProductSize {
@@ -47,6 +49,8 @@ export default function ProductVariantForm({
   onClose,
   onSubmit,
   isSubmitting,
+  error,
+  onErrorClear,
 }: ProductVariantFormProps) {
   const {
     control,
@@ -79,7 +83,14 @@ export default function ProductVariantForm({
 
   const handleClose = () => {
     reset();
+    onErrorClear?.();
     onClose();
+  };
+
+  const handleFieldChange = () => {
+    if (error) {
+      onErrorClear?.();
+    }
   };
 
   return (
@@ -92,6 +103,9 @@ export default function ProductVariantForm({
         </DialogHeader>
 
         <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col gap-4">
+          {/* Error Message */}
+          {error && <p className="text-destructive text-sm font-semibold">{error}</p>}
+
           {/* Size Selection */}
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-primary">Talla *</label>
@@ -109,7 +123,10 @@ export default function ProductVariantForm({
                       <button
                         key={size.id}
                         type="button"
-                        onClick={() => field.onChange(size.id)}
+                        onClick={() => {
+                          field.onChange(size.id);
+                          handleFieldChange();
+                        }}
                         className={`px-4 py-2 rounded-lg border-2 font-semibold text-sm transition-colors ${
                           field.value === size.id
                             ? 'border-secondary bg-secondary text-white'
@@ -143,7 +160,10 @@ export default function ProductVariantForm({
                       <button
                         key={color.id}
                         type="button"
-                        onClick={() => field.onChange(color.id)}
+                        onClick={() => {
+                          field.onChange(color.id);
+                          handleFieldChange();
+                        }}
                         title={color.name}
                         className={`flex items-center gap-2 px-3 py-2 rounded-lg border-2 font-semibold text-sm transition-colors ${
                           field.value === color.id

@@ -77,6 +77,7 @@ export default function ProductDetailsPage() {
   const [isDeletingVariants, setIsDeletingVariants] = useState(false);
   const [isUpdatingVariants, setIsUpdatingVariants] = useState(false);
   const [activeFetchingError, setActiveFetchingError] = useState<string | null>(null);
+  const [variantCreationError, setVariantCreationError] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -228,13 +229,13 @@ export default function ProductDetailsPage() {
       await variantsBackend.refetch();
       await allVariantsBackend.refetch();
       setIsCreateVariantModalOpen(false);
+      setVariantCreationError(null);
     } catch (error) {
-      setIsCreateVariantModalOpen(false);
       const err = error as FetchError;
       if (err.data?.includes('already exists')) {
-        setActiveFetchingError('Esta variante ya existe.');
+        setVariantCreationError('Esta variante ya existe.');
       } else {
-        setActiveFetchingError('Hubo un problema al crear la variante.');
+        setVariantCreationError('Hubo un problema al crear la variante.');
       }
     } finally {
       setIsSubmittingVariant(false);
@@ -457,9 +458,14 @@ export default function ProductDetailsPage() {
 
       <ProductVariantForm
         isOpen={isCreateVariantModalOpen}
-        onClose={() => setIsCreateVariantModalOpen(false)}
+        onClose={() => {
+          setIsCreateVariantModalOpen(false);
+          setVariantCreationError(null);
+        }}
         onSubmit={handleCreateVariant}
         isSubmitting={isSubmittingVariant}
+        error={variantCreationError}
+        onErrorClear={() => setVariantCreationError(null)}
       />
 
       {allVariants.data && (
