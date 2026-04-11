@@ -15,6 +15,7 @@ import { FetchError } from 'ofetch';
 import AuthModal from '@/components/modals/AuthModal';
 import OrderSuccessModal from '@/components/modals/OrderSuccessModal';
 import { ConfirmOrderModal } from '@/components/modals/ConfirmOrderModal';
+import { ErrorModal } from '@/components/modals/ErrorModal';
 
 export interface ClientOutfitDetailsPageProps {
   outfit?: OutfitDTO;
@@ -33,6 +34,8 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
   const user = getCurrentUser();
 
   const isClient = Boolean(user?.client?.id);
+
+  const [activeFetchingError, setActiveFetchingError] = useState<string | null>(null);
 
   const createOrder = useActiveFetcher<OrderDTO>({
     url: 'orders',
@@ -59,6 +62,7 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
     } catch (error: unknown) {
       const err = error as FetchError;
       console.error('Error al crear el pedido:', err);
+      setIsConfirmModalOpen(false);
 
       if (
         err?.status === 401 ||
@@ -66,10 +70,9 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
         err?.message?.includes('401') ||
         err?.message?.includes('403')
       ) {
-        setIsConfirmModalOpen(false);
         setIsAuthModalOpen(true);
       } else {
-        alert('Hubo un problema al crear el pedido.');
+        setActiveFetchingError('Hubo un problema al crear el pedido.');
       }
     } finally {
       setIsCreatingOrder(false);
@@ -78,6 +81,10 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
 
   return (
     <>
+      {activeFetchingError && (
+        <ErrorModal message={activeFetchingError} onClose={() => setActiveFetchingError(null)} />
+      )}
+
       <div className="flex flex-col items-center relative">
         {props.outfit ? (
           <>

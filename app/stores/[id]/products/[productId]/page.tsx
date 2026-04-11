@@ -21,6 +21,7 @@ import ProductVariantForm, { ProductVariantFormData } from './ProductVariantForm
 import { DeleteVariantsModal, UpdateVariantsModal } from './VariantManagementModals';
 import Link from 'next/link';
 import { buttonLinkClass } from '@/lib/utils/buttonLinkClass';
+import { ErrorModal } from '@/components/modals/ErrorModal';
 
 interface ProductVariantBackendDTO {
   id: string;
@@ -75,6 +76,7 @@ export default function ProductDetailsPage() {
   const [isSubmittingVariant, setIsSubmittingVariant] = useState(false);
   const [isDeletingVariants, setIsDeletingVariants] = useState(false);
   const [isUpdatingVariants, setIsUpdatingVariants] = useState(false);
+  const [activeFetchingError, setActiveFetchingError] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -138,7 +140,7 @@ export default function ProductDetailsPage() {
     method: 'DELETE',
     onError: (error) => {
       if (error.data?.includes('outfits')) {
-        alert('No se puede eliminar un producto con outfits asociados.');
+        setActiveFetchingError('No se puede eliminar un producto con outfits asociados.');
       }
     },
   });
@@ -187,16 +189,17 @@ export default function ProductDetailsPage() {
       setIsSuccessModalOpen(true);
     } catch (error: unknown) {
       const err = error as FetchError;
+      setIsConfirmModalOpen(false);
+
       if (
         err?.status === 401 ||
         err?.status === 403 ||
         err?.message?.includes('401') ||
         err?.message?.includes('403')
       ) {
-        setIsConfirmModalOpen(false);
         setIsAuthModalOpen(true);
       } else {
-        alert('Hubo un problema al crear el pedido.');
+        setActiveFetchingError('Hubo un problema al crear el pedido.');
       }
     } finally {
       setIsCreatingOrder(false);
@@ -217,8 +220,13 @@ export default function ProductDetailsPage() {
       await variants.refetch();
       setIsCreateVariantModalOpen(false);
     } catch (error) {
-      console.error('Error creating variant:', error);
-      alert('Hubo un problema al crear la variante.');
+      setIsCreateVariantModalOpen(false);
+      const err = error as FetchError;
+      if (err.data?.includes('already exists')) {
+        setActiveFetchingError('Esta variante ya existe.');
+      } else {
+        setActiveFetchingError('Hubo un problema al crear la variante.');
+      }
     } finally {
       setIsSubmittingVariant(false);
     }
@@ -234,8 +242,9 @@ export default function ProductDetailsPage() {
       await allVariantsBackend.refetch();
       setIsDeleteModalOpen(false);
     } catch (error) {
+      setIsDeleteModalOpen(false);
       console.error('Error deleting variants:', error);
-      alert('Hubo un problema al eliminar las variantes.');
+      setActiveFetchingError('Hubo un problema al eliminar las variantes.');
     } finally {
       setIsDeletingVariants(false);
     }
@@ -256,8 +265,9 @@ export default function ProductDetailsPage() {
       await allVariantsBackend.refetch();
       setIsUpdateModalOpen(false);
     } catch (error) {
+      setIsUpdateModalOpen(false);
       console.error('Error updating variants:', error);
-      alert('Hubo un problema al actualizar las variantes.');
+      setActiveFetchingError('Hubo un problema al actualizar las variantes.');
     } finally {
       setIsUpdatingVariants(false);
     }
@@ -291,6 +301,10 @@ export default function ProductDetailsPage() {
 
   return (
     <>
+      {activeFetchingError && (
+        <ErrorModal message={activeFetchingError} onClose={() => setActiveFetchingError(null)} />
+      )}
+
       <div className="flex flex-col items-center relative">
         <MobileTitle />
 
