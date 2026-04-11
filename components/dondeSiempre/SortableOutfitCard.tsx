@@ -20,9 +20,11 @@ export default function SortableOutfitCard(props: OutfitCardProps) {
   const { ref } = useSortable({ id: props.outfit.id, index: props.index });
   return (
     <Card key={props.outfit.id} ref={ref} className="p-4 m-4 pt-8 shadow-xl">
-      <div className="flex flex-row justify-between ps-4 pe-4">
+      <div className="flex flex-row justify-between ps-4 pe-4 min-w-0">
         <MdDragIndicator className="text-4xl" />
-        <h1 className="mb-3 font-bold text-primary text-center text-3xl">{props.outfit.name}</h1>
+        <h1 className="mb-3 font-bold text-primary text-center text-3xl wrap-break-word min-w-0 flex-1">
+          {props.outfit.name}
+        </h1>
         {props.outfit.discountPercentage ? (
           <RiDiscountPercentFill className="text-4xl" />
         ) : (
