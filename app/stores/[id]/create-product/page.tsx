@@ -179,7 +179,7 @@ export default function ProductCreationPage() {
                     id="form-type"
                     aria-invalid={!!errors.productTypeId}
                     {...register('productTypeId')}
-                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    className="appearance-none h-9 w-full rounded-md border border-input px-3 py-1 text-base shadow-sm focus:outline-none"
                   >
                     <option value="">Seleccionar categoría...</option>
                     {productTypes.data?.map((type) => (
