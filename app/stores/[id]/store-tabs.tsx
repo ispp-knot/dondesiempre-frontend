@@ -12,6 +12,9 @@ import AboutUs from './about-us';
 import StoreOptions from './options';
 import Outfits from './outfits';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
+import Products from './products';
+import { buttonLinkClass } from '@/lib/utils/buttonLinkClass';
+import Link from 'next/link';
 
 type Tab = 'catalogo' | 'sobre' | 'opciones';
 
@@ -81,14 +84,12 @@ export default function StoreTabs({
           <p className="text-gray-600 font-medium mt-2 text-sm md:text-base">
             Crea una nueva oferta o descuento especial para tu tienda.
           </p>
-          <button
-            onClick={() => {
-              window.location.href = `/stores/${store.id}/promotions`;
-            }}
-            className="bg-primary text-white font-bold py-3 px-8 rounded-lg mt-6 w-full shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
+          <Link
+            href={`/stores/${store.id}/promotions`}
+            className={`${buttonLinkClass} bg-primary text-white font-bold py-3 px-8 rounded-lg mt-6 w-full shadow-lg hover:scale-[1.02] active:scale-95 transition-all`}
           >
             Crear Nueva Promoción
-          </button>
+          </Link>
         </div>
       );
     }
@@ -273,7 +274,12 @@ export default function StoreTabs({
       </div>
 
       <div className="flex flex-col gap-10 sm:items-center min-h-96">
-        {activeTab === 'catalogo' && <Outfits storeId={store.id} outfits={outfits} />}
+        {activeTab === 'catalogo' && (
+          <>
+            <Outfits storeId={store.id} outfits={outfits} />
+            <Products storeId={store.id} />
+          </>
+        )}
 
         {activeTab === 'sobre' && <AboutUs description={description} />}
 

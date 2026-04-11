@@ -1,6 +1,6 @@
 import { OutfitProductDTO } from '@/lib/types/outfits/outfitsDto';
 import { ProductDTO } from '@/lib/types/products/productsDto';
-import { convertPrice } from '@/lib/utils';
+import { convertPrice, formatDisplayPrice } from '@/lib/utils';
 import { useSortable } from '@dnd-kit/react/sortable';
 import { IoIosCloseCircle } from 'react-icons/io';
 import { Card } from '../ui/card';
@@ -11,6 +11,8 @@ export type SortableProductProps = {
   product: ProductDTO | OutfitProductDTO;
   removable: boolean;
   onClick: () => void;
+  isOwner?: boolean;
+  storeId?: string;
 };
 
 export default function SortableProduct(props: Readonly<SortableProductProps>) {
@@ -37,7 +39,7 @@ export default function SortableProduct(props: Readonly<SortableProductProps>) {
           className="w-30 md:w-50 aspect-square object-cover shrink-0 rounded-lg shadow-lg"
         ></Image>
         <h1 className="mb-1 font-bold text-center text-md">
-          {`${convertPrice(props.product.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
+          {formatDisplayPrice(convertPrice(props.product.priceInCents))}
         </h1>
       </Card>
     </div>
