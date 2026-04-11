@@ -353,6 +353,12 @@ export default function ProductDetailsPage() {
 
             <ProductPrice product={product.data} />
 
+            {hasVariants && !user && (
+              <p className="text-sm text-muted-foreground">
+                Inicia sesión para seleccionar una variante y hacer un pedido.
+              </p>
+            )}
+
             {hasVariants && variants.data && (
               <ProductVariantSelector
                 variants={variants.data}
@@ -361,6 +367,7 @@ export default function ProductDetailsPage() {
                 selectedVariant={selectedVariant}
                 onSizeChange={handleSizeChange}
                 onColorChange={setSelectedColor}
+                disabled={!user}
               />
             )}
 

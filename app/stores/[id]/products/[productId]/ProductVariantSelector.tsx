@@ -12,6 +12,7 @@ export default function ProductVariantSelector({
   selectedVariant,
   onSizeChange,
   onColorChange,
+  disabled = false,
 }: {
   variants: ProductVariantDTO[];
   selectedSize: string | null;
@@ -19,6 +20,7 @@ export default function ProductVariantSelector({
   selectedVariant: ProductVariantDTO | null;
   onSizeChange: (sizeId: string) => void;
   onColorChange: (colorId: string) => void;
+  disabled?: boolean;
 }) {
   const availableSizes = [...new Map(variants.map((v) => [v.size.id, v.size])).values()];
 
@@ -45,12 +47,12 @@ export default function ProductVariantSelector({
             {availableSizes.map((size) => (
               <button
                 key={size.id}
-                onClick={() => onSizeChange(size.id)}
+                onClick={() => !disabled && onSizeChange(size.id)}
                 className={`px-4 py-2 rounded-lg border-2 font-semibold text-sm transition-colors ${
                   selectedSize === size.id
                     ? 'border-secondary bg-secondary text-white'
                     : 'border-gray-300 text-secondary hover:border-secondary'
-                }`}
+                } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 {size.name}
               </button>
@@ -66,13 +68,13 @@ export default function ProductVariantSelector({
             {availableColors.map((color) => (
               <button
                 key={color.id}
-                onClick={() => onColorChange(color.id)}
+                onClick={() => !disabled && onColorChange(color.id)}
                 title={color.name}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg border-2 font-semibold text-sm transition-colors ${
                   selectedColor === color.id
                     ? 'border-secondary bg-secondary/10'
                     : 'border-gray-300 hover:border-secondary'
-                }`}
+                } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 {color.hexCode && (
                   <span
