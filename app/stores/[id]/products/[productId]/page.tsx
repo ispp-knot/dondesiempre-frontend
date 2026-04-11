@@ -217,7 +217,8 @@ export default function ProductDetailsPage() {
           isAvailable: data.isAvailable,
         },
       });
-      await variants.refetch();
+      await variantsBackend.refetch();
+      await allVariantsBackend.refetch();
       setIsCreateVariantModalOpen(false);
     } catch (error) {
       setIsCreateVariantModalOpen(false);
