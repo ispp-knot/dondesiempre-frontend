@@ -13,7 +13,7 @@ import { ProductDTO } from '@/lib/types/products/productsDto';
 import { ProductTypeDTO } from '@/lib/types/producttypes/productTypesDto';
 import { createEditProductFormSchema, ProductFormValues } from '@/lib/types/products/productsRules';
 import { useParams, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
@@ -24,6 +24,10 @@ interface ProductUpdateDTO {
   description?: string | null;
   priceInCents?: number;
   productTypeId?: string;
+}
+
+interface ProductDiscountUpdateDTO {
+  discountPercentage: number | null;
 }
 
 function FieldError({ message }: { message?: string }) {
@@ -37,12 +41,17 @@ export default function ProductEditPage() {
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
+  const originalDiscountRef = useRef<number | null>(null);
 
   const product = usePassiveFetcher<ProductDTO>({ url: `products/${params.productId}` });
   const productTypes = usePassiveFetcher<ProductTypeDTO[]>({ url: `product-types` });
   const updateProduct = useActiveFetcher<ProductDTO>({
     url: `products/${params.productId}`,
     method: 'PUT',
+  });
+  const updateDiscount = useActiveFetcher<ProductDTO>({
+    url: `products/${params.productId}/discount`,
+    method: 'PATCH',
   });
 
   const {
@@ -60,11 +69,14 @@ export default function ProductEditPage() {
 
   useEffect(() => {
     if (product.data) {
+      const discount = product.data.discountPercentage ?? null;
+      originalDiscountRef.current = discount;
       reset({
         name: product.data.name,
         description: product.data.description || '',
         price: product.data.priceInCents / 100,
         productTypeId: product.data.typeId,
+        discount: discount,
       });
     }
   }, [product.data, reset]);
@@ -88,14 +100,20 @@ export default function ProductEditPage() {
 
   const submitForm = async (data: ProductFormValues) => {
     setApiError(null);
-    const dto: ProductUpdateDTO = {
-      name: data.name || undefined,
-      description: data.description || null,
-      priceInCents: Math.round(data.price * 100) || undefined,
-      productTypeId: data.productTypeId || undefined,
-    };
 
     try {
+      // Check if discount has changed
+      const discountChanged = data.discount !== originalDiscountRef.current;
+
+      // Prepare PUT request for other fields
+      const dto: ProductUpdateDTO = {
+        name: data.name || undefined,
+        description: data.description || null,
+        priceInCents: Math.round(data.price * 100) || undefined,
+        productTypeId: data.productTypeId || undefined,
+      };
+
+      // Send PUT request for other changes
       await updateProduct.fetch({
         formPayload: {
           product: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
@@ -103,11 +121,31 @@ export default function ProductEditPage() {
         },
       });
 
-      if (!updateProduct.isError) {
-        router.push(`/stores/${params.id}/products/${params.productId}`);
-      } else {
+      if (updateProduct.isError) {
         setApiError('Hubo un error al actualizar el producto. Por favor, intenta de nuevo.');
+        return;
       }
+
+      // Send PATCH request only if discount changed
+      if (discountChanged) {
+        const discountDto: ProductDiscountUpdateDTO = {
+          discountPercentage: data.discount ?? null,
+        };
+
+        await updateDiscount.fetch({
+          body: discountDto,
+        });
+
+        if (updateDiscount.isError) {
+          setApiError(
+            'El producto se actualizó pero hubo un error al actualizar el descuento. Por favor, intenta de nuevo.'
+          );
+          return;
+        }
+      }
+
+      // Success
+      router.push(`/stores/${params.id}/products/${params.productId}`);
     } catch (_err: unknown) {
       setApiError('Hubo un error al actualizar el producto. Por favor, intenta de nuevo.');
     }
@@ -120,7 +158,7 @@ export default function ProductEditPage() {
           <Card className="p-4 shadow-xl sm:p-6 md:p-8">
             <h1 className="mb-6 text-center text-3xl font-bold text-primary">Editar producto</h1>
 
-            <form onSubmit={handleSubmit(submitForm)} className="space-y-6" noValidate>
+            <form onSubmit={(e) => handleSubmit(submitForm)(e)} className="space-y-6" noValidate>
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="form-name" className="text-base font-bold text-secondary">
@@ -220,6 +258,27 @@ export default function ProductEditPage() {
                     ))}
                   </select>
                   <FieldError message={errors.productTypeId?.message} />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="form-discount" className="text-base font-bold text-secondary">
+                    Descuento (Opcional)
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="form-discount"
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="1"
+                      placeholder="0"
+                      aria-invalid={!!errors.discount}
+                      className="w-32"
+                      {...register('discount', { valueAsNumber: true })}
+                    />
+                    <span className="text-base font-semibold text-secondary">%</span>
+                  </div>
+                  <FieldError message={errors.discount?.message} />
                 </div>
               </div>
 
