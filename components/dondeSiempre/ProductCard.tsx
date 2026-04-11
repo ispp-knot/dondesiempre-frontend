@@ -1,7 +1,7 @@
 'use client';
 import { ProductDTO } from '@/lib/types/products/productsDto';
 import { Card } from '../ui/card';
-import { convertPrice, formatDisplayPrice } from '@/lib/utils';
+import { convertPrice, formatDisplayPrice, discountPrice } from '@/lib/utils';
 import { RiDiscountPercentFill } from 'react-icons/ri';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -12,8 +12,9 @@ export interface ProductCardProps {
 
 export default function ProductCard(props: ProductCardProps) {
   const product = props.product;
-  const hasDiscount = product.discountedPriceInCents !== product.priceInCents;
+  const hasDiscount = (product.discountPercentage ?? 0) > 0;
   const formatPrice = (cents: number) => formatDisplayPrice(convertPrice(cents));
+  const discountedPrice = discountPrice(product.priceInCents, product.discountPercentage);
   const router = useRouter();
 
   return (
@@ -48,7 +49,7 @@ export default function ProductCard(props: ProductCardProps) {
                 {formatPrice(product.priceInCents)}
               </span>
               <span className="text-xl font-bold text-primary">
-                {formatPrice(product.discountedPriceInCents)}
+                {formatDisplayPrice(discountedPrice)}
               </span>
             </div>
           ) : (
