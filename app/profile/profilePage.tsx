@@ -15,6 +15,7 @@ import LoadingText from '@/components/dondeSiempre/LoadingText';
 import UserEditPassword from '@/app/profile/user-edit-password-modal';
 import { StripeOnBoardingButton } from '@/components/dondeSiempre/StripeOnBoardingButton'; // ajusta path
 import { StripeDashboardLinkDTO } from '@/lib/types/payment/stripeDashboardLinkDto';
+import { AccountStatusDto } from '@/lib/types/payment/accountStatusDto';
 
 export function ProfilePage({}) {
   const router = useRouter();
@@ -26,9 +27,13 @@ export function ProfilePage({}) {
     url: 'auth/me',
   });
 
+  const verified = usePassiveFetcher<AccountStatusDto>({
+    url: `stores/${meQuery?.data?.store?.id}/stripe/status`,
+    enabled: !!meQuery?.data?.store?.id,
+  });
   const dashboard = usePassiveFetcher<StripeDashboardLinkDTO>({
     url: `stores/${meQuery?.data?.store?.id}/stripe/dashboard`,
-    enabled: !!meQuery?.data?.store?.id,
+    enabled: !!meQuery?.data?.store?.id && !verified.isLoading && verified.data?.verified === true,
   });
 
   useEffect(() => {
@@ -120,19 +125,29 @@ export function ProfilePage({}) {
           </Button>
         )}
         {user?.store?.id && (
-          <Button
-            variant="outline"
-            className="w-full flex items-center gap-2"
-            disabled={dashboard.isLoading}
-            onClick={
-              dashboard.data?.dashboardLink
-                ? () => router.push(dashboard.data.dashboardLink)
-                : () => dashboard.refetch()
-            }
-          >
-            Dashboard
-            {!dashboard.isLoading && !dashboard.data?.dashboardLink && 'No disponible, reintentar'}
-          </Button>
+          <>
+            <Button
+              variant="outline"
+              className="w-full flex items-center gap-2"
+              disabled={
+                dashboard.isLoading ||
+                verified.isLoading ||
+                (!verified.isLoading && !verified.data?.verified)
+              }
+              onClick={
+                dashboard.data?.dashboardLink
+                  ? () => router.push(dashboard.data.dashboardLink)
+                  : () => dashboard.refetch()
+              }
+            >
+              {verified.isLoading ? 'Verificando' : 'Dashboard'}
+            </Button>
+            {dashboard.isError && (
+              <p className="text-[11px] text-destructive px-1 leading-tight">
+                No se pudo obtener el enlace.
+              </p>
+            )}
+          </>
         )}
         <Button variant="outline" className="w-full" onClick={() => router.push('/pricing')}>
           Planes y precios
