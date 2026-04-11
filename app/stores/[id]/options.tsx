@@ -5,6 +5,8 @@ import { Edit2, Loader2, Save, X, AlertCircle } from 'lucide-react';
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { useActiveFetcher } from '@/lib/api/fetcher';
+import { ErrorModal } from '@/components/modals/ErrorModal';
+import { GenericConfirmModal } from '@/components/modals/GenericConfirmModal';
 
 type Props = {
   storefrontId: string;
@@ -16,6 +18,8 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
   const [formData, setFormData] = useState<StoreDTO['storefront']>(initialStore?.storefront);
   const [hasChanges, setHasChanges] = useState(false);
   const [bannerImageFile, setBannerImageFile] = useState<File | null>(null);
+
+  const [activeFetchingError, setActiveFetchingError] = useState<string | null>(null);
 
   const updateStorefront = useActiveFetcher<StoreDTO['storefront']>({
     url: `storefronts/${storefrontId}`,
@@ -41,13 +45,10 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
     setHasChanges(false);
   };
 
-  const handleSave = async () => {
-    const confirmed = window.confirm(
-      '¿Estás seguro de que deseas confirmar los cambios? Se actualizará la apariencia pública de la tienda.'
-    );
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
-    if (!confirmed) return;
-
+  const handleConfirm = async () => {
+    setIsConfirmModalOpen(false);
     setLoading(true);
     try {
       const formPayload = {
@@ -61,7 +62,7 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
       setHasChanges(false);
       location.reload();
     } catch (error) {
-      alert('Error al guardar los cambios: ' + error);
+      setActiveFetchingError('Error al guardar los cambios: ' + error);
     } finally {
       setLoading(false);
     }
@@ -71,6 +72,19 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
 
   return (
     <div className="w-11/12 max-w-200 space-y-10 relative pb-10 self-center">
+      {isConfirmModalOpen && (
+        <GenericConfirmModal
+          message="¿Estás seguro de que deseas confirmar los cambios? Se actualizará la apariencia pública de la tienda."
+          onConfirm={handleConfirm}
+          onClose={() => setIsConfirmModalOpen(false)}
+          isLoading={loading}
+        />
+      )}
+
+      {activeFetchingError && (
+        <ErrorModal message={activeFetchingError} onClose={() => setActiveFetchingError(null)} />
+      )}
+
       {loading && (
         <div className="absolute inset-0 bg-white/60 z-30 flex justify-center items-center rounded-xl">
           <Loader2 className="animate-spin text-teal-700 w-12 h-12" />
@@ -121,7 +135,7 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
             <span className="text-sm font-semibold">Tienes cambios pendientes de confirmar</span>
           </div>
           <button
-            onClick={handleSave}
+            onClick={() => setIsConfirmModalOpen(true)}
             className="w-full bg-[#19756a] text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-2 hover:bg-teal-800 transition cursor-pointer"
           >
             <Save className="w-5 h-5" />
