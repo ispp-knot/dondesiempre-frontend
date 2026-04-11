@@ -257,11 +257,11 @@ export default function ProductDetailsPage() {
     }
   };
 
-  const handleUpdateVariants = async (variantIds: string[], isAvailable: boolean) => {
+  const handleUpdateVariants = async (changes: Array<{ id: string; isAvailable: boolean }>) => {
     setIsUpdatingVariants(true);
     try {
       await Promise.all(
-        variantIds.map((id) =>
+        changes.map(({ id, isAvailable }) =>
           updateVariant.fetch({
             url: `product-variants/${id}`,
             body: { isAvailable },
