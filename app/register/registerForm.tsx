@@ -466,7 +466,7 @@ function StoreStep2Form({
 
         <div className="space-y-1">
           <Label>Ubicación</Label>
-          <div className="h-[280px] w-full rounded-md overflow-hidden border border-input">
+          <div className="flex-1  w-full rounded-md overflow-hidden border border-input relative bg-muted">
             <LocationPickerMap
               latitude={latitude || undefined}
               longitude={longitude || undefined}

@@ -29,7 +29,7 @@ export function GlassCenterCard({
           'relative z-10 w-full flex flex-col justify-center flex-1',
           'border-0 bg-transparent shadow-none rounded-none py-6',
           // sm+: real glass card, auto-sized
-          'sm:flex-none sm:block sm:max-w-md sm:p-8',
+          'sm:flex-none sm:block sm:max-w-4xl sm:p-8',
           'sm:rounded-2xl sm:border sm:border-white/40',
           'sm:bg-white/85 sm:shadow-xl sm:backdrop-blur-md'
         )}
