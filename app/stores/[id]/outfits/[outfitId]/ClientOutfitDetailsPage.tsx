@@ -156,8 +156,10 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
     setIsCreatingOrder(true);
 
     const payload: Record<string, number> = {};
-    outfit.products.forEach((product) => {
-      payload[product.id] = 1;
+    if (!canOrder) return;
+
+    selectedVariants.forEach((variant) => {
+      payload[variant.id] = 1;
     });
 
     try {

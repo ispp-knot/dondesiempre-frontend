@@ -181,7 +181,7 @@ export default function ProductDetailsPage() {
     }
     setIsCreatingOrder(true);
     try {
-      await createOrder.fetch({ body: { [product.data.id]: 1 } });
+      await createOrder.fetch({ body: { [selectedVariant.id]: 1 } });
       setIsConfirmModalOpen(false);
       setIsSuccessModalOpen(true);
     } catch (error: unknown) {
