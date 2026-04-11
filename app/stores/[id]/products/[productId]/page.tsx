@@ -173,7 +173,7 @@ export default function ProductDetailsPage() {
 
   const hasVariants = (variants.data?.length ?? 0) > 0;
   const hasAnyVariants = (allVariants.data?.length ?? 0) > 0;
-  const canOrder = !hasVariants || selectedVariant !== null;
+  const canOrder = hasVariants && selectedVariant && selectedVariant.isAvailable;
 
   const handleSizeChange = (sizeId: string) => {
     setSelectedSize(sizeId);
@@ -182,6 +182,12 @@ export default function ProductDetailsPage() {
 
   const confirmAndCreateOrder = async () => {
     if (!product.data) return;
+    if (!canOrder) {
+      setActiveFetchingError(
+        'No puedes realizar un pedido sin seleccionar una variantes disponible.'
+      );
+      return;
+    }
     setIsCreatingOrder(true);
     try {
       await createOrder.fetch({ body: { [product.data.id]: 1 } });
@@ -364,7 +370,7 @@ export default function ProductDetailsPage() {
               </p>
             )}
 
-            {isClient && (
+            {isClient && hasVariants && (
               <Button
                 onClick={() => setIsConfirmModalOpen(true)}
                 disabled={!canOrder}
