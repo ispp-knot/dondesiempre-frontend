@@ -331,13 +331,20 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
             </div>
 
             {isClient && (
-              <Button
-                onClick={() => setIsConfirmModalOpen(true)}
-                disabled={!canOrder}
-                className="bg-secondary hover:bg-dark-secondary disabled:bg-gray-300 disabled:cursor-not-allowed hover:cursor-pointer text-white font-bold text-xl h-12 w-full"
-              >
-                Hacer pedido
-              </Button>
+              <>
+                <Button
+                  onClick={() => setIsConfirmModalOpen(true)}
+                  disabled={!canOrder}
+                  className="bg-secondary hover:bg-dark-secondary disabled:bg-gray-300 disabled:cursor-not-allowed hover:cursor-pointer text-white font-bold text-xl h-12 w-full"
+                >
+                  Hacer pedido
+                </Button>
+                {!canOrder && (
+                  <p className="text-sm text-muted-foreground">
+                    Selecciona color y talla de todas las prendas para hacer el pedido.
+                  </p>
+                )}
+              </>
             )}
           </div>
         </div>
