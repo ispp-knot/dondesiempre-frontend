@@ -291,9 +291,6 @@ export default function ProductDetailsPage() {
         <h1 className="mb-1 font-bold text-primary text-3xl wrap-break-word">
           {product.data.name}
         </h1>
-        {product.data.description && (
-          <p className="text-secondary text-md break-words">{product.data.description}</p>
-        )}
       </div>
     );
   };
@@ -304,9 +301,6 @@ export default function ProductDetailsPage() {
         <h1 className="font-bold text-primary text-3xl mb-1 wrap-break-word">
           {product.data.name}
         </h1>
-        {product.data.description && (
-          <p className="text-secondary text-md break-words">{product.data.description}</p>
-        )}
       </div>
     );
   };
@@ -321,7 +315,7 @@ export default function ProductDetailsPage() {
         <MobileTitle />
 
         <div className="w-full md:max-w-5xl md:flex md:flex-row md:gap-10 md:px-10 md:py-10 md:pt-4">
-          <div className="md:w-1/2 shrink-0">
+          <div className="md:w-1/2 shrink-0 flex flex-col">
             <Image
               src={product.data.image || '/static/img/product_placeholder.png'}
               alt={product.data.name}
@@ -330,6 +324,11 @@ export default function ProductDetailsPage() {
               loading="eager"
               className="aspect-square w-full object-cover md:rounded-xl shrink-0 shadow-lg"
             />
+            {product.data.description && (
+              <p className="text-secondary text-m break-words line-clamp-3 mt-4 px-8 md:px-0">
+                {product.data.description}
+              </p>
+            )}
           </div>
 
           <div className="md:w-1/2 flex flex-col gap-5 pt-4 pb-8 px-8 md:px-0 md:py-0 md:justify-center">
