@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { ProductDTO } from '@/lib/types/products/productsDto';
 import { OrderDTO } from '@/lib/types/orders/orderDto';
-import { convertPrice, formatDisplayPrice } from '@/lib/utils';
+import { convertPrice, formatDisplayPrice, discountPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useMemo } from 'react';
@@ -44,15 +44,17 @@ interface ProductColor {
 
 function ProductPrice({ product }: { product: ProductDTO }) {
   const fmt = (cents: number) => formatDisplayPrice(convertPrice(cents));
+  const hasDiscount = (product.discountPercentage ?? 0) > 0;
+  const discountedPrice = discountPrice(product.priceInCents, product.discountPercentage);
 
   return (
     <div className="text-primary text-2xl">
-      {product.discountedPriceInCents !== product.priceInCents ? (
+      {hasDiscount ? (
         <span className="flex flex-row items-baseline gap-3">
           <span className="line-through text-muted-foreground text-xl">
             {fmt(product.priceInCents)}
           </span>
-          <strong>{fmt(product.discountedPriceInCents)} (IVA incluido)</strong>
+          <strong>{formatDisplayPrice(discountedPrice)} (IVA incluido)</strong>
         </span>
       ) : (
         <strong>{fmt(product.priceInCents)} (IVA incluido)</strong>
@@ -433,7 +435,9 @@ export default function ProductDetailsPage() {
 
       {isConfirmModalOpen && (
         <ConfirmOrderModal
-          price={convertPrice(product.data.discountedPriceInCents)}
+          price={convertPrice(
+            discountPrice(product.data.priceInCents, product.data.discountPercentage)
+          )}
           isCreatingOrder={isCreatingOrder}
           onConfirm={confirmAndCreateOrder}
           onClose={() => setIsConfirmModalOpen(false)}
