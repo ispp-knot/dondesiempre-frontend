@@ -189,8 +189,6 @@ export default function StorePage() {
           <span className="text-center hover:underline">{store.data.address}</span>
         </a>
 
-        <div className="sm:text-lg md:text-xl text-[var(--secondary)]">{store.data.phone}</div>
-
         <div className="flex items-start justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]">
           <MdAccessTimeFilled className="flex-shrink-0 mt-1" />
           <span className="text-center">{store.data.openingHours}</span>
