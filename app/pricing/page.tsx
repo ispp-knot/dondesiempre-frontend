@@ -97,6 +97,7 @@ export default function PricingPage() {
       {/* Title */}
       <h1
         className="relative z-10 text-center font-extrabold tracking-tight mb-4 leading-tight"
+        data-testid="pricing-title"
         style={{ fontSize: 'clamp(28px, 5vw, 44px)', color: '#1a1a1a' }}
       >
         Elige el plan que

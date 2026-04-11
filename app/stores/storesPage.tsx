@@ -68,6 +68,7 @@ export function StoresPage() {
             <StoreCard
               store={selectedStore}
               userLocation={userLocation}
+              data-testid="store-card"
               className="rounded-b-none"
             />
           </motion.div>
