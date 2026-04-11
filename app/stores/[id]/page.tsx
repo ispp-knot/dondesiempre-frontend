@@ -179,10 +179,15 @@ export default function StorePage() {
           </div>
         )}
 
-        <div className="flex items-start justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]">
+        <a
+          href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(store.data.address)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-start justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)] hover:opacity-80 transition-opacity cursor-pointer"
+        >
           <FaLocationDot className="flex-shrink-0 mt-1" />
-          <span className="text-center">{store.data.address}</span>
-        </div>
+          <span className="text-center hover:underline">{store.data.address}</span>
+        </a>
 
         <div className="sm:text-lg md:text-xl text-[var(--secondary)]">{store.data.phone}</div>
 

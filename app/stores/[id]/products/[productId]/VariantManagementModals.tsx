@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import {
   Dialog,
   DialogContent,
@@ -140,7 +141,7 @@ interface UpdateVariantsModalProps {
   isOpen: boolean;
   onClose: () => void;
   variants: ProductVariantDTO[];
-  onUpdate: (variantIds: string[], isAvailable: boolean) => Promise<void>;
+  onUpdate: (changes: Array<{ id: string; isAvailable: boolean }>) => Promise<void>;
   isUpdating: boolean;
 }
 
@@ -151,103 +152,73 @@ export function UpdateVariantsModal({
   onUpdate,
   isUpdating,
 }: UpdateVariantsModalProps) {
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [action, setAction] = useState<'activate' | 'deactivate'>('activate');
+  const [variantStates, setVariantStates] = useState<Record<string, boolean>>({});
 
-  const handleToggle = (id: string) => {
-    const newSet = new Set(selectedIds);
-    if (newSet.has(id)) {
-      newSet.delete(id);
-    } else {
-      newSet.add(id);
+  // Initialize variant states on modal open
+  React.useEffect(() => {
+    if (isOpen) {
+      const initialStates: Record<string, boolean> = {};
+      variants.forEach((v) => {
+        initialStates[v.id] = v.isAvailable;
+      });
+      setVariantStates(initialStates);
     }
-    setSelectedIds(newSet);
+  }, [isOpen, variants]);
+
+  const handleSwitchChange = (id: string, checked: boolean) => {
+    setVariantStates((prev) => ({
+      ...prev,
+      [id]: checked,
+    }));
   };
 
-  const handleSelectAll = () => {
-    if (selectedIds.size === variants.length) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(variants.map((v) => v.id)));
-    }
+  const getChanges = () => {
+    const changes: Array<{ id: string; isAvailable: boolean }> = [];
+    variants.forEach((variant) => {
+      if (variantStates[variant.id] !== variant.isAvailable) {
+        changes.push({
+          id: variant.id,
+          isAvailable: variantStates[variant.id],
+        });
+      }
+    });
+    return changes;
   };
 
   const handleConfirm = async () => {
-    await onUpdate(Array.from(selectedIds), action === 'activate');
-    setSelectedIds(new Set());
+    const changes = getChanges();
+    if (changes.length > 0) {
+      await onUpdate(changes);
+      setVariantStates({});
+    }
   };
 
   const handleClose = () => {
-    setSelectedIds(new Set());
+    setVariantStates({});
     onClose();
   };
+
+  const changes = getChanges();
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-primary">
-            {action === 'activate' ? 'Activar' : 'Desactivar'} Variantes
+            Gestionar Disponibilidad de Variantes
           </DialogTitle>
           <DialogDescription>
-            Selecciona las variantes que deseas {action === 'activate' ? 'activar' : 'desactivar'} (
-            {selectedIds.size} seleccionadas)
+            Habilita o deshabilita variantes ({changes.length} cambios detectados).
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg mb-2">
-          <label className="font-semibold text-secondary">Acción:</label>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setAction('activate')}
-              className={`px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${
-                action === 'activate'
-                  ? 'bg-secondary text-white'
-                  : 'bg-white border border-gray-300 text-secondary hover:border-secondary'
-              }`}
-            >
-              Activar
-            </button>
-            <button
-              type="button"
-              onClick={() => setAction('deactivate')}
-              className={`px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${
-                action === 'deactivate'
-                  ? 'bg-secondary text-white'
-                  : 'bg-white border border-gray-300 text-secondary hover:border-secondary'
-              }`}
-            >
-              Desactivar
-            </button>
-          </div>
-        </div>
-
         <div className="flex-1 overflow-y-auto">
-          <div className="flex items-center justify-between p-3 border-b bg-gray-50">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={selectedIds.size === variants.length && variants.length > 0}
-                onChange={handleSelectAll}
-                className="w-5 h-5 cursor-pointer"
-              />
-              <span className="font-semibold text-secondary">Seleccionar todas</span>
-            </label>
-          </div>
-
           <div className="flex flex-col">
             {variants.map((variant) => (
-              <label
+              <div
                 key={variant.id}
-                className="flex items-center gap-3 p-3 border-b hover:bg-gray-50 cursor-pointer transition-colors"
+                className="flex items-center justify-between gap-3 p-4 border-b hover:bg-gray-50 transition-colors"
               >
-                <input
-                  type="checkbox"
-                  checked={selectedIds.has(variant.id)}
-                  onChange={() => handleToggle(variant.id)}
-                  className="w-5 h-5 cursor-pointer"
-                />
                 <div className="flex items-center gap-3 flex-1">
                   <div
                     className="w-8 h-8 rounded-full border-2 border-gray-300 shrink-0"
@@ -259,11 +230,16 @@ export function UpdateVariantsModal({
                       Talla: {variant.size.name} · Color: {variant.color.name}
                     </div>
                     <div className="text-sm text-gray-500">
-                      Estado actual: {variant.isAvailable ? 'Disponible' : 'No disponible'}
+                      {variantStates[variant.id] ? 'Disponible' : 'No disponible'}
                     </div>
                   </div>
                 </div>
-              </label>
+                <Switch
+                  checked={variantStates[variant.id] || false}
+                  onCheckedChange={(checked) => handleSwitchChange(variant.id, checked)}
+                  disabled={isUpdating}
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -281,12 +257,10 @@ export function UpdateVariantsModal({
           <Button
             type="button"
             onClick={handleConfirm}
-            disabled={isUpdating || selectedIds.size === 0}
+            disabled={isUpdating || changes.length === 0}
             className="bg-secondary hover:bg-dark-secondary text-white font-bold"
           >
-            {isUpdating
-              ? 'Actualizando...'
-              : `${action === 'activate' ? 'Activar' : 'Desactivar'} ${selectedIds.size} variante(s)`}
+            {isUpdating ? 'Actualizando...' : `Aplicar ${changes.length} cambio(s)`}
           </Button>
         </DialogFooter>
       </DialogContent>

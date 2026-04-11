@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { ProductDTO } from '@/lib/types/products/productsDto';
 import { OrderDTO } from '@/lib/types/orders/orderDto';
-import { convertPrice, formatDisplayPrice } from '@/lib/utils';
+import { convertPrice, formatDisplayPrice, discountPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useMemo } from 'react';
@@ -44,15 +44,17 @@ interface ProductColor {
 
 function ProductPrice({ product }: { product: ProductDTO }) {
   const fmt = (cents: number) => formatDisplayPrice(convertPrice(cents));
+  const hasDiscount = (product.discountPercentage ?? 0) > 0;
+  const discountedPrice = discountPrice(product.priceInCents, product.discountPercentage);
 
   return (
     <div className="text-primary text-2xl">
-      {product.discountedPriceInCents !== product.priceInCents ? (
+      {hasDiscount ? (
         <span className="flex flex-row items-baseline gap-3">
           <span className="line-through text-muted-foreground text-xl">
             {fmt(product.priceInCents)}
           </span>
-          <strong>{fmt(product.discountedPriceInCents)} (IVA incluido)</strong>
+          <strong>{formatDisplayPrice(discountedPrice)} (IVA incluido)</strong>
         </span>
       ) : (
         <strong>{fmt(product.priceInCents)} (IVA incluido)</strong>
@@ -77,6 +79,7 @@ export default function ProductDetailsPage() {
   const [isDeletingVariants, setIsDeletingVariants] = useState(false);
   const [isUpdatingVariants, setIsUpdatingVariants] = useState(false);
   const [activeFetchingError, setActiveFetchingError] = useState<string | null>(null);
+  const [variantCreationError, setVariantCreationError] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -179,8 +182,10 @@ export default function ProductDetailsPage() {
   const canOrder = hasVariants && selectedVariant && selectedVariant.isAvailable;
 
   const handleSizeChange = (sizeId: string) => {
-    setSelectedSize(sizeId);
-    setSelectedColor(null);
+    if (selectedSize !== sizeId) {
+      setSelectedSize(sizeId);
+      setSelectedColor(null);
+    }
   };
 
   const confirmAndCreateOrder = async () => {
@@ -229,13 +234,13 @@ export default function ProductDetailsPage() {
       await variantsBackend.refetch();
       await allVariantsBackend.refetch();
       setIsCreateVariantModalOpen(false);
+      setVariantCreationError(null);
     } catch (error) {
-      setIsCreateVariantModalOpen(false);
       const err = error as FetchError;
       if (err.data?.includes('already exists')) {
-        setActiveFetchingError('Esta variante ya existe.');
+        setVariantCreationError('Esta variante ya existe.');
       } else {
-        setActiveFetchingError('Hubo un problema al crear la variante.');
+        setVariantCreationError('Hubo un problema al crear la variante.');
       }
     } finally {
       setIsSubmittingVariant(false);
@@ -260,11 +265,11 @@ export default function ProductDetailsPage() {
     }
   };
 
-  const handleUpdateVariants = async (variantIds: string[], isAvailable: boolean) => {
+  const handleUpdateVariants = async (changes: Array<{ id: string; isAvailable: boolean }>) => {
     setIsUpdatingVariants(true);
     try {
       await Promise.all(
-        variantIds.map((id) =>
+        changes.map(({ id, isAvailable }) =>
           updateVariant.fetch({
             url: `product-variants/${id}`,
             body: { isAvailable },
@@ -289,9 +294,6 @@ export default function ProductDetailsPage() {
         <h1 className="mb-1 font-bold text-primary text-3xl wrap-break-word">
           {product.data.name}
         </h1>
-        {product.data.description && (
-          <p className="text-secondary text-md">{product.data.description}</p>
-        )}
       </div>
     );
   };
@@ -302,9 +304,6 @@ export default function ProductDetailsPage() {
         <h1 className="font-bold text-primary text-3xl mb-1 wrap-break-word">
           {product.data.name}
         </h1>
-        {product.data.description && (
-          <p className="text-secondary text-md">{product.data.description}</p>
-        )}
       </div>
     );
   };
@@ -319,7 +318,7 @@ export default function ProductDetailsPage() {
         <MobileTitle />
 
         <div className="w-full md:max-w-5xl md:flex md:flex-row md:gap-10 md:px-10 md:py-10 md:pt-4">
-          <div className="md:w-1/2 shrink-0">
+          <div className="md:w-1/2 shrink-0 flex flex-col">
             <Image
               src={product.data.image || '/static/img/product_placeholder.png'}
               alt={product.data.name}
@@ -328,6 +327,11 @@ export default function ProductDetailsPage() {
               loading="eager"
               className="aspect-square w-full object-cover md:rounded-xl shrink-0 shadow-lg"
             />
+            {product.data.description && (
+              <p className="text-secondary text-m break-words line-clamp-3 mt-4 px-8 md:px-0">
+                {product.data.description}
+              </p>
+            )}
           </div>
 
           <div className="md:w-1/2 flex flex-col gap-5 pt-4 pb-8 px-8 md:px-0 md:py-0 md:justify-center">
@@ -433,7 +437,9 @@ export default function ProductDetailsPage() {
 
       {isConfirmModalOpen && (
         <ConfirmOrderModal
-          price={convertPrice(product.data.discountedPriceInCents)}
+          price={convertPrice(
+            discountPrice(product.data.priceInCents, product.data.discountPercentage)
+          )}
           isCreatingOrder={isCreatingOrder}
           onConfirm={confirmAndCreateOrder}
           onClose={() => setIsConfirmModalOpen(false)}
@@ -458,9 +464,14 @@ export default function ProductDetailsPage() {
 
       <ProductVariantForm
         isOpen={isCreateVariantModalOpen}
-        onClose={() => setIsCreateVariantModalOpen(false)}
+        onClose={() => {
+          setIsCreateVariantModalOpen(false);
+          setVariantCreationError(null);
+        }}
         onSubmit={handleCreateVariant}
         isSubmitting={isSubmittingVariant}
+        error={variantCreationError}
+        onErrorClear={() => setVariantCreationError(null)}
       />
 
       {allVariants.data && (
