@@ -155,10 +155,10 @@ export default function ProductEditPage() {
                       <Input
                         type="number"
                         id="form-price"
-                        min="0"
+                        min="0.01"
                         max="9999"
                         step="0.01"
-                        placeholder="0,00"
+                        placeholder="0.00"
                         aria-invalid={!!errors.price}
                         {...register('price', { valueAsNumber: true })}
                         className="shadow appearance-none border border-secondary leading-tight w-full rounded pt-2 pb-2 pl-3 pr-3 mb-2 text-secondary focus:outline-none focus:shadow-outline"
