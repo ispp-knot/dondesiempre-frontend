@@ -3,6 +3,7 @@
 import ErrorText from '@/components/dondeSiempre/ErrorText';
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
+import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -18,6 +19,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import Image from 'next/image';
+import { FetchError } from 'ofetch';
 
 interface ProductUpdateDTO {
   name?: string;
@@ -73,16 +75,28 @@ export default function ProductEditPage() {
     return <LoadingText />;
   }
 
-  if (product.isError || productTypes.isError) {
+  if (product.error instanceof FetchError && product.error.status === 404) {
     return (
-      <>
-        <ErrorText error={product.error} />
-        <ErrorText error={productTypes.error} />
-      </>
+      <ErrorView
+        title="Producto no encontrado"
+        description="No pudimos encontrar este producto. Puede que se haya eliminado o que el enlace ya no sea válido."
+        buttonText="Volver atrás"
+      />
     );
   }
 
+  if (productTypes.isError) {
+    return <ErrorText error={productTypes.error} />;
+  }
+
   if (!product.data) {
+    return (
+      <ErrorView
+        title="Producto no encontrado"
+        description="No pudimos encontrar este producto. Puede que se haya eliminado o que el enlace ya no sea válido."
+        buttonText="Volver atrás"
+      />
+    );
     return <ErrorText error={new Error('Producto no encontrado')} />;
   }
 
