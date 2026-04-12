@@ -5,7 +5,7 @@ export const MAX_PRODUCT_DESCRIPTION_LENGTH = 5000;
 export const MIN_PRODUCT_PRICE = 0.01;
 export const MAX_PRODUCT_PRICE = 9999;
 export const MIN_DISCOUNT = 0;
-export const MAX_DISCOUNT = 99.99;
+export const MAX_DISCOUNT = 99;
 
 const baseProductFormSchema = z.object({
   name: z
