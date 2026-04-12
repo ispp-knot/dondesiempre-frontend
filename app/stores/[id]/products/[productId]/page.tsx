@@ -1,6 +1,5 @@
 'use client';
 
-import ErrorText from '@/components/dondeSiempre/ErrorText';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import { Button } from '@/components/ui/button';
@@ -169,17 +168,14 @@ export default function ProductDetailsPage() {
   ) {
     return <LoadingText />;
   }
-  if (product.isError) {
-    if (product.error instanceof FetchError && product.error.status === 404) {
-      return (
-        <ErrorView
-          title="Producto no encontrado"
-          description="No pudimos encontrar este producto. Puede que se haya eliminado o que el enlace ya no sea válido."
-          buttonText="Volver atrás"
-        />
-      );
-    }
-    return <ErrorText error={product.error} />;
+  if (product.error) {
+    return (
+      <ErrorView
+        title="Producto no encontrado"
+        description="No pudimos encontrar este producto. Puede que se haya eliminado o que el enlace ya no sea válido."
+        buttonText="Volver atrás"
+      />
+    );
   }
   if (!product.data) {
     return (
