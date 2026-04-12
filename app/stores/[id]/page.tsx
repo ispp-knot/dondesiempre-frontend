@@ -7,7 +7,7 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
 
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
-import { StoreDTO } from '@/lib/types/stores/storesDto';
+import { StoreDTO, StoreImageDTO } from '@/lib/types/stores/storesDto';
 import { StoreSocialNetworkDTO } from '@/lib/types/stores/storesSocialDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { ProductDTO } from '@/lib/types/products/productsDto';
@@ -122,6 +122,9 @@ export default function StorePage() {
   });
   const promotionsDto = usePassiveFetcher<PromotionDTO[]>({
     url: `stores/${params.id}/promotions`,
+  });
+  const storeImages = usePassiveFetcher<StoreImageDTO[]>({
+    url: `stores/${params.id}/images`,
   });
 
   if ((store.isLoading || outfits.isLoading || products.isLoading) && !store.data) {
@@ -290,6 +293,8 @@ export default function StorePage() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         isOwner={isOwner}
+        images={storeImages.data ?? []}
+        onImagesUpdated={(imgs) => storeImages.setData(imgs)}
       />
 
       {isOwner && (
