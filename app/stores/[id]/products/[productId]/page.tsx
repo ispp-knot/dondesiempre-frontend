@@ -1,8 +1,7 @@
 'use client';
 
-import ErrorText from '@/components/dondeSiempre/ErrorText';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
-import NotFoundText from '@/components/dondeSiempre/NotFoundText';
+import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import { Button } from '@/components/ui/button';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { ProductDTO } from '@/lib/types/products/productsDto';
@@ -145,6 +144,9 @@ export default function ProductDetailsPage() {
       if (error.data?.includes('outfits')) {
         setActiveFetchingError('No se puede eliminar un producto con outfits asociados.');
       }
+      if (error.data?.includes('promotions')) {
+        setActiveFetchingError('No se puede eliminar un producto con promociones asociadas.');
+      }
     },
   });
 
@@ -166,8 +168,24 @@ export default function ProductDetailsPage() {
   ) {
     return <LoadingText />;
   }
-  if (product.isError) return <ErrorText error={product.error} />;
-  if (!product.data) return <NotFoundText message="El producto que buscas no existe..." />;
+  if (product.error) {
+    return (
+      <ErrorView
+        title="Producto no encontrado"
+        description="No pudimos encontrar este producto. Puede que se haya eliminado o que el enlace ya no sea válido."
+        buttonText="Volver atrás"
+      />
+    );
+  }
+  if (!product.data) {
+    return (
+      <ErrorView
+        title="Producto no encontrado"
+        description="No pudimos encontrar este producto. Puede que se haya eliminado o que el enlace ya no sea válido."
+        buttonText="Volver atrás"
+      />
+    );
+  }
 
   const selectedVariant =
     variants.data?.find(
