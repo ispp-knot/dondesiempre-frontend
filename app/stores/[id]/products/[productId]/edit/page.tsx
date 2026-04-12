@@ -19,7 +19,6 @@ import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import Image from 'next/image';
-import { FetchError } from 'ofetch';
 
 interface ProductUpdateDTO {
   name?: string;
@@ -75,7 +74,7 @@ export default function ProductEditPage() {
     return <LoadingText />;
   }
 
-  if (product.error instanceof FetchError && product.error.status === 404) {
+  if (product.error) {
     return (
       <ErrorView
         title="Producto no encontrado"
@@ -97,7 +96,6 @@ export default function ProductEditPage() {
         buttonText="Volver atrás"
       />
     );
-    return <ErrorText error={new Error('Producto no encontrado')} />;
   }
 
   const submitForm = async (data: ProductFormValues) => {
