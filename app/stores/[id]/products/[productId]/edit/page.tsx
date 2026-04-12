@@ -1,6 +1,5 @@
 'use client';
 
-import ErrorText from '@/components/dondeSiempre/ErrorText';
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
@@ -74,7 +73,7 @@ export default function ProductEditPage() {
     return <LoadingText />;
   }
 
-  if (product.error) {
+  if (product.error || productTypes.isError) {
     return (
       <ErrorView
         title="Producto no encontrado"
@@ -82,10 +81,6 @@ export default function ProductEditPage() {
         buttonText="Volver atrás"
       />
     );
-  }
-
-  if (productTypes.isError) {
-    return <ErrorText error={productTypes.error} />;
   }
 
   if (!product.data) {
