@@ -3,9 +3,8 @@
 import StoreLocationModal from '@/app/stores/[id]/store-edit-location-modal';
 
 export const dynamic = 'force-dynamic';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
-import { IoSearch } from 'react-icons/io5';
 
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
@@ -60,19 +59,25 @@ export default function StorePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
 
-  // Build query params for outfits fetcher
-  const outfitsQueryParams = new URLSearchParams();
-  if (debouncedSearchQuery) outfitsQueryParams.append('name', debouncedSearchQuery);
+  // Memoize the outfits URL to prevent unnecessary refetches
+  const outfitsUrl = useMemo(() => {
+    const queryParams = new URLSearchParams();
+    if (debouncedSearchQuery) queryParams.append('name', debouncedSearchQuery);
+    return `stores/${params.id}/outfits?${queryParams.toString()}`;
+  }, [debouncedSearchQuery, params.id]);
 
-  // Build query params for products fetcher
-  const productsQueryParams = new URLSearchParams();
-  if (debouncedSearchQuery) productsQueryParams.append('name', debouncedSearchQuery);
+  // Memoize the products URL to prevent unnecessary refetches
+  const productsUrl = useMemo(() => {
+    const queryParams = new URLSearchParams();
+    if (debouncedSearchQuery) queryParams.append('name', debouncedSearchQuery);
+    return `stores/${params.id}/products?${queryParams.toString()}`;
+  }, [debouncedSearchQuery, params.id]);
 
   const outfits = usePassiveFetcher<OutfitDTO[]>({
-    url: `stores/${params.id}/outfits?${outfitsQueryParams.toString()}`,
+    url: outfitsUrl,
   });
   const products = usePassiveFetcher<ProductDTO[]>({
-    url: `stores/${params.id}/products?${productsQueryParams.toString()}`,
+    url: productsUrl,
   });
   const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
 
@@ -119,7 +124,7 @@ export default function StorePage() {
     url: `stores/${params.id}/promotions`,
   });
 
-  if (store.isLoading || outfits.isLoading || products.isLoading) {
+  if ((store.isLoading || outfits.isLoading || products.isLoading) && !store.data) {
     return <LoadingText />;
   } else if (store.isError || outfits.isError || products.isError) {
     return (
@@ -276,26 +281,14 @@ export default function StorePage() {
         </div>
       )}
 
-      <div className="p-4 mt-6 sticky top-0 bg-white z-50 ">
-        <div className="relative flex items-center w-full max-w-2xl mx-auto">
-          <IoSearch className="absolute left-3 text-secondary text-xl" />
-          <input
-            type="text"
-            placeholder="Buscar productos..."
-            className="w-full pl-10 pr-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 bg-gray-50 text-dark-blue font-medium"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-      </div>
-
       <StoreTabs
         store={store.data}
         description={store.data?.aboutUs || ''}
         promotions={promotionData}
         outfits={validOutfits}
         products={products.data || []}
-        searchQuery={debouncedSearchQuery}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
         isOwner={isOwner}
       />
 

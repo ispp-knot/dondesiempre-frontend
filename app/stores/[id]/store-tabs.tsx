@@ -9,6 +9,7 @@ import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { convertPrice, discountPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { JSX, useState } from 'react';
+import { IoSearch } from 'react-icons/io5';
 import AboutUs from './about-us';
 import StoreOptions from './options';
 import Outfits from './outfits';
@@ -26,6 +27,7 @@ type Props = {
   promotions?: PromotionDTO[];
   store: StoreDTO;
   searchQuery?: string;
+  onSearchChange?: (query: string) => void;
   isOwner: boolean;
 };
 
@@ -35,6 +37,8 @@ export default function StoreTabs({
   products = [],
   promotions = [],
   store,
+  searchQuery = '',
+  onSearchChange,
   isOwner,
 }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
@@ -238,6 +242,22 @@ export default function StoreTabs({
           )}
         </div>
       )}
+
+      <div className="p-4 mt-6 bg-white sticky top-0 z-50">
+        <div className=" relative flex items-center w-full max-w-2xl mx-auto">
+          <IoSearch className="absolute left-3 text-secondary text-xl" />
+          <input
+            type="text"
+            placeholder="Buscar productos..."
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck="false"
+            className="w-full pl-10 pr-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 bg-gray-50 text-dark-blue font-medium"
+            value={searchQuery || ''}
+            onChange={(e) => onSearchChange?.(e.target.value)}
+          />
+        </div>
+      </div>
 
       <div className="flex mx-4 mt-5 mb-5 self-center rounded-md overflow-hidden border border-gray-200 w-11/12 sm:mx-auto sm:max-w-142.5">
         <button
