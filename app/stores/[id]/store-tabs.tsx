@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ShareTo } from '@/components/ui/shareTo';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
+import { ProductDTO } from '@/lib/types/products/productsDto';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { convertPrice, discountPrice } from '@/lib/utils';
 import Image from 'next/image';
@@ -21,14 +22,17 @@ type Tab = 'catalogo' | 'sobre' | 'opciones';
 type Props = {
   description?: string;
   outfits?: OutfitDTO[];
+  products?: ProductDTO[];
   promotions?: PromotionDTO[];
   store: StoreDTO;
+  searchQuery?: string;
   isOwner: boolean;
 };
 
 export default function StoreTabs({
   description = '',
   outfits = [],
+  products = [],
   promotions = [],
   store,
   isOwner,
@@ -277,7 +281,7 @@ export default function StoreTabs({
         {activeTab === 'catalogo' && (
           <>
             <Outfits storeId={store.id} outfits={outfits} />
-            <Products storeId={store.id} />
+            <Products storeId={store.id} products={products} />
           </>
         )}
 
