@@ -116,7 +116,7 @@ export default function EditPromotionPage() {
       setStatus({ type: 'success', message: '¡Promoción actualizada con éxito!' });
 
       setTimeout(() => {
-        router.push(`/stores/${storeId}`);
+        router.push(`/stores/${storeId}/promotions/manage`);
       }, 2000);
     } catch (err) {
       console.error('Error updating promotion:', err);
