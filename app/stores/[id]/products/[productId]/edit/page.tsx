@@ -1,8 +1,8 @@
 'use client';
 
-import ErrorText from '@/components/dondeSiempre/ErrorText';
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
+import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -75,17 +75,24 @@ export default function ProductEditPage() {
     return <LoadingText />;
   }
 
-  if (product.isError || productTypes.isError) {
+  if (product.error || productTypes.isError) {
     return (
-      <>
-        <ErrorText error={product.error} />
-        <ErrorText error={productTypes.error} />
-      </>
+      <ErrorView
+        title="Producto no encontrado"
+        description="No pudimos encontrar este producto. Puede que se haya eliminado o que el enlace ya no sea válido."
+        buttonText="Volver atrás"
+      />
     );
   }
 
   if (!product.data) {
-    return <ErrorText error={new Error('Producto no encontrado')} />;
+    return (
+      <ErrorView
+        title="Producto no encontrado"
+        description="No pudimos encontrar este producto. Puede que se haya eliminado o que el enlace ya no sea válido."
+        buttonText="Volver atrás"
+      />
+    );
   }
 
   const submitForm = async (data: ProductFormInput) => {
