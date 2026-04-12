@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { ProductDTO } from '@/lib/types/products/productsDto';
 import { ProductTypeDTO } from '@/lib/types/producttypes/productTypesDto';
-import { createEditProductFormSchema, ProductFormValues } from '@/lib/types/products/productsRules';
+import { createEditProductFormSchema, ProductFormInput } from '@/lib/types/products/productsRules';
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
@@ -52,7 +52,7 @@ export default function ProductEditPage() {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<ProductFormValues>({
+  } = useForm<ProductFormInput>({
     resolver: zodResolver(createEditProductFormSchema()),
   });
 
@@ -66,7 +66,7 @@ export default function ProductEditPage() {
         description: product.data.description || '',
         price: product.data.priceInCents / 100,
         productTypeId: product.data.typeId,
-        discount: product.data.discountPercentage ?? null,
+        discount: product.data.discountPercentage ?? undefined,
       });
     }
   }, [product.data, reset]);
@@ -88,7 +88,7 @@ export default function ProductEditPage() {
     return <ErrorText error={new Error('Producto no encontrado')} />;
   }
 
-  const submitForm = async (data: ProductFormValues) => {
+  const submitForm = async (data: ProductFormInput) => {
     setApiError(null);
 
     try {
@@ -98,7 +98,7 @@ export default function ProductEditPage() {
         description: data.description || null,
         priceInCents: Math.round(data.price * 100) || undefined,
         productTypeId: data.productTypeId || undefined,
-        discountPercentage: data.discount ?? null,
+        discountPercentage: (data.discount as number | undefined) ?? null,
       };
 
       // Send single PUT request with all changes
