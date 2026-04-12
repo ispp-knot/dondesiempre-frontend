@@ -252,6 +252,7 @@ export default function StoreTabs({
             autoComplete="off"
             autoCorrect="off"
             spellCheck="false"
+            maxLength={50}
             className="w-full pl-10 pr-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 bg-gray-50 text-dark-blue font-medium"
             value={searchQuery || ''}
             onChange={(e) => onSearchChange?.(e.target.value)}
