@@ -24,6 +24,7 @@ import {
 import {
   calculatePriceWithPercentageDiscount,
   convertPrice,
+  formatDisplayPrice,
   getOutfitDiscountPercentage,
 } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -37,6 +38,7 @@ import { FaTag } from 'react-icons/fa6';
 import { IoIosCloseCircle } from 'react-icons/io';
 import { z } from 'zod';
 import ClientOutfitDetailsPage from './ClientOutfitDetailsPage';
+import { BackButton } from '@/components/dondeSiempre/BackButton';
 
 type EditOutfitSchema = ReturnType<typeof createEditOutfitFormSchema>;
 type EditOutfitFormInput = z.input<EditOutfitSchema>;
@@ -301,9 +303,7 @@ function OutfitAdminForm({
           <div className="space-y-1 md:col-span-2">
             <p className="text-sm text-muted-foreground">
               Precio original del outfit:{' '}
-              <strong>
-                {`${convertPrice(outfit.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
-              </strong>
+              <strong>{formatDisplayPrice(convertPrice(outfit.priceInCents))}</strong>
             </p>
             {hasOutfitDiscount && (
               <p className="text-sm font-semibold text-secondary">
@@ -311,8 +311,7 @@ function OutfitAdminForm({
               </p>
             )}
             <p className="text-sm text-muted-foreground">
-              Precio final del outfit:{' '}
-              <strong>{`${outfitDisplayPrice.toFixed(2).toString().replace('.', ',')}€`}</strong>
+              Precio final del outfit: <strong>{formatDisplayPrice(outfitDisplayPrice)}</strong>
             </p>
           </div>
 
@@ -346,7 +345,7 @@ function OutfitAdminForm({
                       <div className="min-w-0">
                         <p className="break-words font-semibold text-primary">{product.name}</p>
                         <p className="text-sm text-muted-foreground">
-                          {`${convertPrice(product.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
+                          {formatDisplayPrice(convertPrice(product.priceInCents))}
                         </p>
                       </div>
                     </div>
@@ -524,6 +523,9 @@ export default function OutfitDetailsPage() {
       fallbackWhenNotStoreOwner={renderClientPage()}
     >
       <div className="flex flex-col items-center relative">
+        <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
+          <BackButton />
+        </div>
         {outfit.data ? (
           <div className="w-full px-4 py-6">
             <div className="mx-auto flex w-full justify-center">
