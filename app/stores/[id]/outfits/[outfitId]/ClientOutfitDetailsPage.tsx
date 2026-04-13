@@ -250,35 +250,37 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
               loading="eager"
               className="aspect-square w-full md:h-[400px] md:w-auto mx-auto object-cover md:rounded-xl shadow-lg"
             />
-            <div className="flex flex-row justify-center py-2">
-              {outfit.products.map((_, i) => (
-                <GoDotFill
-                  key={i}
-                  onClick={() => setSelectedProduct(i)}
-                  className={`cursor-pointer ${i === selectedProduct ? 'text-secondary' : 'text-ring'}`}
-                />
-              ))}
-            </div>
-            <div className="px-8 md:px-0">
-              <h1 className="text-primary text-2xl">{outfit.products[selectedProduct].name}</h1>
-            </div>
-            <div
-              className="py-4 px-8 md:px-0 flex flex-row w-full overflow-x-auto items-center gap-4"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              {outfit.products.map((p, i) => (
-                <Button
-                  key={p.id}
-                  onClick={() => setSelectedProduct(i)}
-                  className={
-                    'w-20 h-20 shrink-0 bg-cover bg-center rounded-lg shadow-lg cursor-pointer ' +
-                    (i === selectedProduct ? 'border-4 border-ring' : '')
-                  }
-                  style={{
-                    backgroundImage: `url(${p.image || '/static/img/product_placeholder.png'})`,
-                  }}
-                />
-              ))}
+            <div className="flex flex-col items-center mx-auto">
+              <div className="flex flex-row justify-center py-2">
+                {outfit.products.map((_, i) => (
+                  <GoDotFill
+                    key={i}
+                    onClick={() => setSelectedProduct(i)}
+                    className={`cursor-pointer ${i === selectedProduct ? 'text-secondary' : 'text-ring'}`}
+                  />
+                ))}
+              </div>
+              <div className="px-8 md:px-0">
+                <h1 className="text-primary text-2xl">{outfit.products[selectedProduct].name}</h1>
+              </div>
+              <div
+                className="py-4 px-8 md:px-0 flex flex-row overflow-x-auto items-center gap-4"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                {outfit.products.map((p, i) => (
+                  <Button
+                    key={p.id}
+                    onClick={() => setSelectedProduct(i)}
+                    className={
+                      'w-20 h-20 shrink-0 bg-cover bg-center rounded-lg shadow-lg cursor-pointer ' +
+                      (i === selectedProduct ? 'border-4 border-ring' : '')
+                    }
+                    style={{
+                      backgroundImage: `url(${p.image || '/static/img/product_placeholder.png'})`,
+                    }}
+                  />
+                ))}
+              </div>
             </div>
           </div>
 
