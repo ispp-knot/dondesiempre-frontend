@@ -27,6 +27,8 @@ import Link from 'next/link';
 import { buttonLinkClass } from '@/lib/utils/buttonLinkClass';
 import { ErrorModal } from '@/components/modals/ErrorModal';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
+import { GenericConfirmModal } from '@/components/modals/GenericConfirmModal';
+import GenericSuccessModal from '@/components/modals/GenericSuccessModal';
 
 function ProductPrice({ product }: { product: ProductDTO }) {
   const fmt = (cents: number) => formatDisplayPrice(convertPrice(cents));
@@ -66,6 +68,9 @@ export default function ProductDetailsPage() {
   const [isUpdatingVariants, setIsUpdatingVariants] = useState(false);
   const [activeFetchingError, setActiveFetchingError] = useState<string | null>(null);
   const [variantCreationError, setVariantCreationError] = useState<string | null>(null);
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
 
   const router = useRouter();
 
@@ -280,6 +285,19 @@ export default function ProductDetailsPage() {
       setIsUpdatingVariants(false);
     }
   };
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteProduct.fetch({ url: `products/${product.data?.id}` });
+      setIsConfirmDeleteOpen(false);
+      setDeleteSuccess(true);
+    } catch {
+      setIsConfirmDeleteOpen(false);
+      setActiveFetchingError('No se pudo eliminar el producto.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const MobileTitle = () => {
     return (
@@ -333,7 +351,15 @@ export default function ProductDetailsPage() {
 
           <div className="md:w-1/2 flex flex-col gap-5 pt-4 pb-8 px-8 md:px-0 md:py-0 md:justify-start">
             <DesktopTitle />
-
+            {isConfirmDeleteOpen && (
+              <GenericConfirmModal
+                message="¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer."
+                onConfirm={handleDelete}
+                onClose={() => setIsConfirmDeleteOpen(false)}
+                isLoading={isDeleting}
+                confirmLabel="Eliminar"
+              />
+            )}
             {isStore && isStoreOwner && (
               <div className="flex gap-3">
                 <Link
@@ -344,10 +370,7 @@ export default function ProductDetailsPage() {
                 </Link>
 
                 <Button
-                  onClick={async () => {
-                    await deleteProduct.fetch({ url: `products/${product.data?.id}` });
-                    router.push(`/stores/${params.id}`);
-                  }}
+                  onClick={() => setIsConfirmDeleteOpen(true)}
                   className="flex-1 flex items-center justify-center rounded-lg bg-primary hover:bg-dark-primary text-white font-semibold text-sm md:text-base h-11 transition-colors"
                 >
                   Eliminar
@@ -504,6 +527,13 @@ export default function ProductDetailsPage() {
             onUpdate={handleUpdateVariants}
             isUpdating={isUpdatingVariants}
           />
+          {deleteSuccess && (
+            <GenericSuccessModal
+              setOpenModal={() => router.push(`/stores/${params.id}`)}
+              title="Producto eliminado"
+              description="El producto se ha eliminado correctamente."
+            />
+          )}
         </>
       )}
     </>
