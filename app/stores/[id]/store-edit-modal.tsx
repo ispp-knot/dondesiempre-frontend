@@ -23,13 +23,6 @@ const storeUpdateSchema = z.object({
   email: z.string().email('Email inválido'),
   address: z.string().min(1, 'La dirección es obligatoria').max(255, 'Máximo 255 caracteres'),
   openingHours: z.string().min(1, 'El horario es obligatorio').max(255, 'Máximo 255 caracteres'),
-  phone: z
-    .string()
-    .trim()
-    .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
-      message: 'Teléfono inválido',
-    })
-    .optional(),
   aboutUs: z.string().max(5000, 'Máximo 5000 caracteres').optional(),
 });
 
@@ -74,7 +67,6 @@ export default function StoreEditModal({
       email: '',
       address: '',
       openingHours: '',
-      phone: '',
       aboutUs: '',
     },
   });
@@ -87,7 +79,6 @@ export default function StoreEditModal({
       email: store.email ?? '',
       address: store.address ?? '',
       openingHours: store.openingHours ?? '',
-      phone: store.phone ?? '',
       aboutUs: store.aboutUs ?? '',
     });
   }, [open, store, reset]);
@@ -108,7 +99,6 @@ export default function StoreEditModal({
           email: data.email,
           address: data.address,
           openingHours: data.openingHours,
-          phone: data.phone?.trim() === '' ? null : data.phone,
           aboutUs: data.aboutUs?.trim() === '' ? null : data.aboutUs,
         },
       });
@@ -181,19 +171,6 @@ export default function StoreEditModal({
               {...register('openingHours')}
             />
             <FieldError message={errors.openingHours?.message} />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="phone" className="text-xl">
-              Teléfono
-            </Label>
-            <Input
-              id="phone"
-              className="text-muted-foreground text-2xl "
-              aria-invalid={!!errors.phone}
-              {...register('phone')}
-            />
-            <FieldError message={errors.phone?.message} />
           </div>
 
           <div className="grid gap-2">
