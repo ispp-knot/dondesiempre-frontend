@@ -144,6 +144,7 @@ export function StoreCard({
             {isClient && (
               <Button
                 onClick={handleFollowClick}
+                data-testid="follow-button"
                 className="w-7 h-7 p-1.5 rounded-md bg-primary/10 hover:bg-primary/20 transition-colors disabled:opacity-50"
                 title={isFollowing.data?.isFollowing ? 'Dejar de seguir' : 'Seguir'}
                 disabled={isFollowing.isLoading}

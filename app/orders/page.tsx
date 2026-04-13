@@ -93,7 +93,10 @@ export default function OrdersPage() {
   const formatPrice = (cents: number) => formatDisplayPrice(convertPrice(cents));
 
   const filteredOrders =
-    orders.data?.filter((order) => (filter === 'ALL' ? true : order.orderStatus === filter)) || [];
+    orders.data
+      ?.slice()
+      .sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime())
+      .filter((order) => (filter === 'ALL' ? true : order.orderStatus === filter)) || [];
 
   const getStatusStyles = (status: string) => {
     switch (status) {

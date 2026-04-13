@@ -18,6 +18,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import Image from 'next/image';
+import { BackButton } from '@/components/dondeSiempre/BackButton';
 
 interface ProductUpdateDTO {
   name?: string;
@@ -99,7 +100,6 @@ export default function ProductEditPage() {
     setApiError(null);
 
     try {
-      // Prepare PUT request with all fields including discount
       const dto: ProductUpdateDTO = {
         name: data.name || undefined,
         description: data.description || null,
@@ -108,7 +108,6 @@ export default function ProductEditPage() {
         discountPercentage: (data.discount as number | undefined) ?? null,
       };
 
-      // Send single PUT request with all changes
       await updateProduct.fetch({
         formPayload: {
           product: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
@@ -121,7 +120,6 @@ export default function ProductEditPage() {
         return;
       }
 
-      // Success
       router.push(`/stores/${params.id}/products/${params.productId}`);
     } catch (_err: unknown) {
       setApiError('Hubo un error al actualizar el producto. Por favor, intenta de nuevo.');
@@ -131,7 +129,11 @@ export default function ProductEditPage() {
   return (
     <StoreOwnerGuard storeId={params.id}>
       <div className="flex flex-col items-center px-4 py-6">
-        <div className="w-full max-w-6xl">
+        <div className="w-full max-w-6xl space-y-4">
+          <div className="flex justify-start">
+            <BackButton />
+          </div>
+
           <Card className="p-4 shadow-xl sm:p-6 md:p-8">
             <h1 className="mb-6 text-center text-3xl font-bold text-primary">Editar producto</h1>
 

@@ -19,6 +19,7 @@ import { IoMdAddCircleOutline } from 'react-icons/io';
 import LoadingText from '../../../../components/dondeSiempre/LoadingText';
 import ClientOutfitsPage from './ClientOutfitsPage';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
+import { BackButton } from '@/components/dondeSiempre/BackButton';
 
 export default function OutfitsPage() {
   const params = useParams<{ id: string }>();
@@ -77,6 +78,7 @@ export default function OutfitsPage() {
   const renderClientPage = (): ReactNode => {
     return <ClientOutfitsPage storeId={params.id} outfits={outfits.data} />;
   };
+
   return (
     <StoreOwnerGuard
       storeId={params.id}
@@ -105,6 +107,9 @@ export default function OutfitsPage() {
         }}
       >
         <div className="flex flex-col items-center">
+          <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
+            <BackButton />
+          </div>
           <div className="w-full md:w-8/12">
             {invalidOutfits.length > 0 && (
               <Card className="m-4 space-y-4 border-destructive/30 bg-destructive/5 p-4 shadow-xl">

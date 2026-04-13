@@ -26,6 +26,7 @@ import { DeleteVariantsModal, UpdateVariantsModal } from './VariantManagementMod
 import Link from 'next/link';
 import { buttonLinkClass } from '@/lib/utils/buttonLinkClass';
 import { ErrorModal } from '@/components/modals/ErrorModal';
+import { BackButton } from '@/components/dondeSiempre/BackButton';
 
 function ProductPrice({ product }: { product: ProductDTO }) {
   const fmt = (cents: number) => formatDisplayPrice(convertPrice(cents));
@@ -154,16 +155,7 @@ export default function ProductDetailsPage() {
   ) {
     return <LoadingText />;
   }
-  if (product.error) {
-    return (
-      <ErrorView
-        title="Producto no encontrado"
-        description="No pudimos encontrar este producto. Puede que se haya eliminado o que el enlace ya no sea válido."
-        buttonText="Volver atrás"
-      />
-    );
-  }
-  if (!product.data) {
+  if (product.error || !product.data) {
     return (
       <ErrorView
         title="Producto no encontrado"
@@ -315,7 +307,11 @@ export default function ProductDetailsPage() {
         <ErrorModal message={activeFetchingError} onClose={() => setActiveFetchingError(null)} />
       )}
 
-      <div className="flex flex-col items-center relative" data-testid="product-mobile-name">
+      <div className="flex flex-col items-center relative">
+        <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
+          <BackButton />
+        </div>
+
         <MobileTitle />
 
         <div className="w-full md:max-w-5xl md:flex md:flex-row md:gap-10 md:px-10 md:py-10 md:pt-4">

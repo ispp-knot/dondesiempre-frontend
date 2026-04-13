@@ -22,6 +22,7 @@ import { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
+import { BackButton } from '@/components/dondeSiempre/BackButton';
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
@@ -96,7 +97,11 @@ export default function ProductCreationPage() {
   return (
     <StoreOwnerGuard storeId={params.id}>
       <div className="flex flex-col items-center px-4 py-6">
-        <div className="w-full max-w-6xl">
+        <div className="w-full max-w-6xl space-y-4">
+          <div className="flex justify-start">
+            <BackButton />
+          </div>
+
           <Card className="p-4 shadow-xl sm:p-6 md:p-8">
             <h1 className="mb-6 text-center text-3xl font-bold text-primary">Crear producto</h1>
 

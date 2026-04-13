@@ -23,6 +23,7 @@ import ProductVariantSelector, {
   ProductVariantDTO,
 } from '../../products/[productId]/ProductVariantSelector';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { BackButton } from '@/components/dondeSiempre/BackButton';
 
 export interface ClientOutfitDetailsPageProps {
   outfit?: OutfitDTO;
@@ -191,7 +192,7 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
 
   const MobileTitle = () => (
     <div className="md:hidden pt-8 px-4 pb-4 w-full text-center">
-      <h1 className="mb-1 font-bold text-primary text-3xl text-center wrap-break-word">
+      <h1 className="mb-1 font-bold text-primary text-3xl text-center break-words">
         {outfit.name}
       </h1>
       <OutfitDescription />
@@ -200,7 +201,7 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
 
   const DesktopTitle = () => (
     <div className="hidden md:block">
-      <h1 className="font-bold text-primary text-3xl mb-1 wrap-break-word">{outfit.name}</h1>
+      <h1 className="font-bold text-primary text-3xl mb-1 break-words">{outfit.name}</h1>
       <OutfitDescription />
     </div>
   );
@@ -238,6 +239,10 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
         <ErrorModal message={activeFetchingError} onClose={() => setActiveFetchingError(null)} />
       )}
       <div className="flex flex-col items-center relative">
+        <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
+          <BackButton />
+        </div>
+
         <MobileTitle />
 
         <div className="w-full md:max-w-5xl md:flex md:flex-row md:gap-10 md:px-10 md:py-10 md:pt-4">
@@ -250,7 +255,7 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
               loading="eager"
               className="aspect-square w-full md:h-[400px] md:w-auto mx-auto object-cover md:rounded-xl shadow-lg"
             />
-            <div className="flex flex-col items-center mx-auto">
+            <div className="flex flex-col items-center mx-auto w-full">
               <div className="flex flex-row justify-center py-2">
                 {outfit.products.map((_, i) => (
                   <GoDotFill
@@ -260,11 +265,13 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
                   />
                 ))}
               </div>
-              <div className="px-8 md:px-0">
-                <h1 className="text-primary text-2xl">{outfit.products[selectedProduct].name}</h1>
+              <div className="px-8 md:px-0 w-full text-center">
+                <h1 className="text-primary text-2xl break-words">
+                  {outfit.products[selectedProduct].name}
+                </h1>
               </div>
               <div
-                className="py-4 px-8 md:px-0 flex flex-row overflow-x-auto items-center gap-4"
+                className="py-4 px-8 md:px-0 flex flex-row overflow-x-auto items-center gap-4 w-full"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
                 {outfit.products.map((p, i) => (
@@ -284,11 +291,11 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
             </div>
           </div>
 
-          <div className="md:w-1/2 flex flex-col gap-5 pb-8 px-8 md:px-0 md:py-0 md:justify-start">
+          <div className="md:w-1/2 flex flex-col gap-5 pb-8 px-8 md:px-0 md:py-0 md:justify-start w-full">
             <DesktopTitle />
             <div className="text-primary text-2xl">
               {outfit.discountPercentage ? (
-                <span className="flex flex-row items-baseline gap-3">
+                <span className="flex flex-row items-baseline gap-3 flex-wrap">
                   <span className="line-through text-muted-foreground text-xl">
                     {fmt(outfit.priceInCents)}
                   </span>

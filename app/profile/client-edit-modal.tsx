@@ -23,17 +23,8 @@ const clientUpdateSchema = z.object({
   name: z.string().min(1, 'El nombre es obligatorio').max(255, 'Máximo 255 caracteres'),
   surname: z.string().min(1, 'Los apellidos son obligatorios').max(255, 'Máximo 255 caracteres'),
   email: z.string().email('Email inválido'),
-  address: z.string().min(1, 'La dirección es obligatoria').max(255, 'Máximo 255 caracteres'),
-  phone: z
-    .string()
-    .trim()
-    .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
-      message: 'Teléfono inválido',
-    })
-    .optional(),
 });
 
-type ClientUpdateInput = z.input<typeof clientUpdateSchema>;
 type ClientUpdateValues = z.infer<typeof clientUpdateSchema>;
 
 function FieldError({ message }: { message?: string }) {
@@ -60,7 +51,7 @@ export default function ClientEditModal({ client, onSavedAction }: ClientEditMod
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<ClientUpdateInput, unknown, ClientUpdateValues>({
+  } = useForm<ClientUpdateValues>({
     resolver: zodResolver(clientUpdateSchema),
   });
 
@@ -70,8 +61,6 @@ export default function ClientEditModal({ client, onSavedAction }: ClientEditMod
         name: client.name ?? '',
         surname: client.surname ?? '',
         email: client.email ?? '',
-        address: client.address ?? '',
-        phone: client.phone ?? '',
       });
     }
   }, [isOpen, client, reset]);
@@ -90,8 +79,6 @@ export default function ClientEditModal({ client, onSavedAction }: ClientEditMod
           name: data.name,
           surname: data.surname,
           email: data.email,
-          address: data.address,
-          phone: data.phone?.trim() === '' ? null : data.phone,
         },
       });
 
@@ -169,32 +156,6 @@ export default function ClientEditModal({ client, onSavedAction }: ClientEditMod
               {...register('email')}
             />
             <FieldError message={errors.email?.message} />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="address" className="text-xl">
-              Dirección
-            </Label>
-            <Input
-              id="address"
-              className="text-muted-foreground text-xl"
-              aria-invalid={!!errors.address}
-              {...register('address')}
-            />
-            <FieldError message={errors.address?.message} />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="phone" className="text-xl">
-              Teléfono
-            </Label>
-            <Input
-              id="phone"
-              className="text-muted-foreground text-xl"
-              aria-invalid={!!errors.phone}
-              {...register('phone')}
-            />
-            <FieldError message={errors.phone?.message} />
           </div>
 
           {apiError && <p className="text-xs text-destructive text-center">{apiError}</p>}

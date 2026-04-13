@@ -23,7 +23,7 @@ export default defineConfig({
         'npm run build && node tests/scripts/copy-standalone.js && node .next/standalone/server.js',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
-      timeout: 180 * 100000,
+      timeout: 180 * 10000,
       // stdout: 'pipe', // <--- Verás los logs del Frontend
       // stderr: 'pipe',
     },
@@ -120,6 +120,18 @@ export default defineConfig({
           : {}),
       },
       dependencies: ['setup-registro'],
+    },
+    {
+      name: 'multidata tests',
+      testMatch: /.*\.multi\.ts/, // Ejecutará archivos que terminen en .multi.ts
+      use: {
+        ...devices['Desktop Chrome'],
+        screenshot: 'on',
+        ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+          ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
+          : {}),
+      },
+      dependencies: ['failures'],
     },
   ],
 
