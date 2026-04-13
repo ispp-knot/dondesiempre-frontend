@@ -14,7 +14,7 @@ import { ProductTypeDTO } from '@/lib/types/producttypes/productTypesDto';
 import { useParams, useRouter } from 'next/navigation';
 import {
   createProductFormSchema,
-  ProductFormValues,
+  ProductFormInput,
   MAX_PRODUCT_NAME_LENGTH,
   MAX_PRODUCT_DESCRIPTION_LENGTH,
 } from '@/lib/types/products/productsRules';
@@ -46,7 +46,7 @@ export default function ProductCreationPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<ProductFormValues>({
+  } = useForm<ProductFormInput>({
     resolver: zodResolver(createProductFormSchema()),
     defaultValues: {
       name: '',
@@ -66,7 +66,7 @@ export default function ProductCreationPage() {
     return <ErrorText error={productTypes.error} />;
   }
 
-  const submitForm = async (data: ProductFormValues) => {
+  const submitForm = async (data: ProductFormInput) => {
     setApiError(null);
     const dto: ProductCreationDTO = {
       name: data.name,

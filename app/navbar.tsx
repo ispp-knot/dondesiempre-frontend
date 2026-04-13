@@ -16,6 +16,9 @@ export default function Navbar() {
 
   const isLoggedIn = Boolean(user);
   const isClient = Boolean(user?.client);
+  const isStoreOwner = Boolean(user?.store?.id);
+
+  const showPricing = !isLoggedIn || isStoreOwner;
 
   const userActiveMatches = ['/profile', '/login', '/register'];
   const isUserActive = userActiveMatches.some((m) => pathname.startsWith(m));
@@ -36,24 +39,24 @@ export default function Navbar() {
             </div>
           </div>
           <div className="flex flex-row items-center gap-5 text-2xl font-primary">
-            {isClient ? (
+            {isClient && (
               <Link href="/following" aria-label="Favoritos">
                 <FaRegHeart className="cursor-pointer" />
               </Link>
-            ) : (
-              <></>
             )}
 
-            {isLoggedIn ? (
+            {isLoggedIn && (
               <Link href="/orders" aria-label="Pedidos">
                 <LuPackage className="cursor-pointer" strokeWidth={1.5} />
               </Link>
-            ) : (
-              <></>
             )}
-            <Link href="/pricing" aria-label="Planes y precios">
-              <LuCrown className="cursor-pointer" strokeWidth={1.5} />
-            </Link>
+
+            {showPricing && (
+              <Link href="/pricing" aria-label="Planes y precios">
+                <LuCrown className="cursor-pointer" strokeWidth={1.5} />
+              </Link>
+            )}
+
             <UserNavButton isActive={isUserActive} />
           </div>
         </div>

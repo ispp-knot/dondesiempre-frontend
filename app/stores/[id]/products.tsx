@@ -1,6 +1,6 @@
 'use client';
 import ProductCard from '@/components/dondeSiempre/ProductCard';
-import { usePassiveFetcher } from '@/lib/api/fetcher';
+import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { ProductDTO } from '@/lib/types/products/productsDto';
 import Link from 'next/link';
@@ -11,9 +11,7 @@ type Props = {
   products?: ProductDTO[];
 };
 
-export default function Products({ storeId = undefined }: Readonly<Props>) {
-  const products = usePassiveFetcher<ProductDTO[]>({ url: `stores/${storeId}/products` });
-
+export default function Products({ storeId = undefined, products = [] }: Readonly<Props>) {
   const { getCurrentUser } = useAuth();
 
   const user = getCurrentUser();
@@ -35,10 +33,14 @@ export default function Products({ storeId = undefined }: Readonly<Props>) {
           </Link>
         )}
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-4">
-        {products.data?.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-4 transition-opacity duration-300 ease-in-out">
+        {products && products.length > 0 ? (
+          products.map((product) => <ProductCard key={product.id} product={product} />)
+        ) : (
+          <div className="col-span-2 sm:col-span-4 flex justify-center py-8">
+            <NotFoundText message="No se encontraron productos con tu búsqueda" />
+          </div>
+        )}
       </div>
     </div>
   );
