@@ -35,16 +35,6 @@ const step1Schema = z
 const clientStep2Schema = z.object({
   name: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
   surname: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
-  phone: z
-    .string()
-    .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
-      message: 'Número de teléfono no válido',
-    })
-    .transform((value) => (value === '' ? null : value)),
-  address: z
-    .string()
-    .max(255, 'Máximo 255 caracteres')
-    .transform((value) => (value === '' ? null : value)),
 });
 
 const storeStep2Schema = z.object({
@@ -68,7 +58,6 @@ const storeStep2Schema = z.object({
 });
 
 type Step1Values = z.infer<typeof step1Schema>;
-type ClientStep2InputValues = z.input<typeof clientStep2Schema>;
 type ClientStep2Values = z.infer<typeof clientStep2Schema>;
 type StoreStep2InputValues = z.input<typeof storeStep2Schema>;
 type StoreStep2Values = z.infer<typeof storeStep2Schema>;
@@ -315,7 +304,7 @@ function ClientStep2Form({
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<ClientStep2InputValues, unknown, ClientStep2Values>({
+  } = useForm<ClientStep2Values>({
     resolver: zodResolver(clientStep2Schema),
   });
 
@@ -326,7 +315,8 @@ function ClientStep2Form({
         body: {
           email: step1Data.email,
           password: step1Data.password,
-          ...data,
+          name: data.name,
+          surname: data.surname,
         },
       });
       onSuccess();
@@ -353,19 +343,6 @@ function ClientStep2Form({
           <FieldError message={errors.surname?.message} />
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-1">
-          <Label htmlFor="phone">Teléfono</Label>
-          <Input id="phone" type="tel" aria-invalid={!!errors.phone} {...register('phone')} />
-          <FieldError message={errors.phone?.message} />
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor="address">Dirección</Label>
-          <Input id="address" aria-invalid={!!errors.address} {...register('address')} />
-          <FieldError message={errors.address?.message} />
-        </div>
-      </div>
-
       {apiError && <p className="text-xs text-destructive">{apiError}</p>}
 
       <div className="flex gap-2">
@@ -403,8 +380,8 @@ function StoreStep2Form({
   } = useForm<StoreStep2InputValues, unknown, StoreStep2Values>({
     resolver: zodResolver(storeStep2Schema),
     defaultValues: {
-      primaryColor: '#000000',
-      secondaryColor: '#ffffff',
+      primaryColor: '#c65a3a',
+      secondaryColor: '#19756a',
     },
   });
 
@@ -466,7 +443,7 @@ function StoreStep2Form({
 
         <div className="space-y-1">
           <Label>Ubicación</Label>
-          <div className="h-[280px] w-full rounded-md overflow-hidden border border-input">
+          <div className="flex-1  w-full rounded-md overflow-hidden border border-input relative bg-muted">
             <LocationPickerMap
               latitude={latitude || undefined}
               longitude={longitude || undefined}

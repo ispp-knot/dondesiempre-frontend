@@ -6,17 +6,21 @@ import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
+import { useAuth } from '@/lib/auth/AuthContext';
+import { GenericConfirmModal } from '@/components/modals/GenericConfirmModal';
 
 export default function EditPromotionPage() {
   const params = useParams<{ id: string; promoId: string }>();
   const router = useRouter();
   const storeId = params.id;
   const promoId = params.promoId;
+  const { getCurrentUser } = useAuth();
 
   const [isDeleting, setIsDeleting] = useState(false);
   const [initialData, setInitialData] = useState<Partial<PromotionFormData> | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [isUnauthorized, setIsUnauthorized] = useState(false);
 
   // Fetch de la promoción existente
   const {
@@ -26,18 +30,13 @@ export default function EditPromotionPage() {
   } = usePassiveFetcher<PromotionDTO>({
     url: `promotions/${promoId}`,
   });
-
   const updatePromotion = useActiveFetcher<void>({ method: 'PUT' });
   const deletePromotion = useActiveFetcher<void>({ method: 'DELETE' });
 
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+
   const handleDelete = async () => {
-    if (
-      !window.confirm(
-        '¿Estás seguro de que deseas eliminar esta promoción? Esta acción no se puede deshacer.'
-      )
-    ) {
-      return;
-    }
+    setIsConfirmDeleteOpen(false);
 
     setIsDeleting(true);
     try {
@@ -58,28 +57,45 @@ export default function EditPromotionPage() {
   };
 
   useEffect(() => {
-    if (promoData) {
-      setInitialData({
-        name: promoData.name,
-        discountPercentage: promoData.discountPercentage,
-        description: promoData.description || '',
-        isActive: promoData.active, // <--- Mapeamos 'active' de la API a 'isActive' del Form
-        dateRange: {
-          from: new Date(promoData.startDate),
-          to: new Date(promoData.endDate),
-        },
-        products:
-          promoData.products?.map((p) => ({
-            id: p.id,
-            name: p.name,
-            // Usamos la imagen del producto o el placeholder
-            imageUrl: p.image ?? '/static/img/outfit_placeholder.jpg',
-          })) || [],
-        // Pasamos la URL de la imagen actual para que ImageUpload la muestre
-        promotionImage: promoData.promotionImageUrl,
-      });
+    if (!promoData) return;
+
+    // 👇 Verificar que la tienda de la promo coincide con el parámetro de la URL
+    // y que el usuario autenticado es dueño de esa tienda
+    const promoStoreId = promoData.storeId; // ajusta según tu DTO
+    const user = getCurrentUser();
+    if (!user?.roles?.includes('STORE')) {
+      setIsUnauthorized(true);
+      return;
+    } else if (promoStoreId !== user.store?.id) {
+      setIsUnauthorized(true);
+      return;
     }
-  }, [promoData]);
+
+    setInitialData({
+      name: promoData.name,
+      discountPercentage: promoData.discountPercentage,
+      description: promoData.description || '',
+      isActive: promoData.active,
+      dateRange: {
+        from: new Date(promoData.startDate),
+        to: new Date(promoData.endDate),
+      },
+      products:
+        promoData.products?.map((p) => ({
+          id: p.id,
+          name: p.name,
+          imageUrl: p.image ?? '/static/img/outfit_placeholder.jpg',
+        })) || [],
+      promotionImage: promoData.promotionImageUrl,
+    });
+  }, [promoData, storeId, getCurrentUser]);
+
+  // 👇 Redirigir si no tiene permisos
+  useEffect(() => {
+    if (isUnauthorized) {
+      router.replace(`/stores/${storeId}`); // o a /unauthorized, según prefieras
+    }
+  }, [isUnauthorized, router, storeId]);
 
   const handleSubmit = async (formData: PromotionFormData) => {
     setIsSaving(true);
@@ -119,7 +135,7 @@ export default function EditPromotionPage() {
       setStatus({ type: 'success', message: '¡Promoción actualizada con éxito!' });
 
       setTimeout(() => {
-        router.push(`/stores/${storeId}`);
+        router.push(`/stores/${storeId}/promotions/manage`);
       }, 2000);
     } catch (err) {
       console.error('Error updating promotion:', err);
@@ -153,6 +169,16 @@ export default function EditPromotionPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white p-6 font-quicksand text-primary pb-24 relative">
+      {isConfirmDeleteOpen && (
+        <GenericConfirmModal
+          message="¿Estás seguro de que deseas eliminar esta promoción? Esta acción no se puede deshacer."
+          onConfirm={handleDelete}
+          onClose={() => setIsConfirmDeleteOpen(false)}
+          isLoading={isDeleting}
+          confirmLabel="Eliminar"
+        />
+      )}
+
       <PromotionForm
         key={promoId} // Forzamos remount si cambia la promo
         initialData={initialData}
