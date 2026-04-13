@@ -199,7 +199,7 @@ export default function ProductDetailsPage() {
     }
     setIsCreatingOrder(true);
     try {
-      await createOrder.fetch({ body: { [product.data.id]: 1 } });
+      await createOrder.fetch({ body: { [selectedVariant.id]: 1 } });
       setIsConfirmModalOpen(false);
       setIsSuccessModalOpen(true);
     } catch (error: unknown) {
@@ -438,9 +438,7 @@ export default function ProductDetailsPage() {
 
       {isConfirmModalOpen && (
         <ConfirmOrderModal
-          price={convertPrice(
-            discountPrice(product.data.priceInCents, product.data.discountPercentage)
-          )}
+          price={discountPrice(product.data.priceInCents, product.data.discountPercentage)}
           isCreatingOrder={isCreatingOrder}
           onConfirm={confirmAndCreateOrder}
           onClose={() => setIsConfirmModalOpen(false)}
