@@ -51,7 +51,7 @@ export default function ClientEditModal({ client, onSavedAction }: ClientEditMod
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<ClientUpdateValues, unknown, ClientUpdateValues>({
+  } = useForm<ClientUpdateValues>({
     resolver: zodResolver(clientUpdateSchema),
   });
 
