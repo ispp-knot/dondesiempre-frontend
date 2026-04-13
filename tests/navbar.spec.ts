@@ -32,6 +32,13 @@ test.describe.serial('public navbar', () => {
 
     await expect(page).toHaveURL('http://localhost:3000/stores');
   });
+
+  test('navbar to plans and prices page', async ({ page }) => {
+    await page.goto('http://localhost:3000/stores');
+    await page.getByRole('link', { name: 'Planes y precios' }).click();
+
+    await expect(page).toHaveURL('http://localhost:3000/pricing');
+  });
 });
 
 test.describe.serial('private navbar', () => {

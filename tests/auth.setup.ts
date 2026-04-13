@@ -27,10 +27,6 @@ test.describe.serial('client auth setup', () => {
     await page.getByRole('textbox', { name: 'Nombre' }).fill('Jose');
     await page.getByRole('textbox', { name: 'Nombre' }).press('Tab');
     await page.getByRole('textbox', { name: 'Apellido' }).fill('Cliente');
-    await page.getByRole('textbox', { name: 'Apellido' }).press('Tab');
-    await page.getByRole('textbox', { name: 'Teléfono' }).fill('123456789');
-    await page.getByRole('textbox', { name: 'Teléfono' }).press('Tab');
-    await page.getByRole('textbox', { name: 'Dirección' }).fill('Avenida del cliente 2');
     await page.getByRole('button', { name: 'Registrarse' }).click();
 
     const toast = page.getByText('DondeSiempre¡Registro exitoso');
