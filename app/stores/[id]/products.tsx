@@ -19,11 +19,8 @@ export default function Products({ storeId = undefined, products = [] }: Readonl
   const isStoreOwner = (user?.store && user?.store.id === storeId) ?? false;
 
   return (
-    <div className="flex flex-col px-5 sm:w-10/12" >
-      <div
-        className="flex flex-row items-center justify-between w-full mb-4"
-        
-      >
+    <div className="flex flex-col px-5 sm:w-10/12">
+      <div className="flex flex-row items-center justify-between w-full mb-4">
         <h1 className="text-primary text-xl md:text-2xl font-bold">Nuestros productos</h1>
         {isStore && isStoreOwner && (
           <Link

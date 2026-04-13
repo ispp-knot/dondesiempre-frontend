@@ -102,7 +102,7 @@ export default function ProductCreationPage() {
 
             <form onSubmit={handleSubmit(submitForm)} className="space-y-6" noValidate>
               <div className="grid gap-6 md:grid-cols-2">
-                <div className="space-y-2 md:col-span-2" >
+                <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="form-name" className="text-base font-bold text-secondary">
                     Nombre
                   </Label>
@@ -122,7 +122,7 @@ export default function ProductCreationPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2 md:col-span-2" >
+                <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="form-description" className="text-base font-bold text-secondary">
                     Descripción
                   </Label>
@@ -143,11 +143,11 @@ export default function ProductCreationPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2 md:col-span-2" >
+                <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="form-image" className="text-base font-bold text-secondary">
                     Imagen
                   </Label>
-                  <div id="form-image" data-testid="product-image-input" >
+                  <div id="form-image" data-testid="product-image-input">
                     <ImageUpload onChange={setImageFile} />
                   </div>
                 </div>
@@ -174,7 +174,7 @@ export default function ProductCreationPage() {
                   <FieldError message={errors.price?.message} />
                 </div>
 
-                <div className="space-y-2" >
+                <div className="space-y-2">
                   <Label htmlFor="form-type" className="text-base font-bold text-secondary">
                     Categoría
                   </Label>

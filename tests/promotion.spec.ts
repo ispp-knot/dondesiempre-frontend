@@ -16,12 +16,12 @@ test.describe.serial('promotion management', () => {
     await page.waitForURL(/stores\/.*/);
     storeUrl = page.url();
 
-    const createPromotionBanner = await page.locator('.absolute.inset-0.bg-gradient-to-br');
+    const createPromotionBanner = await page.getByTestId('create-promotion-banner').first();
     await expect(createPromotionBanner).toBeVisible();
 
-    await page.getByRole('button', { name: 'Crear Nueva Promoción' }).click();
+    await createPromotionBanner.getByTestId('create-promotion-button').click();
 
-    await page.waitForURL(/stores\/.*\/promotions/);
+    await page.waitForURL(/promotions/);
 
     const promotionNameInput = await page.getByTestId('promotion-name-input');
     const discountPercentageInput = await page.getByTestId('promotion-discount-input');
@@ -39,7 +39,6 @@ test.describe.serial('promotion management', () => {
     await expect(launchPromotion).toBeVisible();
   });
 
-  /* TODO: Si no se pueden crear productos desde la interfaz, esto no se puede hacer.
     test('create promotion', async ({ page }) => {
         await page.goto('storeUrl/promotions');
 
@@ -48,25 +47,28 @@ test.describe.serial('promotion management', () => {
         await page.getByRole('spinbutton').dblclick();
         await page.getByRole('spinbutton').fill('30');
         await page.getByRole('button', { name: 'Selecciona el rango de fechas' }).click();
-        await page.getByRole('button', { name: 'Tuesday, April 14th,' }).click();
+        await page.getByRole('button', { name: 'Friday, April 17th,' }).click();
         await page.getByRole('button', { name: 'Tuesday, April 21st,' }).click();
         await page.getByRole('textbox', { name: 'Escribe una descripción...' }).click();
         await page.getByRole('textbox', { name: 'Escribe una descripción...' }).fill('Descripción');
+        await page
+        .getByRole('button', { name: 'Añadir imagen' })
+        .locator('input[type="file"]')
+        .setInputFiles('tests/scripts/foto-rebajas-1.jpg');
         await page.getByRole('button', { name: 'Añadir artículos' }).click();
-        await page.getByRole('button', { name: 'Vestido Blanco Vestido Blanco' }).click();
-        await page.getByRole('button', { name: 'Botas Negras Botas Negras' }).click();
+        await page.getByRole('button', { name: 'Producto 1 Producto' }).click()
         await page.getByRole('button', { name: 'Lanzar promoción' }).click();
 
-        await page.waitForURL(/stores\/.{aqui va un *}/);
+        await page.waitForURL(storeUrl);
 
         const promotionName = await page.getByRole('heading', { name: 'Rebajas' });
         await expect(promotionName).toBeVisible();
     });
 
     test('edit promotion', async ({ page }) => {
-        await page.goto('storeUrl');
+        await page.goto(storeUrl);
 
-        await page.waitForURL(/stores\/.{aqui va un *}/);
+        await page.waitForURL(storeUrl);
 
         await page.getByRole('button', { name: 'Editar promoción' }).click();
 
@@ -83,7 +85,7 @@ test.describe.serial('promotion management', () => {
         await page.getByRole('button').nth(4).click();
         await page.getByRole('button', { name: 'Guardar cambios' }).click();
 
-        await page.waitForURL(/stores\/.{aqui va un *}/);
+        await page.waitForURL(storeUrl);
 
         const promotionName = await page.getByRole('heading', { name: 'Rebajas Actualizada' });
         await expect(promotionName).toBeVisible();
@@ -91,7 +93,7 @@ test.describe.serial('promotion management', () => {
     test('get promotion products and share promotion', async ({ page }) => {
         await page.goto('storeUrl');
 
-        await page.waitForURL(/stores\/.{aqui va un *}/);
+        await page.waitForURL(storeUrl);
         
         const promotionProducts = await page.getByRole('button', { name: 'Ver productos' });
         await expect(promotionProducts).toBeVisible();
@@ -127,5 +129,4 @@ test.describe.serial('promotion management', () => {
         await expect(createPromotionBanner).toBeVisible();
 
     });
-    */
 });

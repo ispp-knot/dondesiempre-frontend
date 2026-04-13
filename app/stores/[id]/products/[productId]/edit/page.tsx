@@ -203,7 +203,7 @@ export default function ProductEditPage() {
                   <Label htmlFor="form-price" className="text-base font-bold text-secondary">
                     Precio
                   </Label>
-                  <div className="flex items-center gap-2" >
+                  <div className="flex items-center gap-2">
                     <Input
                       id="form-price"
                       data-testid="product-edit-price-input"
@@ -221,7 +221,7 @@ export default function ProductEditPage() {
                   <FieldError message={errors.price?.message} />
                 </div>
 
-                <div className="space-y-2" >
+                <div className="space-y-2">
                   <Label htmlFor="form-type" className="text-base font-bold text-secondary">
                     Categoría
                   </Label>
@@ -246,10 +246,7 @@ export default function ProductEditPage() {
                   <Label htmlFor="form-discount" className="text-base font-bold text-secondary">
                     Descuento (Opcional)
                   </Label>
-                  <div
-                    className="flex items-center gap-2"
-                    
-                  >
+                  <div className="flex items-center gap-2">
                     <Input
                       data-testid="product-edit-discount-input"
                       id="form-discount"

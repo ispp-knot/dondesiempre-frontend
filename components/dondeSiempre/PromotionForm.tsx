@@ -343,7 +343,6 @@ export default function PromotionForm({
 
       <div
         className={cn('flex flex-col gap-1', isEditMode && 'opacity-60')}
-        data-testid="promotion-image-input"
       >
         <h2 className="text-xl font-bold">Imagen de la promoción</h2>
         <Controller
@@ -352,6 +351,7 @@ export default function PromotionForm({
           render={({ field }) => (
             <ImageUpload
               onChange={field.onChange}
+              data-testid="promotion-image-input"
               existingImageUrl={initialData?.promotionImage}
               className={cn(
                 'mt-2 border-2 rounded-lg transition-colors',

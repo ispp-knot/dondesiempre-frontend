@@ -14,7 +14,10 @@ export function ConfirmOrderModal({
   onClose: () => void;
 }) {
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" data-testid="confirm-order-modal">
+    <div
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      data-testid="confirm-order-modal"
+    >
       <div className="bg-background p-8 rounded-lg shadow-xl flex flex-col items-center gap-6 max-w-md w-full">
         <h2 className="text-2xl font-bold text-primary text-center">¿Confirmar pedido?</h2>
         <p className="text-secondary text-center">
