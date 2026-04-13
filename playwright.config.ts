@@ -99,7 +99,7 @@ export default defineConfig({
     },
     {
       name: 'tests',
-      timeout: 300 * 10000,
+      timeout: 400 * 100,
       use: {
         ...devices['Desktop Chrome'],
         screenshot: 'on',

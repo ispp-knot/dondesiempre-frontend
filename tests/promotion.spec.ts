@@ -4,42 +4,42 @@ let storeUrl: string;
 
 test.describe.serial('promotion management', () => {
   test.use({ storageState: './tests/scripts/auth.store.json' });
-    test('going to the promotion creation page', async ({ page }) => {
-        await page.goto('http://localhost:3000/search');
-  
-        const storeLink = await page
-            .getByRole('link', { name: 'Un nombre de tienda Lun-Vier' })
-            .first();
-        await expect(storeLink).toBeVisible();
-        await storeLink.click();
-  
-        await page.waitForURL(/stores\/.*/);
-        storeUrl = page.url();
+  test('going to the promotion creation page', async ({ page }) => {
+    await page.goto('http://localhost:3000/search');
 
-        const createPromotionBanner = await page.locator('.absolute.inset-0.bg-gradient-to-br');
-        await expect(createPromotionBanner).toBeVisible();
+    const storeLink = await page
+      .getByRole('link', { name: 'Un nombre de tienda Lun-Vier' })
+      .first();
+    await expect(storeLink).toBeVisible();
+    await storeLink.click();
 
-        await page.getByRole('button', { name: 'Crear Nueva Promoción' }).click();
+    await page.waitForURL(/stores\/.*/);
+    storeUrl = page.url();
 
-        await page.waitForURL(/stores\/.*\/promotions/);
+    const createPromotionBanner = await page.locator('.absolute.inset-0.bg-gradient-to-br');
+    await expect(createPromotionBanner).toBeVisible();
 
-        const promotionNameInput = await page.getByTestId('promotion-name-input');
-        const discountPercentageInput = await page.getByTestId('promotion-discount-input');
-        const promotionDurationInput = await page.getByTestId('promotion-duration-input');
-        const promotionDescriptionInput = await page.getByTestId('promotion-description-input');
-        const addProductsButton = await page.getByRole('button', { name: 'Añadir artículos' });
-        const addImageButton = await page.getByTestId('promotion-image-input');
-        const launchPromotion = await page.getByTestId('promotion-confirm-input');
-        await expect(promotionNameInput).toBeVisible();
-        await expect(discountPercentageInput).toBeVisible();
-        await expect(promotionDurationInput).toBeVisible();
-        await expect(promotionDescriptionInput).toBeVisible();
-        await expect(addProductsButton).toBeVisible();
-        await expect(addImageButton).toBeVisible();
-        await expect(launchPromotion).toBeVisible();
-    });
+    await page.getByRole('button', { name: 'Crear Nueva Promoción' }).click();
 
-    /* TODO: Si no se pueden crear productos desde la interfaz, esto no se puede hacer.
+    await page.waitForURL(/stores\/.*\/promotions/);
+
+    const promotionNameInput = await page.getByTestId('promotion-name-input');
+    const discountPercentageInput = await page.getByTestId('promotion-discount-input');
+    const promotionDurationInput = await page.getByTestId('promotion-duration-input');
+    const promotionDescriptionInput = await page.getByTestId('promotion-description-input');
+    const addProductsButton = await page.getByRole('button', { name: 'Añadir artículos' });
+    const addImageButton = await page.getByTestId('promotion-image-input');
+    const launchPromotion = await page.getByTestId('promotion-confirm-input');
+    await expect(promotionNameInput).toBeVisible();
+    await expect(discountPercentageInput).toBeVisible();
+    await expect(promotionDurationInput).toBeVisible();
+    await expect(promotionDescriptionInput).toBeVisible();
+    await expect(addProductsButton).toBeVisible();
+    await expect(addImageButton).toBeVisible();
+    await expect(launchPromotion).toBeVisible();
+  });
+
+  /* TODO: Si no se pueden crear productos desde la interfaz, esto no se puede hacer.
     test('create promotion', async ({ page }) => {
         await page.goto('storeUrl/promotions');
 

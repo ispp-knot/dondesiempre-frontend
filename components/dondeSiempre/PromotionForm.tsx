@@ -165,7 +165,10 @@ export default function PromotionForm({
       )}
 
       {/* Promotion Name */}
-      <div className="relative border-2 border-secondary rounded-lg p-3" data-testid="promotion-name-input">
+      <div
+        className="relative border-2 border-secondary rounded-lg p-3"
+        data-testid="promotion-name-input"
+      >
         <label className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold text-primary">
           Nombre de la promoción
         </label>
@@ -178,7 +181,10 @@ export default function PromotionForm({
       </div>
 
       {/* Discount Percentage - Usando Controller para el Slider */}
-      <div className="relative border-2 border-secondary rounded-lg p-3 flex flex-col gap-4" data-testid="promotion-discount-input">
+      <div
+        className="relative border-2 border-secondary rounded-lg p-3 flex flex-col gap-4"
+        data-testid="promotion-discount-input"
+      >
         <label className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold text-primary">
           Porcentaje de descuento*
         </label>
@@ -267,7 +273,10 @@ export default function PromotionForm({
       </div>
 
       {/* Description */}
-      <div className="relative border-2 border-secondary rounded-lg p-3" data-testid="promotion-description-input">
+      <div
+        className="relative border-2 border-secondary rounded-lg p-3"
+        data-testid="promotion-description-input"
+      >
         <label className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold text-primary">
           Descripción
         </label>
@@ -332,7 +341,10 @@ export default function PromotionForm({
         </div>
       </div>
 
-      <div className={cn('flex flex-col gap-1', isEditMode && 'opacity-60')} data-testid="promotion-image-input">
+      <div
+        className={cn('flex flex-col gap-1', isEditMode && 'opacity-60')}
+        data-testid="promotion-image-input"
+      >
         <h2 className="text-xl font-bold">Imagen de la promoción</h2>
         <Controller
           control={control}

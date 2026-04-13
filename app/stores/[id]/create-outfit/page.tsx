@@ -486,7 +486,10 @@ export default function OutfitCreationPage() {
 
               <Card className="p-4 shadow-xl sm:p-6 md:p-8">
                 <h1 className="mb-6 text-center text-3xl font-bold text-primary">Productos</h1>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3" data-testid="outfit-products-list">
+                <div
+                  className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
+                  data-testid="outfit-products-list"
+                >
                   {products.data
                     .filter(
                       (product) => !outfitProducts.some((selected) => selected.id === product.id)
