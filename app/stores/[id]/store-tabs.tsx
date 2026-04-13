@@ -4,16 +4,17 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ShareTo } from '@/components/ui/shareTo';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
-import { ProductDTO } from '@/lib/types/products/productsDto';
-import { StoreDTO } from '@/lib/types/stores/storesDto';
+import { StoreDTO, StoreImageDTO } from '@/lib/types/stores/storesDto';
+
 import { convertPrice, discountPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { JSX, useState } from 'react';
-import { IoSearch } from 'react-icons/io5';
-import AboutUs from './about-us';
 import StoreOptions from './options';
 import Outfits from './outfits';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
+import StoreAboutSection from './about-us-section';
+import { ProductDTO } from '@/lib/types/products/productsDto';
+import { IoSearch } from 'react-icons/io5';
 import Products from './products';
 import { buttonLinkClass } from '@/lib/utils/buttonLinkClass';
 import Link from 'next/link';
@@ -29,6 +30,8 @@ type Props = {
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
   isOwner: boolean;
+  images?: StoreImageDTO[];
+  onImagesUpdated?: (images: StoreImageDTO[]) => void;
 };
 
 export default function StoreTabs({
@@ -40,12 +43,21 @@ export default function StoreTabs({
   searchQuery = '',
   onSearchChange,
   isOwner,
+  images = [],
+  onImagesUpdated,
 }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
 
   const activePromotions = promotions.filter((p) => p.active);
   const [currentPromoIndex, setCurrentPromoIndex] = useState(0);
   const [selectedPromo, setSelectedPromo] = useState<PromotionDTO | null>(null);
+  const [localImages, setLocalImages] = useState<StoreImageDTO[]>(images ?? []);
+
+  const handleImagesUpdated = (updated: StoreImageDTO[]) => {
+    setLocalImages(updated);
+    onImagesUpdated?.(updated);
+  };
+
   const totalSlides = isOwner ? activePromotions.length + 1 : activePromotions.length;
 
   const formatDateRange = (start?: string, end?: string) => {
@@ -306,7 +318,15 @@ export default function StoreTabs({
           </>
         )}
 
-        {activeTab === 'sobre' && <AboutUs description={description} />}
+        {activeTab === 'sobre' && (
+          <StoreAboutSection
+            description={description}
+            images={localImages}
+            isOwner={isOwner}
+            storeId={store.id}
+            onImagesUpdated={handleImagesUpdated}
+          />
+        )}
 
         {activeTab === 'opciones' && isOwner && (
           <StoreOptions storefrontId={storefrontId} initialStore={store} />
