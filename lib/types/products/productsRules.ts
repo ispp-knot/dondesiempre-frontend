@@ -4,6 +4,8 @@ export const MAX_PRODUCT_NAME_LENGTH = 255;
 export const MAX_PRODUCT_DESCRIPTION_LENGTH = 5000;
 export const MIN_PRODUCT_PRICE = 0.01;
 export const MAX_PRODUCT_PRICE = 9999;
+export const MIN_DISCOUNT = 0;
+export const MAX_DISCOUNT = 99;
 
 const baseProductFormSchema = z.object({
   name: z
@@ -31,6 +33,17 @@ const baseProductFormSchema = z.object({
     .max(MAX_PRODUCT_PRICE, `El precio no puede ser mayor a ${MAX_PRODUCT_PRICE}€.`)
     .multipleOf(0.01, 'El precio debe tener como máximo dos decimales.'),
   productTypeId: z.string().min(1, 'La categoría es obligatoria.'),
+  discount: z
+    .preprocess(
+      (val) => (val === '' || val === null || Number.isNaN(val) ? 0 : val),
+      z
+        .number()
+        .min(MIN_DISCOUNT, `El descuento no puede ser menor a ${MIN_DISCOUNT}%.`)
+        .max(MAX_DISCOUNT, `El descuento no puede ser mayor a ${MAX_DISCOUNT}%.`)
+        .multipleOf(1, 'El descuento debe ser un número entero.')
+        .nullable()
+    )
+    .optional(),
 });
 
 export function createProductFormSchema() {

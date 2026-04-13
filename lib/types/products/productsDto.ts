@@ -15,3 +15,22 @@ export interface ProductCreationDTO {
   description: string | null;
   typeId: string;
 }
+
+export interface ProductSize {
+  id: string;
+  name: string;
+}
+
+export interface ProductColor {
+  id: string;
+  name: string;
+  hexCode: string;
+}
+
+export interface ProductVariantBackendDTO {
+  id: string;
+  productId: string;
+  sizeId: string;
+  colorId: string;
+  isAvailable: boolean;
+}
