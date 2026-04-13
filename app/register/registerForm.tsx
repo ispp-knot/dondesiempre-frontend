@@ -315,7 +315,8 @@ function ClientStep2Form({
         body: {
           email: step1Data.email,
           password: step1Data.password,
-          ...data,
+          name: data.name,
+          surname: data.surname,
         },
       });
       onSuccess();
@@ -379,8 +380,8 @@ function StoreStep2Form({
   } = useForm<StoreStep2InputValues, unknown, StoreStep2Values>({
     resolver: zodResolver(storeStep2Schema),
     defaultValues: {
-      primaryColor: '#000000',
-      secondaryColor: '#ffffff',
+      primaryColor: '#c65a3a',
+      secondaryColor: '#19756a',
     },
   });
 
