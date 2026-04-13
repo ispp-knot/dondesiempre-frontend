@@ -22,3 +22,9 @@ export interface StoreDTO {
   storefront: StorefrontDTO;
   socialNetworks: StoreSocialNetworkDTO[];
 }
+
+export interface StoreImageDTO {
+  id: typeof NIL_UUID;
+  displayOrder: number;
+  image: string | null;
+}

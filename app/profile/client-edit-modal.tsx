@@ -23,10 +23,8 @@ const clientUpdateSchema = z.object({
   name: z.string().min(1, 'El nombre es obligatorio').max(255, 'Máximo 255 caracteres'),
   surname: z.string().min(1, 'Los apellidos son obligatorios').max(255, 'Máximo 255 caracteres'),
   email: z.string().email('Email inválido'),
-  address: z.string().min(1, 'La dirección es obligatoria').max(255, 'Máximo 255 caracteres'),
 });
 
-type ClientUpdateInput = z.input<typeof clientUpdateSchema>;
 type ClientUpdateValues = z.infer<typeof clientUpdateSchema>;
 
 function FieldError({ message }: { message?: string }) {
@@ -53,7 +51,7 @@ export default function ClientEditModal({ client, onSavedAction }: ClientEditMod
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<ClientUpdateInput, unknown, ClientUpdateValues>({
+  } = useForm<ClientUpdateValues, unknown, ClientUpdateValues>({
     resolver: zodResolver(clientUpdateSchema),
   });
 
@@ -63,7 +61,6 @@ export default function ClientEditModal({ client, onSavedAction }: ClientEditMod
         name: client.name ?? '',
         surname: client.surname ?? '',
         email: client.email ?? '',
-        address: client.address ?? '',
       });
     }
   }, [isOpen, client, reset]);
@@ -82,7 +79,6 @@ export default function ClientEditModal({ client, onSavedAction }: ClientEditMod
           name: data.name,
           surname: data.surname,
           email: data.email,
-          address: data.address,
         },
       });
 
@@ -160,19 +156,6 @@ export default function ClientEditModal({ client, onSavedAction }: ClientEditMod
               {...register('email')}
             />
             <FieldError message={errors.email?.message} />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="address" className="text-xl">
-              Dirección
-            </Label>
-            <Input
-              id="address"
-              className="text-muted-foreground text-xl"
-              aria-invalid={!!errors.address}
-              {...register('address')}
-            />
-            <FieldError message={errors.address?.message} />
           </div>
 
           {apiError && <p className="text-xs text-destructive text-center">{apiError}</p>}

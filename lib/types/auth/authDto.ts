@@ -24,7 +24,6 @@ export interface RegisterClientDTO {
   password: string;
   name: string;
   surname: string;
-  address: string | null;
 }
 
 /**

@@ -4,7 +4,12 @@ import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import { Button } from '@/components/ui/button';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
-import { ProductDTO } from '@/lib/types/products/productsDto';
+import {
+  ProductColor,
+  ProductDTO,
+  ProductSize,
+  ProductVariantBackendDTO,
+} from '@/lib/types/products/productsDto';
 import { OrderDTO } from '@/lib/types/orders/orderDto';
 import { convertPrice, formatDisplayPrice, discountPrice } from '@/lib/utils';
 import Image from 'next/image';
@@ -21,25 +26,7 @@ import { DeleteVariantsModal, UpdateVariantsModal } from './VariantManagementMod
 import Link from 'next/link';
 import { buttonLinkClass } from '@/lib/utils/buttonLinkClass';
 import { ErrorModal } from '@/components/modals/ErrorModal';
-
-interface ProductVariantBackendDTO {
-  id: string;
-  productId: string;
-  sizeId: string;
-  colorId: string;
-  isAvailable: boolean;
-}
-
-interface ProductSize {
-  id: string;
-  name: string;
-}
-
-interface ProductColor {
-  id: string;
-  name: string;
-  hexCode: string;
-}
+import { BackButton } from '@/components/dondeSiempre/BackButton';
 
 function ProductPrice({ product }: { product: ProductDTO }) {
   const fmt = (cents: number) => formatDisplayPrice(convertPrice(cents));
@@ -168,16 +155,7 @@ export default function ProductDetailsPage() {
   ) {
     return <LoadingText />;
   }
-  if (product.error) {
-    return (
-      <ErrorView
-        title="Producto no encontrado"
-        description="No pudimos encontrar este producto. Puede que se haya eliminado o que el enlace ya no sea válido."
-        buttonText="Volver atrás"
-      />
-    );
-  }
-  if (!product.data) {
+  if (product.error || !product.data) {
     return (
       <ErrorView
         title="Producto no encontrado"
@@ -213,7 +191,7 @@ export default function ProductDetailsPage() {
     }
     setIsCreatingOrder(true);
     try {
-      await createOrder.fetch({ body: { [product.data.id]: 1 } });
+      await createOrder.fetch({ body: { [selectedVariant.id]: 1 } });
       setIsConfirmModalOpen(false);
       setIsSuccessModalOpen(true);
     } catch (error: unknown) {
@@ -305,7 +283,7 @@ export default function ProductDetailsPage() {
 
   const MobileTitle = () => {
     return (
-      <div className="md:hidden pt-8 px-8 pb-4 w-full text-center">
+      <div className="md:hidden pt-8 px-4 pb-4 w-full text-center">
         <h1 className="mb-1 font-bold text-primary text-3xl wrap-break-word">
           {product.data.name}
         </h1>
@@ -330,6 +308,10 @@ export default function ProductDetailsPage() {
       )}
 
       <div className="flex flex-col items-center relative">
+        <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
+          <BackButton />
+        </div>
+
         <MobileTitle />
 
         <div className="w-full md:max-w-5xl md:flex md:flex-row md:gap-10 md:px-10 md:py-10 md:pt-4">
@@ -337,8 +319,8 @@ export default function ProductDetailsPage() {
             <Image
               src={product.data.image || '/static/img/product_placeholder.png'}
               alt={product.data.name}
-              width={1024}
-              height={1024}
+              width={680}
+              height={680}
               loading="eager"
               className="aspect-square w-full object-cover md:rounded-xl shrink-0 shadow-lg"
             />
@@ -349,7 +331,7 @@ export default function ProductDetailsPage() {
             )}
           </div>
 
-          <div className="md:w-1/2 flex flex-col gap-5 pt-4 pb-8 px-8 md:px-0 md:py-0 md:justify-center">
+          <div className="md:w-1/2 flex flex-col gap-5 pt-4 pb-8 px-8 md:px-0 md:py-0 md:justify-start">
             <DesktopTitle />
 
             {isStore && isStoreOwner && (
@@ -452,18 +434,34 @@ export default function ProductDetailsPage() {
 
       {isConfirmModalOpen && (
         <ConfirmOrderModal
-          price={convertPrice(
-            discountPrice(product.data.priceInCents, product.data.discountPercentage)
-          )}
+          price={discountPrice(product.data.priceInCents, product.data.discountPercentage)}
           isCreatingOrder={isCreatingOrder}
           onConfirm={confirmAndCreateOrder}
           onClose={() => setIsConfirmModalOpen(false)}
         >
           {selectedVariant && (
-            <p className="text-secondary text-center text-sm">
-              Talla: <strong>{selectedVariant.size.name}</strong> · Color:{' '}
-              <strong>{selectedVariant.color.name}</strong>
-            </p>
+            <div className="flex flex-col gap-3 w-full">
+              <p className="text-sm font-semibold text-primary/60 uppercase tracking-wide">
+                Resumen
+              </p>
+              <div className="flex flex-row items-center justify-between border border-secondary/20 rounded-lg px-4 py-3 bg-secondary/5">
+                <p className="text-secondary font-semibold text-sm truncate flex-1">
+                  {product.data.name}
+                </p>
+                <div className="flex flex-row items-center gap-2 shrink-0 text-sm text-secondary/80">
+                  <span className="bg-secondary/10 rounded px-2 py-0.5">
+                    {selectedVariant.size.name ?? '—'}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span
+                      className="w-3 h-3 rounded-full border border-gray-300 shrink-0"
+                      style={{ backgroundColor: selectedVariant.color.hexCode }}
+                    />
+                    {selectedVariant.color.name ?? '—'}
+                  </span>
+                </div>
+              </div>
+            </div>
           )}
         </ConfirmOrderModal>
       )}

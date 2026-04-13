@@ -93,7 +93,10 @@ export default function OrdersPage() {
   const formatPrice = (cents: number) => formatDisplayPrice(convertPrice(cents));
 
   const filteredOrders =
-    orders.data?.filter((order) => (filter === 'ALL' ? true : order.orderStatus === filter)) || [];
+    orders.data
+      ?.slice()
+      .sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime())
+      .filter((order) => (filter === 'ALL' ? true : order.orderStatus === filter)) || [];
 
   const getStatusStyles = (status: string) => {
     switch (status) {
@@ -241,6 +244,11 @@ export default function OrdersPage() {
                             <p className="font-bold text-primary leading-tight">
                               {item.productName}
                             </p>
+                            {(item.variantSize || item.variantColor) && (
+                              <p className="text-xs font-semibold text-secondary/80 bg-secondary/10 px-2 py-0.5 rounded-full my-1.5 inline-block">
+                                {[item.variantSize, item.variantColor].filter(Boolean).join(' · ')}
+                              </p>
+                            )}
                             <p className="text-xs text-secondary italic">
                               {formatPrice(item.priceAtPurchase)} / ud
                             </p>
