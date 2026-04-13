@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
-import { OutfitCreationDTO, OutfitDTO } from '@/lib/types/outfits/outfitsDto';
+import { OutfitCreationDTO, OutfitDTO, OutfitTagDTO } from '@/lib/types/outfits/outfitsDto';
 import { productDTOToOufitCreationProductDTO } from '@/lib/types/outfits/outfitsHelper';
 import {
   createOutfitFormSchema,
@@ -29,6 +29,7 @@ import { StoreDTO } from '@/lib/types/stores/storesDto';
 import {
   calculatePriceWithPercentageDiscount,
   convertPrice,
+  formatDisplayPrice,
   getOutfitDiscountPercentage,
 } from '@/lib/utils';
 import { move } from '@dnd-kit/helpers';
@@ -156,7 +157,6 @@ export default function OutfitCreationPage() {
   const discountedOutfitPrice = hasOutfitDiscount
     ? calculatePriceWithPercentageDiscount(totalPriceInCents, discountPercentage)
     : convertPrice(totalPriceInCents);
-  const discountedOutfitPriceInCents = Math.round(discountedOutfitPrice * 100);
 
   if (products.isLoading || store.isLoading) {
     return <LoadingText />;
@@ -195,9 +195,10 @@ export default function OutfitCreationPage() {
       name: data.name,
       description: data.description,
       discountPercentage: data.discountPercentage > 0 ? data.discountPercentage : null,
-      discountedPriceInCents: hasOutfitDiscount ? discountedOutfitPriceInCents : totalPriceInCents,
       storefrontId: store.data.storefront.id,
-      tags: data.tags,
+      tags: data.tags.map((tag) => {
+        return { name: tag } as OutfitTagDTO;
+      }),
       products: outfitProducts.map((product, index) =>
         productDTOToOufitCreationProductDTO(product, index)
       ),
@@ -221,7 +222,6 @@ export default function OutfitCreationPage() {
                   name: data.name,
                   description: data.description,
                   discountPercentage: data.discountPercentage,
-                  discountedPriceInCents: discountedOutfitPriceInCents,
                 }),
               ],
               { type: 'application/json' }
@@ -451,11 +451,10 @@ export default function OutfitCreationPage() {
                   <div>
                     <h2 className="text-center text-3xl font-bold text-primary">
                       <strong>Precio original: </strong>
-                      {`${convertPrice(totalPriceInCents).toFixed(2).toString().replace('.', ',')}€`}
+                      {formatDisplayPrice(convertPrice(totalPriceInCents))}
                     </h2>
                     <p className="mt-2 text-center text-sm text-muted-foreground">
-                      Precio final del outfit:{' '}
-                      {`${discountedOutfitPrice.toFixed(2).toString().replace('.', ',')}€`}
+                      Precio final del outfit: {formatDisplayPrice(discountedOutfitPrice)}
                     </p>
                     {hasOutfitDiscount && (
                       <p className="text-center text-sm font-semibold text-secondary">
@@ -510,7 +509,7 @@ export default function OutfitCreationPage() {
                           />
                         </div>
                         <h3 className="text-center text-lg font-bold text-primary sm:text-2xl">
-                          {`${convertPrice(product.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
+                          {formatDisplayPrice(convertPrice(product.priceInCents))}
                         </h3>
                         <Button
                           type="button"

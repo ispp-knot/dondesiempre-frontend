@@ -16,11 +16,16 @@ export interface StoreDTO {
   address: string;
   openingHours: string;
   phone: string;
-  acceptsShipping: boolean;
   hasActivePromotions: boolean;
   latitude: number;
   longitude: number;
   aboutUs: string | null;
   storefront: StorefrontDTO;
   socialNetworks: StoreSocialNetworkDTO[];
+}
+
+export interface StoreImageDTO {
+  id: typeof NIL_UUID;
+  displayOrder: number;
+  image: string | null;
 }

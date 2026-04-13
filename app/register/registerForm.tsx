@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LocationPickerMap } from '@/components/ui/locationPickerMap';
-import { Switch } from '@/components/ui/switch';
 import { useActiveFetcher } from '@/lib/api/fetcher';
 import { FetchError } from 'ofetch';
 import { Eye, EyeOff } from 'lucide-react';
@@ -36,16 +35,6 @@ const step1Schema = z
 const clientStep2Schema = z.object({
   name: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
   surname: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
-  phone: z
-    .string()
-    .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
-      message: 'Número de teléfono no válido',
-    })
-    .transform((value) => (value === '' ? null : value)),
-  address: z
-    .string()
-    .max(255, 'Máximo 255 caracteres')
-    .transform((value) => (value === '' ? null : value)),
 });
 
 const storeStep2Schema = z.object({
@@ -54,7 +43,6 @@ const storeStep2Schema = z.object({
   longitude: z.number({ error: 'Selecciona una ubicación en el mapa' }),
   address: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
   openingHours: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
-  acceptsShipping: z.boolean(),
   phone: z
     .string()
     .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
@@ -70,7 +58,6 @@ const storeStep2Schema = z.object({
 });
 
 type Step1Values = z.infer<typeof step1Schema>;
-type ClientStep2InputValues = z.input<typeof clientStep2Schema>;
 type ClientStep2Values = z.infer<typeof clientStep2Schema>;
 type StoreStep2InputValues = z.input<typeof storeStep2Schema>;
 type StoreStep2Values = z.infer<typeof storeStep2Schema>;
@@ -79,7 +66,7 @@ type StoreStep2Values = z.infer<typeof storeStep2Schema>;
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
-  return <p className="">{message}</p>;
+  return <p className="text-sm text-destructive">{message}</p>;
 }
 
 // ── Root component ─────────────────────────────────────────────────────────────
@@ -109,7 +96,7 @@ export function RegisterForm() {
 
   if (success) {
     return (
-      <div className="text-center space-y-4">
+      <div className="text-center space-y-4 w-full max-w-2xl mx-auto">
         <h2 className="text-2xl font-bold text-primary">¡Registro exitoso!</h2>
         <p className="text-muted-foreground">Tu cuenta ha sido creada correctamente.</p>
         <Link href="/login" className="text-primary underline underline-offset-4">
@@ -120,7 +107,7 @@ export function RegisterForm() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-2xl lg:max-w-4xl mx-auto">
       {/* Tabs */}
       <div className="flex flex-col gap-2 sm:flex-row">
         <button
@@ -244,50 +231,52 @@ function Step1Form({
         <FieldError message={errors.email?.message} />
       </div>
 
-      <div className="space-y-1">
-        <Label htmlFor="password">Contraseña</Label>
-        <div className="relative">
-          <Input
-            id="password"
-            type={showPassword ? 'text' : 'password'}
-            placeholder="••••••••"
-            aria-invalid={!!errors.password}
-            className="pr-10"
-            {...register('password')}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
-            tabIndex={-1}
-          >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </button>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-1">
+          <Label htmlFor="password">Contraseña</Label>
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              aria-invalid={!!errors.password}
+              className="pr-10"
+              {...register('password')}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+              tabIndex={-1}
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+          <FieldError message={errors.password?.message} />
         </div>
-        <FieldError message={errors.password?.message} />
-      </div>
 
-      <div className="space-y-1">
-        <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
-        <div className="relative">
-          <Input
-            id="confirmPassword"
-            type={showConfirmPassword ? 'text' : 'password'}
-            placeholder="••••••••"
-            aria-invalid={!!errors.confirmPassword}
-            className="pr-10"
-            {...register('confirmPassword')}
-          />
-          <button
-            type="button"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
-            tabIndex={-1}
-          >
-            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </button>
+        <div className="space-y-1">
+          <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
+          <div className="relative">
+            <Input
+              id="confirmPassword"
+              type={showConfirmPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              aria-invalid={!!errors.confirmPassword}
+              className="pr-10"
+              {...register('confirmPassword')}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+              tabIndex={-1}
+            >
+              {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+          <FieldError message={errors.confirmPassword?.message} />
         </div>
-        <FieldError message={errors.confirmPassword?.message} />
       </div>
 
       <Button type="submit" className="w-full">
@@ -315,7 +304,7 @@ function ClientStep2Form({
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<ClientStep2InputValues, unknown, ClientStep2Values>({
+  } = useForm<ClientStep2Values>({
     resolver: zodResolver(clientStep2Schema),
   });
 
@@ -326,7 +315,8 @@ function ClientStep2Form({
         body: {
           email: step1Data.email,
           password: step1Data.password,
-          ...data,
+          name: data.name,
+          surname: data.surname,
         },
       });
       onSuccess();
@@ -341,27 +331,18 @@ function ClientStep2Form({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-      <div className="space-y-1">
-        <Label htmlFor="name">Nombre</Label>
-        <Input id="name" aria-invalid={!!errors.name} {...register('name')} />
-        <FieldError message={errors.name?.message} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-1">
+          <Label htmlFor="name">Nombre</Label>
+          <Input id="name" aria-invalid={!!errors.name} {...register('name')} />
+          <FieldError message={errors.name?.message} />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="surname">Apellido</Label>
+          <Input id="surname" aria-invalid={!!errors.surname} {...register('surname')} />
+          <FieldError message={errors.surname?.message} />
+        </div>
       </div>
-      <div className="space-y-1">
-        <Label htmlFor="surname">Apellido</Label>
-        <Input id="surname" aria-invalid={!!errors.surname} {...register('surname')} />
-        <FieldError message={errors.surname?.message} />
-      </div>
-      <div className="space-y-1">
-        <Label htmlFor="phone">Teléfono</Label>
-        <Input id="phone" type="tel" aria-invalid={!!errors.phone} {...register('phone')} />
-        <FieldError message={errors.phone?.message} />
-      </div>
-      <div className="space-y-1">
-        <Label htmlFor="address">Dirección</Label>
-        <Input id="address" aria-invalid={!!errors.address} {...register('address')} />
-        <FieldError message={errors.address?.message} />
-      </div>
-
       {apiError && <p className="text-xs text-destructive">{apiError}</p>}
 
       <div className="flex gap-2">
@@ -399,15 +380,13 @@ function StoreStep2Form({
   } = useForm<StoreStep2InputValues, unknown, StoreStep2Values>({
     resolver: zodResolver(storeStep2Schema),
     defaultValues: {
-      acceptsShipping: false,
-      primaryColor: '#000000',
-      secondaryColor: '#ffffff',
+      primaryColor: '#c65a3a',
+      secondaryColor: '#19756a',
     },
   });
 
   const primaryColor = useWatch({ control, name: 'primaryColor' });
   const secondaryColor = useWatch({ control, name: 'secondaryColor' });
-  const acceptsShipping = useWatch({ control, name: 'acceptsShipping' });
   const latitude = useWatch({ control, name: 'latitude' });
   const longitude = useWatch({ control, name: 'longitude' });
 
@@ -433,45 +412,53 @@ function StoreStep2Form({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-      <div className="space-y-1">
-        <Label htmlFor="name">Nombre de la tienda</Label>
-        <Input id="name" aria-invalid={!!errors.name} {...register('name')} />
-        <FieldError message={errors.name?.message} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <div className="space-y-1">
+            <Label htmlFor="name">Nombre de la tienda</Label>
+            <Input id="name" aria-invalid={!!errors.name} {...register('name')} />
+            <FieldError message={errors.name?.message} />
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="address">Dirección</Label>
+            <Input id="address" aria-invalid={!!errors.address} {...register('address')} />
+            <FieldError message={errors.address?.message} />
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="openingHours">Horario de apertura</Label>
+            <Input
+              id="openingHours"
+              placeholder="Lun-Vie 9:00-18:00"
+              aria-invalid={!!errors.openingHours}
+              {...register('openingHours')}
+            />
+            <FieldError message={errors.openingHours?.message} />
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="phone">Teléfono</Label>
+            <Input id="phone" type="tel" aria-invalid={!!errors.phone} {...register('phone')} />
+            <FieldError message={errors.phone?.message} />
+          </div>
+        </div>
+
+        <div className="space-y-1">
+          <Label>Ubicación</Label>
+          <div className="flex-1  w-full rounded-md overflow-hidden border border-input relative bg-muted">
+            <LocationPickerMap
+              latitude={latitude || undefined}
+              longitude={longitude || undefined}
+              onChange={(lat, lng) => {
+                setValue('latitude', lat, { shouldValidate: true });
+                setValue('longitude', lng, { shouldValidate: true });
+              }}
+            />
+          </div>
+          {(errors.latitude || errors.longitude) && (
+            <FieldError message={errors.latitude?.message ?? errors.longitude?.message} />
+          )}
+        </div>
       </div>
-      <div className="space-y-1">
-        <Label>Ubicación</Label>
-        <LocationPickerMap
-          latitude={latitude || undefined}
-          longitude={longitude || undefined}
-          onChange={(lat, lng) => {
-            setValue('latitude', lat, { shouldValidate: true });
-            setValue('longitude', lng, { shouldValidate: true });
-          }}
-        />
-        {(errors.latitude || errors.longitude) && (
-          <FieldError message={errors.latitude?.message ?? errors.longitude?.message} />
-        )}
-      </div>
-      <div className="space-y-1">
-        <Label htmlFor="address">Dirección</Label>
-        <Input id="address" aria-invalid={!!errors.address} {...register('address')} />
-        <FieldError message={errors.address?.message} />
-      </div>
-      <div className="space-y-1">
-        <Label htmlFor="openingHours">Horario de apertura</Label>
-        <Input
-          id="openingHours"
-          placeholder="Lun-Vie 9:00-18:00"
-          aria-invalid={!!errors.openingHours}
-          {...register('openingHours')}
-        />
-        <FieldError message={errors.openingHours?.message} />
-      </div>
-      <div className="space-y-1">
-        <Label htmlFor="phone">Teléfono</Label>
-        <Input id="phone" type="tel" aria-invalid={!!errors.phone} {...register('phone')} />
-        <FieldError message={errors.phone?.message} />
-      </div>
+
       <div className="space-y-1">
         <Label htmlFor="aboutUs">Sobre nosotros</Label>
         <textarea
@@ -483,15 +470,8 @@ function StoreStep2Form({
         />
         <FieldError message={errors.aboutUs?.message} />
       </div>
-      <div className="flex items-center gap-3">
-        <Switch
-          id="acceptsShipping"
-          checked={acceptsShipping}
-          onCheckedChange={(checked) => setValue('acceptsShipping', checked)}
-        />
-        <Label htmlFor="acceptsShipping">Acepta envíos</Label>
-      </div>
-      <div className="grid grid-cols-2 gap-3">
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1">
           <Label htmlFor="primaryColor">Color primario</Label>
           <div className="flex gap-2 items-center">
@@ -530,7 +510,7 @@ function StoreStep2Form({
 
       {apiError && <p className="text-xs text-destructive">{apiError}</p>}
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 pt-2">
         <Button type="button" variant="outline" className="flex-1" onClick={onBack}>
           Atrás
         </Button>

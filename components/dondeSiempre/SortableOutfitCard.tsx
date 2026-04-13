@@ -1,7 +1,7 @@
 'use client';
 
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
-import { convertPrice, discountPrice } from '@/lib/utils';
+import { convertPrice, discountPrice, formatDisplayPrice } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { RiDiscountPercentFill } from 'react-icons/ri';
@@ -19,40 +19,45 @@ export interface OutfitCardProps {
 export default function SortableOutfitCard(props: OutfitCardProps) {
   const { ref } = useSortable({ id: props.outfit.id, index: props.index });
   return (
-    <Card key={props.outfit.id} ref={ref} className="p-4 m-4 pt-8 shadow-xl">
-      <div className="flex flex-row justify-between ps-4 pe-4">
-        <MdDragIndicator className="text-4xl" />
-        <h1 className="mb-3 font-bold text-primary text-center text-3xl">{props.outfit.name}</h1>
-        {props.outfit.discountPercentage ? (
-          <RiDiscountPercentFill className="text-4xl" />
-        ) : (
-          <div></div>
-        )}
-      </div>
+    <Card
+      key={props.outfit.id}
+      ref={ref}
+      className="relative p-4 m-4 pt-8 shadow-xl overflow-visible"
+    >
+      <MdDragIndicator className="absolute top-3 left-3 text-4xl" />
+      {props.outfit.discountPercentage && (
+        <RiDiscountPercentFill className="absolute top-3 right-3 text-4xl text-primary drop-shadow" />
+      )}
+      <h1 className="font-bold text-primary text-center text-3xl px-8 truncate">
+        {props.outfit.name}
+      </h1>
       <div className="flex flex-row w-fit max-w-11/12 self-center overflow-x-auto items-center gap-4 p-4">
         {props.outfit.products.map((p) => (
-          <Image
-            key={p.id}
-            src={p.image || '/static/img/product_placeholder.png'}
-            alt={p.name}
-            width={512}
-            height={512}
-            className="w-30 h-30 md:w-50 md:h-50 object-cover shrink-0 rounded-lg shadow-lg"
-          />
+          <div key={p.id} className="rounded-2xl overflow-hidden shadow-md shrink-0">
+            <Image
+              src={p.image || '/static/img/product_placeholder.png'}
+              alt={p.name}
+              width={512}
+              height={512}
+              className="object-contain h-30 md:h-50 w-auto"
+            />
+          </div>
         ))}
       </div>
       {props.outfit.discountPercentage ? (
         <div className="flex flex-row self-center gap-3">
           <h1 className="text-primary text-center line-through text-3xl">
-            {`${convertPrice(props.outfit.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
+            {formatDisplayPrice(convertPrice(props.outfit.priceInCents))}
           </h1>
           <h1 className="font-bold text-primary text-center text-3xl">
-            {`${discountPrice(props.outfit.priceInCents, props.outfit.discountPercentage).toFixed(2).toString().replace('.', ',')}€`}
+            {formatDisplayPrice(
+              discountPrice(props.outfit.priceInCents, props.outfit.discountPercentage)
+            )}
           </h1>
         </div>
       ) : (
         <h1 className="font-bold text-primary text-center text-3xl">
-          {`${convertPrice(props.outfit.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
+          {formatDisplayPrice(convertPrice(props.outfit.priceInCents))}
         </h1>
       )}
       <div className="self-center grid grid-cols-3 w-11/12 gap-2">

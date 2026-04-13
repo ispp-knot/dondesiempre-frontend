@@ -3,7 +3,7 @@
 import { Card } from '@/components/ui/card';
 import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { OrderDTO } from '@/lib/types/orders/orderDto';
-import { convertPrice } from '@/lib/utils';
+import { convertPrice, formatDisplayPrice } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -90,8 +90,7 @@ export default function OrdersPage() {
     return <ErrorView />;
   }
 
-  const formatDisplayPrice = (cents: number) =>
-    `${convertPrice(cents).toFixed(2).replace('.', ',')}€`;
+  const formatPrice = (cents: number) => formatDisplayPrice(convertPrice(cents));
 
   const filteredOrders =
     orders.data?.filter((order) => (filter === 'ALL' ? true : order.orderStatus === filter)) || [];
@@ -242,13 +241,18 @@ export default function OrdersPage() {
                             <p className="font-bold text-primary leading-tight">
                               {item.productName}
                             </p>
+                            {(item.variantSize || item.variantColor) && (
+                              <p className="text-xs font-semibold text-secondary/80 bg-secondary/10 px-2 py-0.5 rounded-full my-1.5 inline-block">
+                                {[item.variantSize, item.variantColor].filter(Boolean).join(' · ')}
+                              </p>
+                            )}
                             <p className="text-xs text-secondary italic">
-                              {formatDisplayPrice(item.priceAtPurchase)} / ud
+                              {formatPrice(item.priceAtPurchase)} / ud
                             </p>
                           </div>
                         </div>
                         <span className="font-bold text-primary text-lg">
-                          {formatDisplayPrice(item.subtotal)}
+                          {formatPrice(item.subtotal)}
                         </span>
                       </div>
                     ))}
@@ -260,7 +264,7 @@ export default function OrdersPage() {
                         Total
                       </p>
                       <div className="flex items-center gap-2 text-3xl text-secondary font-black">
-                        <MdOutlinePayments /> {formatDisplayPrice(order.totalPrice)}
+                        <MdOutlinePayments /> {formatPrice(order.totalPrice)}
                       </div>
                     </div>
 

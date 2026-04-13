@@ -6,6 +6,7 @@ import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
+import { GenericConfirmModal } from '@/components/modals/GenericConfirmModal';
 
 export default function EditPromotionPage() {
   const params = useParams<{ id: string; promoId: string }>();
@@ -30,14 +31,10 @@ export default function EditPromotionPage() {
   const updatePromotion = useActiveFetcher<void>({ method: 'PUT' });
   const deletePromotion = useActiveFetcher<void>({ method: 'DELETE' });
 
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+
   const handleDelete = async () => {
-    if (
-      !window.confirm(
-        '¿Estás seguro de que deseas eliminar esta promoción? Esta acción no se puede deshacer.'
-      )
-    ) {
-      return;
-    }
+    setIsConfirmDeleteOpen(false);
 
     setIsDeleting(true);
     try {
@@ -119,7 +116,7 @@ export default function EditPromotionPage() {
       setStatus({ type: 'success', message: '¡Promoción actualizada con éxito!' });
 
       setTimeout(() => {
-        router.push(`/stores/${storeId}`);
+        router.push(`/stores/${storeId}/promotions/manage`);
       }, 2000);
     } catch (err) {
       console.error('Error updating promotion:', err);
@@ -153,6 +150,16 @@ export default function EditPromotionPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white p-6 font-quicksand text-primary pb-24 relative">
+      {isConfirmDeleteOpen && (
+        <GenericConfirmModal
+          message="¿Estás seguro de que deseas eliminar esta promoción? Esta acción no se puede deshacer."
+          onConfirm={handleDelete}
+          onClose={() => setIsConfirmDeleteOpen(false)}
+          isLoading={isDeleting}
+          confirmLabel="Eliminar"
+        />
+      )}
+
       <PromotionForm
         key={promoId} // Forzamos remount si cambia la promo
         initialData={initialData}

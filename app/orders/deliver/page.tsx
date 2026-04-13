@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
-import { convertPrice } from '@/lib/utils';
+import { formatDisplayPrice } from '@/lib/utils';
 import { OrderDTO } from '@/lib/types/orders/orderDto';
 import Image from 'next/image';
 import {
@@ -38,9 +38,6 @@ export default function DeliverOrderPage() {
     url: 'orders',
   });
   const pickFetcher = useActiveFetcher<void>({ method: 'PATCH' });
-
-  const formatDisplayPrice = (cents: number) =>
-    `${convertPrice(cents).toFixed(2).replace('.', ',')}€`;
 
   const getStatusStyles = (status: string) => {
     switch (status) {
