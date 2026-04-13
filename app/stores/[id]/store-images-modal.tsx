@@ -199,7 +199,10 @@ export default function StoreImagesModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[calc(100vw-2rem)] max-w-[700px] overflow-hidden">
         <DialogHeader>
-          <DialogTitle className="text-primary">Gestionar imágenes de la tienda</DialogTitle>
+          <DialogTitle className="text-primary">
+            {' '}
+            Gestiona las imágenes del &apos;Sobre nosotros&apos;{' '}
+          </DialogTitle>
         </DialogHeader>
 
         {status && (
@@ -235,11 +238,11 @@ export default function StoreImagesModal({
                   />
                 </div>
 
-                <div className="min-w-0 flex-1 overflow-hidden">
+                <div className="flex min-w-0 flex-1 items-center overflow-hidden">
                   <p className="truncate text-sm text-muted-foreground">{img.image}</p>
                 </div>
 
-                <span className="w-8 shrink-0 text-center text-xs font-semibold text-muted-foreground">
+                <span className="flex w-8 shrink-0 text-center text-s items-center font-semibold text-muted-foreground">
                   #{index + 1}
                 </span>
 
@@ -272,7 +275,7 @@ export default function StoreImagesModal({
                 <Button
                   type="button"
                   size="icon"
-                  className="bg-primary hover:opacity-90 text-white shrink-0"
+                  className="bg-primary hover:opacity-90 text-white shrink-0 self-center"
                   onClick={() => handleDelete(img.id)}
                   disabled={deleteImage.isPending}
                   title="Eliminar imagen"

@@ -44,10 +44,10 @@ export default function StoreAboutSection({
 
   return (
     <>
-      <section className="w-full max-w-6xl mx-auto px-5 mb-20">
+      <section className="w-full max-w-6xl mx-auto px-5">
         <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr] gap-8 items-start">
           <div className="flex flex-col gap-4">
-            {hasImages && (
+            {hasImages ? (
               <Carousel
                 plugins={[plugin.current]}
                 className="w-full"
@@ -69,9 +69,15 @@ export default function StoreAboutSection({
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
+                <CarouselPrevious className="hidden md:flex" />
+                <CarouselNext className="hidden md:flex" />
               </Carousel>
+            ) : (
+              isOwner && (
+                <div className="flex min-h-[280px] items-center justify-center rounded-xl border border-dashed bg-muted/20 p-6 text-center text-sm text-muted-foreground">
+                  Esta tienda todavía no tiene imágenes.
+                </div>
+              )
             )}
 
             {isOwner && (
