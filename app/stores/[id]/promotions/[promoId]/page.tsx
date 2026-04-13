@@ -9,7 +9,6 @@ import { format } from 'date-fns';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { GenericConfirmModal } from '@/components/modals/GenericConfirmModal';
 
-
 export default function EditPromotionPage() {
   const params = useParams<{ id: string; promoId: string }>();
   const router = useRouter();
