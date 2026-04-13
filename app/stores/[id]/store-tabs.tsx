@@ -4,14 +4,17 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ShareTo } from '@/components/ui/shareTo';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
-import { StoreDTO } from '@/lib/types/stores/storesDto';
+import { StoreDTO, StoreImageDTO } from '@/lib/types/stores/storesDto';
+
 import { convertPrice, discountPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { JSX, useState } from 'react';
-import AboutUs from './about-us';
 import StoreOptions from './options';
 import Outfits from './outfits';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
+import StoreAboutSection from './about-us-section';
+import { ProductDTO } from '@/lib/types/products/productsDto';
+import { IoSearch } from 'react-icons/io5';
 import Products from './products';
 import { buttonLinkClass } from '@/lib/utils/buttonLinkClass';
 import Link from 'next/link';
@@ -21,23 +24,40 @@ type Tab = 'catalogo' | 'sobre' | 'opciones';
 type Props = {
   description?: string;
   outfits?: OutfitDTO[];
+  products?: ProductDTO[];
   promotions?: PromotionDTO[];
   store: StoreDTO;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
   isOwner: boolean;
+  images?: StoreImageDTO[];
+  onImagesUpdated?: (images: StoreImageDTO[]) => void;
 };
 
 export default function StoreTabs({
   description = '',
   outfits = [],
+  products = [],
   promotions = [],
   store,
+  searchQuery = '',
+  onSearchChange,
   isOwner,
+  images = [],
+  onImagesUpdated,
 }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
 
   const activePromotions = promotions.filter((p) => p.active);
   const [currentPromoIndex, setCurrentPromoIndex] = useState(0);
   const [selectedPromo, setSelectedPromo] = useState<PromotionDTO | null>(null);
+  const [localImages, setLocalImages] = useState<StoreImageDTO[]>(images ?? []);
+
+  const handleImagesUpdated = (updated: StoreImageDTO[]) => {
+    setLocalImages(updated);
+    onImagesUpdated?.(updated);
+  };
+
   const totalSlides = isOwner ? activePromotions.length + 1 : activePromotions.length;
 
   const formatDateRange = (start?: string, end?: string) => {
@@ -235,6 +255,23 @@ export default function StoreTabs({
         </div>
       )}
 
+      <div className="p-4 mt-6 bg-white sticky top-0 z-50">
+        <div className=" relative flex items-center w-full max-w-2xl mx-auto">
+          <IoSearch className="absolute left-3 text-secondary text-xl" />
+          <input
+            type="text"
+            placeholder="Buscar productos..."
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck="false"
+            maxLength={50}
+            className="w-full pl-10 pr-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 bg-gray-50 text-dark-blue font-medium"
+            value={searchQuery || ''}
+            onChange={(e) => onSearchChange?.(e.target.value)}
+          />
+        </div>
+      </div>
+
       <div className="flex mx-4 mt-5 mb-5 self-center rounded-md overflow-hidden border border-gray-200 w-11/12 sm:mx-auto sm:max-w-142.5">
         <button
           onClick={() => setActiveTab('catalogo')}
@@ -277,11 +314,19 @@ export default function StoreTabs({
         {activeTab === 'catalogo' && (
           <>
             <Outfits storeId={store.id} outfits={outfits} />
-            <Products storeId={store.id} />
+            <Products storeId={store.id} products={products} />
           </>
         )}
 
-        {activeTab === 'sobre' && <AboutUs description={description} />}
+        {activeTab === 'sobre' && (
+          <StoreAboutSection
+            description={description}
+            images={localImages}
+            isOwner={isOwner}
+            storeId={store.id}
+            onImagesUpdated={handleImagesUpdated}
+          />
+        )}
 
         {activeTab === 'opciones' && isOwner && (
           <StoreOptions storefrontId={storefrontId} initialStore={store} />

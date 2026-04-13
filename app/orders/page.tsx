@@ -241,6 +241,11 @@ export default function OrdersPage() {
                             <p className="font-bold text-primary leading-tight">
                               {item.productName}
                             </p>
+                            {(item.variantSize || item.variantColor) && (
+                              <p className="text-xs font-semibold text-secondary/80 bg-secondary/10 px-2 py-0.5 rounded-full my-1.5 inline-block">
+                                {[item.variantSize, item.variantColor].filter(Boolean).join(' · ')}
+                              </p>
+                            )}
                             <p className="text-xs text-secondary italic">
                               {formatPrice(item.priceAtPurchase)} / ud
                             </p>
