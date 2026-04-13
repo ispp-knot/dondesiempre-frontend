@@ -110,7 +110,7 @@ export default function StorePage() {
 
   const isFollowing = usePassiveFetcher<{ isFollowing: boolean }>({
     url: `stores/${params.id}/follow`,
-    enabled: !!user,
+    enabled: isClient,
   });
   const followStore = useActiveFetcher<void>({
     url: `stores/${params.id}/follow`,
