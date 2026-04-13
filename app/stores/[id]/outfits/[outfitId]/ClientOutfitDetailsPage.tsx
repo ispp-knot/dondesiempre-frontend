@@ -23,6 +23,7 @@ import ProductVariantSelector, {
   ProductVariantDTO,
 } from '../../products/[productId]/ProductVariantSelector';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { BackButton } from '@/components/dondeSiempre/BackButton';
 
 export interface ClientOutfitDetailsPageProps {
   outfit?: OutfitDTO;
@@ -238,6 +239,10 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
         <ErrorModal message={activeFetchingError} onClose={() => setActiveFetchingError(null)} />
       )}
       <div className="flex flex-col items-center relative">
+        <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
+          <BackButton />
+        </div>
+
         <MobileTitle />
 
         <div className="w-full md:max-w-5xl md:flex md:flex-row md:gap-10 md:px-10 md:py-10 md:pt-4">

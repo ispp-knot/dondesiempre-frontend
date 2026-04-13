@@ -38,6 +38,7 @@ import { FaTag } from 'react-icons/fa6';
 import { IoIosCloseCircle } from 'react-icons/io';
 import { z } from 'zod';
 import ClientOutfitDetailsPage from './ClientOutfitDetailsPage';
+import { BackButton } from '@/components/dondeSiempre/BackButton';
 
 type EditOutfitSchema = ReturnType<typeof createEditOutfitFormSchema>;
 type EditOutfitFormInput = z.input<EditOutfitSchema>;
@@ -522,6 +523,9 @@ export default function OutfitDetailsPage() {
       fallbackWhenNotStoreOwner={renderClientPage()}
     >
       <div className="flex flex-col items-center relative">
+        <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
+          <BackButton />
+        </div>
         {outfit.data ? (
           <div className="w-full px-4 py-6">
             <div className="mx-auto flex w-full justify-center">
