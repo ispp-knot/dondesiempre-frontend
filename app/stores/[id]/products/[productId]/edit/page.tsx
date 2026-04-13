@@ -1,8 +1,8 @@
 'use client';
 
-import ErrorText from '@/components/dondeSiempre/ErrorText';
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
+import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,19 +11,21 @@ import { Textarea } from '@/components/ui/textarea';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { ProductDTO } from '@/lib/types/products/productsDto';
 import { ProductTypeDTO } from '@/lib/types/producttypes/productTypesDto';
-import { createEditProductFormSchema, ProductFormValues } from '@/lib/types/products/productsRules';
+import { createEditProductFormSchema, ProductFormInput } from '@/lib/types/products/productsRules';
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import Image from 'next/image';
+import { BackButton } from '@/components/dondeSiempre/BackButton';
 
 interface ProductUpdateDTO {
   name?: string;
   description?: string | null;
   priceInCents?: number;
   productTypeId?: string;
+  discountPercentage?: number | null;
 }
 
 function FieldError({ message }: { message?: string }) {
@@ -51,7 +53,7 @@ export default function ProductEditPage() {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<ProductFormValues>({
+  } = useForm<ProductFormInput>({
     resolver: zodResolver(createEditProductFormSchema()),
   });
 
@@ -65,6 +67,7 @@ export default function ProductEditPage() {
         description: product.data.description || '',
         price: product.data.priceInCents / 100,
         productTypeId: product.data.typeId,
+        discount: product.data.discountPercentage ?? undefined,
       });
     }
   }, [product.data, reset]);
@@ -73,29 +76,38 @@ export default function ProductEditPage() {
     return <LoadingText />;
   }
 
-  if (product.isError || productTypes.isError) {
+  if (product.error || productTypes.isError) {
     return (
-      <>
-        <ErrorText error={product.error} />
-        <ErrorText error={productTypes.error} />
-      </>
+      <ErrorView
+        title="Producto no encontrado"
+        description="No pudimos encontrar este producto. Puede que se haya eliminado o que el enlace ya no sea válido."
+        buttonText="Volver atrás"
+      />
     );
   }
 
   if (!product.data) {
-    return <ErrorText error={new Error('Producto no encontrado')} />;
+    return (
+      <ErrorView
+        title="Producto no encontrado"
+        description="No pudimos encontrar este producto. Puede que se haya eliminado o que el enlace ya no sea válido."
+        buttonText="Volver atrás"
+      />
+    );
   }
 
-  const submitForm = async (data: ProductFormValues) => {
+  const submitForm = async (data: ProductFormInput) => {
     setApiError(null);
-    const dto: ProductUpdateDTO = {
-      name: data.name || undefined,
-      description: data.description || null,
-      priceInCents: Math.round(data.price * 100) || undefined,
-      productTypeId: data.productTypeId || undefined,
-    };
 
     try {
+      const dto: ProductUpdateDTO = {
+        name: data.name || undefined,
+        description: data.description || null,
+        priceInCents: Math.round(data.price * 100) || undefined,
+        productTypeId: data.productTypeId || undefined,
+        discountPercentage: (data.discount as number | undefined) ?? null,
+      };
+
       await updateProduct.fetch({
         formPayload: {
           product: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
@@ -103,11 +115,12 @@ export default function ProductEditPage() {
         },
       });
 
-      if (!updateProduct.isError) {
-        router.push(`/stores/${params.id}/products/${params.productId}`);
-      } else {
+      if (updateProduct.isError) {
         setApiError('Hubo un error al actualizar el producto. Por favor, intenta de nuevo.');
+        return;
       }
+
+      router.push(`/stores/${params.id}/products/${params.productId}`);
     } catch (_err: unknown) {
       setApiError('Hubo un error al actualizar el producto. Por favor, intenta de nuevo.');
     }
@@ -116,11 +129,15 @@ export default function ProductEditPage() {
   return (
     <StoreOwnerGuard storeId={params.id}>
       <div className="flex flex-col items-center px-4 py-6">
-        <div className="w-full max-w-6xl">
+        <div className="w-full max-w-6xl space-y-4">
+          <div className="flex justify-start">
+            <BackButton />
+          </div>
+
           <Card className="p-4 shadow-xl sm:p-6 md:p-8">
             <h1 className="mb-6 text-center text-3xl font-bold text-primary">Editar producto</h1>
 
-            <form onSubmit={handleSubmit(submitForm)} className="space-y-6" noValidate>
+            <form onSubmit={(e) => handleSubmit(submitForm)(e)} className="space-y-6" noValidate>
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="form-name" className="text-base font-bold text-secondary">
@@ -220,6 +237,27 @@ export default function ProductEditPage() {
                     ))}
                   </select>
                   <FieldError message={errors.productTypeId?.message} />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="form-discount" className="text-base font-bold text-secondary">
+                    Descuento (Opcional)
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="form-discount"
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="1"
+                      placeholder="0"
+                      aria-invalid={!!errors.discount}
+                      className="w-32"
+                      {...register('discount', { valueAsNumber: true })}
+                    />
+                    <span className="text-base font-semibold text-secondary">%</span>
+                  </div>
+                  <FieldError message={errors.discount?.message} />
                 </div>
               </div>
 

@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { FaImage, FaLock } from 'react-icons/fa';
 import { cn } from '@/lib/utils';
+import { ALLOWED_IMAGE_TYPES } from '@/lib/utils/imageType';
 
 interface ImageUploadProps {
   onChange: (file: File | null) => void;
@@ -21,10 +22,17 @@ export default function ImageUpload({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(existingImageUrl ?? null);
   const [hasFile, setHasFile] = useState(false);
+  const [typeError, setTypeError] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
     if (file) {
+      if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+        e.target.value = '';
+        setTypeError(true);
+        return;
+      }
+      setTypeError(false);
       setPreview(URL.createObjectURL(file));
       setHasFile(true);
       onChange(file);
@@ -90,6 +98,11 @@ export default function ImageUpload({
           accept="image/*"
           onChange={handleFileChange}
         />
+      )}
+      {!disabled && (
+        <p className="text-red-500 text-xs z-10 [text-shadow:0_0_4px_white,0_0_8px_white,0_0_12px_white]">
+          {typeError && 'Formato no válido. Solo se aceptan: JPG, PNG, WebP, AVIF, HEIC, HEIF'}
+        </p>
       )}
     </div>
   );
