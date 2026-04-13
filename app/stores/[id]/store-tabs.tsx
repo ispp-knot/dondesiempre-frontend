@@ -105,10 +105,10 @@ export default function StoreTabs({
             Crea una nueva oferta o descuento especial para tu tienda.
           </p>
           <Link
-            href={`/stores/${store.id}/promotions`}
+            href={`/stores/${store.id}/promotions/manage`}
             className={`${buttonLinkClass} bg-primary text-white font-bold py-3 px-8 rounded-lg mt-6 w-full shadow-lg hover:scale-[1.02] active:scale-95 transition-all`}
           >
-            Crear Nueva Promoción
+            Gestionar promociones
           </Link>
         </div>
       );
