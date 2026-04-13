@@ -403,8 +403,8 @@ function StoreStep2Form({
   } = useForm<StoreStep2InputValues, unknown, StoreStep2Values>({
     resolver: zodResolver(storeStep2Schema),
     defaultValues: {
-      primaryColor: '#000000',
-      secondaryColor: '#ffffff',
+      primaryColor: '#c65a3a',
+      secondaryColor: '#19756a',
     },
   });
 
