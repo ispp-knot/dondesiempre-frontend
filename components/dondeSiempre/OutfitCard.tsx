@@ -13,6 +13,7 @@ export interface OutfitCardProps {
   outfit: OutfitDTO;
   isOwner: boolean;
   onDelete: () => void;
+  onSuccess?: () => void;
 }
 
 export default function OutfitCard(props: OutfitCardProps) {
@@ -26,6 +27,7 @@ export default function OutfitCard(props: OutfitCardProps) {
     setIsDeleting(true);
     try {
       await props.onDelete();
+      if (props.onSuccess) props.onSuccess();
     } catch (err) {
       console.error('Error deleting promotion:', err);
       setIsDeleting(false);
@@ -82,7 +84,7 @@ export default function OutfitCard(props: OutfitCardProps) {
           </Link>
           {isConfirmDeleteOpen && (
             <GenericConfirmModal
-              message="¿Estás seguro de que deseas eliminar esta promoción? Esta acción no se puede deshacer."
+              message="¿Estás seguro de que deseas eliminar este outfit? Esta acción no se puede deshacer."
               onConfirm={handleDelete}
               onClose={() => setIsConfirmDeleteOpen(false)}
               isLoading={isDeleting}

@@ -20,6 +20,7 @@ import LoadingText from '../../../../components/dondeSiempre/LoadingText';
 import ClientOutfitsPage from './ClientOutfitsPage';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
+import GenericSuccessModal from '@/components/modals/GenericSuccessModal';
 
 export default function OutfitsPage() {
   const params = useParams<{ id: string }>();
@@ -27,6 +28,7 @@ export default function OutfitsPage() {
   const [cleanupError, setCleanupError] = useState<string | null>(null);
   const [isCleaningInvalidOutfits, setIsCleaningInvalidOutfits] = useState(false);
   const [isOrdering, setIsOrdering] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
   const deleteOutfit = useActiveFetcher<void>({ method: 'DELETE' });
@@ -200,6 +202,7 @@ export default function OutfitsPage() {
                         await deleteOutfit.fetch({ url: `outfits/${outfit.id}` });
                         outfits.refetch();
                       }}
+                      onSuccess={() => setSuccess(true)}
                     />
                   )
                 )}
@@ -208,6 +211,7 @@ export default function OutfitsPage() {
           </div>
         </div>
       </DragDropProvider>
+      {success && <GenericSuccessModal setOpenModal={setSuccess} />}
     </StoreOwnerGuard>
   );
 }
