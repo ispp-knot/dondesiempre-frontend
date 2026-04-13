@@ -4,30 +4,41 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ShareTo } from '@/components/ui/shareTo';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
+import { ProductDTO } from '@/lib/types/products/productsDto';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { convertPrice, discountPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { JSX, useState } from 'react';
+import { IoSearch } from 'react-icons/io5';
 import AboutUs from './about-us';
 import StoreOptions from './options';
 import Outfits from './outfits';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
+import Products from './products';
+import { buttonLinkClass } from '@/lib/utils/buttonLinkClass';
+import Link from 'next/link';
 
 type Tab = 'catalogo' | 'sobre' | 'opciones';
 
 type Props = {
   description?: string;
   outfits?: OutfitDTO[];
+  products?: ProductDTO[];
   promotions?: PromotionDTO[];
   store: StoreDTO;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
   isOwner: boolean;
 };
 
 export default function StoreTabs({
   description = '',
   outfits = [],
+  products = [],
   promotions = [],
   store,
+  searchQuery = '',
+  onSearchChange,
   isOwner,
 }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
@@ -81,14 +92,12 @@ export default function StoreTabs({
           <p className="text-gray-600 font-medium mt-2 text-sm md:text-base">
             Crea una nueva oferta o descuento especial para tu tienda.
           </p>
-          <button
-            onClick={() => {
-              window.location.href = `/stores/${store.id}/promotions`;
-            }}
-            className="bg-primary text-white font-bold py-3 px-8 rounded-lg mt-6 w-full shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
+          <Link
+            href={`/stores/${store.id}/promotions`}
+            className={`${buttonLinkClass} bg-primary text-white font-bold py-3 px-8 rounded-lg mt-6 w-full shadow-lg hover:scale-[1.02] active:scale-95 transition-all`}
           >
             Crear Nueva Promoción
-          </button>
+          </Link>
         </div>
       );
     }
@@ -234,6 +243,23 @@ export default function StoreTabs({
         </div>
       )}
 
+      <div className="p-4 mt-6 bg-white sticky top-0 z-50">
+        <div className=" relative flex items-center w-full max-w-2xl mx-auto">
+          <IoSearch className="absolute left-3 text-secondary text-xl" />
+          <input
+            type="text"
+            placeholder="Buscar productos..."
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck="false"
+            maxLength={50}
+            className="w-full pl-10 pr-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 bg-gray-50 text-dark-blue font-medium"
+            value={searchQuery || ''}
+            onChange={(e) => onSearchChange?.(e.target.value)}
+          />
+        </div>
+      </div>
+
       <div className="flex mx-4 mt-5 mb-5 self-center rounded-md overflow-hidden border border-gray-200 w-11/12 sm:mx-auto sm:max-w-142.5">
         <button
           onClick={() => setActiveTab('catalogo')}
@@ -273,7 +299,12 @@ export default function StoreTabs({
       </div>
 
       <div className="flex flex-col gap-10 sm:items-center min-h-96">
-        {activeTab === 'catalogo' && <Outfits storeId={store.id} outfits={outfits} />}
+        {activeTab === 'catalogo' && (
+          <>
+            <Outfits storeId={store.id} outfits={outfits} />
+            <Products storeId={store.id} products={products} />
+          </>
+        )}
 
         {activeTab === 'sobre' && <AboutUs description={description} />}
 

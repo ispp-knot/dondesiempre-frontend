@@ -1,12 +1,16 @@
 'use client';
 
+import StoreLocationModal from '@/app/stores/[id]/store-edit-location-modal';
+
 export const dynamic = 'force-dynamic';
-import { useState } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { useDebounce } from 'use-debounce';
 
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { StoreSocialNetworkDTO } from '@/lib/types/stores/storesSocialDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
+import { ProductDTO } from '@/lib/types/products/productsDto';
 import { hasMinimumOutfitProducts } from '@/lib/types/outfits/outfitsRules';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
@@ -49,14 +53,60 @@ export default function StorePage() {
   const params = useParams<{ id: string }>();
   const { getCurrentUser } = useAuth();
   const user = getCurrentUser();
-  const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
+  const contentRef = useRef<HTMLDivElement>(null);
+  const scrollPositionRef = useRef<number>(0);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
+
+  // Memoize the outfits URL to prevent unnecessary refetches
+  const outfitsUrl = useMemo(() => {
+    const queryParams = new URLSearchParams();
+    if (debouncedSearchQuery) queryParams.append('name', debouncedSearchQuery);
+    return `stores/${params.id}/outfits?${queryParams.toString()}`;
+  }, [debouncedSearchQuery, params.id]);
+
+  // Memoize the products URL to prevent unnecessary refetches
+  const productsUrl = useMemo(() => {
+    const queryParams = new URLSearchParams();
+    if (debouncedSearchQuery) queryParams.append('name', debouncedSearchQuery);
+    return `stores/${params.id}/products?${queryParams.toString()}`;
+  }, [debouncedSearchQuery, params.id]);
+
+  const outfits = usePassiveFetcher<OutfitDTO[]>({
+    url: outfitsUrl,
+  });
+  const products = usePassiveFetcher<ProductDTO[]>({
+    url: productsUrl,
+  });
   const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
+
+  // Preserve scroll position when search query changes
+  useEffect(() => {
+    // Save current scroll position when search starts
+    scrollPositionRef.current = window.scrollY;
+  }, [searchQuery]);
+
+  // Restore scroll position after products are loaded
+  useEffect(() => {
+    const container = contentRef.current;
+    if (container) {
+      // Restore scroll position if we have saved it
+      if (scrollPositionRef.current > 0) {
+        window.scrollTo({
+          top: scrollPositionRef.current,
+          behavior: 'auto',
+        });
+      }
+    }
+  }, [products.data, outfits.data]);
 
   const isClient = Boolean(user?.client);
 
   const isOwner = !!user?.store?.id && user.store.id === params.id;
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isSocialModalOpen, setIsSocialModalOpen] = useState(false);
+  const [locationSuccessMsg, setLocationSuccessMsg] = useState<string | null>(null);
 
   const isFollowing = usePassiveFetcher<{ isFollowing: boolean }>({
     url: `stores/${params.id}/follow`,
@@ -74,12 +124,12 @@ export default function StorePage() {
     url: `stores/${params.id}/promotions`,
   });
 
-  if (store.isLoading || outfits.isLoading) {
+  if ((store.isLoading || outfits.isLoading || products.isLoading) && !store.data) {
     return <LoadingText />;
-  } else if (store.isError || outfits.isError) {
+  } else if (store.isError || outfits.isError || products.isError) {
     return (
       <>
-        {(store.error || outfits.error) && (
+        {(store.error || outfits.error || products.error) && (
           <ErrorView
             title="Tienda no encontrada"
             description="No pudimos encontrar esta tienda. Puede que se haya eliminado o que el enlace ya no sea válido."
@@ -90,6 +140,15 @@ export default function StorePage() {
     );
   }
 
+  const handleLocationSaved = async () => {
+    await store.refetch();
+
+    setLocationSuccessMsg('¡Ubicación actualizada con éxito!');
+    setTimeout(() => {
+      setLocationSuccessMsg(null);
+    }, 4000);
+  };
+
   const promotionData: PromotionDTO[] = promotionsDto.data || [];
   const socialNetworks: Array<StoreSocialNetworkDTO> = store.data?.socialNetworks || [];
   const primaryColor = store.data?.storefront?.primaryColor || '#000000';
@@ -97,9 +156,10 @@ export default function StorePage() {
   const banner = store.data?.storefront?.bannerImageUrl;
   const validOutfits = (outfits.data ?? []).filter(hasMinimumOutfitProducts);
 
-  return store.data && outfits.data ? (
+  return store.data && outfits.data && products.data ? (
     <div
       className="flex flex-col bg-white"
+      ref={contentRef}
       style={
         {
           '--primary': primaryColor,
@@ -161,10 +221,21 @@ export default function StorePage() {
           {store.data.name}
         </div>
 
-        <div className="flex items-start justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]">
+        {locationSuccessMsg && (
+          <div className="px-4 py-2 bg-green-100 text-green-800 text-sm rounded-md border border-green-200 text-center animate-in fade-in slide-in-from-top-2 duration-300 w-full max-w-md my-2">
+            {locationSuccessMsg}
+          </div>
+        )}
+
+        <a
+          href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(store.data.address)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-start justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)] hover:opacity-80 transition-opacity cursor-pointer"
+        >
           <FaLocationDot className="flex-shrink-0 mt-1" />
-          <span className="text-center">{store.data.address}</span>
-        </div>
+          <span className="text-center hover:underline">{store.data.address}</span>
+        </a>
 
         <div className="sm:text-lg md:text-xl text-[var(--secondary)]">{store.data.phone}</div>
 
@@ -190,13 +261,21 @@ export default function StorePage() {
       </div>
 
       {isOwner && (
-        <div className="flex justify-center gap-3 mt-3 mb-2">
+        <div className="flex justify-center gap-3 mt-3 mb-2 flex-wrap px-4">
           <Button type="button" onClick={() => setIsEditOpen(true)}>
-            <Edit2 className="w-5 h-5" />
+            <Edit2 className="w-5 h-5 mr-1" />
             Editar tienda
           </Button>
+
+          <StoreLocationModal
+            storeId={params.id}
+            initialLat={store.data.latitude}
+            initialLng={store.data.longitude}
+            onSavedAction={handleLocationSaved}
+          />
+
           <Button type="button" onClick={() => setIsSocialModalOpen(true)}>
-            <Edit2 className="w-5 h-5" />
+            <Edit2 className="w-5 h-5 mr-1" />
             Editar redes
           </Button>
         </div>
@@ -207,6 +286,9 @@ export default function StorePage() {
         description={store.data?.aboutUs || ''}
         promotions={promotionData}
         outfits={validOutfits}
+        products={products.data || []}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
         isOwner={isOwner}
       />
 

@@ -10,24 +10,16 @@ export function convertPrice(priceInCents: number): number {
   return Number((priceInCents / 100).toFixed(2));
 }
 
+export function formatDisplayPrice(price: number): string {
+  return `${price.toFixed(2).replace('.', ',')}€`;
+}
+
 export function getOutfitDiscountPercentage(
-  outfit: Pick<OutfitDTO, 'priceInCents' | 'discountPercentage' | 'discountedPriceInCents'>
+  outfit: Pick<OutfitDTO, 'priceInCents' | 'discountPercentage'>
 ): number {
   if (typeof outfit.discountPercentage === 'number') {
     return Math.max(0, Math.min(100, outfit.discountPercentage));
   }
-
-  if (
-    typeof outfit.discountedPriceInCents === 'number' &&
-    outfit.priceInCents > 0 &&
-    outfit.discountedPriceInCents < outfit.priceInCents
-  ) {
-    return Math.max(
-      0,
-      Math.min(100, 100 - Math.round((outfit.discountedPriceInCents / outfit.priceInCents) * 100))
-    );
-  }
-
   return 0;
 }
 
@@ -39,7 +31,7 @@ export function calculatePriceWithPercentageDiscount(
 }
 
 export function getOutfitDisplayPrice(
-  outfit: Pick<OutfitDTO, 'priceInCents' | 'discountPercentage' | 'discountedPriceInCents'>
+  outfit: Pick<OutfitDTO, 'priceInCents' | 'discountPercentage'>
 ): number {
   const discountPercentage = getOutfitDiscountPercentage(outfit);
   return discountPercentage > 0
@@ -48,7 +40,7 @@ export function getOutfitDisplayPrice(
 }
 
 export function outfitWithDiscount(
-  outfit: Pick<OutfitDTO, 'priceInCents' | 'discountPercentage' | 'discountedPriceInCents'>
+  outfit: Pick<OutfitDTO, 'priceInCents' | 'discountPercentage'>
 ): boolean {
   return getOutfitDiscountPercentage(outfit) > 0;
 }
