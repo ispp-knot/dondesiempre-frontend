@@ -48,8 +48,8 @@ export function ProfilePage({}) {
     : user.email;
 
   const email = profile?.email ?? user.email;
-  const phone = profile?.phone ?? null;
-  const address = profile?.address ?? null;
+  const phone = user.store?.phone ?? null;
+  const address = user.store?.address ?? null;
 
   const handlePasswordChanged = () => {
     setSuccessMsg('¡Contraseña actualizada con éxito!');
@@ -97,10 +97,7 @@ export function ProfilePage({}) {
       </CardContent>
       <CardFooter className="border-t mt-3 flex flex-col gap-3">
         {user.client && (
-          <ClientEditModal
-            client={{ ...user.client, email: email }}
-            onSavedAction={() => meQuery.refetch()}
-          />
+          <ClientEditModal client={user.client!} onSavedAction={() => meQuery.refetch()} />
         )}
         {user?.store?.id && (
           <Button
