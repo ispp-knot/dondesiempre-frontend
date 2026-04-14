@@ -247,18 +247,22 @@ export default function StorePage() {
       </div>
 
       <div className="flex gap-3 mt-3 flex-wrap justify-center mb-2">
-        {socialNetworks.map((social: StoreSocialNetworkDTO) => (
-          <a
-            key={social.id}
-            href={social.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center w-fit gap-1.5 border border-[var(--primary)] rounded-sm px-3 py-1.5 text-xs text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition"
-          >
-            {getSocialIcon(social.name)}
-            <p>{social.name}</p>
-          </a>
-        ))}
+        {socialNetworks.map((social: StoreSocialNetworkDTO) => {
+          const isPhone = social.name.toLowerCase().includes('teléfono');
+
+          return (
+            <a
+              key={social.id}
+              href={social.link}
+              target={isPhone ? '_self' : '_blank'}
+              rel="noopener noreferrer"
+              className="flex items-center w-fit gap-1.5 border border-[var(--primary)] rounded-sm px-3 py-1.5 text-xs text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition"
+            >
+              {getSocialIcon(social.name)}
+              <p>{isPhone ? social.link?.replace('tel:', '') : social.name}</p>
+            </a>
+          );
+        })}
       </div>
 
       {isOwner && (
