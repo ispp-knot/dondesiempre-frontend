@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
-import { convertPrice } from '@/lib/utils';
+import { convertPrice, formatDisplayPrice } from '@/lib/utils';
 import { OrderDTO } from '@/lib/types/orders/orderDto';
 import Image from 'next/image';
 import {
@@ -38,9 +38,6 @@ export default function DeliverOrderPage() {
     url: 'orders',
   });
   const pickFetcher = useActiveFetcher<void>({ method: 'PATCH' });
-
-  const formatDisplayPrice = (cents: number) =>
-    `${convertPrice(cents).toFixed(2).replace('.', ',')}€`;
 
   const getStatusStyles = (status: string) => {
     switch (status) {
@@ -187,12 +184,12 @@ export default function DeliverOrderPage() {
                         <div>
                           <p className="font-bold text-primary leading-tight">{item.productName}</p>
                           <p className="text-xs text-secondary italic">
-                            {formatDisplayPrice(item.priceAtPurchase)} / ud
+                            {formatDisplayPrice(convertPrice(item.priceAtPurchase))} / ud
                           </p>
                         </div>
                       </div>
                       <span className="font-bold text-primary text-lg">
-                        {formatDisplayPrice(item.subtotal)}
+                        {formatDisplayPrice(convertPrice(item.subtotal))}
                       </span>
                     </div>
                   ))}
@@ -204,7 +201,7 @@ export default function DeliverOrderPage() {
                       Total a cobrar/cobrado
                     </p>
                     <div className="flex items-center gap-2 text-3xl text-secondary font-black">
-                      <MdOutlinePayments /> {formatDisplayPrice(order.totalPrice)}
+                      <MdOutlinePayments /> {formatDisplayPrice(convertPrice(order.totalPrice))}
                     </div>
                   </div>
 

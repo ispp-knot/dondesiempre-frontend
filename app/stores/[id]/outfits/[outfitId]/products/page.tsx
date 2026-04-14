@@ -9,7 +9,7 @@ import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { OutfitCreationProductDTO, OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { hasMinimumOutfitProducts, MIN_OUTFIT_PRODUCTS } from '@/lib/types/outfits/outfitsRules';
 import { ProductDTO } from '@/lib/types/products/productsDto';
-import { convertPrice } from '@/lib/utils';
+import { convertPrice, formatDisplayPrice } from '@/lib/utils';
 import { move } from '@dnd-kit/helpers';
 import { DragDropProvider } from '@dnd-kit/react';
 import Image from 'next/image';
@@ -131,14 +131,13 @@ export default function OutfitProductsPage() {
                 <div>
                   <h1 className="mt-2 mb-4 text-primary text-center text-3xl">
                     <strong>Total: </strong>
-                    {`${convertPrice(
-                      outfitProducts
-                        .map((product) => product.priceInCents)
-                        .reduce((accumulator, currentPrice) => accumulator + currentPrice, 0)
-                    )
-                      .toFixed(2)
-                      .toString()
-                      .replace('.', ',')}€`}
+                    {formatDisplayPrice(
+                      convertPrice(
+                        outfitProducts
+                          .map((product) => product.priceInCents)
+                          .reduce((accumulator, currentPrice) => accumulator + currentPrice, 0)
+                      )
+                    )}
                   </h1>
                 </div>
                 <div className="flex flex-row justify-center mb-8">
@@ -181,7 +180,7 @@ export default function OutfitProductsPage() {
                           ></Image>
                         </div>
                         <h1 className="font-bold text-primary text-center text-lg md:text-2xl">
-                          {`${convertPrice(p.priceInCents).toFixed(2).toString().replace('.', ',')}€`}
+                          {formatDisplayPrice(convertPrice(p.priceInCents))}
                         </h1>
                         <div className="flex flex-row justify-center">
                           <Button

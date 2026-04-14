@@ -1,8 +1,9 @@
 import { authorizedOfetch } from './authorizedOfetch';
 import { getBackendUrl } from '../config';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { useState, Dispatch, SetStateAction } from 'react';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { FetchError } from 'ofetch';
 
 function buildQueryKey(url: string, ...extra: unknown[]): unknown[] {
   return [...url.split('/'), ...extra];
@@ -85,6 +86,7 @@ export function usePassiveFetcher<T>({
     queryKey,
     queryFn: () => executeFetch<T>({ url, getToken: getAuthToken, timeout: timeout }),
     enabled,
+    placeholderData: keepPreviousData,
   });
 
   const setData = (data: T) => {
@@ -105,7 +107,7 @@ type UseActiveFetcherOptions<T> = {
   method?: MutationMethod;
   timeout?: number;
   onSuccess?: (data: T) => void;
-  onError?: (error: Error) => void;
+  onError?: (error: FetchError) => void;
   onSettled?: (data: T | undefined, error: Error | null) => void;
 };
 
