@@ -23,6 +23,7 @@ import { MdOutlinePayments } from 'react-icons/md';
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
+import { PayButton } from '@/components/dondeSiempre/PayButton';
 
 type OrderStatus = 'ALL' | 'PENDING' | 'CONFIRMED' | 'REJECTED' | 'PICKED';
 
@@ -275,7 +276,7 @@ export default function OrdersPage() {
                       </div>
                     </div>
 
-                    <div className="flex gap-2 w-full md:w-auto">
+                    <div className="flex gap-2 w-full md:w-auto justify-center md:justify-end">
                       {isStore && order.orderStatus === 'PENDING' && (
                         <>
                           <button
@@ -292,6 +293,18 @@ export default function OrdersPage() {
                           </button>
                         </>
                       )}
+                      {!isStore &&
+                        order.orderStatus === 'CONFIRMED' &&
+                        (order.isPaid ? (
+                          <div className="flex flex-col items-center gap-1 bg-green-50 text-green-800 border border-green-200 px-5 py-2.5 rounded-lg self-center md:self-auto">
+                            <FaCheckCircle className="text-green-700 text-xl" />
+                            <span className="text-xs font-bold uppercase tracking-wide">
+                              Pagado
+                            </span>
+                          </div>
+                        ) : (
+                          <PayButton orderId={order.id} />
+                        ))}
                     </div>
                   </div>
                 </div>
