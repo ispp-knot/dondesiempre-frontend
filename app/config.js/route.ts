@@ -1,12 +1,17 @@
-export const dynamic = 'force-dynamic';
+import { ConfigShape } from '@/lib/config';
 
-const config = `window.__CONFIG__ = ${JSON.stringify({
+// export const dynamic = 'force-dynamic';
+
+const config: Omit<ConfigShape, 'authToken'> = {
   backendUrl: process.env.BACKEND_URL ?? '',
   webUrl: process.env.WEB_URL ?? '',
-})};`;
+  notificationVapidPublic: process.env.NOTIFICATION_VAPID_PUBLIC ?? '',
+};
+
+const configJs = `window.__CONFIG__ = ${JSON.stringify(config)};`;
 
 export function GET() {
-  return new Response(config, {
+  return new Response(configJs, {
     headers: { 'Content-Type': 'application/javascript' },
   });
 }

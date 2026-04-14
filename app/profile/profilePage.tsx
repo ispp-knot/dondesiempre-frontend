@@ -19,6 +19,7 @@ export function ProfilePage({}) {
   const { deleteInfo, registerInfo, getAuthToken } = useAuth();
 
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [subscribeButtonLoading, setSubscribeButtonLoading] = useState(false);
 
   const meQuery = usePassiveFetcher<UserResponseDTO>({
     url: 'auth/me',
@@ -96,6 +97,29 @@ export function ProfilePage({}) {
         )}
       </CardContent>
       <CardFooter className="border-t mt-3 flex flex-col gap-3">
+        <Button
+          variant="outline"
+          className="w-full"
+          disabled={subscribeButtonLoading}
+          onClick={async () => {
+            await Notification.requestPermission();
+
+            if (Notification.permission == 'granted') {
+              navigator.serviceWorker.controller?.postMessage({ type: 'SETUP_NOTIFS' });
+            }
+
+            setSubscribeButtonLoading(true);
+
+            setTimeout(() => setSubscribeButtonLoading(false), 10000);
+          }}
+        >
+          {subscribeButtonLoading ? 'Procesando...' : 'Instalar notificaciones'}
+        </Button>
+        <p className="text-center">
+          Pronto recibirás una notificación que confirme que se han instalado correctamente. De no
+          ser así,
+          <a href="mailto:dondesiempreispp+notificaciones@gmail.com"> contacta con nosotros</a>.
+        </p>
         {user.client && (
           <ClientEditModal
             client={{ ...user.client, email: email }}

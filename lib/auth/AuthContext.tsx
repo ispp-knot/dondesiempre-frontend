@@ -4,8 +4,8 @@ import type { UserResponseDTO } from '@/lib/types/auth/authDto';
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
-const LOCAL_STORAGE_KEY = 'auth_user_v2';
-const AUTH_TOKEN_KEY = 'auth_token_v2';
+export const LOCAL_STORAGE_KEY = 'auth_user_v2';
+export const AUTH_TOKEN_KEY = 'auth_token_v2';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
 

@@ -1,14 +1,26 @@
+import { AUTH_TOKEN_KEY } from './auth/AuthContext';
+
 declare global {
   interface Window {
-    __CONFIG__?: { backendUrl: string; webUrl: string };
+    __CONFIG__?: Omit<ConfigShape, 'authToken'>;
   }
 }
 
+export type ConfigShape = {
+  backendUrl: string;
+  webUrl: string;
+  notificationVapidPublic: string;
+  authToken: string;
+};
+
 export function notifyServiceWorker() {
   if (typeof navigator === 'undefined' || !navigator.serviceWorker) return;
-  const backendUrl = window.__CONFIG__?.backendUrl ?? '';
   const send = () =>
-    navigator.serviceWorker.controller?.postMessage({ type: 'SET_CONFIG', backendUrl });
+    navigator.serviceWorker.controller?.postMessage({
+      ...window.__CONFIG__,
+      authToken: localStorage.getItem(AUTH_TOKEN_KEY),
+      type: 'SET_CONFIG',
+    });
   send();
   navigator.serviceWorker.addEventListener('controllerchange', send, { once: true });
 }
