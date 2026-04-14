@@ -102,6 +102,7 @@ export function StoreCard({
 
   return (
     <Link
+      data-testid="store-card"
       href={`/stores/${store.id}`}
       onClick={handleCardClick}
       className={cn(

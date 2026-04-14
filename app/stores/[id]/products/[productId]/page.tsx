@@ -34,7 +34,7 @@ function ProductPrice({ product }: { product: ProductDTO }) {
   const discountedPrice = discountPrice(product.priceInCents, product.discountPercentage);
 
   return (
-    <div className="text-primary text-2xl">
+    <div className="text-primary text-2xl" data-testid="product-price">
       {hasDiscount ? (
         <span className="flex flex-row items-baseline gap-3">
           <span className="line-through text-muted-foreground text-xl">
@@ -317,6 +317,7 @@ export default function ProductDetailsPage() {
         <div className="w-full md:max-w-5xl md:flex md:flex-row md:gap-10 md:px-10 md:py-10 md:pt-4">
           <div className="md:w-1/2 shrink-0 flex flex-col">
             <Image
+              data-testid="product-image"
               src={product.data.image || '/static/img/product_placeholder.png'}
               alt={product.data.name}
               width={680}
@@ -325,13 +326,19 @@ export default function ProductDetailsPage() {
               className="aspect-square w-full object-cover md:rounded-xl shrink-0 shadow-lg"
             />
             {product.data.description && (
-              <p className="text-secondary text-m break-words line-clamp-3 mt-4 px-8 md:px-0">
+              <p
+                className="text-secondary text-m break-words line-clamp-3 mt-4 px-8 md:px-0"
+                data-testid="product-description"
+              >
                 {product.data.description}
               </p>
             )}
           </div>
 
-          <div className="md:w-1/2 flex flex-col gap-5 pt-4 pb-8 px-8 md:px-0 md:py-0 md:justify-start">
+          <div
+            className="md:w-1/2 flex flex-col gap-5 pt-4 pb-8 px-8 md:px-0 md:py-0 md:justify-start"
+            data-testid="product-desktop-name"
+          >
             <DesktopTitle />
 
             {isStore && isStoreOwner && (
@@ -339,6 +346,7 @@ export default function ProductDetailsPage() {
                 <Link
                   href={`/stores/${product.data?.storeId}/products/${params.productId}/edit`}
                   className={`${buttonLinkClass} flex-1 flex items-center justify-center rounded-lg bg-secondary hover:bg-dark-secondary text-white font-semibold text-sm md:text-base h-11 transition-colors`}
+                  data-testid="product-edit-button"
                 >
                   Editar
                 </Link>
@@ -349,6 +357,7 @@ export default function ProductDetailsPage() {
                     router.push(`/stores/${params.id}`);
                   }}
                   className="flex-1 flex items-center justify-center rounded-lg bg-primary hover:bg-dark-primary text-white font-semibold text-sm md:text-base h-11 transition-colors"
+                  data-testid="product-delete-button"
                 >
                   Eliminar
                 </Button>
@@ -385,6 +394,7 @@ export default function ProductDetailsPage() {
               <Button
                 onClick={() => setIsConfirmModalOpen(true)}
                 disabled={!canOrder}
+                data-testid="product-order-button"
                 className="bg-secondary hover:bg-dark-secondary disabled:bg-gray-300 disabled:cursor-not-allowed hover:cursor-pointer text-white font-bold text-xl h-12 w-full"
               >
                 Hacer pedido
@@ -392,7 +402,10 @@ export default function ProductDetailsPage() {
             )}
 
             {isStoreOwner && (
-              <div className="flex flex-col gap-3 mt-4 pt-4 border-t">
+              <div
+                className="flex flex-col gap-3 mt-4 pt-4 border-t"
+                data-testid="product-variants-list"
+              >
                 <h3 className="font-bold text-primary text-lg">Gestión de Variantes</h3>
                 {hasAnyVariants && allVariants.data && (
                   <div className="mb-2">
@@ -405,6 +418,7 @@ export default function ProductDetailsPage() {
                 <div className="flex flex-wrap gap-2">
                   <Button
                     onClick={() => setIsCreateVariantModalOpen(true)}
+                    data-testid="create-variant"
                     className="bg-secondary hover:bg-dark-secondary text-white font-bold"
                   >
                     Crear Variante
@@ -413,6 +427,7 @@ export default function ProductDetailsPage() {
                     onClick={() => setIsDeleteModalOpen(true)}
                     disabled={!hasAnyVariants}
                     variant="outline"
+                    data-testid="delete-variants"
                     className="font-bold border-destructive text-destructive hover:bg-destructive hover:text-white disabled:opacity-50"
                   >
                     Eliminar Variantes
@@ -421,6 +436,7 @@ export default function ProductDetailsPage() {
                     onClick={() => setIsUpdateModalOpen(true)}
                     disabled={!hasAnyVariants}
                     variant="outline"
+                    data-testid="allow-variant"
                     className="font-bold disabled:opacity-50"
                   >
                     Habilitar/Deshabilitar

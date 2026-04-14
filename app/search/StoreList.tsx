@@ -41,7 +41,7 @@ export default function StoreList() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-2 max-w-6xl mx-auto w-full ">
+      <div className="flex-1 overflow-y-auto px-4 py-2 max-w-6xl mx-auto w-full">
         {isPending && !stores ? (
           <div className="flex justify-center items-center h-40">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>

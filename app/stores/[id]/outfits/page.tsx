@@ -140,7 +140,11 @@ export default function OutfitsPage() {
             )}
             <div className="flex flex-col sm:flex-row justify-between w-full gap-2 p-4">
               <div className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12">
-                <Link href={`/stores/${params.id}/create-outfit/`} className="flex flex-row gap-2">
+                <Link
+                  href={`/stores/${params.id}/create-outfit/`}
+                  className="flex flex-row gap-2"
+                  data-testid="create-outfit-button"
+                >
                   <IoMdAddCircleOutline className="mt-0.5 text-white text-center text-2xl" />
                   <h1 className="font-bold text-white text-center text-xl">Crear outfit</h1>
                 </Link>
@@ -171,7 +175,7 @@ export default function OutfitsPage() {
                     setIsOrdering(true);
                   }}
                 >
-                  <div className="flex flex-row gap-2">
+                  <div className="flex flex-row gap-2" data-testid="outfit-sort-button">
                     <BiTransfer className="mt-0.5 text-white text-center text-2xl" />
                     <h1 className="font-bold text-white text-center text-xl">Ordenar</h1>
                   </div>

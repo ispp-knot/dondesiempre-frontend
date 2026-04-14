@@ -20,6 +20,7 @@ export default function ProductCard(props: ProductCardProps) {
   return (
     <Card
       className="relative flex flex-col overflow-hidden shadow-sm pt-0 w-full py-0 cursor-pointer"
+      data-testid="product-card"
       onClick={() => router.push(`/stores/${product.storeId}/products/${product.id}`)}
     >
       {hasDiscount && (
