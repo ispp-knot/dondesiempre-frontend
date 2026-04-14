@@ -75,8 +75,6 @@ test.describe.serial('store auth setup', () => {
     await page.getByRole('textbox', { name: 'Dirección' }).fill('Una dirección de una tienda');
     await page.getByRole('textbox', { name: 'Horario de apertura' }).click();
     await page.getByRole('textbox', { name: 'Horario de apertura' }).fill('Lun-Vier 8:00 a 20:00');
-    await page.getByRole('textbox', { name: 'Teléfono' }).click();
-    await page.getByRole('textbox', { name: 'Teléfono' }).fill('123456789');
     await page.getByRole('textbox', { name: 'Sobre nosotros' }).click();
     await page.getByRole('textbox', { name: 'Sobre nosotros' }).fill('Somos una tienda de testing');
     await page.getByRole('textbox', { name: 'Color primario' }).click();

@@ -31,9 +31,7 @@ test('reduction of stores in map', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Dirección' }).fill('Avenida');
   await page.getByRole('textbox', { name: 'Horario de apertura' }).click();
   await page.getByRole('textbox', { name: 'Horario de apertura' }).fill('Lun-Viern');
-  await page.getByRole('textbox', { name: 'Teléfono' }).click();
-  await page.getByRole('textbox', { name: 'Teléfono' }).fill('123456789');
-
+  
   await page.getByRole('textbox', { name: 'Sobre nosotros' }).click();
   await page.getByRole('textbox', { name: 'Sobre nosotros' }).fill('Info');
 
