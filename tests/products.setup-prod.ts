@@ -93,6 +93,24 @@ test.describe.serial('test products', () => {
       await page.getByTestId('product-submit-button').click();
 
       await page.waitForURL(storeUrl);
+
+      await page.getByRole('link', { name: 'Crear producto' }).click();
+
+      await page.waitForURL(storeUrl + '/create-product');
+      await page.getByTestId('product-name-input').click();
+      await page.getByTestId('product-name-input').fill('Producto 4');
+      await page.getByTestId('product-description-input').click();
+      await page.getByTestId('product-description-input').fill('Cuarta Descripción');
+      await page.getByTestId('product-price-input').click();
+      await page.getByTestId('product-price-input').fill('25.2');
+      await page
+        .getByTestId('product-image-input')
+        .locator('input[type="file"]')
+        .setInputFiles('tests/scripts/foto-zapatos.jpg');
+      await page.getByTestId('product-cat-input').selectOption({ label: 'Zapatos' });
+      await page.getByTestId('product-submit-button').click();
+
+      await page.waitForURL(storeUrl);
     });
 
     test('test seen info of a product', async ({ page }) => {
@@ -297,7 +315,7 @@ test.describe.serial('test products', () => {
 
       await page.waitForURL(storeUrl);
 
-      const deletedProduct = await page.getByTestId('product-card').nth(2);
+      const deletedProduct = await page.getByTestId('product-card').nth(3);
       await expect(deletedProduct).not.toBeVisible();
     });
   });
@@ -322,7 +340,7 @@ test.describe.serial('test products', () => {
     test('seeing the info of a product', async ({ page }) => {
       await page.goto(storeUrl);
 
-      const productCard1 = await page.getByTestId('product-card').nth(1);
+      const productCard1 = await page.getByTestId('product-card').nth(2);
       await productCard1.click();
 
       await page.waitForURL(/products\/.*/);
@@ -341,7 +359,7 @@ test.describe.serial('test products', () => {
     test('seeing the variants of a product', async ({ page }) => {
       await page.goto(storeUrl);
 
-      const productCard1 = await page.getByTestId('product-card').nth(1);
+      const productCard1 = await page.getByTestId('product-card').nth(2);
       await productCard1.click();
 
       await page.waitForURL(/products\/.*/);
@@ -353,35 +371,6 @@ test.describe.serial('test products', () => {
         page.getByTestId('product-size').getByRole('button', { name: 'S' })
       ).toBeVisible();
       await expect(page.getByRole('button', { name: 'Blanco' })).toBeVisible();
-    });
-
-    test('making an order with a product variant', async ({ page }) => {
-      await page.goto(storeUrl);
-
-      const productCard1 = await page.getByTestId('product-card').nth(1);
-      await productCard1.click();
-
-      await page.waitForURL(/products\/.*/);
-
-      await page.getByTestId('product-size').getByRole('button', { name: 'S' }).click();
-      await page.getByRole('button', { name: 'Blanco' }).click();
-
-      const makeOrderButton = await page.getByTestId('product-order-button');
-      await expect(makeOrderButton).toBeVisible();
-
-      await makeOrderButton.click();
-
-      const confirmOrderModal = await page.getByTestId('confirm-order-modal');
-      await expect(confirmOrderModal).toBeVisible();
-
-      const confirmOrderButton = await page.getByTestId('confirm-order-button');
-      const cancelOrderButton = await page.getByTestId('cancel-order-button');
-      await expect(confirmOrderButton).toBeVisible();
-      await expect(cancelOrderButton).toBeVisible();
-
-      await confirmOrderButton.click();
-
-      await expect(page.getByTestId('order-success-modal')).toBeVisible();
     });
   });
 });

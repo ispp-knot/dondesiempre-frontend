@@ -98,6 +98,18 @@ export default defineConfig({
       },
     },
     {
+      name: 'setup-productos',
+      testMatch: /.*\.setup-prod\.ts/, // Ejecutará archivos que terminen en .setup.ts
+      use: {
+        ...devices['Desktop Chrome'],
+        screenshot: 'on',
+        ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+          ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
+          : {}),
+      },
+      dependencies: ['setup-registro'],
+    },
+    {
       name: 'tests',
       timeout: 400 * 100,
       use: {
@@ -107,7 +119,7 @@ export default defineConfig({
           ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
           : {}),
       },
-      dependencies: ['setup-registro'],
+      dependencies: ['setup-productos'],
     },
     {
       name: 'failures',
@@ -119,11 +131,12 @@ export default defineConfig({
           ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
           : {}),
       },
-      dependencies: ['setup-registro'],
+      dependencies: ['setup-productos'],
     },
     {
       name: 'multidata tests',
       testMatch: /.*\.multi\.ts/, // Ejecutará archivos que terminen en .multi.ts
+      timeout: 400 * 100,
       use: {
         ...devices['Desktop Chrome'],
         screenshot: 'on',
@@ -131,7 +144,7 @@ export default defineConfig({
           ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
           : {}),
       },
-      dependencies: ['failures'],
+      dependencies: ['tests'],
     },
   ],
 

@@ -193,7 +193,11 @@ export default function OrdersPage() {
         {filteredOrders.length > 0 ? (
           <div className="grid gap-6">
             {filteredOrders.map((order) => (
-              <Card key={order.id} className="shadow-xl overflow-hidden border-none bg-white">
+              <Card
+                key={order.id}
+                className="shadow-xl overflow-hidden border-none bg-white"
+                data-testid="order-card"
+              >
                 <div className="bg-primary/5 px-6 py-4 border-b border-primary/10 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                   <div className="flex flex-wrap items-center gap-2 text-primary font-bold">
                     <div className="flex items-center gap-2">

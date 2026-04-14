@@ -341,9 +341,7 @@ export default function PromotionForm({
         </div>
       </div>
 
-      <div
-        className={cn('flex flex-col gap-1', isEditMode && 'opacity-60')}
-      >
+      <div className={cn('flex flex-col gap-1', isEditMode && 'opacity-60')}>
         <h2 className="text-xl font-bold">Imagen de la promoción</h2>
         <Controller
           control={control}

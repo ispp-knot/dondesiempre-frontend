@@ -82,8 +82,11 @@ export default function StoreTabs({
     // Si el índice actual es igual a la longitud, mostramos la tarjeta de "Crear"
     if (currentPromoIndex == activePromotions.length && isOwner) {
       return (
-        <div className="relative z-10 flex flex-col items-center w-full text-center p-4" >
-          <div className="bg-secondary/10 p-4 rounded-full mb-4" data-testid="create-promotion-banner">
+        <div className="relative z-10 flex flex-col items-center w-full text-center p-4">
+          <div
+            className="bg-secondary/10 p-4 rounded-full mb-4"
+            data-testid="create-promotion-banner"
+          >
             <svg
               className="w-10 h-10 text-secondary"
               fill="none"
@@ -179,9 +182,9 @@ export default function StoreTabs({
   return (
     <>
       {totalSlides > 0 && (
-        <div className="relative mx-4 mt-5 flex flex-col items-center justify-center border-2 border-secondary/30 rounded-xl p-6 overflow-hidden w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5 min-h-[300px] transition-all bg-gray-50" >
+        <div className="relative mx-4 mt-5 flex flex-col items-center justify-center border-2 border-secondary/30 rounded-xl p-6 overflow-hidden w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5 min-h-[300px] transition-all bg-gray-50">
           {/* Fondo Dinámico (Solo si hay promo, si no, un fondo neutro para 'Crear') */}
-          <div className="absolute inset-0 z-0 w-full h-full" >
+          <div className="absolute inset-0 z-0 w-full h-full">
             {currentPromoIndex != activePromotions.length ? (
               <>
                 <Image
@@ -196,7 +199,10 @@ export default function StoreTabs({
                 <div className="absolute inset-0 bg-white/50 backdrop-blur-[2px]"></div>
               </>
             ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-200" data-testid="create-promotion-banner"/>
+              <div
+                className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-200"
+                data-testid="create-promotion-banner"
+              />
             )}
           </div>
 
@@ -335,7 +341,10 @@ export default function StoreTabs({
       </div>
       {selectedPromo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-md w-full max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200">
+          <div
+            className="bg-white rounded-2xl max-w-md w-full max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200"
+            data-testid="promotion-products-modal"
+          >
             {/* Cabecera dinámica */}
             <div className="relative h-40 w-full shrink-0">
               <Image

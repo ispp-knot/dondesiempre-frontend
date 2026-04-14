@@ -18,7 +18,10 @@ export default function OutfitCard(props: OutfitCardProps) {
   const hasDiscount = !!outfit.discountPercentage;
 
   return (
-    <Card className="relative flex flex-col gap-6 p-4 pt-8 shadow-xl overflow-hidden m-4">
+    <Card
+      className="relative flex flex-col gap-6 p-4 pt-8 shadow-xl overflow-hidden m-4"
+      data-testid="outfit-card"
+    >
       {hasDiscount && (
         <RiDiscountPercentFill className="absolute top-3 right-3 text-4xl text-primary drop-shadow" />
       )}
