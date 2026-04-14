@@ -115,6 +115,7 @@ export default function ProductCreationPage() {
                     id="form-name"
                     type="text"
                     maxLength={255}
+                    data-testid="product-name-input"
                     aria-invalid={!!errors.name}
                     {...register('name')}
                   />
@@ -131,6 +132,7 @@ export default function ProductCreationPage() {
                     Descripción
                   </Label>
                   <Textarea
+                    data-testid="product-description-input"
                     id="form-description"
                     maxLength={5000}
                     rows={5}
@@ -150,7 +152,7 @@ export default function ProductCreationPage() {
                   <Label htmlFor="form-image" className="text-base font-bold text-secondary">
                     Imagen
                   </Label>
-                  <div id="form-image">
+                  <div id="form-image" data-testid="product-image-input">
                     <ImageUpload onChange={setImageFile} />
                   </div>
                 </div>
@@ -162,6 +164,7 @@ export default function ProductCreationPage() {
                   <div className="flex items-center gap-2">
                     <Input
                       id="form-price"
+                      data-testid="product-price-input"
                       type="number"
                       min="0.01"
                       max="9999"
@@ -182,13 +185,14 @@ export default function ProductCreationPage() {
                   </Label>
                   <select
                     id="form-type"
+                    data-testid="product-cat-input"
                     aria-invalid={!!errors.productTypeId}
                     {...register('productTypeId')}
                     className="appearance-none h-9 w-full rounded-md border border-input px-3 py-1 text-base shadow-sm focus:outline-none"
                   >
                     <option value="">Seleccionar categoría...</option>
                     {productTypes.data?.map((type) => (
-                      <option key={type.id} value={type.id}>
+                      <option key={type.id} value={type.id} data-testid={`cat-${type.name}`}>
                         {type.name}
                       </option>
                     ))}
@@ -199,7 +203,7 @@ export default function ProductCreationPage() {
 
               {apiError && <p className="text-sm text-destructive">{apiError}</p>}
 
-              <div className="flex justify-center">
+              <div className="flex justify-center" data-testid="product-submit-button">
                 <Button
                   type="submit"
                   className="mt-2 h-12 w-full bg-secondary text-base font-bold text-white hover:bg-dark-secondary md:w-1/3"

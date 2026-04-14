@@ -95,9 +95,9 @@ export default function ProductVariantForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md" data-testid="dialog-variant">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-primary">
+          <DialogTitle className="text-2xl font-bold text-primary" data-testid="title-new-variant">
             Crear Nueva Variante
           </DialogTitle>
         </DialogHeader>
@@ -118,10 +118,11 @@ export default function ProductVariantForm({
                 control={control}
                 name="sizeId"
                 render={({ field }) => (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2" data-testid="size-list">
                     {sizes.data?.map((size) => (
                       <button
                         key={size.id}
+                        data-testid={`size-${size.name}`}
                         type="button"
                         onClick={() => {
                           field.onChange(size.id);
@@ -155,11 +156,12 @@ export default function ProductVariantForm({
                 control={control}
                 name="colorId"
                 render={({ field }) => (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2" data-testid="color-list">
                     {colors.data?.map((color) => (
                       <button
                         key={color.id}
                         type="button"
+                        data-testid={`color-${color.name}`}
                         onClick={() => {
                           field.onChange(color.id);
                           handleFieldChange();
@@ -192,7 +194,7 @@ export default function ProductVariantForm({
               control={control}
               name="isAvailable"
               render={({ field }) => (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2" data-testid="data-disp">
                   <input
                     type="checkbox"
                     checked={field.value}
@@ -207,6 +209,7 @@ export default function ProductVariantForm({
 
           <DialogFooter className="mt-4">
             <Button
+              data-testid="cancel-button"
               type="button"
               variant="outline"
               onClick={handleClose}
@@ -217,6 +220,7 @@ export default function ProductVariantForm({
             </Button>
             <Button
               type="submit"
+              data-testid="submit-button"
               disabled={isSubmitting}
               className="bg-secondary hover:bg-dark-secondary text-white font-bold"
             >

@@ -139,7 +139,7 @@ export default function ProductEditPage() {
 
             <form onSubmit={(e) => handleSubmit(submitForm)(e)} className="space-y-6" noValidate>
               <div className="grid gap-6 md:grid-cols-2">
-                <div className="space-y-2 md:col-span-2">
+                <div className="space-y-2 md:col-span-2" data-testid="product-edit-name-input">
                   <Label htmlFor="form-name" className="text-base font-bold text-secondary">
                     Nombre
                   </Label>
@@ -157,7 +157,10 @@ export default function ProductEditPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2 md:col-span-2">
+                <div
+                  className="space-y-2 md:col-span-2"
+                  data-testid="product-edit-description-input"
+                >
                   <Label htmlFor="form-description" className="text-base font-bold text-secondary">
                     Descripción
                   </Label>
@@ -178,7 +181,7 @@ export default function ProductEditPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2 md:col-span-2">
+                <div className="space-y-2 md:col-span-2" data-testid="product-edit-image-input">
                   <Label htmlFor="form-image" className="text-base font-bold text-secondary">
                     Imagen
                   </Label>
@@ -205,6 +208,7 @@ export default function ProductEditPage() {
                   <div className="flex items-center gap-2">
                     <Input
                       id="form-price"
+                      data-testid="product-edit-price-input"
                       type="number"
                       min="0.01"
                       max="9999"
@@ -224,6 +228,7 @@ export default function ProductEditPage() {
                     Categoría
                   </Label>
                   <select
+                    data-testid="product-edit-cat-input"
                     id="form-type"
                     aria-invalid={!!errors.productTypeId}
                     {...register('productTypeId')}
@@ -245,6 +250,7 @@ export default function ProductEditPage() {
                   </Label>
                   <div className="flex items-center gap-2">
                     <Input
+                      data-testid="product-edit-discount-input"
                       id="form-discount"
                       type="number"
                       min="0"
@@ -268,11 +274,13 @@ export default function ProductEditPage() {
                   type="submit"
                   className="mt-2 h-12 w-full bg-secondary text-base font-bold text-white hover:bg-dark-secondary md:w-1/3"
                   disabled={isSubmitting}
+                  data-testid="product-edit-submit-button"
                 >
                   {isSubmitting ? 'Guardando...' : 'Guardar cambios'}
                 </Button>
                 <Button
                   type="button"
+                  data-testid="product-edit-cancel-button"
                   onClick={() => router.push(`/stores/${params.id}/products/${params.productId}`)}
                   className="mt-2 h-12 w-full bg-gray-400 text-base font-bold text-white hover:bg-gray-500 md:w-1/3"
                 >
