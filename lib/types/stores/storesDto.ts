@@ -15,7 +15,6 @@ export interface StoreDTO {
   storeID: typeof NIL_UUID;
   address: string;
   openingHours: string;
-  phone: string;
   hasActivePromotions: boolean;
   latitude: number;
   longitude: number;

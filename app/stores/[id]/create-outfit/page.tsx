@@ -212,6 +212,13 @@ export default function OutfitCreationPage() {
         },
       });
 
+      if (createOutfit.isError) {
+        setApiError('Hubo un error al crear el outfit. Por favor, intenta de nuevo.');
+        submitLockRef.current = false;
+        setIsCreateLocked(false);
+        return;
+      }
+
       if (discountPercentage > 0 && getOutfitDiscountPercentage(createdOutfit) === 0) {
         await updateOutfit.fetch({
           url: `outfits/${createdOutfit.id}`,
@@ -236,10 +243,14 @@ export default function OutfitCreationPage() {
         setApiError(
           'Ya hay una creación de outfit en curso. Espera un momento antes de reintentar.'
         );
-      } else if (error instanceof Error && error.message) {
-        setApiError(error.message);
+      } else if (error instanceof FetchError && error.response?.status === 400) {
+        setApiError(
+          'La imagen o los datos proporcionados no son válidos. Por favor, intenta de nuevo.'
+        );
       } else {
-        setApiError('No se pudo crear el outfit. Revisa los campos e inténtalo de nuevo.');
+        setApiError(
+          'Hubo un error al crear el outfit. Por favor, revisa los campos e intenta de nuevo.'
+        );
       }
     } finally {
       submitLockRef.current = false;
