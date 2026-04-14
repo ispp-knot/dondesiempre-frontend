@@ -18,7 +18,10 @@ export default function OutfitCard(props: OutfitCardProps) {
   const hasDiscount = !!outfit.discountPercentage;
 
   return (
-    <Card className="relative flex flex-col gap-6 p-4 pt-8 shadow-xl overflow-hidden m-4">
+    <Card
+      className="relative flex flex-col gap-6 p-4 pt-8 shadow-xl overflow-hidden m-4"
+      data-testid="outfit-card"
+    >
       {hasDiscount && (
         <RiDiscountPercentFill className="absolute top-3 right-3 text-4xl text-primary drop-shadow" />
       )}
@@ -57,18 +60,21 @@ export default function OutfitCard(props: OutfitCardProps) {
           <Link
             href={`/stores/${outfit.storeId}/outfits/${outfit.id}`}
             className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
+            data-testid="outfit-edit-link"
           >
             Editar
           </Link>
           <Link
             href={`/stores/${outfit.storeId}/outfits/${outfit.id}/products`}
             className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
+            data-testid="outfit-products-link"
           >
             Productos
           </Link>
           <Button
             onClick={props.onDelete}
             className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-primary hover:bg-dark-primary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
+            data-testid="outfit-delete-button"
           >
             Eliminar
           </Button>

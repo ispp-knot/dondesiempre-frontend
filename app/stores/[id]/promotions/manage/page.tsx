@@ -59,6 +59,7 @@ export default function ManagePromotionsPage() {
           <div>
             <button
               onClick={() => router.push(`/stores/${storeId}`)}
+              data-testid="back-to-storefront"
               className="flex items-center text-gray-500 hover:text-[var(--primary)] transition-colors mb-2 text-sm font-semibold"
             >
               <ArrowLeft className="w-4 h-4 mr-1.5" /> Volver a mi tienda
@@ -74,14 +75,21 @@ export default function ManagePromotionsPage() {
           <button
             onClick={() => router.push(`/stores/${storeId}/promotions`)}
             className="flex items-center justify-center gap-2 px-6 py-3.5 bg-[var(--primary)] text-white rounded-xl font-bold hover:brightness-110 active:scale-95 transition-all shadow-lg hover:shadow-xl shrink-0"
+            data-testid="create-new-promotion-button"
           >
             <Plus className="w-5 h-5" /> Nueva Promoción
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          data-testid="promotion-list"
+        >
           {!promotions || promotions.length === 0 ? (
-            <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed border-gray-300 shadow-sm">
+            <div
+              className="col-span-full flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed border-gray-300 shadow-sm"
+              data-testid="empty-promotion-list"
+            >
               <div className="w-20 h-20 bg-[var(--primary)]/10 rounded-full flex items-center justify-center mb-4">
                 <Tag className="w-10 h-10 text-[var(--primary)]" />
               </div>
@@ -101,6 +109,7 @@ export default function ManagePromotionsPage() {
             promotions.map((promo) => (
               <div
                 key={promo.id}
+                data-testid="promotion-card"
                 className={`group flex flex-col bg-white rounded-2xl shadow-sm hover:shadow-xl border overflow-hidden transition-all duration-300 ${
                   promo.active
                     ? 'border-[var(--secondary)]/30'
@@ -136,7 +145,10 @@ export default function ManagePromotionsPage() {
                   </div>
 
                   <div className="absolute bottom-3 left-4 right-4 flex justify-between items-end">
-                    <div className="bg-white/95 backdrop-blur-sm px-3 py-1 rounded-lg shadow-sm">
+                    <div
+                      className="bg-white/95 backdrop-blur-sm px-3 py-1 rounded-lg shadow-sm"
+                      data-testid="promo-discount"
+                    >
                       <span className="text-[var(--primary)] font-black text-lg">
                         -{promo.discountPercentage}%
                       </span>
@@ -165,6 +177,7 @@ export default function ManagePromotionsPage() {
                   <button
                     onClick={() => router.push(`/stores/${storeId}/promotions/${promo.id}`)}
                     className="mt-auto flex items-center justify-center w-full gap-2 px-4 py-3 bg-[var(--primary)]/5 hover:bg-[var(--primary)] text-[var(--primary)] hover:text-white rounded-xl font-bold transition-colors"
+                    data-testid="edit-promotion-button"
                   >
                     <Edit2 className="w-4 h-4" />
                     Editar Promoción

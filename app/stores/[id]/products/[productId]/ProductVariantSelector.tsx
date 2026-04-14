@@ -39,9 +39,9 @@ export default function ProductVariantSelector({
       ];
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5" data-testid="product-variants">
       {availableSizes.length > 0 && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2" data-testid="product-size">
           <p className="font-bold text-secondary">Talla</p>
           <div className="flex flex-row flex-wrap gap-2">
             {availableSizes.map((size) => (
@@ -62,7 +62,7 @@ export default function ProductVariantSelector({
       )}
 
       {availableColors.length > 0 && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2" data-testid="product-color">
           <p className="font-bold text-secondary">Color</p>
           <div className="flex flex-row flex-wrap gap-2">
             {availableColors.map((color) => (

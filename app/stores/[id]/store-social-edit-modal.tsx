@@ -357,6 +357,7 @@ export default function StoreSocialNetworksModal({
 
             <Button
               size="icon"
+              data-testid="add-social-media"
               className="bg-primary hover:opacity-90 text-white shrink-0 ml-auto sm:ml-0 pt-0.5"
               onClick={handleAdd}
               disabled={addSocial.isPending || !newName}
