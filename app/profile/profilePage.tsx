@@ -5,7 +5,7 @@ import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useRouter } from 'next/navigation';
 import { FaRegUser } from 'react-icons/fa';
-import { MdOutlineEmail, MdOutlinePhone, MdOutlineLocationOn } from 'react-icons/md';
+import { MdOutlineEmail, MdOutlineLocationOn } from 'react-icons/md';
 import { GlassCenterCard } from '@/components/dondeSiempre/GlassCenterCard';
 import ClientEditModal from '@/app/profile/client-edit-modal';
 import { usePassiveFetcher } from '@/lib/api/fetcher';
@@ -48,8 +48,7 @@ export function ProfilePage({}) {
     : user.email;
 
   const email = profile?.email ?? user.email;
-  const phone = profile?.phone ?? null;
-  const address = profile?.address ?? null;
+  const address = user.store?.address ?? null;
 
   const handlePasswordChanged = () => {
     setSuccessMsg('¡Contraseña actualizada con éxito!');
@@ -82,12 +81,6 @@ export function ProfilePage({}) {
           <MdOutlineEmail className="text-base shrink-0" />
           <span>{email}</span>
         </div>
-        {phone && (
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <MdOutlinePhone className="text-base shrink-0" />
-            <span>{phone}</span>
-          </div>
-        )}
         {address && (
           <div className="flex items-center gap-2 text-muted-foreground">
             <MdOutlineLocationOn className="text-base shrink-0" />
@@ -97,10 +90,7 @@ export function ProfilePage({}) {
       </CardContent>
       <CardFooter className="border-t mt-3 flex flex-col gap-3">
         {user.client && (
-          <ClientEditModal
-            client={{ ...user.client, email: email }}
-            onSavedAction={() => meQuery.refetch()}
-          />
+          <ClientEditModal client={user.client!} onSavedAction={() => meQuery.refetch()} />
         )}
         {user?.store?.id && (
           <Button

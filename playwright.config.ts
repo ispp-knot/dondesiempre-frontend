@@ -23,7 +23,7 @@ export default defineConfig({
         'npm run build && node tests/scripts/copy-standalone.js && node .next/standalone/server.js',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
-      timeout: 180 * 100000,
+      timeout: 180 * 10000,
       // stdout: 'pipe', // <--- Verás los logs del Frontend
       // stderr: 'pipe',
     },
@@ -98,8 +98,8 @@ export default defineConfig({
       },
     },
     {
-      name: 'tests',
-      timeout: 300 * 10000,
+      name: 'setup-productos',
+      testMatch: /.*\.setup-prod\.ts/, // Ejecutará archivos que terminen en .setup.ts
       use: {
         ...devices['Desktop Chrome'],
         screenshot: 'on',
@@ -108,6 +108,18 @@ export default defineConfig({
           : {}),
       },
       dependencies: ['setup-registro'],
+    },
+    {
+      name: 'tests',
+      timeout: 400 * 100,
+      use: {
+        ...devices['Desktop Chrome'],
+        screenshot: 'on',
+        ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+          ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
+          : {}),
+      },
+      dependencies: ['setup-productos'],
     },
     {
       name: 'failures',
@@ -119,7 +131,20 @@ export default defineConfig({
           ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
           : {}),
       },
-      dependencies: ['setup-registro'],
+      dependencies: ['setup-productos'],
+    },
+    {
+      name: 'multidata tests',
+      testMatch: /.*\.multi\.ts/, // Ejecutará archivos que terminen en .multi.ts
+      timeout: 400 * 100,
+      use: {
+        ...devices['Desktop Chrome'],
+        screenshot: 'on',
+        ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+          ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } }
+          : {}),
+      },
+      dependencies: ['tests'],
     },
   ],
 
