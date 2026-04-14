@@ -9,6 +9,7 @@ import { IoSearch } from 'react-icons/io5';
 import { HiOutlineLocationMarker, HiLocationMarker } from 'react-icons/hi';
 import { BsBoxSeam, BsBoxSeamFill } from 'react-icons/bs';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { StripeUnverifiedBadge } from '@/components/dondeSiempre/StripeUnverifiedBadge';
 
 function BottomNavbarIcon({
   href,
@@ -71,12 +72,15 @@ export default function NavbarBottom() {
         <></>
       )}
 
-      <BottomNavbarIcon
-        href={profileHref}
-        activeMatches={['/profile', '/login', '/register']}
-        icon={user ? <FaRegUser /> : <RiLoginCircleLine />}
-        activeIcon={user ? <FaUser /> : <RiLoginCircleFill />}
-      />
+      <div className="relative">
+        <BottomNavbarIcon
+          href={profileHref}
+          activeMatches={['/profile', '/login', '/register']}
+          icon={user ? <FaRegUser /> : <RiLoginCircleLine />}
+          activeIcon={user ? <FaUser /> : <RiLoginCircleFill />}
+        />
+        {user?.store?.id && <StripeUnverifiedBadge storeId={user.store.id} />}
+      </div>
     </div>
   );
 }

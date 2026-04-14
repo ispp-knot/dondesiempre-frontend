@@ -24,6 +24,8 @@ import { useState } from 'react';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import { PayButton } from '@/components/dondeSiempre/PayButton';
+import { AccountStatusDto } from '@/lib/types/payment/accountStatusDto';
+import { AlertTriangle } from 'lucide-react';
 
 type OrderStatus = 'ALL' | 'PENDING' | 'CONFIRMED' | 'REJECTED' | 'PICKED';
 
@@ -51,6 +53,10 @@ export default function OrdersPage() {
   const isStore = user?.roles.includes('STORE') ?? false;
 
   const orders = usePassiveFetcher<OrderDTOExtended[]>({ url: 'orders' });
+  const verified = usePassiveFetcher<AccountStatusDto>({
+    url: `stores/${user?.store?.id}/stripe/status`,
+    enabled: !!user?.store?.id,
+  });
   const updateStatus = useActiveFetcher<void>({ method: 'PATCH' });
   const [filter, setFilter] = useState<OrderStatus>('ALL');
 
@@ -279,12 +285,27 @@ export default function OrdersPage() {
                     <div className="flex gap-2 w-full md:w-auto justify-center md:justify-end">
                       {isStore && order.orderStatus === 'PENDING' && (
                         <>
-                          <button
-                            onClick={() => handleUpdateStatus(order.id, 'confirm')}
-                            className="flex-1 md:flex-none bg-green-800 hover:bg-green-900 text-white px-6 py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition"
-                          >
-                            <FaCheckCircle /> Confirmar
-                          </button>
+                          {verified.data?.verified ? (
+                            <button
+                              onClick={() => handleUpdateStatus(order.id, 'confirm')}
+                              className="flex-1 md:flex-none bg-green-800 hover:bg-green-900 text-white px-6 py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition"
+                            >
+                              <FaCheckCircle /> Confirmar
+                            </button>
+                          ) : (
+                            <Link
+                              href="/profile"
+                              className="flex-1 md:flex-none flex items-center justify-center gap-2
+                   px-6 py-3 rounded-lg font-bold text-sm transition
+                   bg-amber-50 border border-amber-400 text-amber-700
+                   hover:bg-amber-100 dark:bg-amber-950/60 dark:border-amber-600
+                   dark:text-amber-400 dark:hover:bg-amber-900/60"
+                              title="Tu tienda no está verificada. Completa la verificación para confirmar pedidos."
+                            >
+                              <AlertTriangle className="w-4 h-4 shrink-0" />
+                              Verificar para confirmar
+                            </Link>
+                          )}
                           <button
                             onClick={() => handleUpdateStatus(order.id, 'reject')}
                             className="flex-1 md:flex-none bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition"
