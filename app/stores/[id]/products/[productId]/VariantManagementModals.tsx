@@ -12,6 +12,7 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { ProductVariantDTO } from './ProductVariantSelector';
+import GenericSuccessModal from '@/components/modals/GenericSuccessModal';
 
 interface DeleteVariantsModalProps {
   isOpen: boolean;
@@ -29,6 +30,7 @@ export function DeleteVariantsModal({
   isDeleting,
 }: DeleteVariantsModalProps) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleToggle = (id: string) => {
     const newSet = new Set(selectedIds);
@@ -51,12 +53,24 @@ export function DeleteVariantsModal({
   const handleConfirm = async () => {
     await onDelete(Array.from(selectedIds));
     setSelectedIds(new Set());
+    setIsSuccess(true);
   };
 
   const handleClose = () => {
     setSelectedIds(new Set());
+    setIsSuccess(false);
     onClose();
   };
+
+  if (isSuccess) {
+    return (
+      <GenericSuccessModal
+        setOpenModal={() => handleClose()}
+        title="Variantes eliminadas"
+        description="Las variantes se han eliminado correctamente."
+      />
+    );
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -118,25 +132,32 @@ export function DeleteVariantsModal({
         </div>
 
         <DialogFooter className="mt-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleClose}
-            disabled={isDeleting}
-            data-testid="cancel-button"
-            className="font-bold"
-          >
-            Cancelar
-          </Button>
-          <Button
-            type="button"
-            data-testid="delete-button"
-            onClick={handleConfirm}
-            disabled={isDeleting || selectedIds.size === 0}
-            className="bg-destructive hover:bg-destructive/90 text-white font-bold"
-          >
-            {isDeleting ? 'Eliminando...' : `Eliminar ${selectedIds.size} variante(s)`}
-          </Button>
+          <div className="flex flex-col gap-2 w-full">
+            <p className="text-xs text-destructive text-center font-medium">
+              Esta acción es irreversible.
+            </p>
+            <div className="flex gap-2 w-full">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClose}
+                disabled={isDeleting}
+                data-testid="cancel-button"
+                className="font-bold flex-1"
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="button"
+                data-testid="delete-button"
+                onClick={handleConfirm}
+                disabled={isDeleting || selectedIds.size === 0}
+                className="bg-destructive hover:bg-destructive/90 text-white font-bold flex-1"
+              >
+                {isDeleting ? 'Eliminando...' : `Eliminar ${selectedIds.size} variante(s)`}
+              </Button>
+            </div>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
