@@ -14,7 +14,6 @@ import Outfits from './outfits';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import StoreAboutSection from './about-us-section';
 import { ProductDTO } from '@/lib/types/products/productsDto';
-import { IoSearch } from 'react-icons/io5';
 import Products from './products';
 import { buttonLinkClass } from '@/lib/utils/buttonLinkClass';
 import Link from 'next/link';
@@ -262,23 +261,6 @@ export default function StoreTabs({
         </div>
       )}
 
-      <div className="p-4 mt-6 bg-white sticky top-0 z-50">
-        <div className=" relative flex items-center w-full max-w-2xl mx-auto">
-          <IoSearch className="absolute left-3 text-secondary text-xl" />
-          <input
-            type="text"
-            placeholder="Buscar productos..."
-            autoComplete="off"
-            autoCorrect="off"
-            spellCheck="false"
-            maxLength={50}
-            className="w-full pl-10 pr-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 bg-gray-50 text-dark-blue font-medium"
-            value={searchQuery || ''}
-            onChange={(e) => onSearchChange?.(e.target.value)}
-          />
-        </div>
-      </div>
-
       <div className="flex mx-4 mt-5 mb-5 self-center rounded-md overflow-hidden border border-gray-200 w-11/12 sm:mx-auto sm:max-w-142.5">
         <button
           onClick={() => setActiveTab('catalogo')}
@@ -321,7 +303,12 @@ export default function StoreTabs({
         {activeTab === 'catalogo' && (
           <>
             <Outfits storeId={store.id} outfits={outfits} />
-            <Products storeId={store.id} products={products} />
+            <Products
+              storeId={store.id}
+              products={products}
+              searchQuery={searchQuery}
+              onSearchChange={onSearchChange}
+            />
           </>
         )}
 
@@ -345,7 +332,6 @@ export default function StoreTabs({
             className="bg-white rounded-2xl max-w-md w-full max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200"
             data-testid="promotion-products-modal"
           >
-            {/* Cabecera dinámica */}
             <div className="relative h-40 w-full shrink-0">
               <Image
                 src={
@@ -359,7 +345,7 @@ export default function StoreTabs({
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
               <button
-                onClick={() => setSelectedPromo(null)} // Cerramos reseteando a null
+                onClick={() => setSelectedPromo(null)}
                 className="absolute top-3 right-3 text-white bg-black/20 hover:bg-black/40 p-1.5 rounded-full backdrop-blur-md transition"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -376,7 +362,6 @@ export default function StoreTabs({
               </h2>
             </div>
 
-            {/* Lista de productos de ESTA promoción específica */}
             <div className="p-5 overflow-y-auto">
               <p className="text-gray-600 text-sm mb-4 leading-relaxed">
                 {selectedPromo.description}
@@ -420,7 +405,6 @@ export default function StoreTabs({
               </div>
             </div>
 
-            {/* Footer con el descuento de esta promo */}
             <div className="p-5 border-t bg-gray-50">
               <div className="flex justify-between items-center mb-4">
                 <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">

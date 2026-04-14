@@ -61,10 +61,8 @@ export default function StorePage() {
 
   // Memoize the outfits URL to prevent unnecessary refetches
   const outfitsUrl = useMemo(() => {
-    const queryParams = new URLSearchParams();
-    if (debouncedSearchQuery) queryParams.append('name', debouncedSearchQuery);
-    return `stores/${params.id}/outfits?${queryParams.toString()}`;
-  }, [debouncedSearchQuery, params.id]);
+    return `stores/${params.id}/outfits`;
+  }, [params.id]);
 
   // Memoize the products URL to prevent unnecessary refetches
   const productsUrl = useMemo(() => {
