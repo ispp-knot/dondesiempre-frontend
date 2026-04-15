@@ -49,12 +49,21 @@ export default function CreatePromotionPage() {
 
       // Pequeño delay para que el usuario vea el mensaje de éxito antes de redirigir
       router.push(`/stores/${storeId}`);
-    } catch (error) {
-      console.error('Error creating promotion:', error);
-      setStatus({
-        type: 'error',
-        message: `Error al crear la promoción. Verifica los datos e intenta de nuevo.`,
-      });
+    } catch (error: unknown) {
+      const fetchError = error as { status?: number; response?: { status?: number } };
+      const statusCode = fetchError.status || fetchError.response?.status;
+
+      if (statusCode === 413) {
+        setStatus({
+          type: 'error',
+          message: 'La imagen es demasiado grande. Por favor, intenta con una que pese menos.',
+        });
+      } else {
+        setStatus({
+          type: 'error',
+          message: 'Error al crear la promoción. Verifica los datos e intenta de nuevo.',
+        });
+      }
       setIsLoading(false);
     }
   };

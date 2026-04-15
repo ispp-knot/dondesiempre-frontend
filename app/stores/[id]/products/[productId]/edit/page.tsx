@@ -19,6 +19,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import Image from 'next/image';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
+import { getUploadErrorMessage } from '@/lib/utils/errorHandler';
 
 interface ProductUpdateDTO {
   name?: string;
@@ -121,8 +122,13 @@ export default function ProductEditPage() {
       }
 
       router.push(`/stores/${params.id}/products/${params.productId}`);
-    } catch (_err: unknown) {
-      setApiError('Hubo un error al actualizar el producto. Por favor, intenta de nuevo.');
+    } catch (err: unknown) {
+      setApiError(
+        getUploadErrorMessage(
+          err,
+          'Hubo un error al actualizar el producto. Por favor, intenta de nuevo.'
+        )
+      );
     }
   };
 
@@ -267,7 +273,7 @@ export default function ProductEditPage() {
                 </div>
               </div>
 
-              {apiError && <p className="text-sm text-destructive">{apiError}</p>}
+              {apiError && <p className="text-sm font-bold text-destructive">{apiError}</p>}
 
               <div className="flex justify-center gap-4">
                 <Button
