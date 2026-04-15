@@ -123,6 +123,7 @@ export default function StorePage() {
   });
   const storeImages = usePassiveFetcher<StoreImageDTO[]>({
     url: `stores/${params.id}/images`,
+    enabled: isOwner,
   });
 
   if ((store.isLoading || outfits.isLoading || products.isLoading) && !store.data) {
