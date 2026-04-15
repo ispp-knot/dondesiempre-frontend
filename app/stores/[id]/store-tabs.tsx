@@ -14,7 +14,6 @@ import Outfits from './outfits';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import StoreAboutSection from './about-us-section';
 import { ProductDTO } from '@/lib/types/products/productsDto';
-import { IoSearch } from 'react-icons/io5';
 import Products from './products';
 import { buttonLinkClass } from '@/lib/utils/buttonLinkClass';
 import Link from 'next/link';
@@ -69,7 +68,6 @@ export default function StoreTabs({
     return `Válido: ${format(startDate, 'dd MMM', { locale: es })} - ${format(endDate, 'dd MMM', { locale: es })}`;
   };
 
-  // Funciones para navegar
   const nextPromo = () => {
     setCurrentPromoIndex((prev) => (prev + 1) % totalSlides);
   };
@@ -79,7 +77,6 @@ export default function StoreTabs({
   };
 
   const renderBannerContent = () => {
-    // Si el índice actual es igual a la longitud, mostramos la tarjeta de "Crear"
     if (currentPromoIndex == activePromotions.length && isOwner) {
       return (
         <div className="relative z-10 flex flex-col items-center w-full text-center p-4">
@@ -118,7 +115,6 @@ export default function StoreTabs({
       );
     }
     if (activePromotions.length > 0) {
-      // Contenido normal de la promoción
       const currentPromo = activePromotions[currentPromoIndex];
       return (
         <div className="relative z-10 flex flex-col items-center w-full text-center">
@@ -133,7 +129,7 @@ export default function StoreTabs({
               onClick={() => {
                 window.location.href = `/stores/${store.id}/promotions/${currentPromo.id}/`;
               }}
-              className="absolute top-0 right-0 bg-white/80 hover:bg-white text-secondary p-2 rounded-full shadow-md transition-all z-30 group"
+              className="absolute top-0 right-0 bg-white/80 hover:bg-white text-secondary p-2 rounded-full shadow-md transition-all hover:scale-105 hover:shadow-lg cursor-pointer z-30 group"
               title="Editar promoción"
             >
               <svg
@@ -183,7 +179,6 @@ export default function StoreTabs({
     <>
       {totalSlides > 0 && (
         <div className="relative mx-4 mt-5 flex flex-col items-center justify-center border-2 border-secondary/30 rounded-xl p-6 overflow-hidden w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5 min-h-[300px] transition-all bg-gray-50">
-          {/* Fondo Dinámico (Solo si hay promo, si no, un fondo neutro para 'Crear') */}
           <div className="absolute inset-0 z-0 w-full h-full">
             {currentPromoIndex != activePromotions.length ? (
               <>
@@ -208,7 +203,6 @@ export default function StoreTabs({
 
           {renderBannerContent()}
 
-          {/* Flechas de Navegación (Siempre que el total sea > 1) */}
           {totalSlides > 1 && (
             <>
               <button
@@ -248,7 +242,6 @@ export default function StoreTabs({
                 </svg>
               </button>
 
-              {/* Indicadores de posición */}
               <div className="absolute bottom-2 flex gap-1">
                 {Array.from({ length: totalSlides }).map((_, i) => (
                   <div
@@ -261,23 +254,6 @@ export default function StoreTabs({
           )}
         </div>
       )}
-
-      <div className="p-4 mt-6 bg-white sticky top-0 z-50">
-        <div className=" relative flex items-center w-full max-w-2xl mx-auto">
-          <IoSearch className="absolute left-3 text-secondary text-xl" />
-          <input
-            type="text"
-            placeholder="Buscar productos..."
-            autoComplete="off"
-            autoCorrect="off"
-            spellCheck="false"
-            maxLength={50}
-            className="w-full pl-10 pr-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 bg-gray-50 text-dark-blue font-medium"
-            value={searchQuery || ''}
-            onChange={(e) => onSearchChange?.(e.target.value)}
-          />
-        </div>
-      </div>
 
       <div className="flex mx-4 mt-5 mb-5 self-center rounded-md overflow-hidden border border-gray-200 w-11/12 sm:mx-auto sm:max-w-142.5">
         <button
@@ -321,7 +297,12 @@ export default function StoreTabs({
         {activeTab === 'catalogo' && (
           <>
             <Outfits storeId={store.id} outfits={outfits} />
-            <Products storeId={store.id} products={products} />
+            <Products
+              storeId={store.id}
+              products={products}
+              searchQuery={searchQuery}
+              onSearchChange={onSearchChange}
+            />
           </>
         )}
 
@@ -345,7 +326,6 @@ export default function StoreTabs({
             className="bg-white rounded-2xl max-w-md w-full max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200"
             data-testid="promotion-products-modal"
           >
-            {/* Cabecera dinámica */}
             <div className="relative h-40 w-full shrink-0">
               <Image
                 src={
@@ -359,8 +339,8 @@ export default function StoreTabs({
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
               <button
-                onClick={() => setSelectedPromo(null)} // Cerramos reseteando a null
-                className="absolute top-3 right-3 text-white bg-black/20 hover:bg-black/40 p-1.5 rounded-full backdrop-blur-md transition"
+                onClick={() => setSelectedPromo(null)}
+                className="absolute top-3 right-3 text-white bg-black/20 hover:bg-black/40 p-1.5 rounded-full backdrop-blur-md transition cursor-pointer hover:scale-105"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -376,7 +356,6 @@ export default function StoreTabs({
               </h2>
             </div>
 
-            {/* Lista de productos de ESTA promoción específica */}
             <div className="p-5 overflow-y-auto">
               <p className="text-gray-600 text-sm mb-4 leading-relaxed">
                 {selectedPromo.description}
@@ -420,7 +399,6 @@ export default function StoreTabs({
               </div>
             </div>
 
-            {/* Footer con el descuento de esta promo */}
             <div className="p-5 border-t bg-gray-50">
               <div className="flex justify-between items-center mb-4">
                 <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
