@@ -19,6 +19,8 @@ import {
 import { MdOutlinePayments } from 'react-icons/md';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 const statusMap: Record<string, string> = {
   PENDING: 'Pendiente',
@@ -157,7 +159,8 @@ export default function DeliverOrderPage() {
                 </div>
                 <div className="flex items-center gap-4 text-sm">
                   <div className="flex items-center gap-1.5 text-secondary font-medium">
-                    <FaCalendarAlt /> {new Date(order.orderDate).toLocaleDateString()}
+                    <FaCalendarAlt />{' '}
+                    {format(new Date(order.orderDate), 'dd MMM yyyy', { locale: es })}
                   </div>
                   <span
                     className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold uppercase ${getStatusStyles(order.orderStatus)}`}
