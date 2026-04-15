@@ -139,9 +139,12 @@ export function ProfilePage({}) {
             )}
           </>
         )}
-        <Button variant="outline" className="w-full" onClick={() => router.push('/pricing')}>
-          Planes y precios
-        </Button>
+
+        {user?.store?.id && (
+          <Button variant="outline" className="w-full" onClick={() => router.push('/pricing')}>
+            Planes y precios
+          </Button>
+        )}
         <Button
           variant="outline"
           className="w-full"
