@@ -121,7 +121,7 @@ export default function StoreTabs({
           <h3 className="text-primary font-bold text-sm md:text-base uppercase tracking-widest">
             ¡Promoción Activa!
           </h3>
-          <h2 className="text-secondary font-black text-3xl md:text-4xl mt-2 leading-tight">
+          <h2 className="text-secondary font-black text-3xl md:text-4xl mt-2 leading-tight truncate max-w-full w-full">
             {currentPromo.name}
           </h2>
           {isOwner && (
@@ -351,7 +351,7 @@ export default function StoreTabs({
                   />
                 </svg>
               </button>
-              <h2 className="absolute bottom-4 left-5 text-white text-xl font-bold">
+              <h2 className="absolute bottom-4 left-5 text-white text-xl font-bold truncate max-w-[80%]">
                 {selectedPromo.name}
               </h2>
             </div>
