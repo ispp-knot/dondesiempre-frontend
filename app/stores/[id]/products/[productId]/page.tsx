@@ -321,9 +321,14 @@ export default function ProductDetailsPage() {
       await deleteProduct.fetch({ url: `products/${product.data?.id}` });
       setIsConfirmDeleteOpen(false);
       setDeleteSuccess(true);
-    } catch {
+    } catch (error) {
       setIsConfirmDeleteOpen(false);
-      setActiveFetchingError('No se pudo eliminar el producto.');
+      const err = error as FetchError;
+      const message =
+        err.status === 400
+          ? 'No puede ser borrado porque es usado en uno o más outfits.'
+          : 'Hubo un problema al eliminar el producto';
+      setActiveFetchingError(message);
     } finally {
       setIsDeleting(false);
     }

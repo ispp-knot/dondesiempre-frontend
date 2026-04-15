@@ -37,7 +37,11 @@ export function StoreCard({
   const clickTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [heartAnimating, setHeartAnimating] = useState(false);
 
-  const isFollowing = usePassiveFetcher<StoreFollowerDTO>({ url: `stores/${store.id}/follow` });
+  const isFollowing = usePassiveFetcher<StoreFollowerDTO>({
+    url: `stores/${store.id}/follow`,
+    enabled: isClient,
+  });
+
   const followStore = useActiveFetcher<void>({
     url: `stores/${store.id}/follow`,
     method: 'POST',
