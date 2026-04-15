@@ -28,43 +28,29 @@ type Props = {
 
 function ImageListItem({
   img,
-  totalImages,
+  index,
   onRemove,
-  onChangeOrder,
   isSaving,
 }: {
   img: StoreImageDTO;
-  totalImages: number;
+  index: number;
   onRemove: (id: string) => void;
-  onChangeOrder: (id: string, newOrder: number) => void;
   isSaving: boolean;
 }) {
   return (
     <div
       className={`flex items-center gap-4 border rounded-lg p-3 bg-white ${isSaving ? 'opacity-50 pointer-events-none' : ''}`}
     >
+      <div className="flex flex-col items-center justify-center min-w-[30px]">
+        <span className="text-sm font-bold text-muted-foreground">#{index + 1}</span>
+      </div>
+
       <div className="relative w-20 h-20 overflow-hidden rounded-md shrink-0">
         <Image src={img.image as string} alt="" fill className="object-cover" unoptimized />
       </div>
 
-      <div className="flex-1 flex items-center gap-2">
-        <span className="text-sm text-muted-foreground font-medium">Posición:</span>
-        <select
-          value={img.displayOrder}
-          onChange={(e) => onChangeOrder(img.id, parseInt(e.target.value))}
-          disabled={isSaving}
-          className="border border-input bg-background rounded-md p-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
-        >
-          {Array.from({ length: totalImages }).map((_, i) => (
-            <option key={i} value={i}>
-              {i + 1}
-            </option>
-          ))}
-        </select>
-      </div>
-
       <button
-        className="text-red-500 hover:text-red-600 transition p-2 hover:bg-red-50 rounded-md shrink-0"
+        className="ml-auto text-red-500 hover:text-red-600 transition p-2 hover:bg-red-50 rounded-md shrink-0"
         onClick={() => onRemove(img.id)}
         disabled={isSaving}
         title="Eliminar imagen"
@@ -95,10 +81,6 @@ export default function StoreAboutSection({
 
   const deleteImageFetcher = useActiveFetcher<string>({
     method: 'DELETE',
-  });
-
-  const updateImageFetcher = useActiveFetcher<StoreImageDTO>({
-    method: 'PUT',
   });
 
   const sortedImages = [...images]
@@ -165,45 +147,6 @@ export default function StoreAboutSection({
       }
     } catch (_error) {
       setUploadError('Error al eliminar la imagen.');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const changeImageOrder = async (id: string, newOrder: number) => {
-    setUploadError(null);
-
-    const oldIndex = images.findIndex((img) => img.id === id);
-    const imageToMove = images[oldIndex];
-
-    if (!imageToMove || imageToMove.displayOrder === newOrder) return;
-
-    const swapTargetIndex = images.findIndex((img) => img.displayOrder === newOrder);
-    const newImages = [...images];
-
-    if (swapTargetIndex !== -1) {
-      newImages[swapTargetIndex] = {
-        ...newImages[swapTargetIndex],
-        displayOrder: imageToMove.displayOrder,
-      };
-    }
-    newImages[oldIndex] = { ...imageToMove, displayOrder: newOrder };
-
-    syncLocalImages(newImages.sort((a, b) => a.displayOrder - b.displayOrder));
-
-    try {
-      setIsSaving(true);
-
-      await updateImageFetcher.fetch({
-        url: `stores/${storeId}/images/${id}`,
-        body: {
-          image: imageToMove.image,
-          displayOrder: newOrder,
-        },
-      });
-    } catch (_error) {
-      setUploadError('Error al actualizar la posición.');
-      onImagesUpdated(images);
     } finally {
       setIsSaving(false);
     }
@@ -285,13 +228,12 @@ export default function StoreAboutSection({
 
             <div className="flex-1 overflow-y-auto space-y-3 pr-2">
               <div className="space-y-3">
-                {images.map((img) => (
+                {sortedImages.map((img, index) => (
                   <ImageListItem
                     key={img.id}
                     img={img}
-                    totalImages={images.length}
+                    index={index}
                     onRemove={removeImage}
-                    onChangeOrder={changeImageOrder}
                     isSaving={isSaving}
                   />
                 ))}
