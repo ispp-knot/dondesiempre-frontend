@@ -17,6 +17,7 @@ import { ProductDTO } from '@/lib/types/products/productsDto';
 import Products from './products';
 import { buttonLinkClass } from '@/lib/utils/buttonLinkClass';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 type Tab = 'catalogo' | 'sobre' | 'opciones';
 
@@ -121,7 +122,7 @@ export default function StoreTabs({
           <h3 className="text-primary font-bold text-sm md:text-base uppercase tracking-widest">
             ¡Promoción Activa!
           </h3>
-          <h2 className="text-secondary font-black text-3xl md:text-4xl mt-2 leading-tight">
+          <h2 className="text-secondary font-black text-3xl md:text-4xl mt-2 leading-tight truncate max-w-full w-full">
             {currentPromo.name}
           </h2>
           {isOwner && (
@@ -351,7 +352,7 @@ export default function StoreTabs({
                   />
                 </svg>
               </button>
-              <h2 className="absolute bottom-4 left-5 text-white text-xl font-bold">
+              <h2 className="absolute bottom-4 left-5 text-white text-xl font-bold truncate max-w-[80%]">
                 {selectedPromo.name}
               </h2>
             </div>
@@ -366,29 +367,40 @@ export default function StoreTabs({
                   selectedPromo.products.map((product, index) => (
                     <div
                       key={`${selectedPromo.id}-prod-${index}`}
-                      className="flex items-center gap-3 p-2 border border-gray-100 rounded-xl hover:bg-gray-50 transition"
+                      className="flex items-center gap-3 p-2 border border-gray-100 rounded-xl hover:bg-gray-50 transition justify-between"
                     >
-                      <div className="relative h-14 w-14 rounded-lg overflow-hidden shrink-0 border">
-                        <Image
-                          src={product.image || '/static/img/outfit_placeholder.jpg'}
-                          alt={product.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-gray-800 text-sm truncate">
-                          {product.name}
-                        </h4>
-                        <div className="flex items-center gap-2">
-                          <span className="text-primary font-bold text-sm">
-                            {discountPrice(product.priceInCents, selectedPromo.discountPercentage)}€
-                          </span>
-                          <span className="text-gray-400 text-xs line-through">
-                            {convertPrice(product.priceInCents)}€
-                          </span>
+                      <div>
+                        <div className="relative h-14 w-14 rounded-lg overflow-hidden shrink-0 border">
+                          <Image
+                            src={product.image || '/static/img/outfit_placeholder.jpg'}
+                            alt={product.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-gray-800 text-sm truncate">
+                            {product.name}
+                          </h4>
+                          <div className="flex items-center gap-2">
+                            <span className="text-primary font-bold text-sm">
+                              {discountPrice(
+                                product.priceInCents,
+                                selectedPromo.discountPercentage
+                              )}
+                              €
+                            </span>
+                            <span className="text-gray-400 text-xs line-through">
+                              {convertPrice(product.priceInCents)}€
+                            </span>
+                          </div>
                         </div>
                       </div>
+                      <Link
+                        href={`/stores/${store.id}/products/${product.id}?promotionId=${selectedPromo.id}`}
+                      >
+                        <Button className="m-2">Aplicar promoción</Button>
+                      </Link>
                     </div>
                   ))
                 ) : (

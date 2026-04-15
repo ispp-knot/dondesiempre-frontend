@@ -47,6 +47,6 @@ export function outfitWithDiscount(
 
 export function discountPrice(priceInCents: number, discountPercentage: number | null): number {
   return discountPercentage
-    ? convertPrice(priceInCents * ((100 - discountPercentage) / 100))
+    ? convertPrice(Math.floor(priceInCents * ((100 - discountPercentage) / 100)))
     : convertPrice(priceInCents);
 }
