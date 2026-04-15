@@ -23,6 +23,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
+import { getUploadErrorMessage } from '@/lib/utils/errorHandler';
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
@@ -89,8 +90,13 @@ export default function ProductCreationPage() {
       } else {
         setApiError('Hubo un error al crear el producto. Por favor, intenta de nuevo.');
       }
-    } catch (_err: unknown) {
-      setApiError('Hubo un error al crear el producto. Por favor, intenta de nuevo.');
+    } catch (err: unknown) {
+      setApiError(
+        getUploadErrorMessage(
+          err,
+          'Hubo un error al crear el producto. Por favor, intenta de nuevo.'
+        )
+      );
     }
   };
 
@@ -201,7 +207,7 @@ export default function ProductCreationPage() {
                 </div>
               </div>
 
-              {apiError && <p className="text-sm text-destructive">{apiError}</p>}
+              {apiError && <p className="text-sm font-bold text-destructive">{apiError}</p>}
 
               <div className="flex justify-center" data-testid="product-submit-button">
                 <Button
