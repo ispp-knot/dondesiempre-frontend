@@ -89,8 +89,15 @@ export default function ProductCreationPage() {
       } else {
         setApiError('Hubo un error al crear el producto. Por favor, intenta de nuevo.');
       }
-    } catch (_err: unknown) {
-      setApiError('Hubo un error al crear el producto. Por favor, intenta de nuevo.');
+    } catch (err: unknown) {
+      const fetchError = err as { status?: number; response?: { status?: number } };
+      const statusCode = fetchError.status || fetchError.response?.status;
+
+      if (statusCode === 413) {
+        setApiError('La imagen es demasiado grande. Por favor, intenta con una que pese menos.');
+      } else {
+        setApiError('Hubo un error al crear el producto. Por favor, intenta de nuevo.');
+      }
     }
   };
 
@@ -201,7 +208,7 @@ export default function ProductCreationPage() {
                 </div>
               </div>
 
-              {apiError && <p className="text-sm text-destructive">{apiError}</p>}
+              {apiError && <p className="text-sm font-bold text-destructive">{apiError}</p>}
 
               <div className="flex justify-center" data-testid="product-submit-button">
                 <Button
