@@ -44,6 +44,7 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
 
   const handleBannerFileChange = (file: File | null) => {
     if (file && file.size > 2 * 1024 * 1024) {
+      setBannerImageFile(null);
       setActiveFetchingError('La imagen supera el tamaño máximo permitido (2MB)');
       return;
     }
