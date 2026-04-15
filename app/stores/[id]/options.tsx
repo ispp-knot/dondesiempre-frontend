@@ -13,13 +13,21 @@ type Props = {
   initialStore: StoreDTO;
 };
 
+type FetchErrorShape = {
+  status?: number;
+  response?: {
+    status?: number;
+  };
+  message?: string;
+};
+
 export default function StoreOptions({ storefrontId, initialStore }: Props) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<StoreDTO['storefront']>(initialStore?.storefront);
   const [hasChanges, setHasChanges] = useState(false);
   const [bannerImageFile, setBannerImageFile] = useState<File | null>(null);
-
   const [activeFetchingError, setActiveFetchingError] = useState<string | null>(null);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const updateStorefront = useActiveFetcher<StoreDTO['storefront']>({
     url: `storefronts/${storefrontId}`,
@@ -35,6 +43,10 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
   };
 
   const handleBannerFileChange = (file: File | null) => {
+    if (file && file.size > 2 * 1024 * 1024) {
+      setActiveFetchingError('La imagen supera el tamaño máximo permitido (2MB)');
+      return;
+    }
     setBannerImageFile(file);
     setHasChanges(true);
   };
@@ -44,8 +56,6 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
     setBannerImageFile(null);
     setHasChanges(false);
   };
-
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const handleConfirm = async () => {
     setIsConfirmModalOpen(false);
@@ -59,10 +69,19 @@ export default function StoreOptions({ storefrontId, initialStore }: Props) {
       await updateStorefront.fetch({
         formPayload,
       });
+
       setHasChanges(false);
       location.reload();
-    } catch (error) {
-      setActiveFetchingError('Error al guardar los cambios: ' + error);
+    } catch (error: unknown) {
+      const err = error as FetchErrorShape;
+      const status = err.status ?? err.response?.status;
+      const message = err.message ?? '';
+
+      if (status === 413 || status === 500 || message.includes('413') || message.includes('500')) {
+        setActiveFetchingError('La imagen es muy grande. Por favor, sube una de menor tamaño.');
+      } else {
+        setActiveFetchingError('No se pudieron guardar los cambios.');
+      }
     } finally {
       setLoading(false);
     }

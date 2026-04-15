@@ -5,7 +5,7 @@ import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useRouter } from 'next/navigation';
 import { FaRegUser } from 'react-icons/fa';
-import { MdOutlineEmail, MdOutlinePhone, MdOutlineLocationOn } from 'react-icons/md';
+import { MdOutlineEmail, MdOutlineLocationOn } from 'react-icons/md';
 import { GlassCenterCard } from '@/components/dondeSiempre/GlassCenterCard';
 import ClientEditModal from '@/app/profile/client-edit-modal';
 import { usePassiveFetcher } from '@/lib/api/fetcher';
@@ -14,6 +14,9 @@ import { useEffect, useState } from 'react';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import UserEditPassword from '@/app/profile/user-edit-password-modal';
 import TermsOfServiceModal from '@/components/dondeSiempre/TermsOfServiceModal';
+import { StripeOnBoardingButton } from '@/components/dondeSiempre/StripeOnBoardingButton'; // ajusta path
+import { StripeDashboardLinkDTO } from '@/lib/types/payment/stripeDashboardLinkDto';
+import { AccountStatusDto } from '@/lib/types/payment/accountStatusDto';
 
 export function ProfilePage({}) {
   const router = useRouter();
@@ -23,6 +26,15 @@ export function ProfilePage({}) {
 
   const meQuery = usePassiveFetcher<UserResponseDTO>({
     url: 'auth/me',
+  });
+
+  const verified = usePassiveFetcher<AccountStatusDto>({
+    url: `stores/${meQuery?.data?.store?.id}/stripe/status`,
+    enabled: !!meQuery?.data?.store?.id,
+  });
+  const dashboard = usePassiveFetcher<StripeDashboardLinkDTO>({
+    url: `stores/${meQuery?.data?.store?.id}/stripe/dashboard`,
+    enabled: !!meQuery?.data?.store?.id && !verified.isLoading && verified.data?.verified === true,
   });
 
   useEffect(() => {
@@ -38,7 +50,6 @@ export function ProfilePage({}) {
 
   const user = meQuery.data;
 
-  // Evitar crasheos si por algún motivo la petición falla
   if (!user) {
     return null;
   }
@@ -49,8 +60,7 @@ export function ProfilePage({}) {
     : user.email;
 
   const email = profile?.email ?? user.email;
-  const phone = profile?.phone ?? null;
-  const address = profile?.address ?? null;
+  const address = user.store?.address ?? null;
 
   const handlePasswordChanged = () => {
     setSuccessMsg('¡Contraseña actualizada con éxito!');
@@ -68,7 +78,6 @@ export function ProfilePage({}) {
           </div>
           <CardTitle className="text-lg">{fullName}</CardTitle>
         </div>
-
         <UserEditPassword onSuccessAction={handlePasswordChanged} />
       </CardHeader>
 
@@ -83,44 +92,55 @@ export function ProfilePage({}) {
           <MdOutlineEmail className="text-base shrink-0" />
           <span>{email}</span>
         </div>
-        {phone && (
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <MdOutlinePhone className="text-base shrink-0" />
-            <span>{phone}</span>
-          </div>
-        )}
         {address && (
           <div className="flex items-center gap-2 text-muted-foreground">
             <MdOutlineLocationOn className="text-base shrink-0" />
             <span>{address}</span>
           </div>
         )}
+
+        {user?.store?.id && <StripeOnBoardingButton storeId={user.store.id} variant="full" />}
       </CardContent>
+
       <CardFooter className="border-t mt-3 flex flex-col gap-3">
         {user.client && (
-          <ClientEditModal
-            client={{ ...user.client, email: email }}
-            onSavedAction={() => meQuery.refetch()}
-          />
+          <ClientEditModal client={user.client!} onSavedAction={() => meQuery.refetch()} />
         )}
         {user?.store?.id && (
           <Button
             variant="outline"
             className="w-full"
-            onClick={() => {
-              router.push(`/stores/${user.store!.id}`);
-            }}
+            onClick={() => router.push(`/stores/${user.store!.id}`)}
           >
             Mi tienda
           </Button>
         )}
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => {
-            router.push('/pricing');
-          }}
-        >
+        {user?.store?.id && (
+          <>
+            <Button
+              variant="outline"
+              className="w-full flex items-center gap-2"
+              disabled={
+                dashboard.isLoading ||
+                verified.isLoading ||
+                (!verified.isLoading && !verified.data?.verified)
+              }
+              onClick={
+                dashboard.data?.dashboardLink
+                  ? () => router.push(dashboard.data.dashboardLink)
+                  : () => dashboard.refetch()
+              }
+            >
+              {verified.isLoading ? 'Verificando' : 'Dashboard'}
+            </Button>
+            {dashboard.isError && (
+              <p className="text-[11px] text-destructive px-1 leading-tight">
+                No se pudo obtener el enlace.
+              </p>
+            )}
+          </>
+        )}
+        <Button variant="outline" className="w-full" onClick={() => router.push('/pricing')}>
           Planes y precios
         </Button>
         <TermsOfServiceModal />

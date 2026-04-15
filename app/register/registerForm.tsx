@@ -36,16 +36,6 @@ const step1Schema = z
 const clientStep2Schema = z.object({
   name: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
   surname: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
-  phone: z
-    .string()
-    .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
-      message: 'Número de teléfono no válido',
-    })
-    .transform((value) => (value === '' ? null : value)),
-  address: z
-    .string()
-    .max(255, 'Máximo 255 caracteres')
-    .transform((value) => (value === '' ? null : value)),
   termsAccepted: z
     .boolean()
     .refine((v) => v === true, { message: 'Debes aceptar los términos de servicio' }),
@@ -57,12 +47,6 @@ const storeStep2Schema = z.object({
   longitude: z.number({ error: 'Selecciona una ubicación en el mapa' }),
   address: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
   openingHours: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
-  phone: z
-    .string()
-    .refine((value) => value === '' || /^(\+\d{1,3}[- ]?)?\d{7,15}$/.test(value), {
-      message: 'Número de teléfono no válido',
-    })
-    .transform((value) => (value === '' ? null : value)),
   aboutUs: z
     .string()
     .max(5000, 'Máximo 5000 caracteres')
@@ -75,7 +59,6 @@ const storeStep2Schema = z.object({
 });
 
 type Step1Values = z.infer<typeof step1Schema>;
-type ClientStep2InputValues = z.input<typeof clientStep2Schema>;
 type ClientStep2Values = z.infer<typeof clientStep2Schema>;
 type StoreStep2InputValues = z.input<typeof storeStep2Schema>;
 type StoreStep2Values = z.infer<typeof storeStep2Schema>;
@@ -316,13 +299,17 @@ function ClientStep2Form({
   onSuccess: () => void;
 }) {
   const [apiError, setApiError] = useState<string | null>(null);
-  const registerClient = useActiveFetcher<void>({ url: 'auth/register/client', method: 'POST' });
+  const registerClient = useActiveFetcher<void>({
+    url: 'auth/register/client',
+    method: 'POST',
+    timeout: 10000,
+  });
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<ClientStep2InputValues, unknown, ClientStep2Values>({
+  } = useForm<ClientStep2Values>({
     resolver: zodResolver(clientStep2Schema),
     defaultValues: { termsAccepted: false },
   });
@@ -334,7 +321,9 @@ function ClientStep2Form({
         body: {
           email: step1Data.email,
           password: step1Data.password,
-          ...data,
+          name: data.name,
+          surname: data.surname,
+          termsAccepted: data.termsAccepted,
         },
       });
       onSuccess();
@@ -361,19 +350,6 @@ function ClientStep2Form({
           <FieldError message={errors.surname?.message} />
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-1">
-          <Label htmlFor="phone">Teléfono</Label>
-          <Input id="phone" type="tel" aria-invalid={!!errors.phone} {...register('phone')} />
-          <FieldError message={errors.phone?.message} />
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor="address">Dirección</Label>
-          <Input id="address" aria-invalid={!!errors.address} {...register('address')} />
-          <FieldError message={errors.address?.message} />
-        </div>
-      </div>
-
       <div className="space-y-1">
         <div className="flex items-start gap-2">
           <input
@@ -401,7 +377,6 @@ function ClientStep2Form({
         </div>
         <FieldError message={errors.termsAccepted?.message} />
       </div>
-
       {apiError && <p className="text-xs text-destructive">{apiError}</p>}
 
       <div className="flex gap-2">
@@ -439,8 +414,8 @@ function StoreStep2Form({
   } = useForm<StoreStep2InputValues, unknown, StoreStep2Values>({
     resolver: zodResolver(storeStep2Schema),
     defaultValues: {
-      primaryColor: '#000000',
-      secondaryColor: '#ffffff',
+      primaryColor: '#c65a3a',
+      secondaryColor: '#19756a',
       termsAccepted: false,
     },
   });
@@ -493,11 +468,6 @@ function StoreStep2Form({
               {...register('openingHours')}
             />
             <FieldError message={errors.openingHours?.message} />
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor="phone">Teléfono</Label>
-            <Input id="phone" type="tel" aria-invalid={!!errors.phone} {...register('phone')} />
-            <FieldError message={errors.phone?.message} />
           </div>
         </div>
 

@@ -8,5 +8,6 @@ export interface OrderDTO {
   orderStatus: 'PENDING' | 'CONFIRMED' | 'REJECTED' | 'PICKED' | 'COMPLETED';
   totalPrice: number;
   storeName?: string;
+  isPaid: boolean;
   items: OrderItemDTO[];
 }

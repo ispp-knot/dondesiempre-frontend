@@ -18,6 +18,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import Image from 'next/image';
+import { BackButton } from '@/components/dondeSiempre/BackButton';
 
 interface ProductUpdateDTO {
   name?: string;
@@ -99,7 +100,6 @@ export default function ProductEditPage() {
     setApiError(null);
 
     try {
-      // Prepare PUT request with all fields including discount
       const dto: ProductUpdateDTO = {
         name: data.name || undefined,
         description: data.description || null,
@@ -108,7 +108,6 @@ export default function ProductEditPage() {
         discountPercentage: (data.discount as number | undefined) ?? null,
       };
 
-      // Send single PUT request with all changes
       await updateProduct.fetch({
         formPayload: {
           product: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
@@ -121,7 +120,6 @@ export default function ProductEditPage() {
         return;
       }
 
-      // Success
       router.push(`/stores/${params.id}/products/${params.productId}`);
     } catch (_err: unknown) {
       setApiError('Hubo un error al actualizar el producto. Por favor, intenta de nuevo.');
@@ -131,13 +129,17 @@ export default function ProductEditPage() {
   return (
     <StoreOwnerGuard storeId={params.id}>
       <div className="flex flex-col items-center px-4 py-6">
-        <div className="w-full max-w-6xl">
+        <div className="w-full max-w-6xl space-y-4">
+          <div className="flex justify-start">
+            <BackButton />
+          </div>
+
           <Card className="p-4 shadow-xl sm:p-6 md:p-8">
             <h1 className="mb-6 text-center text-3xl font-bold text-primary">Editar producto</h1>
 
             <form onSubmit={(e) => handleSubmit(submitForm)(e)} className="space-y-6" noValidate>
               <div className="grid gap-6 md:grid-cols-2">
-                <div className="space-y-2 md:col-span-2">
+                <div className="space-y-2 md:col-span-2" data-testid="product-edit-name-input">
                   <Label htmlFor="form-name" className="text-base font-bold text-secondary">
                     Nombre
                   </Label>
@@ -155,7 +157,10 @@ export default function ProductEditPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2 md:col-span-2">
+                <div
+                  className="space-y-2 md:col-span-2"
+                  data-testid="product-edit-description-input"
+                >
                   <Label htmlFor="form-description" className="text-base font-bold text-secondary">
                     Descripción
                   </Label>
@@ -176,7 +181,7 @@ export default function ProductEditPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2 md:col-span-2">
+                <div className="space-y-2 md:col-span-2" data-testid="product-edit-image-input">
                   <Label htmlFor="form-image" className="text-base font-bold text-secondary">
                     Imagen
                   </Label>
@@ -203,6 +208,7 @@ export default function ProductEditPage() {
                   <div className="flex items-center gap-2">
                     <Input
                       id="form-price"
+                      data-testid="product-edit-price-input"
                       type="number"
                       min="0.01"
                       max="9999"
@@ -222,6 +228,7 @@ export default function ProductEditPage() {
                     Categoría
                   </Label>
                   <select
+                    data-testid="product-edit-cat-input"
                     id="form-type"
                     aria-invalid={!!errors.productTypeId}
                     {...register('productTypeId')}
@@ -243,6 +250,7 @@ export default function ProductEditPage() {
                   </Label>
                   <div className="flex items-center gap-2">
                     <Input
+                      data-testid="product-edit-discount-input"
                       id="form-discount"
                       type="number"
                       min="0"
@@ -266,11 +274,13 @@ export default function ProductEditPage() {
                   type="submit"
                   className="mt-2 h-12 w-full bg-secondary text-base font-bold text-white hover:bg-dark-secondary md:w-1/3"
                   disabled={isSubmitting}
+                  data-testid="product-edit-submit-button"
                 >
                   {isSubmitting ? 'Guardando...' : 'Guardar cambios'}
                 </Button>
                 <Button
                   type="button"
+                  data-testid="product-edit-cancel-button"
                   onClick={() => router.push(`/stores/${params.id}/products/${params.productId}`)}
                   className="mt-2 h-12 w-full bg-gray-400 text-base font-bold text-white hover:bg-gray-500 md:w-1/3"
                 >

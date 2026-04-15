@@ -4,7 +4,8 @@ export async function authorizedOfetch(
   request: FetchRequest,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   options?: FetchOptions<'json', any>,
-  token?: string | null
+  token?: string | null,
+  timeout = 5000
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   const headers = {
@@ -13,7 +14,7 @@ export async function authorizedOfetch(
   };
 
   return ofetch(request, {
-    timeout: 5000,
+    timeout: timeout,
     ...options,
     headers,
   });

@@ -4,19 +4,20 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ShareTo } from '@/components/ui/shareTo';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
-import { ProductDTO } from '@/lib/types/products/productsDto';
-import { StoreDTO } from '@/lib/types/stores/storesDto';
+import { StoreDTO, StoreImageDTO } from '@/lib/types/stores/storesDto';
+
 import { convertPrice, discountPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { JSX, useState } from 'react';
-import { IoSearch } from 'react-icons/io5';
-import AboutUs from './about-us';
 import StoreOptions from './options';
 import Outfits from './outfits';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
+import StoreAboutSection from './about-us-section';
+import { ProductDTO } from '@/lib/types/products/productsDto';
 import Products from './products';
 import { buttonLinkClass } from '@/lib/utils/buttonLinkClass';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 type Tab = 'catalogo' | 'sobre' | 'opciones';
 
@@ -29,6 +30,8 @@ type Props = {
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
   isOwner: boolean;
+  images?: StoreImageDTO[];
+  onImagesUpdated?: (images: StoreImageDTO[]) => void;
 };
 
 export default function StoreTabs({
@@ -40,12 +43,21 @@ export default function StoreTabs({
   searchQuery = '',
   onSearchChange,
   isOwner,
+  images = [],
+  onImagesUpdated,
 }: Props): JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('catalogo');
 
   const activePromotions = promotions.filter((p) => p.active);
   const [currentPromoIndex, setCurrentPromoIndex] = useState(0);
   const [selectedPromo, setSelectedPromo] = useState<PromotionDTO | null>(null);
+  const [localImages, setLocalImages] = useState<StoreImageDTO[]>(images ?? []);
+
+  const handleImagesUpdated = (updated: StoreImageDTO[]) => {
+    setLocalImages(updated);
+    onImagesUpdated?.(updated);
+  };
+
   const totalSlides = isOwner ? activePromotions.length + 1 : activePromotions.length;
 
   const formatDateRange = (start?: string, end?: string) => {
@@ -57,7 +69,6 @@ export default function StoreTabs({
     return `Válido: ${format(startDate, 'dd MMM', { locale: es })} - ${format(endDate, 'dd MMM', { locale: es })}`;
   };
 
-  // Funciones para navegar
   const nextPromo = () => {
     setCurrentPromoIndex((prev) => (prev + 1) % totalSlides);
   };
@@ -67,11 +78,13 @@ export default function StoreTabs({
   };
 
   const renderBannerContent = () => {
-    // Si el índice actual es igual a la longitud, mostramos la tarjeta de "Crear"
     if (currentPromoIndex == activePromotions.length && isOwner) {
       return (
         <div className="relative z-10 flex flex-col items-center w-full text-center p-4">
-          <div className="bg-secondary/10 p-4 rounded-full mb-4">
+          <div
+            className="bg-secondary/10 p-4 rounded-full mb-4"
+            data-testid="create-promotion-banner"
+          >
             <svg
               className="w-10 h-10 text-secondary"
               fill="none"
@@ -93,23 +106,23 @@ export default function StoreTabs({
             Crea una nueva oferta o descuento especial para tu tienda.
           </p>
           <Link
-            href={`/stores/${store.id}/promotions`}
+            data-testid="create-promotion-button"
+            href={`/stores/${store.id}/promotions/manage`}
             className={`${buttonLinkClass} bg-primary text-white font-bold py-3 px-8 rounded-lg mt-6 w-full shadow-lg hover:scale-[1.02] active:scale-95 transition-all`}
           >
-            Crear Nueva Promoción
+            Gestionar promociones
           </Link>
         </div>
       );
     }
     if (activePromotions.length > 0) {
-      // Contenido normal de la promoción
       const currentPromo = activePromotions[currentPromoIndex];
       return (
         <div className="relative z-10 flex flex-col items-center w-full text-center">
           <h3 className="text-primary font-bold text-sm md:text-base uppercase tracking-widest">
             ¡Promoción Activa!
           </h3>
-          <h2 className="text-secondary font-black text-3xl md:text-4xl mt-2 leading-tight">
+          <h2 className="text-secondary font-black text-3xl md:text-4xl mt-2 leading-tight truncate max-w-full w-full">
             {currentPromo.name}
           </h2>
           {isOwner && (
@@ -117,7 +130,7 @@ export default function StoreTabs({
               onClick={() => {
                 window.location.href = `/stores/${store.id}/promotions/${currentPromo.id}/`;
               }}
-              className="absolute top-0 right-0 bg-white/80 hover:bg-white text-secondary p-2 rounded-full shadow-md transition-all z-30 group"
+              className="absolute top-0 right-0 bg-white/80 hover:bg-white text-secondary p-2 rounded-full shadow-md transition-all hover:scale-105 hover:shadow-lg cursor-pointer z-30 group"
               title="Editar promoción"
             >
               <svg
@@ -167,7 +180,6 @@ export default function StoreTabs({
     <>
       {totalSlides > 0 && (
         <div className="relative mx-4 mt-5 flex flex-col items-center justify-center border-2 border-secondary/30 rounded-xl p-6 overflow-hidden w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5 min-h-[300px] transition-all bg-gray-50">
-          {/* Fondo Dinámico (Solo si hay promo, si no, un fondo neutro para 'Crear') */}
           <div className="absolute inset-0 z-0 w-full h-full">
             {currentPromoIndex != activePromotions.length ? (
               <>
@@ -183,13 +195,15 @@ export default function StoreTabs({
                 <div className="absolute inset-0 bg-white/50 backdrop-blur-[2px]"></div>
               </>
             ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-200" />
+              <div
+                className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-200"
+                data-testid="create-promotion-banner"
+              />
             )}
           </div>
 
           {renderBannerContent()}
 
-          {/* Flechas de Navegación (Siempre que el total sea > 1) */}
           {totalSlides > 1 && (
             <>
               <button
@@ -229,7 +243,6 @@ export default function StoreTabs({
                 </svg>
               </button>
 
-              {/* Indicadores de posición */}
               <div className="absolute bottom-2 flex gap-1">
                 {Array.from({ length: totalSlides }).map((_, i) => (
                   <div
@@ -242,23 +255,6 @@ export default function StoreTabs({
           )}
         </div>
       )}
-
-      <div className="p-4 mt-6 bg-white sticky top-0 z-50">
-        <div className=" relative flex items-center w-full max-w-2xl mx-auto">
-          <IoSearch className="absolute left-3 text-secondary text-xl" />
-          <input
-            type="text"
-            placeholder="Buscar productos..."
-            autoComplete="off"
-            autoCorrect="off"
-            spellCheck="false"
-            maxLength={50}
-            className="w-full pl-10 pr-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 bg-gray-50 text-dark-blue font-medium"
-            value={searchQuery || ''}
-            onChange={(e) => onSearchChange?.(e.target.value)}
-          />
-        </div>
-      </div>
 
       <div className="flex mx-4 mt-5 mb-5 self-center rounded-md overflow-hidden border border-gray-200 w-11/12 sm:mx-auto sm:max-w-142.5">
         <button
@@ -302,11 +298,24 @@ export default function StoreTabs({
         {activeTab === 'catalogo' && (
           <>
             <Outfits storeId={store.id} outfits={outfits} />
-            <Products storeId={store.id} products={products} />
+            <Products
+              storeId={store.id}
+              products={products}
+              searchQuery={searchQuery}
+              onSearchChange={onSearchChange}
+            />
           </>
         )}
 
-        {activeTab === 'sobre' && <AboutUs description={description} />}
+        {activeTab === 'sobre' && (
+          <StoreAboutSection
+            description={description}
+            images={localImages}
+            isOwner={isOwner}
+            storeId={store.id}
+            onImagesUpdated={handleImagesUpdated}
+          />
+        )}
 
         {activeTab === 'opciones' && isOwner && (
           <StoreOptions storefrontId={storefrontId} initialStore={store} />
@@ -314,8 +323,10 @@ export default function StoreTabs({
       </div>
       {selectedPromo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-md w-full max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200">
-            {/* Cabecera dinámica */}
+          <div
+            className="bg-white rounded-2xl max-w-md w-full max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200"
+            data-testid="promotion-products-modal"
+          >
             <div className="relative h-40 w-full shrink-0">
               <Image
                 src={
@@ -329,8 +340,8 @@ export default function StoreTabs({
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
               <button
-                onClick={() => setSelectedPromo(null)} // Cerramos reseteando a null
-                className="absolute top-3 right-3 text-white bg-black/20 hover:bg-black/40 p-1.5 rounded-full backdrop-blur-md transition"
+                onClick={() => setSelectedPromo(null)}
+                className="absolute top-3 right-3 text-white bg-black/20 hover:bg-black/40 p-1.5 rounded-full backdrop-blur-md transition cursor-pointer hover:scale-105"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -341,12 +352,11 @@ export default function StoreTabs({
                   />
                 </svg>
               </button>
-              <h2 className="absolute bottom-4 left-5 text-white text-xl font-bold">
+              <h2 className="absolute bottom-4 left-5 text-white text-xl font-bold truncate max-w-[80%]">
                 {selectedPromo.name}
               </h2>
             </div>
 
-            {/* Lista de productos de ESTA promoción específica */}
             <div className="p-5 overflow-y-auto">
               <p className="text-gray-600 text-sm mb-4 leading-relaxed">
                 {selectedPromo.description}
@@ -357,29 +367,40 @@ export default function StoreTabs({
                   selectedPromo.products.map((product, index) => (
                     <div
                       key={`${selectedPromo.id}-prod-${index}`}
-                      className="flex items-center gap-3 p-2 border border-gray-100 rounded-xl hover:bg-gray-50 transition"
+                      className="flex items-center gap-3 p-2 border border-gray-100 rounded-xl hover:bg-gray-50 transition justify-between"
                     >
-                      <div className="relative h-14 w-14 rounded-lg overflow-hidden shrink-0 border">
-                        <Image
-                          src={product.image || '/static/img/outfit_placeholder.jpg'}
-                          alt={product.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-gray-800 text-sm truncate">
-                          {product.name}
-                        </h4>
-                        <div className="flex items-center gap-2">
-                          <span className="text-primary font-bold text-sm">
-                            {discountPrice(product.priceInCents, selectedPromo.discountPercentage)}€
-                          </span>
-                          <span className="text-gray-400 text-xs line-through">
-                            {convertPrice(product.priceInCents)}€
-                          </span>
+                      <div>
+                        <div className="relative h-14 w-14 rounded-lg overflow-hidden shrink-0 border">
+                          <Image
+                            src={product.image || '/static/img/outfit_placeholder.jpg'}
+                            alt={product.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-gray-800 text-sm truncate">
+                            {product.name}
+                          </h4>
+                          <div className="flex items-center gap-2">
+                            <span className="text-primary font-bold text-sm">
+                              {discountPrice(
+                                product.priceInCents,
+                                selectedPromo.discountPercentage
+                              )}
+                              €
+                            </span>
+                            <span className="text-gray-400 text-xs line-through">
+                              {convertPrice(product.priceInCents)}€
+                            </span>
+                          </div>
                         </div>
                       </div>
+                      <Link
+                        href={`/stores/${store.id}/products/${product.id}?promotionId=${selectedPromo.id}`}
+                      >
+                        <Button className="m-2">Aplicar promoción</Button>
+                      </Link>
                     </div>
                   ))
                 ) : (
@@ -390,7 +411,6 @@ export default function StoreTabs({
               </div>
             </div>
 
-            {/* Footer con el descuento de esta promo */}
             <div className="p-5 border-t bg-gray-50">
               <div className="flex justify-between items-center mb-4">
                 <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">

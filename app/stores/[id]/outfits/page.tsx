@@ -19,6 +19,8 @@ import { IoMdAddCircleOutline } from 'react-icons/io';
 import LoadingText from '../../../../components/dondeSiempre/LoadingText';
 import ClientOutfitsPage from './ClientOutfitsPage';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
+import { BackButton } from '@/components/dondeSiempre/BackButton';
+import GenericSuccessModal from '@/components/modals/GenericSuccessModal';
 
 export default function OutfitsPage() {
   const params = useParams<{ id: string }>();
@@ -26,6 +28,7 @@ export default function OutfitsPage() {
   const [cleanupError, setCleanupError] = useState<string | null>(null);
   const [isCleaningInvalidOutfits, setIsCleaningInvalidOutfits] = useState(false);
   const [isOrdering, setIsOrdering] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
   const deleteOutfit = useActiveFetcher<void>({ method: 'DELETE' });
@@ -77,6 +80,7 @@ export default function OutfitsPage() {
   const renderClientPage = (): ReactNode => {
     return <ClientOutfitsPage storeId={params.id} outfits={outfits.data} />;
   };
+
   return (
     <StoreOwnerGuard
       storeId={params.id}
@@ -105,6 +109,9 @@ export default function OutfitsPage() {
         }}
       >
         <div className="flex flex-col items-center">
+          <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
+            <BackButton />
+          </div>
           <div className="w-full md:w-8/12">
             {invalidOutfits.length > 0 && (
               <Card className="m-4 space-y-4 border-destructive/30 bg-destructive/5 p-4 shadow-xl">
@@ -135,7 +142,11 @@ export default function OutfitsPage() {
             )}
             <div className="flex flex-col sm:flex-row justify-between w-full gap-2 p-4">
               <div className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12">
-                <Link href={`/stores/${params.id}/create-outfit/`} className="flex flex-row gap-2">
+                <Link
+                  href={`/stores/${params.id}/create-outfit/`}
+                  className="flex flex-row gap-2"
+                  data-testid="create-outfit-button"
+                >
                   <IoMdAddCircleOutline className="mt-0.5 text-white text-center text-2xl" />
                   <h1 className="font-bold text-white text-center text-xl">Crear outfit</h1>
                 </Link>
@@ -166,7 +177,7 @@ export default function OutfitsPage() {
                     setIsOrdering(true);
                   }}
                 >
-                  <div className="flex flex-row gap-2">
+                  <div className="flex flex-row gap-2" data-testid="outfit-sort-button">
                     <BiTransfer className="mt-0.5 text-white text-center text-2xl" />
                     <h1 className="font-bold text-white text-center text-xl">Ordenar</h1>
                   </div>
@@ -195,6 +206,7 @@ export default function OutfitsPage() {
                         await deleteOutfit.fetch({ url: `outfits/${outfit.id}` });
                         outfits.refetch();
                       }}
+                      onSuccess={() => setSuccess(true)}
                     />
                   )
                 )}
@@ -203,6 +215,7 @@ export default function OutfitsPage() {
           </div>
         </div>
       </DragDropProvider>
+      {success && <GenericSuccessModal setOpenModal={setSuccess} />}
     </StoreOwnerGuard>
   );
 }

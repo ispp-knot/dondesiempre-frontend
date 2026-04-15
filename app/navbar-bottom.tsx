@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FaRegUser, FaUser, FaRegHeart, FaHeart, FaSearch } from 'react-icons/fa';
@@ -9,6 +9,7 @@ import { IoSearch } from 'react-icons/io5';
 import { HiOutlineLocationMarker, HiLocationMarker } from 'react-icons/hi';
 import { BsBoxSeam, BsBoxSeamFill } from 'react-icons/bs';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { StripeUnverifiedBadge } from '@/components/dondeSiempre/StripeUnverifiedBadge';
 
 function BottomNavbarIcon({
   href,
@@ -30,11 +31,24 @@ function BottomNavbarIcon({
 
 export default function NavbarBottom() {
   const { getCurrentUser } = useAuth();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
   const user = getCurrentUser();
   const profileHref = user ? '/profile' : '/login';
 
   const isClient = Boolean(user?.client?.id);
   const isLoggedIn = Boolean(user);
+
+  if (!mounted) {
+    return (
+      <div className="flex fixed flex-row items-center justify-around sm:hidden bottom-0 left-0 w-full h-20 bg-primary text-white text-2xl z-50"></div>
+    );
+  }
 
   return (
     <div className="flex fixed flex-row items-center justify-around sm:hidden bottom-0 left-0 w-full h-20 bg-primary text-white text-2xl z-50">
@@ -58,12 +72,15 @@ export default function NavbarBottom() {
         <></>
       )}
 
-      <BottomNavbarIcon
-        href={profileHref}
-        activeMatches={['/profile', '/login', '/register']}
-        icon={user ? <FaRegUser /> : <RiLoginCircleLine />}
-        activeIcon={user ? <FaUser /> : <RiLoginCircleFill />}
-      />
+      <div className="relative">
+        <BottomNavbarIcon
+          href={profileHref}
+          activeMatches={['/profile', '/login', '/register']}
+          icon={user ? <FaRegUser /> : <RiLoginCircleLine />}
+          activeIcon={user ? <FaUser /> : <RiLoginCircleFill />}
+        />
+        {user?.store?.id && <StripeUnverifiedBadge storeId={user.store.id} />}
+      </div>
     </div>
   );
 }

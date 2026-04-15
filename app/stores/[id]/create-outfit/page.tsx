@@ -212,6 +212,13 @@ export default function OutfitCreationPage() {
         },
       });
 
+      if (createOutfit.isError) {
+        setApiError('Hubo un error al crear el outfit. Por favor, intenta de nuevo.');
+        submitLockRef.current = false;
+        setIsCreateLocked(false);
+        return;
+      }
+
       if (discountPercentage > 0 && getOutfitDiscountPercentage(createdOutfit) === 0) {
         await updateOutfit.fetch({
           url: `outfits/${createdOutfit.id}`,
@@ -236,10 +243,14 @@ export default function OutfitCreationPage() {
         setApiError(
           'Ya hay una creación de outfit en curso. Espera un momento antes de reintentar.'
         );
-      } else if (error instanceof Error && error.message) {
-        setApiError(error.message);
+      } else if (error instanceof FetchError && error.response?.status === 400) {
+        setApiError(
+          'La imagen o los datos proporcionados no son válidos. Por favor, intenta de nuevo.'
+        );
       } else {
-        setApiError('No se pudo crear el outfit. Revisa los campos e inténtalo de nuevo.');
+        setApiError(
+          'Hubo un error al crear el outfit. Por favor, revisa los campos e intenta de nuevo.'
+        );
       }
     } finally {
       submitLockRef.current = false;
@@ -266,7 +277,7 @@ export default function OutfitCreationPage() {
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
                   <div className="grid gap-6 md:grid-cols-2">
-                    <div className="space-y-2 md:col-span-2">
+                    <div className="space-y-2 md:col-span-2" data-testid="outfit-name-input">
                       <Label htmlFor="form-name" className="text-base font-bold text-secondary">
                         Nombre
                       </Label>
@@ -285,7 +296,7 @@ export default function OutfitCreationPage() {
                       </div>
                     </div>
 
-                    <div className="space-y-2 md:col-span-2">
+                    <div className="space-y-2 md:col-span-2" data-testid="outfit-description-input">
                       <Label
                         htmlFor="form-description"
                         className="text-base font-bold text-secondary"
@@ -308,7 +319,7 @@ export default function OutfitCreationPage() {
                       </div>
                     </div>
 
-                    <div className="space-y-2 md:col-span-2">
+                    <div className="space-y-2 md:col-span-2" data-testid="outfit-image-input">
                       <Label htmlFor="form-image" className="text-base font-bold text-secondary">
                         Imagen
                       </Label>
@@ -317,7 +328,7 @@ export default function OutfitCreationPage() {
                       </div>
                     </div>
 
-                    <div className="space-y-2 md:col-span-2">
+                    <div className="space-y-2 md:col-span-2" data-testid="outfit-discount-input">
                       <div className="max-w-xs space-y-2">
                         <Label
                           htmlFor="form-discount-percentage"
@@ -343,7 +354,7 @@ export default function OutfitCreationPage() {
                       </div>
                     </div>
 
-                    <div className="space-y-2 md:col-span-2">
+                    <div className="space-y-2 md:col-span-2" data-testid="outfit-tags-input">
                       <Label htmlFor="form-tags" className="text-base font-bold text-secondary">
                         Etiquetas
                       </Label>
@@ -405,7 +416,7 @@ export default function OutfitCreationPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1" data-testid="outfit-products-input">
                       <h2 className="text-xl font-bold text-primary">Productos del outfit</h2>
                       <p
                         className={
@@ -465,7 +476,7 @@ export default function OutfitCreationPage() {
 
                   {apiError && <p className="text-sm text-destructive">{apiError}</p>}
 
-                  <div className="flex justify-center">
+                  <div className="flex justify-center" data-testid="outfit-confirm-button">
                     <Button
                       type="submit"
                       className="mt-2 h-12 w-full bg-secondary text-base font-bold text-white hover:bg-dark-secondary md:w-1/3"
@@ -486,7 +497,10 @@ export default function OutfitCreationPage() {
 
               <Card className="p-4 shadow-xl sm:p-6 md:p-8">
                 <h1 className="mb-6 text-center text-3xl font-bold text-primary">Productos</h1>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                <div
+                  className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
+                  data-testid="outfit-products-list"
+                >
                   {products.data
                     .filter(
                       (product) => !outfitProducts.some((selected) => selected.id === product.id)

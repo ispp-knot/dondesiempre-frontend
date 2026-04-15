@@ -38,6 +38,7 @@ function CommissionBadge({ value, color }: { value: string; color: string }) {
     >
       <span
         className="font-extrabold leading-none"
+        data-testid="plan-commission"
         style={{ fontSize: 26, color, letterSpacing: '-0.02em' }}
       >
         {value}
@@ -71,7 +72,7 @@ function FeatureRow({ feature }: { feature: Feature }) {
   if (!feature.tooltip) return row;
 
   return (
-    <TooltipProvider delayDuration={200}>
+    <TooltipProvider delayDuration={200} data-testid="feature-tooltip">
       <Tooltip>
         <TooltipTrigger asChild>
           <div>{row}</div>
@@ -129,7 +130,7 @@ export function PlanCard({ plan }: { plan: Plan }) {
               className="absolute top-4 right-4 rounded-full p-1 cursor-pointer transition-colors hover:bg-gray-100"
               onClick={() => setShowModal(false)}
             >
-              <X size={16} color="#aaa" />
+              <X size={16} color="#aaa" data-testid="plan-modal-close" />
             </button>
 
             {/* Icono */}
@@ -180,6 +181,7 @@ export function PlanCard({ plan }: { plan: Plan }) {
       {/* ── Card ── */}
       <div
         className="flex flex-col rounded-2xl overflow-hidden transition-all duration-200 hover:-translate-y-1"
+        data-testid={`plan-card-${plan.id}`}
         style={{
           background: '#fff',
           border: plan.isPremium ? '1.5px solid #e07050' : '1.5px solid #4db8b0',
@@ -195,13 +197,18 @@ export function PlanCard({ plan }: { plan: Plan }) {
         <div className="flex-1 px-6 pt-6">
           {/* Name + badge */}
           <div className="flex items-center gap-2 mb-0.5">
-            <span className="text-xs font-bold tracking-widest uppercase" style={{ color: '#aaa' }}>
+            <span
+              className="text-xs font-bold tracking-widest uppercase"
+              style={{ color: '#aaa' }}
+              data-testid="plan-name"
+            >
               {plan.name}
             </span>
             {plan.badge && (
               <span
                 className="text-xs font-bold tracking-wide uppercase px-2.5 py-0.5 rounded-full"
                 style={{ background: '#e07050', color: '#fff' }}
+                data-testid="plan-badge"
               >
                 {plan.badge}
               </span>
@@ -212,11 +219,16 @@ export function PlanCard({ plan }: { plan: Plan }) {
           <div className="flex items-baseline gap-1.5 mt-3">
             <span
               className="font-extrabold leading-none"
+              data-testid="plan-price"
               style={{ fontSize: 40, color: '#1a1a1a', letterSpacing: '-0.04em' }}
             >
               {plan.price}
             </span>
-            <span className="text-xs font-medium" style={{ color: '#bbb' }}>
+            <span
+              className="text-xs font-medium"
+              style={{ color: '#bbb' }}
+              data-testid="plan-price-note"
+            >
               {plan.priceNote}
             </span>
           </div>
@@ -228,7 +240,7 @@ export function PlanCard({ plan }: { plan: Plan }) {
           <div className="my-5 h-px" style={{ background: '#f0f0f0' }} />
 
           {/* Features */}
-          <ul className="flex flex-col gap-2.5">
+          <ul className="flex flex-col gap-2.5" data-testid="plan-features">
             {plan.features.map((feature, i) => (
               <FeatureRow key={i} feature={feature} />
             ))}
@@ -241,6 +253,7 @@ export function PlanCard({ plan }: { plan: Plan }) {
             <button
               className="w-full h-11 flex items-center justify-center gap-2 rounded-xl text-sm font-bold cursor-pointer transition-all duration-150"
               style={{ background: '#e07050', color: '#fff', border: 'none' }}
+              data-testid="plan-button-premium"
               onClick={() => setShowModal(true)}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLButtonElement).style.background = '#d05f3f';
@@ -256,6 +269,7 @@ export function PlanCard({ plan }: { plan: Plan }) {
             <div
               className="w-full h-11 flex items-center justify-center gap-2 rounded-xl text-sm font-semibold"
               style={{ color: '#4db8b0', border: '1.5px solid #4db8b0', background: '#4db8b010' }}
+              data-testid="plan-button-base-logged-in"
             >
               <CheckCircle2 size={15} />
               {plan.cta}
@@ -263,6 +277,7 @@ export function PlanCard({ plan }: { plan: Plan }) {
           ) : (
             <Link
               href="/register"
+              data-testid="plan-button-base"
               className="w-full h-11 flex items-center justify-center gap-2 rounded-xl text-sm font-bold transition-all duration-150"
               style={{ background: '#4db8b0', color: '#fff', textDecoration: 'none' }}
               onMouseEnter={(e) => {
