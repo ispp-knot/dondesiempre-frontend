@@ -79,13 +79,13 @@ export default function OrdersPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => router.push('/login')}
-                className="inline-flex justify-center items-center gap-2 bg-secondary text-white px-8 py-4 rounded-sm font-bold text-lg hover:opacity-90 transition shadow-lg w-full sm:w-auto"
+                className="inline-flex justify-center items-center gap-2 bg-secondary text-white px-8 py-4 rounded-sm font-bold text-lg hover:opacity-90 hover:scale-105 hover:shadow-xl transition-all shadow-lg w-full sm:w-auto cursor-pointer"
               >
                 Iniciar sesión
               </button>
               <button
                 onClick={() => router.push('/register')}
-                className="inline-flex justify-center items-center gap-2 bg-primary text-white px-8 py-4 rounded-sm font-bold text-lg hover:opacity-90 transition shadow-lg w-full sm:w-auto"
+                className="inline-flex justify-center items-center gap-2 bg-primary text-white px-8 py-4 rounded-sm font-bold text-lg hover:opacity-90 hover:scale-105 hover:shadow-xl transition-all shadow-lg w-full sm:w-auto cursor-pointer"
               >
                 Registrarme
               </button>
@@ -121,11 +121,11 @@ export default function OrdersPage() {
   };
 
   const tabClass = (status: OrderStatus) => `
-    px-4 py-2 text-xs md:text-sm font-bold rounded-full transition-all border
+    px-4 py-2 text-xs md:text-sm font-bold rounded-full transition-all border cursor-pointer
     ${
       filter === status
-        ? 'bg-primary text-white border-primary shadow-md'
-        : 'bg-white text-primary border-primary/20 hover:bg-primary/5'
+        ? 'bg-primary text-white border-primary shadow-md scale-105'
+        : 'bg-white text-primary border-primary/20 hover:bg-primary/10 hover:shadow-md hover:scale-105'
     }
   `;
 
@@ -163,7 +163,7 @@ export default function OrdersPage() {
           {!isStore && (
             <Link
               href="/stores"
-              className="inline-flex items-center gap-2 bg-secondary text-white px-8 py-4 rounded-sm font-bold shadow-lg"
+              className="inline-flex items-center gap-2 bg-secondary text-white px-8 py-4 rounded-sm font-bold shadow-lg hover:shadow-xl hover:scale-105 hover:opacity-90 transition-all cursor-pointer"
             >
               <FaStore /> Explorar tiendas
             </Link>
@@ -189,7 +189,7 @@ export default function OrdersPage() {
         {isStore && (
           <button
             onClick={() => router.push('/orders/deliver')}
-            className="ml-0 md:ml-4 mt-4 md:mt-0 flex items-center gap-2 bg-secondary hover:bg-secondary/90 text-white px-5 py-2 rounded-full font-bold text-sm transition-all shadow-md"
+            className="ml-0 md:ml-4 mt-4 md:mt-0 flex items-center gap-2 bg-secondary hover:bg-secondary/90 text-white px-5 py-2 rounded-full font-bold text-sm transition-all hover:scale-105 hover:shadow-lg shadow-md cursor-pointer"
           >
             Entregar pedido
           </button>
@@ -288,18 +288,14 @@ export default function OrdersPage() {
                           {verified.data?.verified ? (
                             <button
                               onClick={() => handleUpdateStatus(order.id, 'confirm')}
-                              className="flex-1 md:flex-none bg-green-800 hover:bg-green-900 text-white px-6 py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition"
+                              className="flex-1 md:flex-none bg-green-800 hover:bg-green-900 text-white px-6 py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all hover:scale-105 hover:shadow-lg shadow-md cursor-pointer"
                             >
                               <FaCheckCircle /> Confirmar
                             </button>
                           ) : (
                             <Link
                               href="/profile"
-                              className="flex-1 md:flex-none flex items-center justify-center gap-2
-                   px-6 py-3 rounded-lg font-bold text-sm transition
-                   bg-amber-50 border border-amber-400 text-amber-700
-                   hover:bg-amber-100 dark:bg-amber-950/60 dark:border-amber-600
-                   dark:text-amber-400 dark:hover:bg-amber-900/60"
+                              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-bold text-sm transition-all hover:scale-105 hover:shadow-lg shadow-md bg-amber-50 border border-amber-400 text-amber-700 hover:bg-amber-100 dark:bg-amber-950/60 dark:border-amber-600 dark:text-amber-400 dark:hover:bg-amber-900/60 cursor-pointer"
                               title="Tu tienda no está verificada. Completa la verificación para confirmar pedidos."
                             >
                               <AlertTriangle className="w-4 h-4 shrink-0" />
@@ -308,7 +304,7 @@ export default function OrdersPage() {
                           )}
                           <button
                             onClick={() => handleUpdateStatus(order.id, 'reject')}
-                            className="flex-1 md:flex-none bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition"
+                            className="flex-1 md:flex-none bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all hover:scale-105 hover:shadow-lg shadow-md cursor-pointer"
                           >
                             <FaTimesCircle /> Rechazar
                           </button>
@@ -324,7 +320,9 @@ export default function OrdersPage() {
                             </span>
                           </div>
                         ) : (
-                          <PayButton orderId={order.id} />
+                          <div className="transition-all hover:scale-105 hover:shadow-lg rounded-lg">
+                            <PayButton orderId={order.id} />
+                          </div>
                         ))}
                     </div>
                   </div>
@@ -341,7 +339,7 @@ export default function OrdersPage() {
             </p>
             <button
               onClick={() => setFilter('ALL')}
-              className="bg-secondary text-white px-6 py-2 rounded-sm font-bold shadow-lg"
+              className="bg-secondary text-white px-6 py-2 rounded-sm font-bold shadow-lg hover:shadow-xl hover:scale-105 hover:opacity-90 transition-all cursor-pointer"
             >
               Ver todos los pedidos
             </button>
