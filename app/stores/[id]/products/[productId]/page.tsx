@@ -13,8 +13,8 @@ import {
 import { OrderDTO } from '@/lib/types/orders/orderDto';
 import { convertPrice, formatDisplayPrice, discountPrice } from '@/lib/utils';
 import Image from 'next/image';
-import { useParams, useRouter } from 'next/navigation';
-import { useState, useMemo } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useState, useMemo, useEffect } from 'react';
 import { FetchError } from 'ofetch';
 import ProductVariantSelector, { ProductVariantDTO } from './ProductVariantSelector';
 import AuthModal from '@/components/modals/AuthModal';
@@ -29,11 +29,22 @@ import { ErrorModal } from '@/components/modals/ErrorModal';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
 import { GenericConfirmModal } from '@/components/modals/GenericConfirmModal';
 import GenericSuccessModal from '@/components/modals/GenericSuccessModal';
+import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 
-function ProductPrice({ product }: { product: ProductDTO }) {
+function ProductPrice({
+  product,
+  promotion,
+}: {
+  product: ProductDTO;
+  promotion: PromotionDTO | undefined;
+}) {
   const fmt = (cents: number) => formatDisplayPrice(convertPrice(cents));
-  const hasDiscount = (product.discountPercentage ?? 0) > 0;
-  const discountedPrice = discountPrice(product.priceInCents, product.discountPercentage);
+  const hasDiscount =
+    (promotion ? promotion.discountPercentage : (product.discountPercentage ?? 0)) > 0;
+  const discountedPrice = discountPrice(
+    product.priceInCents,
+    promotion ? promotion.discountPercentage : product.discountPercentage
+  );
 
   return (
     <div className="text-primary text-2xl" data-testid="product-price">
@@ -54,6 +65,9 @@ function ProductPrice({ product }: { product: ProductDTO }) {
 export default function ProductDetailsPage() {
   const params = useParams<{ id: string; productId: string }>();
 
+  const searchParams = useSearchParams();
+  const promotionId = searchParams.get('promotionId');
+
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
@@ -71,10 +85,22 @@ export default function ProductDetailsPage() {
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [promotion, setPromotion] = useState<PromotionDTO | undefined>(undefined);
 
   const router = useRouter();
 
   const product = usePassiveFetcher<ProductDTO>({ url: `products/${params.productId}` });
+
+  const promotionFetcher = usePassiveFetcher<PromotionDTO>({
+    url: `promotions/${promotionId}`,
+    enabled: !!promotionId,
+  });
+
+  useEffect(() => {
+    if (promotionFetcher.data) {
+      setPromotion(promotionFetcher.data);
+    }
+  }, [promotionFetcher.data]);
 
   const variantsBackend = usePassiveFetcher<ProductVariantBackendDTO[]>({
     url: `product-variants/product/${params.productId}/available`,
@@ -387,7 +413,7 @@ export default function ProductDetailsPage() {
               </div>
             )}
 
-            <ProductPrice product={product.data} />
+            <ProductPrice product={product.data} promotion={promotion} />
 
             {hasVariants && !user && (
               <p className="text-sm text-muted-foreground">
@@ -473,7 +499,10 @@ export default function ProductDetailsPage() {
 
       {isConfirmModalOpen && (
         <ConfirmOrderModal
-          price={discountPrice(product.data.priceInCents, product.data.discountPercentage)}
+          price={discountPrice(
+            product.data.priceInCents,
+            promotion ? promotion.discountPercentage : product.data.discountPercentage
+          )}
           isCreatingOrder={isCreatingOrder}
           onConfirm={confirmAndCreateOrder}
           onClose={() => setIsConfirmModalOpen(false)}
