@@ -169,7 +169,10 @@ export default function ProductDetailsPage() {
     },
   });
 
-  const createOrder = useActiveFetcher<OrderDTO>({ url: 'orders', method: 'POST' });
+  const createOrder = useActiveFetcher<OrderDTO>({
+    url: promotion ? `orders?promotionId=${promotion.id}` : 'orders',
+    method: 'POST',
+  });
 
   const { getCurrentUser } = useAuth();
   const user = getCurrentUser();
