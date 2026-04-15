@@ -3,22 +3,7 @@
 import * as React from 'react';
 import Image from 'next/image';
 import Autoplay from 'embla-carousel-autoplay';
-import { Edit2, ImagePlus, Trash2, X, GripVertical, Loader2 } from 'lucide-react';
-import {
-  DndContext,
-  closestCenter,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { Edit2, ImagePlus, Trash2, X, Loader2 } from 'lucide-react';
 
 import AboutUs from './about-us';
 import { Button } from '@/components/ui/button';
@@ -41,49 +26,48 @@ type Props = {
   onImagesUpdated: (images: StoreImageDTO[]) => void;
 };
 
-function SortableImage({
+function ImageListItem({
   img,
-  index,
+  totalImages,
   onRemove,
+  onChangeOrder,
   isSaving,
 }: {
   img: StoreImageDTO;
-  index: number;
+  totalImages: number;
   onRemove: (id: string) => void;
+  onChangeOrder: (id: string, newOrder: number) => void;
   isSaving: boolean;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: img.id,
-  });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.6 : 1,
-  };
-
   return (
     <div
-      ref={setNodeRef}
-      style={style}
-      className={`flex items-center gap-3 border rounded-lg p-2 bg-white ${isSaving ? 'opacity-50 pointer-events-none' : ''}`}
+      className={`flex items-center gap-4 border rounded-lg p-3 bg-white ${isSaving ? 'opacity-50 pointer-events-none' : ''}`}
     >
-      <div {...attributes} {...listeners} className="cursor-grab text-muted-foreground">
-        <GripVertical size={18} />
-      </div>
-
-      <div className="relative w-20 h-20 overflow-hidden rounded-md">
+      <div className="relative w-20 h-20 overflow-hidden rounded-md shrink-0">
         <Image src={img.image as string} alt="" fill className="object-cover" unoptimized />
       </div>
 
-      <div className="flex flex-col items-center justify-center min-w-[40px]">
-        <span className="text-xs text-muted-foreground">#{index + 1}</span>
+      <div className="flex-1 flex items-center gap-2">
+        <span className="text-sm text-muted-foreground font-medium">Posición:</span>
+        <select
+          value={img.displayOrder}
+          onChange={(e) => onChangeOrder(img.id, parseInt(e.target.value))}
+          disabled={isSaving}
+          className="border border-input bg-background rounded-md p-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+        >
+          {Array.from({ length: totalImages }).map((_, i) => (
+            <option key={i} value={i}>
+              {i + 1}
+            </option>
+          ))}
+        </select>
       </div>
 
       <button
-        className="ml-auto text-red-500 hover:text-red-600 transition"
+        className="text-red-500 hover:text-red-600 transition p-2 hover:bg-red-50 rounded-md shrink-0"
         onClick={() => onRemove(img.id)}
         disabled={isSaving}
+        title="Eliminar imagen"
       >
         <Trash2 size={18} />
       </button>
@@ -103,8 +87,6 @@ export default function StoreAboutSection({
   const [isSaving, setIsSaving] = React.useState(false);
   const [uploadError, setUploadError] = React.useState<string | null>(null);
   const [uploadKey, setUploadKey] = React.useState(0);
-
-  const sensors = useSensors(useSensor(PointerSensor));
 
   const addImageFetcher = useActiveFetcher<StoreImageDTO>({
     url: `stores/${storeId}/images`,
@@ -188,33 +170,39 @@ export default function StoreAboutSection({
     }
   };
 
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
+  const changeImageOrder = async (id: string, newOrder: number) => {
     setUploadError(null);
-    const oldIndex = images.findIndex((i) => i.id === active.id);
-    const newIndex = images.findIndex((i) => i.id === over.id);
 
-    const reorderedImages = arrayMove(images, oldIndex, newIndex);
-    const normalized = syncLocalImages(reorderedImages);
+    const oldIndex = images.findIndex((img) => img.id === id);
+    const imageToMove = images[oldIndex];
+
+    if (!imageToMove || imageToMove.displayOrder === newOrder) return;
+
+    const swapTargetIndex = images.findIndex((img) => img.displayOrder === newOrder);
+    const newImages = [...images];
+
+    if (swapTargetIndex !== -1) {
+      newImages[swapTargetIndex] = {
+        ...newImages[swapTargetIndex],
+        displayOrder: imageToMove.displayOrder,
+      };
+    }
+    newImages[oldIndex] = { ...imageToMove, displayOrder: newOrder };
+
+    syncLocalImages(newImages.sort((a, b) => a.displayOrder - b.displayOrder));
 
     try {
       setIsSaving(true);
 
-      await Promise.all(
-        normalized.map((img) =>
-          updateImageFetcher.fetch({
-            url: `stores/${storeId}/images/${img.id}`,
-            body: {
-              image: img.image,
-              displayOrder: img.displayOrder,
-            },
-          })
-        )
-      );
+      await updateImageFetcher.fetch({
+        url: `stores/${storeId}/images/${id}`,
+        body: {
+          image: imageToMove.image,
+          displayOrder: newOrder,
+        },
+      });
     } catch (_error) {
-      setUploadError('Error al guardar el nuevo orden de las imágenes.');
+      setUploadError('Error al actualizar la posición.');
       onImagesUpdated(images);
     } finally {
       setIsSaving(false);
@@ -292,32 +280,22 @@ export default function StoreAboutSection({
             </div>
 
             <p className="text-sm text-muted-foreground mb-4">
-              Puedes tener un máximo de 5 imágenes
+              Puedes tener un máximo de 5 imágenes.
             </p>
 
             <div className="flex-1 overflow-y-auto space-y-3 pr-2">
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={images.map((i) => i.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="space-y-3">
-                    {images.map((img, index) => (
-                      <SortableImage
-                        key={img.id}
-                        img={img}
-                        index={index}
-                        onRemove={removeImage}
-                        isSaving={isSaving}
-                      />
-                    ))}
-                  </div>
-                </SortableContext>
-              </DndContext>
+              <div className="space-y-3">
+                {images.map((img) => (
+                  <ImageListItem
+                    key={img.id}
+                    img={img}
+                    totalImages={images.length}
+                    onRemove={removeImage}
+                    onChangeOrder={changeImageOrder}
+                    isSaving={isSaving}
+                  />
+                ))}
+              </div>
             </div>
 
             {images.length < 5 && (
