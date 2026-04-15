@@ -30,6 +30,7 @@ import { BackButton } from '@/components/dondeSiempre/BackButton';
 import { GenericConfirmModal } from '@/components/modals/GenericConfirmModal';
 import GenericSuccessModal from '@/components/modals/GenericSuccessModal';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
+import { BadgePercent } from 'lucide-react';
 
 function ProductPrice({
   product,
@@ -414,6 +415,20 @@ export default function ProductDetailsPage() {
             )}
 
             <ProductPrice product={product.data} promotion={promotion} />
+
+            {promotion && (
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-2 rounded-full shadow-sm">
+                <BadgePercent size={16} className="shrink-0" />
+
+                <span className="text-sm font-semibold flex items-center gap-1">
+                  <span className="font-bold">En promoción:</span>
+
+                  <span className="truncate max-w-[180px]">{promotion.name}</span>
+
+                  <span className="shrink-0">-{promotion.discountPercentage}%</span>
+                </span>
+              </div>
+            )}
 
             {hasVariants && !user && (
               <p className="text-sm text-muted-foreground">
