@@ -80,7 +80,8 @@ export default function DeliverOrderPage() {
 
     try {
       await pickFetcher.fetch({ url: `orders/${order.id}/pick` });
-      setOrder({ ...order, orderStatus: 'PICKED' });
+      await router.push('/orders');
+      router.refresh();
     } catch (_err: unknown) {
       setSearchError('Hubo un error al marcar el pedido como recogido.');
     }
