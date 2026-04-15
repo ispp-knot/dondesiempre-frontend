@@ -76,7 +76,7 @@ export default function DeliverOrderPage() {
   };
 
   const handlePickOrder = async () => {
-    if (!order) return;
+    if (!order || order.orderStatus !== 'CONFIRMED') return;
 
     try {
       await pickFetcher.fetch({ url: `orders/${order.id}/pick` });
