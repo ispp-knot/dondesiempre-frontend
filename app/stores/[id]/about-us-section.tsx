@@ -102,6 +102,7 @@ export default function StoreAboutSection({
   const [open, setOpen] = React.useState(false);
   const [isSaving, setIsSaving] = React.useState(false);
   const [uploadError, setUploadError] = React.useState<string | null>(null);
+  const [uploadKey, setUploadKey] = React.useState(0);
 
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -164,6 +165,7 @@ export default function StoreAboutSection({
       }
     } finally {
       setIsSaving(false);
+      setUploadKey((prev) => prev + 1);
     }
   };
 
@@ -320,11 +322,7 @@ export default function StoreAboutSection({
 
             {images.length < 5 && (
               <div className={`mt-4 ${isSaving ? 'opacity-50 pointer-events-none' : ''}`}>
-                <ImageUpload
-                  key={open ? 'upload-open' : 'upload-closed'}
-                  mode="gallery"
-                  onChange={addImage}
-                />
+                <ImageUpload key={`upload-${uploadKey}`} mode="gallery" onChange={addImage} />
               </div>
             )}
 
