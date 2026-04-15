@@ -137,9 +137,21 @@ export default function EditPromotionPage() {
       setTimeout(() => {
         router.push(`/stores/${storeId}/promotions/manage`);
       }, 2000);
-    } catch (err) {
-      console.error('Error updating promotion:', err);
-      setStatus({ type: 'error', message: 'Error al actualizar la promoción.' });
+    } catch (err: unknown) {
+      const fetchError = err as { status?: number; response?: { status?: number } };
+      const statusCode = fetchError.status || fetchError.response?.status;
+
+      if (statusCode === 413) {
+        setStatus({
+          type: 'error',
+          message: 'La imagen es demasiado grande. Por favor, intenta con una que pese menos.',
+        });
+      } else {
+        setStatus({
+          type: 'error',
+          message: 'Error al actualizar la promoción. Verifica los datos e intenta de nuevo.',
+        });
+      }
     } finally {
       setIsSaving(false);
     }
