@@ -124,6 +124,16 @@ export default function ManagePromotionsPage() {
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
+                  ) : promo.products &&
+                    promo.products.length >= 1 &&
+                    promo.products[0] &&
+                    promo.products[0].image ? (
+                    <Image
+                      src={promo.products[0].image}
+                      alt={promo.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-gray-300">
                       <ImageIcon className="w-12 h-12" />
