@@ -397,7 +397,7 @@ export default function StoreTabs({
                         </div>
                       </div>
                       <Link
-                        href={`/stores/${store.id}/products/${product.id}?orderId=${selectedPromo.id}`}
+                        href={`/stores/${store.id}/products/${product.id}?promotionId=${selectedPromo.id}`}
                       >
                         <Button className="m-2">Aplicar promoción</Button>
                       </Link>
