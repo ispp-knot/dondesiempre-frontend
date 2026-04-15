@@ -68,7 +68,6 @@ export default function StoreTabs({
     return `Válido: ${format(startDate, 'dd MMM', { locale: es })} - ${format(endDate, 'dd MMM', { locale: es })}`;
   };
 
-  // Funciones para navegar
   const nextPromo = () => {
     setCurrentPromoIndex((prev) => (prev + 1) % totalSlides);
   };
@@ -78,7 +77,6 @@ export default function StoreTabs({
   };
 
   const renderBannerContent = () => {
-    // Si el índice actual es igual a la longitud, mostramos la tarjeta de "Crear"
     if (currentPromoIndex == activePromotions.length && isOwner) {
       return (
         <div className="relative z-10 flex flex-col items-center w-full text-center p-4">
@@ -117,7 +115,6 @@ export default function StoreTabs({
       );
     }
     if (activePromotions.length > 0) {
-      // Contenido normal de la promoción
       const currentPromo = activePromotions[currentPromoIndex];
       return (
         <div className="relative z-10 flex flex-col items-center w-full text-center">
@@ -132,7 +129,7 @@ export default function StoreTabs({
               onClick={() => {
                 window.location.href = `/stores/${store.id}/promotions/${currentPromo.id}/`;
               }}
-              className="absolute top-0 right-0 bg-white/80 hover:bg-white text-secondary p-2 rounded-full shadow-md transition-all z-30 group"
+              className="absolute top-0 right-0 bg-white/80 hover:bg-white text-secondary p-2 rounded-full shadow-md transition-all hover:scale-105 hover:shadow-lg cursor-pointer z-30 group"
               title="Editar promoción"
             >
               <svg
@@ -182,7 +179,6 @@ export default function StoreTabs({
     <>
       {totalSlides > 0 && (
         <div className="relative mx-4 mt-5 flex flex-col items-center justify-center border-2 border-secondary/30 rounded-xl p-6 overflow-hidden w-11/12 sm:w-1/2 sm:mx-auto sm:max-w-142.5 min-h-[300px] transition-all bg-gray-50">
-          {/* Fondo Dinámico (Solo si hay promo, si no, un fondo neutro para 'Crear') */}
           <div className="absolute inset-0 z-0 w-full h-full">
             {currentPromoIndex != activePromotions.length ? (
               <>
@@ -207,7 +203,6 @@ export default function StoreTabs({
 
           {renderBannerContent()}
 
-          {/* Flechas de Navegación (Siempre que el total sea > 1) */}
           {totalSlides > 1 && (
             <>
               <button
@@ -247,7 +242,6 @@ export default function StoreTabs({
                 </svg>
               </button>
 
-              {/* Indicadores de posición */}
               <div className="absolute bottom-2 flex gap-1">
                 {Array.from({ length: totalSlides }).map((_, i) => (
                   <div
@@ -346,7 +340,7 @@ export default function StoreTabs({
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
               <button
                 onClick={() => setSelectedPromo(null)}
-                className="absolute top-3 right-3 text-white bg-black/20 hover:bg-black/40 p-1.5 rounded-full backdrop-blur-md transition"
+                className="absolute top-3 right-3 text-white bg-black/20 hover:bg-black/40 p-1.5 rounded-full backdrop-blur-md transition cursor-pointer hover:scale-105"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
