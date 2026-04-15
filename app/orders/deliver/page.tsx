@@ -106,7 +106,7 @@ export default function DeliverOrderPage() {
       <div className="w-full max-w-2xl px-4">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-primary font-bold hover:text-secondary transition-colors mb-6"
+          className="flex items-center gap-2 text-primary font-bold hover:text-secondary transition-all hover:scale-105 cursor-pointer mb-6"
         >
           <FaArrowLeft /> Volver a mis ventas
         </button>
@@ -130,7 +130,7 @@ export default function DeliverOrderPage() {
             <button
               type="submit"
               disabled={isSearching || isLoadingOrders || !searchCode.trim()}
-              className="bg-primary hover:bg-primary/90 disabled:opacity-50 text-white px-8 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition"
+              className="bg-primary hover:bg-primary/90 disabled:opacity-50 text-white px-8 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all hover:scale-105 hover:shadow-lg shadow-md cursor-pointer disabled:hover:scale-100 disabled:cursor-not-allowed"
             >
               <FaSearch /> {isSearching || isLoadingOrders ? 'Cargando...' : 'Buscar'}
             </button>
@@ -210,7 +210,7 @@ export default function DeliverOrderPage() {
                       <button
                         onClick={handlePickOrder}
                         disabled={pickFetcher.isPending}
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-800 hover:bg-green-900 disabled:opacity-50 text-white px-8 py-4 rounded-lg font-bold transition shadow-lg text-lg"
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-800 hover:bg-green-900 disabled:opacity-50 text-white px-8 py-4 rounded-lg font-bold transition-all hover:scale-105 hover:shadow-xl shadow-lg text-lg cursor-pointer disabled:hover:scale-100 disabled:cursor-not-allowed"
                       >
                         <FaBox />{' '}
                         {pickFetcher.isPending ? 'Marcando...' : 'Entregar y Marcar Recogido'}
