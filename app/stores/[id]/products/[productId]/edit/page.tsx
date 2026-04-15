@@ -19,6 +19,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import Image from 'next/image';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
+import { getUploadErrorMessage } from '@/lib/utils/errorHandler';
 
 interface ProductUpdateDTO {
   name?: string;
@@ -122,14 +123,12 @@ export default function ProductEditPage() {
 
       router.push(`/stores/${params.id}/products/${params.productId}`);
     } catch (err: unknown) {
-      const fetchError = err as { status?: number; response?: { status?: number } };
-      const statusCode = fetchError.status || fetchError.response?.status;
-
-      if (statusCode === 413) {
-        setApiError('La imagen es demasiado grande. Por favor, intenta con una que pese menos.');
-      } else {
-        setApiError('Hubo un error al actualizar el producto. Por favor, intenta de nuevo.');
-      }
+      setApiError(
+        getUploadErrorMessage(
+          err,
+          'Hubo un error al actualizar el producto. Por favor, intenta de nuevo.'
+        )
+      );
     }
   };
 
