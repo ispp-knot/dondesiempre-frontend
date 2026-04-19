@@ -38,6 +38,7 @@
     "embla-carousel-autoplay": "^8.5.2",
     "embla-carousel-react": "^8.5.2",
     "framer-motion": "^12.34.3",
+    "html5-qrcode": "^2.3.8",
     "lodash": "^4.17.23",
     "lucide-react": "^0.564.0",
     "maplibre-gl": "^5.18.0",
