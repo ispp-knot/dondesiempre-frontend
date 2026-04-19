@@ -15,12 +15,14 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaClock,
+  FaQrcode,
 } from 'react-icons/fa';
 import { MdOutlinePayments } from 'react-icons/md';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { QrScannerModal } from '@/components/modals/QrScanModal';
 
 const statusMap: Record<string, string> = {
   PENDING: 'Pendiente',
@@ -35,6 +37,7 @@ export default function DeliverOrderPage() {
   const [isSearching, setIsSearching] = useState(false);
   const [order, setOrder] = useState<OrderDTO | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
+  const [isScanning, setIsScanning] = useState(false);
 
   const { data: allOrders, isLoading: isLoadingOrders } = usePassiveFetcher<OrderDTO[]>({
     url: 'orders',
@@ -56,17 +59,14 @@ export default function DeliverOrderPage() {
     }
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchCode.trim() || !allOrders) return;
+  const searchOrder = (code: string) => {
+    if (!code.trim() || !allOrders) return;
 
     setIsSearching(true);
     setSearchError(null);
     setOrder(null);
 
-    const foundOrder = allOrders.find(
-      (o) => o.orderCode.toUpperCase() === searchCode.toUpperCase()
-    );
+    const foundOrder = allOrders.find((o) => o.orderCode.toUpperCase() === code.toUpperCase());
 
     if (foundOrder) {
       setOrder(foundOrder);
@@ -75,6 +75,11 @@ export default function DeliverOrderPage() {
     }
 
     setIsSearching(false);
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    searchOrder(searchCode);
   };
 
   const handlePickOrder = async () => {
@@ -137,6 +142,14 @@ export default function DeliverOrderPage() {
             >
               <FaSearch /> {isSearching || isLoadingOrders ? 'Cargando...' : 'Buscar'}
             </button>
+            <button
+              type="button"
+              onClick={() => setIsScanning(true)}
+              className="bg-secondary hover:bg-secondary/90 text-white px-4 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all hover:scale-105 hover:shadow-lg shadow-md"
+            >
+              <FaQrcode />
+              <span className="hidden sm:inline">Escanear</span>
+            </button>
           </form>
           {searchError && (
             <p className="mt-4 text-red-500 font-medium text-sm text-center bg-red-50 py-2 rounded-md">
@@ -145,6 +158,16 @@ export default function DeliverOrderPage() {
           )}
         </Card>
 
+        {isScanning && (
+          <QrScannerModal
+            onScan={(code) => {
+              setSearchCode(code);
+              setIsScanning(false);
+              searchOrder(code);
+            }}
+            onClose={() => setIsScanning(false)}
+          />
+        )}
         {isSearching && <LoadingText />}
 
         {order && !isSearching && (
