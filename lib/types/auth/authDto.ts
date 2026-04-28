@@ -17,6 +17,7 @@ export interface RegisterStoreDTO {
   aboutUs: string | null;
   primaryColor: string;
   secondaryColor: string;
+  termsAccepted: boolean;
 }
 
 export interface RegisterClientDTO {
@@ -24,6 +25,7 @@ export interface RegisterClientDTO {
   password: string;
   name: string;
   surname: string;
+  termsAccepted: boolean;
 }
 
 /**

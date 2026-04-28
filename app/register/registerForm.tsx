@@ -13,6 +13,7 @@ import { LocationPickerMap } from '@/components/ui/locationPickerMap';
 import { useActiveFetcher } from '@/lib/api/fetcher';
 import { FetchError } from 'ofetch';
 import { Eye, EyeOff } from 'lucide-react';
+import TermsOfServiceModal from '@/components/dondeSiempre/TermsOfServiceModal';
 
 // ── Schemas ────────────────────────────────────────────────────────────────────
 
@@ -35,6 +36,9 @@ const step1Schema = z
 const clientStep2Schema = z.object({
   name: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
   surname: z.string().min(1, 'Requerido').max(255, 'Máximo 255 caracteres'),
+  termsAccepted: z
+    .boolean()
+    .refine((v) => v === true, { message: 'Debes aceptar los términos de servicio' }),
 });
 
 const storeStep2Schema = z.object({
@@ -49,6 +53,9 @@ const storeStep2Schema = z.object({
     .transform((value) => (value === '' ? null : value)),
   primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Color inválido (ej: #FF0000)'),
   secondaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Color inválido (ej: #FF0000)'),
+  termsAccepted: z
+    .boolean()
+    .refine((v) => v === true, { message: 'Debes aceptar los términos de servicio' }),
 });
 
 type Step1Values = z.infer<typeof step1Schema>;
@@ -304,6 +311,7 @@ function ClientStep2Form({
     formState: { errors, isSubmitting },
   } = useForm<ClientStep2Values>({
     resolver: zodResolver(clientStep2Schema),
+    defaultValues: { termsAccepted: false },
   });
 
   async function onSubmit(data: ClientStep2Values) {
@@ -315,6 +323,7 @@ function ClientStep2Form({
           password: step1Data.password,
           name: data.name,
           surname: data.surname,
+          termsAccepted: data.termsAccepted,
         },
       });
       onSuccess();
@@ -340,6 +349,33 @@ function ClientStep2Form({
           <Input id="surname" aria-invalid={!!errors.surname} {...register('surname')} />
           <FieldError message={errors.surname?.message} />
         </div>
+      </div>
+      <div className="space-y-1">
+        <div className="flex items-start gap-2">
+          <input
+            type="checkbox"
+            id="termsAccepted-client"
+            className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-primary"
+            {...register('termsAccepted')}
+          />
+          <label
+            htmlFor="termsAccepted-client"
+            className="text-sm text-muted-foreground leading-snug cursor-pointer"
+          >
+            He leído y acepto los{' '}
+            <TermsOfServiceModal
+              trigger={
+                <button
+                  type="button"
+                  className="text-primary underline underline-offset-2 hover:opacity-80"
+                >
+                  términos de servicio y política de privacidad
+                </button>
+              }
+            />
+          </label>
+        </div>
+        <FieldError message={errors.termsAccepted?.message} />
       </div>
       {apiError && <p className="text-xs text-destructive">{apiError}</p>}
 
@@ -380,6 +416,7 @@ function StoreStep2Form({
     defaultValues: {
       primaryColor: '#c65a3a',
       secondaryColor: '#19756a',
+      termsAccepted: false,
     },
   });
 
@@ -499,6 +536,34 @@ function StoreStep2Form({
           </div>
           <FieldError message={errors.secondaryColor?.message} />
         </div>
+      </div>
+
+      <div className="space-y-1">
+        <div className="flex items-start gap-2">
+          <input
+            type="checkbox"
+            id="termsAccepted-store"
+            className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-primary"
+            {...register('termsAccepted')}
+          />
+          <label
+            htmlFor="termsAccepted-store"
+            className="text-sm text-muted-foreground leading-snug cursor-pointer"
+          >
+            He leído y acepto los{' '}
+            <TermsOfServiceModal
+              trigger={
+                <button
+                  type="button"
+                  className="text-primary underline underline-offset-2 hover:opacity-80"
+                >
+                  términos de servicio y política de privacidad
+                </button>
+              }
+            />
+          </label>
+        </div>
+        <FieldError message={errors.termsAccepted?.message} />
       </div>
 
       {apiError && <p className="text-xs text-destructive">{apiError}</p>}

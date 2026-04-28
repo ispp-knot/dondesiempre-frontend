@@ -13,6 +13,7 @@ import { UserResponseDTO } from '@/lib/types/auth/authDto';
 import { useEffect, useState } from 'react';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import UserEditPassword from '@/app/profile/user-edit-password-modal';
+import TermsOfServiceModal from '@/components/dondeSiempre/TermsOfServiceModal';
 import { StripeOnBoardingButton } from '@/components/dondeSiempre/StripeOnBoardingButton'; // ajusta path
 import { StripeDashboardLinkDTO } from '@/lib/types/payment/stripeDashboardLinkDto';
 import { AccountStatusDto } from '@/lib/types/payment/accountStatusDto';
@@ -139,12 +140,12 @@ export function ProfilePage({}) {
             )}
           </>
         )}
-
         {user?.store?.id && (
           <Button variant="outline" className="w-full" onClick={() => router.push('/pricing')}>
             Planes y precios
           </Button>
         )}
+        <TermsOfServiceModal />
         <Button
           variant="outline"
           className="w-full"
