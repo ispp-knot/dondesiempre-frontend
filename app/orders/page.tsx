@@ -28,6 +28,7 @@ import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import { PayButton } from '@/components/dondeSiempre/PayButton';
 import { AccountStatusDto } from '@/lib/types/payment/accountStatusDto';
 import { AlertTriangle } from 'lucide-react';
+import { OrderQrButton } from '@/components/dondeSiempre/OrderQrButton';
 
 type OrderStatus = 'ALL' | 'PENDING' | 'CONFIRMED' | 'REJECTED' | 'PICKED';
 
@@ -313,6 +314,12 @@ export default function OrdersPage() {
                           </button>
                         </>
                       )}
+                      {!isStore && order.orderStatus === 'CONFIRMED' && order.isPaid ? (
+                        <OrderQrButton orderCode={order.orderCode} />
+                      ) : (
+                        <></>
+                      )}
+
                       {!isStore &&
                         order.orderStatus === 'CONFIRMED' &&
                         (order.isPaid ? (

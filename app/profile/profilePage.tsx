@@ -140,9 +140,11 @@ export function ProfilePage({}) {
             )}
           </>
         )}
-        <Button variant="outline" className="w-full" onClick={() => router.push('/pricing')}>
-          Planes y precios
-        </Button>
+        {user?.store?.id && (
+          <Button variant="outline" className="w-full" onClick={() => router.push('/pricing')}>
+            Planes y precios
+          </Button>
+        )}
         <TermsOfServiceModal />
         <Button
           variant="outline"

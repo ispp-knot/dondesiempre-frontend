@@ -1,5 +1,6 @@
 import { CheckCircle2, Zap, Share2, HelpCircle, Sparkles } from 'lucide-react';
 import { Plan, PlanCard } from '../../components/dondeSiempre/PlanCard';
+import { NotClientGuard } from '@/components/guards/NotClientGuard';
 
 // ─── Colores de marca DondeSiempre ───────────────────────────────────────────
 
@@ -78,72 +79,75 @@ const plans: Plan[] = [
 
 export default function PricingPage() {
   return (
-    <main
-      className="relative min-h-screen flex flex-col items-center px-6 py-20"
-      style={{ background: '#f7f7f8', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}
-    >
-      {/* Google Font */}
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');`}</style>
-
-      {/* Dot pattern */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          backgroundImage: 'radial-gradient(#4db8b018 1px, transparent 1px)',
-          backgroundSize: '28px 28px',
-        }}
-      />
-
-      {/* Title */}
-      <h1
-        className="relative z-10 text-center font-extrabold tracking-tight mb-4 leading-tight"
-        data-testid="pricing-title"
-        style={{ fontSize: 'clamp(28px, 5vw, 44px)', color: '#1a1a1a' }}
+    <NotClientGuard>
+      <main
+        className="relative min-h-screen flex flex-col items-center px-6 py-20"
+        style={{ background: '#f7f7f8', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}
       >
-        Elige el plan que
-        <br />
-        <span style={{ color: '#c65a3a' }}>impulse tu tienda</span>
-      </h1>
+        {/* Google Font */}
+        <style>{`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');`}</style>
 
-      {/* New features banner */}
-      <div
-        className="relative z-10 mb-6 px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2"
-        style={{
-          background: 'rgba(77, 184, 176, 0.1)',
-          color: '#4db8b0',
-          border: '1px solid rgba(77, 184, 176, 0.2)',
-        }}
-      >
-        <Sparkles size={14} />
-        Nuevas funcionalidades tras lanzamiento: estadísticas de ventas y más
-      </div>
+        {/* Dot pattern */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundImage: 'radial-gradient(#4db8b018 1px, transparent 1px)',
+            backgroundSize: '28px 28px',
+          }}
+        />
 
-      {/* Subtitle */}
-      <p
-        className="relative z-10 text-center text-sm mb-14 max-w-sm leading-relaxed"
-        style={{ color: '#888' }}
-      >
-        Empieza gratis sin riesgos y escala cuando estés listo.Sin permanencias, sin letra pequeña.
-      </p>
+        {/* Title */}
+        <h1
+          className="relative z-10 text-center font-extrabold tracking-tight mb-4 leading-tight"
+          data-testid="pricing-title"
+          style={{ fontSize: 'clamp(28px, 5vw, 44px)', color: '#1a1a1a' }}
+        >
+          Elige el plan que
+          <br />
+          <span style={{ color: '#c65a3a' }}>impulse tu tienda</span>
+        </h1>
 
-      {/* Cards grid */}
-      <div
-        className="relative z-10 w-full grid gap-5 justify-center"
-        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(295px, 365px))', maxWidth: 790 }}
-      >
-        {plans.map((plan) => (
-          <PlanCard key={plan.id} plan={plan} />
-        ))}
-      </div>
+        {/* New features banner */}
+        <div
+          className="relative z-10 mb-6 px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2"
+          style={{
+            background: 'rgba(77, 184, 176, 0.1)',
+            color: '#4db8b0',
+            border: '1px solid rgba(77, 184, 176, 0.2)',
+          }}
+        >
+          <Sparkles size={14} />
+          Nuevas funcionalidades tras lanzamiento: estadísticas de ventas y más
+        </div>
 
-      {/* Footnote */}
-      <p
-        className="relative z-10 mt-12 text-xs text-center leading-loose"
-        style={{ color: '#bbb' }}
-      >
-        IVA incluido · Comisión aplicada sobre el importe neto de cada venta
-        <br />
-      </p>
-    </main>
+        {/* Subtitle */}
+        <p
+          className="relative z-10 text-center text-sm mb-14 max-w-sm leading-relaxed"
+          style={{ color: '#888' }}
+        >
+          Empieza gratis sin riesgos y escala cuando estés listo.Sin permanencias, sin letra
+          pequeña.
+        </p>
+
+        {/* Cards grid */}
+        <div
+          className="relative z-10 w-full grid gap-5 justify-center"
+          style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(295px, 365px))', maxWidth: 790 }}
+        >
+          {plans.map((plan) => (
+            <PlanCard key={plan.id} plan={plan} />
+          ))}
+        </div>
+
+        {/* Footnote */}
+        <p
+          className="relative z-10 mt-12 text-xs text-center leading-loose"
+          style={{ color: '#bbb' }}
+        >
+          IVA incluido · Comisión aplicada sobre el importe neto de cada venta
+          <br />
+        </p>
+      </main>
+    </NotClientGuard>
   );
 }
