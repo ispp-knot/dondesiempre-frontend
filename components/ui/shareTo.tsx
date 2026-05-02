@@ -210,18 +210,19 @@ export function ShareTo({ item, images, className }: Props) {
 
             <p>Enlace a la tienda:</p>
             {previewUrl && !loading && (
-              <button
-                onClick={handleCopy}
-                className="flex items-center gap-2 w-full px-3 py-2 rounded-lg bg-zinc-100 hover:bg-zinc-200 transition-colors text-xs text-zinc-600"
-              >
+              <div className="flex items-center gap-2 w-full px-3 py-2 rounded-lg bg-zinc-100 text-xs text-zinc-600">
                 <span className="truncate flex-1 text-left">{shareUrl}</span>
-                <span
-                  className="shrink-0 font-medium transition-colors"
-                  style={{ color: copied ? '#c65a3a' : undefined }}
+                <button
+                  onClick={handleCopy}
+                  className="shrink-0 font-medium px-2 py-1 rounded-md transition-colors"
+                  style={{
+                    border: '1px solid #c65a3a',
+                    color: copied ? '#c65a3a' : '#a1a1aa',
+                  }}
                 >
                   {copied ? '📋 Copiado' : '📋 Copiar'}
-                </span>
-              </button>
+                </button>
+              </div>
             )}
           </div>
 
