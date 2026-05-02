@@ -74,7 +74,21 @@ export function ShareTo({ item, images, className }: Props) {
 
   const backgroundImage = getBackgroundImage(item, images);
   const shareUrl = `${getWebUrl()}/stores/${item.storeId}`; // LO SUYO SERÁ CAMBIARLO POR LA URL DEL PRODUCTO, OUTFIT O PROMO
-
+  const [copied, setCopied] = useState(false);
+  const handleCopy = () => {
+    console.log('Click en copiar');
+    navigator.clipboard
+      .writeText(shareUrl)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(() => {
+        // Fallback por si falla el clipboard
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
+  };
   const drawCanvas = useCallback(async () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -197,11 +211,16 @@ export function ShareTo({ item, images, className }: Props) {
             <p>Enlace a la tienda:</p>
             {previewUrl && !loading && (
               <button
-                onClick={() => navigator.clipboard.writeText(shareUrl)}
+                onClick={handleCopy}
                 className="flex items-center gap-2 w-full px-3 py-2 rounded-lg bg-zinc-100 hover:bg-zinc-200 transition-colors text-xs text-zinc-600"
               >
                 <span className="truncate flex-1 text-left">{shareUrl}</span>
-                <span className="shrink-0 font-medium text-zinc-400">📋 Copiar</span>
+                <span
+                  className="shrink-0 font-medium transition-colors"
+                  style={{ color: copied ? '#c65a3a' : undefined }}
+                >
+                  {copied ? '📋 Copiado' : '📋 Copiar'}
+                </span>
               </button>
             )}
           </div>
