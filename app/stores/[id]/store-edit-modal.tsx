@@ -20,7 +20,19 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 const storeUpdateSchema = z.object({
   name: z.string().min(1, 'El nombre es obligatorio').max(255, 'Máximo 255 caracteres'),
-  email: z.string().email('Email inválido'),
+  email: z
+    .email('Email inválido')
+    .max(254, 'Email demasiado largo')
+    .refine((val) => {
+      const [local, domain] = val.split('@');
+
+      if (local.length > 64) return false;
+
+      const domainLabels = domain.split('.');
+      const isDomainLabelsValid = domainLabels.every((label) => label.length <= 63);
+
+      return isDomainLabelsValid;
+    }, 'Antes del @ tiene más de 64 caracteres o después hay segmentos del dominio superiores a 63 caracteres.'),
   address: z.string().min(1, 'La dirección es obligatoria').max(255, 'Máximo 255 caracteres'),
   openingHours: z.string().min(1, 'El horario es obligatorio').max(255, 'Máximo 255 caracteres'),
   aboutUs: z.string().max(5000, 'Máximo 5000 caracteres').optional(),
