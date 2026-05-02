@@ -147,7 +147,7 @@ export default function StoreEditModal({
 
           <div className="grid gap-2">
             <Label htmlFor="email" className="text-xl">
-              Email
+              Email de contacto
             </Label>
             <Input
               id="email"
