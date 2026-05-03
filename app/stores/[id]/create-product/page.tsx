@@ -14,7 +14,7 @@ import { ProductTypeDTO } from '@/lib/types/producttypes/productTypesDto';
 import { useParams, useRouter } from 'next/navigation';
 import {
   createProductFormSchema,
-  ProductFormValues,
+  ProductFormInput,
   MAX_PRODUCT_NAME_LENGTH,
   MAX_PRODUCT_DESCRIPTION_LENGTH,
 } from '@/lib/types/products/productsRules';
@@ -22,6 +22,8 @@ import { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
+import { BackButton } from '@/components/dondeSiempre/BackButton';
+import { getUploadErrorMessage } from '@/lib/utils/errorHandler';
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
@@ -46,7 +48,7 @@ export default function ProductCreationPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<ProductFormValues>({
+  } = useForm<ProductFormInput>({
     resolver: zodResolver(createProductFormSchema()),
     defaultValues: {
       name: '',
@@ -66,7 +68,7 @@ export default function ProductCreationPage() {
     return <ErrorText error={productTypes.error} />;
   }
 
-  const submitForm = async (data: ProductFormValues) => {
+  const submitForm = async (data: ProductFormInput) => {
     setApiError(null);
     const dto: ProductCreationDTO = {
       name: data.name,
@@ -88,15 +90,24 @@ export default function ProductCreationPage() {
       } else {
         setApiError('Hubo un error al crear el producto. Por favor, intenta de nuevo.');
       }
-    } catch (_err: unknown) {
-      setApiError('Hubo un error al crear el producto. Por favor, intenta de nuevo.');
+    } catch (err: unknown) {
+      setApiError(
+        getUploadErrorMessage(
+          err,
+          'Hubo un error al crear el producto. Por favor, intenta de nuevo.'
+        )
+      );
     }
   };
 
   return (
     <StoreOwnerGuard storeId={params.id}>
       <div className="flex flex-col items-center px-4 py-6">
-        <div className="w-full max-w-6xl">
+        <div className="w-full max-w-6xl space-y-4">
+          <div className="flex justify-start">
+            <BackButton />
+          </div>
+
           <Card className="p-4 shadow-xl sm:p-6 md:p-8">
             <h1 className="mb-6 text-center text-3xl font-bold text-primary">Crear producto</h1>
 
@@ -110,6 +121,7 @@ export default function ProductCreationPage() {
                     id="form-name"
                     type="text"
                     maxLength={255}
+                    data-testid="product-name-input"
                     aria-invalid={!!errors.name}
                     {...register('name')}
                   />
@@ -126,6 +138,7 @@ export default function ProductCreationPage() {
                     Descripción
                   </Label>
                   <Textarea
+                    data-testid="product-description-input"
                     id="form-description"
                     maxLength={5000}
                     rows={5}
@@ -145,7 +158,7 @@ export default function ProductCreationPage() {
                   <Label htmlFor="form-image" className="text-base font-bold text-secondary">
                     Imagen
                   </Label>
-                  <div id="form-image">
+                  <div id="form-image" data-testid="product-image-input">
                     <ImageUpload onChange={setImageFile} />
                   </div>
                 </div>
@@ -157,6 +170,7 @@ export default function ProductCreationPage() {
                   <div className="flex items-center gap-2">
                     <Input
                       id="form-price"
+                      data-testid="product-price-input"
                       type="number"
                       min="0.01"
                       max="9999"
@@ -177,13 +191,14 @@ export default function ProductCreationPage() {
                   </Label>
                   <select
                     id="form-type"
+                    data-testid="product-cat-input"
                     aria-invalid={!!errors.productTypeId}
                     {...register('productTypeId')}
                     className="appearance-none h-9 w-full rounded-md border border-input px-3 py-1 text-base shadow-sm focus:outline-none"
                   >
                     <option value="">Seleccionar categoría...</option>
                     {productTypes.data?.map((type) => (
-                      <option key={type.id} value={type.id}>
+                      <option key={type.id} value={type.id} data-testid={`cat-${type.name}`}>
                         {type.name}
                       </option>
                     ))}
@@ -192,9 +207,9 @@ export default function ProductCreationPage() {
                 </div>
               </div>
 
-              {apiError && <p className="text-sm text-destructive">{apiError}</p>}
+              {apiError && <p className="text-sm font-bold text-destructive">{apiError}</p>}
 
-              <div className="flex justify-center">
+              <div className="flex justify-center" data-testid="product-submit-button">
                 <Button
                   type="submit"
                   className="mt-2 h-12 w-full bg-secondary text-base font-bold text-white hover:bg-dark-secondary md:w-1/3"

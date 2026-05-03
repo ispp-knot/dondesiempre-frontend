@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
-import { formatDisplayPrice } from '@/lib/utils';
+import { convertPrice, formatDisplayPrice } from '@/lib/utils';
 import { OrderDTO } from '@/lib/types/orders/orderDto';
 import Image from 'next/image';
 import {
@@ -15,10 +15,14 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaClock,
+  FaQrcode,
 } from 'react-icons/fa';
 import { MdOutlinePayments } from 'react-icons/md';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { QrScannerModal } from '@/components/modals/QrScanModal';
 
 const statusMap: Record<string, string> = {
   PENDING: 'Pendiente',
@@ -33,6 +37,7 @@ export default function DeliverOrderPage() {
   const [isSearching, setIsSearching] = useState(false);
   const [order, setOrder] = useState<OrderDTO | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
+  const [isScanning, setIsScanning] = useState(false);
 
   const { data: allOrders, isLoading: isLoadingOrders } = usePassiveFetcher<OrderDTO[]>({
     url: 'orders',
@@ -54,17 +59,14 @@ export default function DeliverOrderPage() {
     }
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchCode.trim() || !allOrders) return;
+  const searchOrder = (code: string) => {
+    if (!code.trim() || !allOrders) return;
 
     setIsSearching(true);
     setSearchError(null);
     setOrder(null);
 
-    const foundOrder = allOrders.find(
-      (o) => o.orderCode.toUpperCase() === searchCode.toUpperCase()
-    );
+    const foundOrder = allOrders.find((o) => o.orderCode.toUpperCase() === code.toUpperCase());
 
     if (foundOrder) {
       setOrder(foundOrder);
@@ -75,12 +77,18 @@ export default function DeliverOrderPage() {
     setIsSearching(false);
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    searchOrder(searchCode);
+  };
+
   const handlePickOrder = async () => {
-    if (!order) return;
+    if (!order || order.orderStatus !== 'CONFIRMED') return;
 
     try {
       await pickFetcher.fetch({ url: `orders/${order.id}/pick` });
-      setOrder({ ...order, orderStatus: 'PICKED' });
+      await router.push('/orders');
+      router.refresh();
     } catch (_err: unknown) {
       setSearchError('Hubo un error al marcar el pedido como recogido.');
     }
@@ -106,7 +114,7 @@ export default function DeliverOrderPage() {
       <div className="w-full max-w-2xl px-4">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-primary font-bold hover:text-secondary transition-colors mb-6"
+          className="flex items-center gap-2 text-primary font-bold hover:text-secondary transition-all hover:scale-105 cursor-pointer mb-6"
         >
           <FaArrowLeft /> Volver a mis ventas
         </button>
@@ -130,9 +138,17 @@ export default function DeliverOrderPage() {
             <button
               type="submit"
               disabled={isSearching || isLoadingOrders || !searchCode.trim()}
-              className="bg-primary hover:bg-primary/90 disabled:opacity-50 text-white px-8 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition"
+              className="bg-primary hover:bg-primary/90 disabled:opacity-50 text-white px-8 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all hover:scale-105 hover:shadow-lg shadow-md cursor-pointer disabled:hover:scale-100 disabled:cursor-not-allowed"
             >
               <FaSearch /> {isSearching || isLoadingOrders ? 'Cargando...' : 'Buscar'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsScanning(true)}
+              className="bg-secondary hover:bg-secondary/90 text-white px-4 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all hover:scale-105 hover:shadow-lg shadow-md"
+            >
+              <FaQrcode />
+              <span className="hidden sm:inline">Escanear</span>
             </button>
           </form>
           {searchError && (
@@ -142,6 +158,16 @@ export default function DeliverOrderPage() {
           )}
         </Card>
 
+        {isScanning && (
+          <QrScannerModal
+            onScan={(code) => {
+              setSearchCode(code);
+              setIsScanning(false);
+              searchOrder(code);
+            }}
+            onClose={() => setIsScanning(false)}
+          />
+        )}
         {isSearching && <LoadingText />}
 
         {order && !isSearching && (
@@ -156,7 +182,8 @@ export default function DeliverOrderPage() {
                 </div>
                 <div className="flex items-center gap-4 text-sm">
                   <div className="flex items-center gap-1.5 text-secondary font-medium">
-                    <FaCalendarAlt /> {new Date(order.orderDate).toLocaleDateString()}
+                    <FaCalendarAlt />{' '}
+                    {format(new Date(order.orderDate), 'dd MMM yyyy', { locale: es })}
                   </div>
                   <span
                     className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold uppercase ${getStatusStyles(order.orderStatus)}`}
@@ -184,12 +211,12 @@ export default function DeliverOrderPage() {
                         <div>
                           <p className="font-bold text-primary leading-tight">{item.productName}</p>
                           <p className="text-xs text-secondary italic">
-                            {formatDisplayPrice(item.priceAtPurchase)} / ud
+                            {formatDisplayPrice(convertPrice(item.priceAtPurchase))} / ud
                           </p>
                         </div>
                       </div>
                       <span className="font-bold text-primary text-lg">
-                        {formatDisplayPrice(item.subtotal)}
+                        {formatDisplayPrice(convertPrice(item.subtotal))}
                       </span>
                     </div>
                   ))}
@@ -201,7 +228,7 @@ export default function DeliverOrderPage() {
                       Total a cobrar/cobrado
                     </p>
                     <div className="flex items-center gap-2 text-3xl text-secondary font-black">
-                      <MdOutlinePayments /> {formatDisplayPrice(order.totalPrice)}
+                      <MdOutlinePayments /> {formatDisplayPrice(convertPrice(order.totalPrice))}
                     </div>
                   </div>
 
@@ -210,7 +237,7 @@ export default function DeliverOrderPage() {
                       <button
                         onClick={handlePickOrder}
                         disabled={pickFetcher.isPending}
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-800 hover:bg-green-900 disabled:opacity-50 text-white px-8 py-4 rounded-lg font-bold transition shadow-lg text-lg"
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-800 hover:bg-green-900 disabled:opacity-50 text-white px-8 py-4 rounded-lg font-bold transition-all hover:scale-105 hover:shadow-xl shadow-lg text-lg cursor-pointer disabled:hover:scale-100 disabled:cursor-not-allowed"
                       >
                         <FaBox />{' '}
                         {pickFetcher.isPending ? 'Marcando...' : 'Entregar y Marcar Recogido'}

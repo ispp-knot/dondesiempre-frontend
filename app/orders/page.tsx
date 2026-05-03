@@ -8,6 +8,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 import {
   FaCalendarAlt,
   FaHashtag,
@@ -23,6 +25,10 @@ import { MdOutlinePayments } from 'react-icons/md';
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
+import { PayButton } from '@/components/dondeSiempre/PayButton';
+import { AccountStatusDto } from '@/lib/types/payment/accountStatusDto';
+import { AlertTriangle } from 'lucide-react';
+import { OrderQrButton } from '@/components/dondeSiempre/OrderQrButton';
 
 type OrderStatus = 'ALL' | 'PENDING' | 'CONFIRMED' | 'REJECTED' | 'PICKED';
 
@@ -50,6 +56,10 @@ export default function OrdersPage() {
   const isStore = user?.roles.includes('STORE') ?? false;
 
   const orders = usePassiveFetcher<OrderDTOExtended[]>({ url: 'orders' });
+  const verified = usePassiveFetcher<AccountStatusDto>({
+    url: `stores/${user?.store?.id}/stripe/status`,
+    enabled: !!user?.store?.id,
+  });
   const updateStatus = useActiveFetcher<void>({ method: 'PATCH' });
   const [filter, setFilter] = useState<OrderStatus>('ALL');
 
@@ -72,13 +82,13 @@ export default function OrdersPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => router.push('/login')}
-                className="inline-flex justify-center items-center gap-2 bg-secondary text-white px-8 py-4 rounded-sm font-bold text-lg hover:opacity-90 transition shadow-lg w-full sm:w-auto"
+                className="inline-flex justify-center items-center gap-2 bg-secondary text-white px-8 py-4 rounded-sm font-bold text-lg hover:opacity-90 hover:scale-105 hover:shadow-xl transition-all shadow-lg w-full sm:w-auto cursor-pointer"
               >
                 Iniciar sesión
               </button>
               <button
                 onClick={() => router.push('/register')}
-                className="inline-flex justify-center items-center gap-2 bg-primary text-white px-8 py-4 rounded-sm font-bold text-lg hover:opacity-90 transition shadow-lg w-full sm:w-auto"
+                className="inline-flex justify-center items-center gap-2 bg-primary text-white px-8 py-4 rounded-sm font-bold text-lg hover:opacity-90 hover:scale-105 hover:shadow-xl transition-all shadow-lg w-full sm:w-auto cursor-pointer"
               >
                 Registrarme
               </button>
@@ -93,7 +103,10 @@ export default function OrdersPage() {
   const formatPrice = (cents: number) => formatDisplayPrice(convertPrice(cents));
 
   const filteredOrders =
-    orders.data?.filter((order) => (filter === 'ALL' ? true : order.orderStatus === filter)) || [];
+    orders.data
+      ?.slice()
+      .sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime())
+      .filter((order) => (filter === 'ALL' ? true : order.orderStatus === filter)) || [];
 
   const getStatusStyles = (status: string) => {
     switch (status) {
@@ -111,11 +124,11 @@ export default function OrdersPage() {
   };
 
   const tabClass = (status: OrderStatus) => `
-    px-4 py-2 text-xs md:text-sm font-bold rounded-full transition-all border
+    px-4 py-2 text-xs md:text-sm font-bold rounded-full transition-all border cursor-pointer
     ${
       filter === status
-        ? 'bg-primary text-white border-primary shadow-md'
-        : 'bg-white text-primary border-primary/20 hover:bg-primary/5'
+        ? 'bg-primary text-white border-primary shadow-md scale-105'
+        : 'bg-white text-primary border-primary/20 hover:bg-primary/10 hover:shadow-md hover:scale-105'
     }
   `;
 
@@ -153,7 +166,7 @@ export default function OrdersPage() {
           {!isStore && (
             <Link
               href="/stores"
-              className="inline-flex items-center gap-2 bg-secondary text-white px-8 py-4 rounded-sm font-bold shadow-lg"
+              className="inline-flex items-center gap-2 bg-secondary text-white px-8 py-4 rounded-sm font-bold shadow-lg hover:shadow-xl hover:scale-105 hover:opacity-90 transition-all cursor-pointer"
             >
               <FaStore /> Explorar tiendas
             </Link>
@@ -179,7 +192,7 @@ export default function OrdersPage() {
         {isStore && (
           <button
             onClick={() => router.push('/orders/deliver')}
-            className="ml-0 md:ml-4 mt-4 md:mt-0 flex items-center gap-2 bg-secondary hover:bg-secondary/90 text-white px-5 py-2 rounded-full font-bold text-sm transition-all shadow-md"
+            className="ml-0 md:ml-4 mt-4 md:mt-0 flex items-center gap-2 bg-secondary hover:bg-secondary/90 text-white px-5 py-2 rounded-full font-bold text-sm transition-all hover:scale-105 hover:shadow-lg shadow-md cursor-pointer"
           >
             Entregar pedido
           </button>
@@ -190,7 +203,11 @@ export default function OrdersPage() {
         {filteredOrders.length > 0 ? (
           <div className="grid gap-6">
             {filteredOrders.map((order) => (
-              <Card key={order.id} className="shadow-xl overflow-hidden border-none bg-white">
+              <Card
+                key={order.id}
+                className="shadow-xl overflow-hidden border-none bg-white"
+                data-testid="order-card"
+              >
                 <div className="bg-primary/5 px-6 py-4 border-b border-primary/10 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                   <div className="flex flex-wrap items-center gap-2 text-primary font-bold">
                     <div className="flex items-center gap-2">
@@ -212,7 +229,8 @@ export default function OrdersPage() {
 
                   <div className="flex items-center gap-4 text-sm">
                     <div className="flex items-center gap-1.5 text-secondary font-medium">
-                      <FaCalendarAlt /> {new Date(order.orderDate).toLocaleDateString()}
+                      <FaCalendarAlt />{' '}
+                      {format(new Date(order.orderDate), 'dd MMM yyyy', { locale: es })}
                     </div>
                     <span
                       className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold uppercase ${getStatusStyles(order.orderStatus)}`}
@@ -241,6 +259,11 @@ export default function OrdersPage() {
                             <p className="font-bold text-primary leading-tight">
                               {item.productName}
                             </p>
+                            {(item.variantSize || item.variantColor) && (
+                              <p className="text-xs font-semibold text-secondary/80 bg-secondary/10 px-2 py-0.5 rounded-full my-1.5 inline-block">
+                                {[item.variantSize, item.variantColor].filter(Boolean).join(' · ')}
+                              </p>
+                            )}
                             <p className="text-xs text-secondary italic">
                               {formatPrice(item.priceAtPurchase)} / ud
                             </p>
@@ -263,23 +286,54 @@ export default function OrdersPage() {
                       </div>
                     </div>
 
-                    <div className="flex gap-2 w-full md:w-auto">
+                    <div className="flex gap-2 w-full md:w-auto justify-center md:justify-end">
                       {isStore && order.orderStatus === 'PENDING' && (
                         <>
-                          <button
-                            onClick={() => handleUpdateStatus(order.id, 'confirm')}
-                            className="flex-1 md:flex-none bg-green-800 hover:bg-green-900 text-white px-6 py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition"
-                          >
-                            <FaCheckCircle /> Confirmar
-                          </button>
+                          {verified.data?.verified ? (
+                            <button
+                              onClick={() => handleUpdateStatus(order.id, 'confirm')}
+                              className="flex-1 md:flex-none bg-green-800 hover:bg-green-900 text-white px-6 py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all hover:scale-105 hover:shadow-lg shadow-md cursor-pointer"
+                            >
+                              <FaCheckCircle /> Confirmar
+                            </button>
+                          ) : (
+                            <Link
+                              href="/profile"
+                              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-bold text-sm transition-all hover:scale-105 hover:shadow-lg shadow-md bg-amber-50 border border-amber-400 text-amber-700 hover:bg-amber-100 dark:bg-amber-950/60 dark:border-amber-600 dark:text-amber-400 dark:hover:bg-amber-900/60 cursor-pointer"
+                              title="Tu tienda no está verificada. Completa la verificación para confirmar pedidos."
+                            >
+                              <AlertTriangle className="w-4 h-4 shrink-0" />
+                              Verificar para confirmar
+                            </Link>
+                          )}
                           <button
                             onClick={() => handleUpdateStatus(order.id, 'reject')}
-                            className="flex-1 md:flex-none bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition"
+                            className="flex-1 md:flex-none bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all hover:scale-105 hover:shadow-lg shadow-md cursor-pointer"
                           >
                             <FaTimesCircle /> Rechazar
                           </button>
                         </>
                       )}
+                      {!isStore && order.orderStatus === 'CONFIRMED' && order.isPaid ? (
+                        <OrderQrButton orderCode={order.orderCode} />
+                      ) : (
+                        <></>
+                      )}
+
+                      {!isStore &&
+                        order.orderStatus === 'CONFIRMED' &&
+                        (order.isPaid ? (
+                          <div className="flex flex-col items-center gap-1 bg-green-50 text-green-800 border border-green-200 px-5 py-2.5 rounded-lg self-center md:self-auto">
+                            <FaCheckCircle className="text-green-700 text-xl" />
+                            <span className="text-xs font-bold uppercase tracking-wide">
+                              Pagado
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="transition-all hover:scale-105 hover:shadow-lg rounded-lg">
+                            <PayButton orderId={order.id} />
+                          </div>
+                        ))}
                     </div>
                   </div>
                 </div>
@@ -295,7 +349,7 @@ export default function OrdersPage() {
             </p>
             <button
               onClick={() => setFilter('ALL')}
-              className="bg-secondary text-white px-6 py-2 rounded-sm font-bold shadow-lg"
+              className="bg-secondary text-white px-6 py-2 rounded-sm font-bold shadow-lg hover:shadow-xl hover:scale-105 hover:opacity-90 transition-all cursor-pointer"
             >
               Ver todos los pedidos
             </button>

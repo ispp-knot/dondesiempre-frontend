@@ -63,11 +63,13 @@ export function StoresPage() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}
             transition={{ duration: 0.2, ease: 'easeInOut' }}
-            className="absolute bottom-0 md:bottom-4 left-0 right-0 md:w-[90%] md:max-w-2xl mx-auto"
+            style={{ bottom: 'env(safe-area-inset-bottom)' }}
+            className="absolute left-0 right-0 md:bottom-4 md:w-[90%] md:max-w-2xl mx-auto"
           >
             <StoreCard
               store={selectedStore}
               userLocation={userLocation}
+              data-testid="store-card"
               className="rounded-b-none"
             />
           </motion.div>

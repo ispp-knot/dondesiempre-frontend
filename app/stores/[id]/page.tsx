@@ -3,12 +3,14 @@
 import StoreLocationModal from '@/app/stores/[id]/store-edit-location-modal';
 
 export const dynamic = 'force-dynamic';
-import { useState } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { useDebounce } from 'use-debounce';
 
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
-import { StoreDTO } from '@/lib/types/stores/storesDto';
+import { StoreDTO, StoreImageDTO } from '@/lib/types/stores/storesDto';
 import { StoreSocialNetworkDTO } from '@/lib/types/stores/storesSocialDto';
 import { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
+import { ProductDTO } from '@/lib/types/products/productsDto';
 import { hasMinimumOutfitProducts } from '@/lib/types/outfits/outfitsRules';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
@@ -51,8 +53,51 @@ export default function StorePage() {
   const params = useParams<{ id: string }>();
   const { getCurrentUser } = useAuth();
   const user = getCurrentUser();
-  const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
+  const contentRef = useRef<HTMLDivElement>(null);
+  const scrollPositionRef = useRef<number>(0);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
+
+  // Memoize the outfits URL to prevent unnecessary refetches
+  const outfitsUrl = useMemo(() => {
+    return `stores/${params.id}/outfits`;
+  }, [params.id]);
+
+  // Memoize the products URL to prevent unnecessary refetches
+  const productsUrl = useMemo(() => {
+    const queryParams = new URLSearchParams();
+    if (debouncedSearchQuery) queryParams.append('name', debouncedSearchQuery);
+    return `stores/${params.id}/products?${queryParams.toString()}`;
+  }, [debouncedSearchQuery, params.id]);
+
+  const outfits = usePassiveFetcher<OutfitDTO[]>({
+    url: outfitsUrl,
+  });
+  const products = usePassiveFetcher<ProductDTO[]>({
+    url: productsUrl,
+  });
   const store = usePassiveFetcher<StoreDTO>({ url: `stores/${params.id}` });
+
+  // Preserve scroll position when search query changes
+  useEffect(() => {
+    // Save current scroll position when search starts
+    scrollPositionRef.current = window.scrollY;
+  }, [searchQuery]);
+
+  // Restore scroll position after products are loaded
+  useEffect(() => {
+    const container = contentRef.current;
+    if (container) {
+      // Restore scroll position if we have saved it
+      if (scrollPositionRef.current > 0) {
+        window.scrollTo({
+          top: scrollPositionRef.current,
+          behavior: 'auto',
+        });
+      }
+    }
+  }, [products.data, outfits.data]);
 
   const isClient = Boolean(user?.client);
 
@@ -63,7 +108,7 @@ export default function StorePage() {
 
   const isFollowing = usePassiveFetcher<{ isFollowing: boolean }>({
     url: `stores/${params.id}/follow`,
-    enabled: !!user,
+    enabled: isClient,
   });
   const followStore = useActiveFetcher<void>({
     url: `stores/${params.id}/follow`,
@@ -76,13 +121,17 @@ export default function StorePage() {
   const promotionsDto = usePassiveFetcher<PromotionDTO[]>({
     url: `stores/${params.id}/promotions`,
   });
+  const storeImages = usePassiveFetcher<StoreImageDTO[]>({
+    url: `stores/${params.id}/images`,
+    enabled: isOwner,
+  });
 
-  if (store.isLoading || outfits.isLoading) {
+  if ((store.isLoading || outfits.isLoading || products.isLoading) && !store.data) {
     return <LoadingText />;
-  } else if (store.isError || outfits.isError) {
+  } else if (store.isError || outfits.isError || products.isError) {
     return (
       <>
-        {(store.error || outfits.error) && (
+        {(store.error || outfits.error || products.error) && (
           <ErrorView
             title="Tienda no encontrada"
             description="No pudimos encontrar esta tienda. Puede que se haya eliminado o que el enlace ya no sea válido."
@@ -109,9 +158,10 @@ export default function StorePage() {
   const banner = store.data?.storefront?.bannerImageUrl;
   const validOutfits = (outfits.data ?? []).filter(hasMinimumOutfitProducts);
 
-  return store.data && outfits.data ? (
+  return store.data && outfits.data && products.data ? (
     <div
       className="flex flex-col bg-white"
+      ref={contentRef}
       style={
         {
           '--primary': primaryColor,
@@ -189,8 +239,6 @@ export default function StorePage() {
           <span className="text-center hover:underline">{store.data.address}</span>
         </a>
 
-        <div className="sm:text-lg md:text-xl text-[var(--secondary)]">{store.data.phone}</div>
-
         <div className="flex items-start justify-center gap-1 sm:text-lg md:text-xl text-[var(--secondary)]">
           <MdAccessTimeFilled className="flex-shrink-0 mt-1" />
           <span className="text-center">{store.data.openingHours}</span>
@@ -198,18 +246,22 @@ export default function StorePage() {
       </div>
 
       <div className="flex gap-3 mt-3 flex-wrap justify-center mb-2">
-        {socialNetworks.map((social: StoreSocialNetworkDTO) => (
-          <a
-            key={social.id}
-            href={social.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center w-fit gap-1.5 border border-[var(--primary)] rounded-sm px-3 py-1.5 text-xs text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition"
-          >
-            {getSocialIcon(social.name)}
-            <p>{social.name}</p>
-          </a>
-        ))}
+        {socialNetworks.map((social: StoreSocialNetworkDTO) => {
+          const isPhone = social.name.toLowerCase().includes('teléfono');
+
+          return (
+            <a
+              key={social.id}
+              href={social.link}
+              target={isPhone ? '_self' : '_blank'}
+              rel="noopener noreferrer"
+              className="flex items-center w-fit gap-1.5 border border-[var(--primary)] rounded-sm px-3 py-1.5 text-xs text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition"
+            >
+              {getSocialIcon(social.name)}
+              <p>{isPhone ? social.link?.replace('tel:', '') : social.name}</p>
+            </a>
+          );
+        })}
       </div>
 
       {isOwner && (
@@ -238,7 +290,12 @@ export default function StorePage() {
         description={store.data?.aboutUs || ''}
         promotions={promotionData}
         outfits={validOutfits}
+        products={products.data || []}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
         isOwner={isOwner}
+        images={storeImages.data ?? []}
+        onImagesUpdated={(imgs) => storeImages.setData(imgs)}
       />
 
       {isOwner && (

@@ -37,7 +37,11 @@ export function StoreCard({
   const clickTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [heartAnimating, setHeartAnimating] = useState(false);
 
-  const isFollowing = usePassiveFetcher<StoreFollowerDTO>({ url: `stores/${store.id}/follow` });
+  const isFollowing = usePassiveFetcher<StoreFollowerDTO>({
+    url: `stores/${store.id}/follow`,
+    enabled: isClient,
+  });
+
   const followStore = useActiveFetcher<void>({
     url: `stores/${store.id}/follow`,
     method: 'POST',
@@ -102,6 +106,7 @@ export function StoreCard({
 
   return (
     <Link
+      data-testid="store-card"
       href={`/stores/${store.id}`}
       onClick={handleCardClick}
       className={cn(
@@ -143,6 +148,7 @@ export function StoreCard({
             {isClient && (
               <Button
                 onClick={handleFollowClick}
+                data-testid="follow-button"
                 className="w-7 h-7 p-1.5 rounded-md bg-primary/10 hover:bg-primary/20 transition-colors disabled:opacity-50"
                 title={isFollowing.data?.isFollowing ? 'Dejar de seguir' : 'Seguir'}
                 disabled={isFollowing.isLoading}

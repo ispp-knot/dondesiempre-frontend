@@ -4,12 +4,14 @@ import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { FaImage, FaLock } from 'react-icons/fa';
 import { cn } from '@/lib/utils';
+import { ALLOWED_IMAGE_TYPES } from '@/lib/utils/imageType';
 
 interface ImageUploadProps {
   onChange: (file: File | null) => void;
   existingImageUrl?: string;
   disabled?: boolean;
   className?: string;
+  mode?: 'single' | 'gallery';
 }
 
 export default function ImageUpload({
@@ -17,24 +19,36 @@ export default function ImageUpload({
   existingImageUrl,
   disabled = false,
   className,
+  mode,
 }: ImageUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(existingImageUrl ?? null);
-  const [hasFile, setHasFile] = useState(false);
+  const [typeError, setTypeError] = useState(false);
+
+  const isGallery = mode === 'gallery';
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
-    if (file) {
-      setPreview(URL.createObjectURL(file));
-      setHasFile(true);
-      onChange(file);
+
+    if (!file) return;
+
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      e.target.value = '';
+      setTypeError(true);
+      return;
     }
+
+    setTypeError(false);
+
+    if (!isGallery) {
+      setPreview(URL.createObjectURL(file));
+    }
+
+    onChange(file);
   };
 
   const handleClick = () => {
-    if (!disabled) {
-      fileInputRef.current?.click();
-    }
+    if (!disabled) fileInputRef.current?.click();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -43,6 +57,10 @@ export default function ImageUpload({
       handleClick();
     }
   };
+
+  const hasImage = Boolean(preview || existingImageUrl);
+
+  const label = isGallery ? 'Añadir imagen' : hasImage ? 'Cambiar imagen' : 'Añadir imagen';
 
   return (
     <div
@@ -58,15 +76,16 @@ export default function ImageUpload({
         className
       )}
     >
-      {preview && (
+      {!isGallery && hasImage && (
         <Image
-          src={preview}
+          src={preview || existingImageUrl || ''}
           alt="Preview"
           fill
           unoptimized
-          className={cn('object-cover', disabled ? 'opacity-30 grayscale' : 'opacity-30')}
+          className="object-cover opacity-30"
         />
       )}
+
       <div
         className={cn(
           'flex items-center gap-2 font-bold z-10',
@@ -74,13 +93,7 @@ export default function ImageUpload({
         )}
       >
         {disabled ? <FaLock size={24} /> : <FaImage size={24} />}
-        <span>
-          {disabled
-            ? 'Carga de imagen bloqueada'
-            : hasFile || existingImageUrl
-              ? 'Cambiar imagen'
-              : 'Añadir imagen'}
-        </span>
+        <span>{label}</span>
       </div>
       {!disabled && (
         <input
@@ -90,6 +103,11 @@ export default function ImageUpload({
           accept="image/*"
           onChange={handleFileChange}
         />
+      )}
+      {!disabled && (
+        <p className="text-red-500 text-xs z-10 [text-shadow:0_0_4px_white,0_0_8px_white,0_0_12px_white]">
+          {typeError && 'Formato no válido. Solo se aceptan: JPG, PNG, WebP, AVIF, HEIC, HEIF'}
+        </p>
       )}
     </div>
   );

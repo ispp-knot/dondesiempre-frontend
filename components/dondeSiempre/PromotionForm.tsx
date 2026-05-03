@@ -107,7 +107,7 @@ export default function PromotionForm({
     useWatch({
       control,
       name: 'products',
-    }) || []; // Aseguramos que sea un array para evitar errores de .map
+    }) || [];
 
   const dateRange = useWatch({
     control,
@@ -124,7 +124,11 @@ export default function PromotionForm({
       endDate: data.dateRange.to ? format(data.dateRange.to, 'yyyy-MM-dd') : null,
     };
 
-    await onSubmit(formattedData);
+    try {
+      await onSubmit(formattedData);
+    } finally {
+      setPending(false);
+    }
   };
 
   const removeProduct = (id: string) => {
@@ -149,23 +153,11 @@ export default function PromotionForm({
         {isEditMode ? 'Editar Promoción' : 'Nueva Promoción'}
       </h1>
 
-      {/* Status Messages */}
-      {status && (
-        <div
-          className={cn(
-            'flex items-center gap-2 p-4 rounded-lg animate-in fade-in slide-in-from-top-2',
-            status.type === 'success'
-              ? 'bg-secondary/10 text-secondary border border-secondary'
-              : 'bg-destructive/10 text-destructive border border-destructive'
-          )}
-        >
-          {status.type === 'success' ? <FaCheckCircle /> : <FaExclamationCircle />}
-          <span className="font-bold">{status.message}</span>
-        </div>
-      )}
-
       {/* Promotion Name */}
-      <div className="relative border-2 border-secondary rounded-lg p-3">
+      <div
+        className="relative border-2 border-secondary rounded-lg p-3"
+        data-testid="promotion-name-input"
+      >
         <label className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold text-primary">
           Nombre de la promoción
         </label>
@@ -177,8 +169,10 @@ export default function PromotionForm({
         {errors.name && <p className="text-destructive text-xs mt-1">{errors.name.message}</p>}
       </div>
 
-      {/* Discount Percentage - Usando Controller para el Slider */}
-      <div className="relative border-2 border-secondary rounded-lg p-3 flex flex-col gap-4">
+      <div
+        className="relative border-2 border-secondary rounded-lg p-3 flex flex-col gap-4"
+        data-testid="promotion-discount-input"
+      >
         <label className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold text-primary">
           Porcentaje de descuento*
         </label>
@@ -219,6 +213,7 @@ export default function PromotionForm({
           'relative border-2 rounded-lg p-3 transition-colors',
           errors.dateRange ? 'border-destructive' : 'border-secondary'
         )}
+        data-testid="promotion-duration-input"
       >
         <label className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold text-primary">
           Duración de la promoción
@@ -266,7 +261,10 @@ export default function PromotionForm({
       </div>
 
       {/* Description */}
-      <div className="relative border-2 border-secondary rounded-lg p-3">
+      <div
+        className="relative border-2 border-secondary rounded-lg p-3"
+        data-testid="promotion-description-input"
+      >
         <label className="absolute -top-3 left-3 bg-white px-2 text-sm font-semibold text-primary">
           Descripción
         </label>
@@ -281,7 +279,7 @@ export default function PromotionForm({
       </div>
 
       {/* Products Section */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4" data-testid="promotion-products-input">
         <h2 className="text-xl font-bold">Artículos en promoción</h2>
 
         <Popover>
@@ -339,6 +337,7 @@ export default function PromotionForm({
           render={({ field }) => (
             <ImageUpload
               onChange={field.onChange}
+              data-testid="promotion-image-input"
               existingImageUrl={initialData?.promotionImage}
               className={cn(
                 'mt-2 border-2 rounded-lg transition-colors',
@@ -370,12 +369,31 @@ export default function PromotionForm({
         </div>
       )}
 
+      {status && (
+        <div
+          className={cn(
+            'flex items-center gap-2 p-4 rounded-lg animate-in fade-in slide-in-from-top-2',
+            status.type === 'success'
+              ? 'bg-secondary/10 text-secondary border border-secondary'
+              : 'bg-destructive/10 text-destructive border border-destructive'
+          )}
+        >
+          {status.type === 'success' ? <FaCheckCircle /> : <FaExclamationCircle />}
+          <span className="font-bold">{status.message}</span>
+        </div>
+      )}
+
       <Button
         type="submit"
-        disabled={isPending}
+        disabled={isPending || isLoading}
         className="bg-secondary text-white font-bold py-8 rounded-lg text-xl mt-4 w-full"
+        data-testid="promotion-confirm-input"
       >
-        {isPending ? 'Cargando...' : isEditMode ? 'Guardar cambios' : 'Lanzar promoción'}
+        {isPending || isLoading
+          ? 'Cargando...'
+          : isEditMode
+            ? 'Guardar cambios'
+            : 'Lanzar promoción'}
       </Button>
     </form>
   );
@@ -402,7 +420,6 @@ function ProductSelector({
           `${getBackendUrl()}/api/v1/stores/${params.id}/products`
         );
 
-        console.log(response);
         // Map backend response to Product interface
         const mapped: Product[] = response.map(
           (p: { id: string; name: string; image?: string }) => ({

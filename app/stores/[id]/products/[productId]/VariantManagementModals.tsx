@@ -12,6 +12,7 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { ProductVariantDTO } from './ProductVariantSelector';
+import GenericSuccessModal from '@/components/modals/GenericSuccessModal';
 
 interface DeleteVariantsModalProps {
   isOpen: boolean;
@@ -29,6 +30,7 @@ export function DeleteVariantsModal({
   isDeleting,
 }: DeleteVariantsModalProps) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleToggle = (id: string) => {
     const newSet = new Set(selectedIds);
@@ -51,16 +53,28 @@ export function DeleteVariantsModal({
   const handleConfirm = async () => {
     await onDelete(Array.from(selectedIds));
     setSelectedIds(new Set());
+    setIsSuccess(true);
   };
 
   const handleClose = () => {
     setSelectedIds(new Set());
+    setIsSuccess(false);
     onClose();
   };
 
+  if (isSuccess) {
+    return (
+      <GenericSuccessModal
+        setOpenModal={() => handleClose()}
+        title="Variantes eliminadas"
+        description="Las variantes se han eliminado correctamente."
+      />
+    );
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
+      <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col" data-testid="delete-dialog">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-primary">Eliminar Variantes</DialogTitle>
           <DialogDescription>
@@ -69,7 +83,10 @@ export function DeleteVariantsModal({
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto">
-          <div className="flex items-center justify-between p-3 border-b bg-gray-50">
+          <div
+            className="flex items-center justify-between p-3 border-b bg-gray-50"
+            data-testid="select-all"
+          >
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -81,7 +98,7 @@ export function DeleteVariantsModal({
             </label>
           </div>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col" data-testid="variant-list">
             {variants.map((variant) => (
               <label
                 key={variant.id}
@@ -93,17 +110,18 @@ export function DeleteVariantsModal({
                   onChange={() => handleToggle(variant.id)}
                   className="w-5 h-5 cursor-pointer"
                 />
-                <div className="flex items-center gap-3 flex-1">
+                <div className="flex items-center gap-3 flex-1" data-testid="variant">
                   <div
                     className="w-8 h-8 rounded-full border-2 border-gray-300 shrink-0"
                     style={{ backgroundColor: variant.color.hexCode }}
+                    data-testid="variant-color"
                     title={variant.color.name}
                   />
                   <div className="flex-1">
-                    <div className="font-semibold text-secondary">
+                    <div className="font-semibold text-secondary" data-testid="variant-info">
                       Talla: {variant.size.name} · Color: {variant.color.name}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-gray-500" data-testid="variant-aviability">
                       {variant.isAvailable ? 'Disponible' : 'No disponible'}
                     </div>
                   </div>
@@ -114,23 +132,32 @@ export function DeleteVariantsModal({
         </div>
 
         <DialogFooter className="mt-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleClose}
-            disabled={isDeleting}
-            className="font-bold"
-          >
-            Cancelar
-          </Button>
-          <Button
-            type="button"
-            onClick={handleConfirm}
-            disabled={isDeleting || selectedIds.size === 0}
-            className="bg-destructive hover:bg-destructive/90 text-white font-bold"
-          >
-            {isDeleting ? 'Eliminando...' : `Eliminar ${selectedIds.size} variante(s)`}
-          </Button>
+          <div className="flex flex-col gap-2 w-full">
+            <p className="text-xs text-destructive text-center font-medium">
+              Esta acción es irreversible.
+            </p>
+            <div className="flex gap-2 w-full">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClose}
+                disabled={isDeleting}
+                data-testid="cancel-button"
+                className="font-bold flex-1"
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="button"
+                data-testid="delete-button"
+                onClick={handleConfirm}
+                disabled={isDeleting || selectedIds.size === 0}
+                className="bg-destructive hover:bg-destructive/90 text-white font-bold flex-1"
+              >
+                {isDeleting ? 'Eliminando...' : `Eliminar ${selectedIds.size} variante(s)`}
+              </Button>
+            </div>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -202,7 +229,10 @@ export function UpdateVariantsModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
+      <DialogContent
+        className="max-w-2xl max-h-[80vh] flex flex-col"
+        data-testid="availability-dialog"
+      >
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-primary">
             Gestionar Disponibilidad de Variantes
@@ -251,6 +281,7 @@ export function UpdateVariantsModal({
             onClick={handleClose}
             disabled={isUpdating}
             className="font-bold"
+            data-testid="cancel-button"
           >
             Cancelar
           </Button>
@@ -258,6 +289,7 @@ export function UpdateVariantsModal({
             type="button"
             onClick={handleConfirm}
             disabled={isUpdating || changes.length === 0}
+            data-testid="update-button"
             className="bg-secondary hover:bg-dark-secondary text-white font-bold"
           >
             {isUpdating ? 'Actualizando...' : `Aplicar ${changes.length} cambio(s)`}

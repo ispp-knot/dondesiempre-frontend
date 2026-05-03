@@ -6,19 +6,38 @@ import Link from 'next/link';
 import { RiDiscountPercentFill } from 'react-icons/ri';
 import { Card } from '../ui/card';
 import { Button } from '../ui/button';
+import { GenericConfirmModal } from '../modals/GenericConfirmModal';
+import { useState } from 'react';
 
 export interface OutfitCardProps {
   outfit: OutfitDTO;
   isOwner: boolean;
   onDelete: () => void;
+  onSuccess?: () => void;
 }
 
 export default function OutfitCard(props: OutfitCardProps) {
   const outfit = props.outfit;
   const hasDiscount = !!outfit.discountPercentage;
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const handleDelete = async () => {
+    setIsConfirmDeleteOpen(false);
 
+    setIsDeleting(true);
+    try {
+      await props.onDelete();
+      if (props.onSuccess) props.onSuccess();
+    } catch (err) {
+      console.error('Error deleting promotion:', err);
+      setIsDeleting(false);
+    }
+  };
   return (
-    <Card className="relative flex flex-col gap-6 p-4 pt-8 shadow-xl overflow-hidden m-4">
+    <Card
+      className="relative flex flex-col gap-6 p-4 pt-8 shadow-xl overflow-hidden m-4"
+      data-testid="outfit-card"
+    >
       {hasDiscount && (
         <RiDiscountPercentFill className="absolute top-3 right-3 text-4xl text-primary drop-shadow" />
       )}
@@ -57,18 +76,30 @@ export default function OutfitCard(props: OutfitCardProps) {
           <Link
             href={`/stores/${outfit.storeId}/outfits/${outfit.id}`}
             className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
+            data-testid="outfit-edit-link"
           >
             Editar
           </Link>
           <Link
             href={`/stores/${outfit.storeId}/outfits/${outfit.id}/products`}
             className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
+            data-testid="outfit-products-link"
           >
             Productos
           </Link>
+          {isConfirmDeleteOpen && (
+            <GenericConfirmModal
+              message="¿Estás seguro de que deseas eliminar este outfit? Esta acción no se puede deshacer."
+              onConfirm={handleDelete}
+              onClose={() => setIsConfirmDeleteOpen(false)}
+              isLoading={isDeleting}
+              confirmLabel="Eliminar"
+            />
+          )}
           <Button
-            onClick={props.onDelete}
+            onClick={() => setIsConfirmDeleteOpen(true)}
             className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-primary hover:bg-dark-primary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
+            data-testid="outfit-delete-button"
           >
             Eliminar
           </Button>

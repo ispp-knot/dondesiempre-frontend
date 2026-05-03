@@ -153,7 +153,10 @@ export function ShareTo({ item, images, className }: Props) {
             Compartir {typeValue == itemType.PROMOTION ? 'promoción' : 'descuento'}
           </Button>
         </DialogTrigger>
-        <DialogContent className="flex flex-col w-full max-w-sm mx-auto max-h-[90dvh] p-0 gap-0 overflow-hidden">
+        <DialogContent
+          className="flex flex-col w-full max-w-sm mx-auto max-h-[90dvh] p-0 gap-0 overflow-hidden"
+          data-testid="share-promotion-modal"
+        >
           <div className="flex flex-col gap-3 overflow-y-auto p-4 flex-1">
             <DialogHeader>
               <DialogTitle className="text-base">Vista previa de publicación</DialogTitle>
