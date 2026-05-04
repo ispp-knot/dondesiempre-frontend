@@ -19,7 +19,19 @@ import TermsOfServiceModal from '@/components/dondeSiempre/TermsOfServiceModal';
 
 const step1Schema = z
   .object({
-    email: z.string().email('Email inválido'),
+    email: z
+      .email('Email inválido')
+      .max(254, 'Email demasiado largo')
+      .refine((val) => {
+        const [local, domain] = val.split('@');
+
+        if (local.length > 64) return false;
+
+        const domainLabels = domain.split('.');
+        const isDomainLabelsValid = domainLabels.every((label) => label.length <= 63);
+
+        return isDomainLabelsValid;
+      }, 'Antes del @ tiene más de 64 caracteres o después hay segmentos del dominio superiores a 63 caracteres.'),
     password: z
       .string()
       .min(8, 'Mínimo 8 caracteres')
@@ -330,6 +342,13 @@ function ClientStep2Form({
     } catch (err: unknown) {
       if (err instanceof FetchError && err.response?.status === 409) {
         setApiError('El correo ya existe.');
+      } else if (
+        err instanceof FetchError &&
+        err.statusCode === 400 &&
+        typeof err.data === 'string'
+      ) {
+        setApiError(err.data);
+        return;
       } else {
         setApiError('Ha ocurrido un error.');
       }
