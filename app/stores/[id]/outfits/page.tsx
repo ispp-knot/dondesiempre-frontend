@@ -113,7 +113,7 @@ export default function OutfitsPage() {
             <BackButton />
           </div>
           <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
-            <h1 className="text-3xl font-bold text-primary text-center">Tus Outfits</h1>
+            <h1 className="text-3xl font-bold text-primary text-center">Tus outfits</h1>
           </div>
           <div className="w-full md:w-8/12">
             {invalidOutfits.length > 0 && (
