@@ -129,7 +129,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       undefined,
       localStorage.getItem(AUTH_TOKEN_KEY)
     ).catch((e) => {
-      if (e instanceof FetchError && e.statusCode === 401) {
+      // For some reason the backend returns 404 if you're not logged in
+      if (e instanceof FetchError && (e.statusCode === 401 || e.statusCode === 404)) {
         deleteInfo();
         router.replace('/login');
       }
