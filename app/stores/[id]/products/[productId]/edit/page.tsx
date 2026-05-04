@@ -1,7 +1,6 @@
 'use client';
 
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
-import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -20,6 +19,7 @@ import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import Image from 'next/image';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
 import { getUploadErrorMessage } from '@/lib/utils/errorHandler';
+import { Loader2 } from 'lucide-react';
 
 interface ProductUpdateDTO {
   name?: string;
@@ -74,7 +74,11 @@ export default function ProductEditPage() {
   }, [product.data, reset]);
 
   if (product.isLoading || productTypes.isLoading) {
-    return <LoadingText />;
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
+        <Loader2 className="animate-spin w-12 h-12" />
+      </div>
+    );
   }
 
   if (product.error || productTypes.isError) {

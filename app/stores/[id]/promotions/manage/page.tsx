@@ -3,8 +3,7 @@
 import { usePassiveFetcher } from '@/lib/api/fetcher';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { useParams, useRouter } from 'next/navigation';
-import { Plus, Edit2, ArrowLeft, Image as ImageIcon, Calendar, Tag } from 'lucide-react';
-import LoadingText from '@/components/dondeSiempre/LoadingText';
+import { Plus, Edit2, ArrowLeft, Image as ImageIcon, Calendar, Tag, Loader2 } from 'lucide-react';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useEffect } from 'react';
@@ -37,10 +36,19 @@ export default function ManagePromotionsPage() {
   }, [user, isOwner, router, storeId]);
 
   if (user === undefined || !isOwner) {
-    return <LoadingText />;
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
+        <Loader2 className="animate-spin w-12 h-12" />
+      </div>
+    );
   }
 
-  if (isLoading) return <LoadingText />;
+  if (isLoading)
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
+        <Loader2 className="animate-spin w-12 h-12" />
+      </div>
+    );
 
   if (isError) {
     return (

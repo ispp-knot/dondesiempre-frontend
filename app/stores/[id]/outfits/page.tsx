@@ -16,11 +16,11 @@ import { ReactNode, useState } from 'react';
 import { BiTransfer } from 'react-icons/bi';
 import { FaRegSave } from 'react-icons/fa';
 import { IoMdAddCircleOutline } from 'react-icons/io';
-import LoadingText from '../../../../components/dondeSiempre/LoadingText';
 import ClientOutfitsPage from './ClientOutfitsPage';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
 import GenericSuccessModal from '@/components/modals/GenericSuccessModal';
+import { Loader2 } from 'lucide-react';
 
 export default function OutfitsPage() {
   const params = useParams<{ id: string }>();
@@ -38,7 +38,11 @@ export default function OutfitsPage() {
   });
 
   if (outfits.isLoading) {
-    return <LoadingText />;
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
+        <Loader2 className="animate-spin w-12 h-12" />
+      </div>
+    );
   }
 
   if (outfits.isError) {

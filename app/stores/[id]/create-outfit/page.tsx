@@ -2,7 +2,6 @@
 
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
-import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import SortableProduct from '@/components/dondeSiempre/SortableProduct';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
@@ -42,6 +41,7 @@ import { useRef, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { FaPlus, FaTag } from 'react-icons/fa';
 import { z } from 'zod';
+import { Loader2 } from 'lucide-react';
 
 const outfitSchema = createOutfitFormSchema();
 
@@ -159,7 +159,11 @@ export default function OutfitCreationPage() {
     : convertPrice(totalPriceInCents);
 
   if (products.isLoading || store.isLoading) {
-    return <LoadingText />;
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
+        <Loader2 className="animate-spin w-12 h-12" />
+      </div>
+    );
   }
 
   if (products.isError || store.isError) {

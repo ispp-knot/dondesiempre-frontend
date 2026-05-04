@@ -1,6 +1,5 @@
 'use client';
 
-import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import { Button } from '@/components/ui/button';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
@@ -30,7 +29,7 @@ import { BackButton } from '@/components/dondeSiempre/BackButton';
 import { GenericConfirmModal } from '@/components/modals/GenericConfirmModal';
 import GenericSuccessModal from '@/components/modals/GenericSuccessModal';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
-import { BadgePercent } from 'lucide-react';
+import { BadgePercent, Loader2 } from 'lucide-react';
 
 function ProductPrice({
   product,
@@ -188,7 +187,11 @@ export default function ProductDetailsPage() {
     sizes.isLoading ||
     colors.isLoading
   ) {
-    return <LoadingText />;
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
+        <Loader2 className="animate-spin w-12 h-12" />
+      </div>
+    );
   }
   if (product.error || !product.data) {
     return (

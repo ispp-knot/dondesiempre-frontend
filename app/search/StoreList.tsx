@@ -7,6 +7,7 @@ import { usePassiveFetcher } from '@/lib/api/fetcher';
 import { useDebounce } from 'use-debounce';
 import { StoreCard } from '@/components/dondeSiempre/StoreCard';
 import { useUserLocation } from '@/lib/useGeolocation';
+import { Loader2 } from 'lucide-react';
 
 export default function StoreList() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -44,7 +45,7 @@ export default function StoreList() {
       <div className="flex-1 overflow-y-auto px-4 py-2 max-w-6xl mx-auto w-full">
         {isPending && !stores ? (
           <div className="flex justify-center items-center h-40">
-            <div className="animate-spin rounded-full h-10 w-10 border-4 border-t-transparent border-primary"></div>
+            <Loader2 className="animate-spin w-12 h-12" />
           </div>
         ) : stores && stores.length > 0 ? (
           <div className="grid grid-cols-1 wide:grid-cols-2 gap-4 wide:gap-6">

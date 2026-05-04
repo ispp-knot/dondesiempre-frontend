@@ -2,7 +2,6 @@
 
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
-import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import { Button } from '@/components/ui/button';
@@ -40,6 +39,7 @@ import { IoIosCloseCircle } from 'react-icons/io';
 import { z } from 'zod';
 import ClientOutfitDetailsPage from './ClientOutfitDetailsPage';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
+import { Loader2 } from 'lucide-react';
 
 type EditOutfitSchema = ReturnType<typeof createEditOutfitFormSchema>;
 type EditOutfitFormInput = z.input<EditOutfitSchema>;
@@ -455,7 +455,11 @@ export default function OutfitDetailsPage() {
   const removeProduct = useActiveFetcher<void>({ method: 'DELETE' });
 
   if (outfit.isLoading) {
-    return <LoadingText />;
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
+        <Loader2 className="animate-spin w-12 h-12" />
+      </div>
+    );
   }
 
   if (outfit.isError) {

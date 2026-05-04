@@ -13,8 +13,8 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { usePassiveFetcher } from '@/lib/api/fetcher';
-import LoadingText from '@/components/dondeSiempre/LoadingText';
 import ErrorText from '@/components/dondeSiempre/ErrorText';
+import { Loader2 } from 'lucide-react';
 
 const variantSchema = z.object({
   sizeId: z.string().min(1, 'Debes seleccionar una talla'),
@@ -110,7 +110,9 @@ export default function ProductVariantForm({
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-primary">Talla *</label>
             {sizes.isLoading ? (
-              <LoadingText />
+              <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
+                <Loader2 className="animate-spin w-12 h-12" />
+              </div>
             ) : sizes.isError ? (
               <ErrorText error={sizes.error} />
             ) : (
@@ -148,7 +150,9 @@ export default function ProductVariantForm({
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-primary">Color *</label>
             {colors.isLoading ? (
-              <LoadingText />
+              <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
+                <Loader2 className="animate-spin w-12 h-12" />
+              </div>
             ) : colors.isError ? (
               <ErrorText error={colors.error} />
             ) : (

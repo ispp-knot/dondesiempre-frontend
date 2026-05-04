@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { LngLat } from 'maplibre-gl';
 import { DEFAULT_MAP_LOCATION } from '@/lib/mapUtils';
+import { Loader2 } from 'lucide-react';
 
 export function StoresPage() {
   const [selectedStore, setSelectedStore] = useState<StoreDTO | null>(null);
@@ -42,7 +43,7 @@ export function StoresPage() {
   if (!startingLocation) {
     return (
       <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
-        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+        <Loader2 className="animate-spin w-12 h-12" />
         <p className="text-muted-foreground animate-pulse font-medium">Buscando tu ubicación...</p>
       </div>
     );

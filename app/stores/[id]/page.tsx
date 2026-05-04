@@ -26,10 +26,9 @@ import {
 import { FaLocationDot, FaWhatsapp } from 'react-icons/fa6';
 import { MdAccessTimeFilled } from 'react-icons/md';
 import StoreTabs from './store-tabs';
-import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { useAuth } from '@/lib/auth/AuthContext';
-import { Edit2, Heart } from 'lucide-react';
+import { Edit2, Heart, Loader2 } from 'lucide-react';
 import StoreEditModal from './store-edit-modal';
 import StoreSocialNetworksModal from './store-social-edit-modal';
 import { Button } from '@/components/ui/button';
@@ -127,7 +126,11 @@ export default function StorePage() {
   });
 
   if ((store.isLoading || outfits.isLoading || products.isLoading) && !store.data) {
-    return <LoadingText />;
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
+        <Loader2 className="animate-spin w-12 h-12" />
+      </div>
+    );
   } else if (store.isError || outfits.isError || products.isError) {
     return (
       <>

@@ -7,7 +7,6 @@ import { convertPrice, formatDisplayPrice } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import {
@@ -27,7 +26,7 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import { PayButton } from '@/components/dondeSiempre/PayButton';
 import { AccountStatusDto } from '@/lib/types/payment/accountStatusDto';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Loader2 } from 'lucide-react';
 import { OrderQrButton } from '@/components/dondeSiempre/OrderQrButton';
 
 type OrderStatus = 'ALL' | 'PENDING' | 'CONFIRMED' | 'REJECTED' | 'PICKED';
@@ -64,7 +63,12 @@ export default function OrdersPage() {
   const updateStatus = useActiveFetcher<void>({ method: 'PATCH' });
   const [filter, setFilter] = useState<OrderStatus>('ALL');
 
-  if (orders.isLoading) return <LoadingText />;
+  if (orders.isLoading)
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
+        <Loader2 className="animate-spin w-12 h-12" />
+      </div>
+    );
 
   if (orders.isError) {
     const errorData = orders.error as FetcherError;

@@ -11,12 +11,12 @@ import ClientEditModal from '@/app/profile/client-edit-modal';
 import { usePassiveFetcher } from '@/lib/api/fetcher';
 import { UserResponseDTO } from '@/lib/types/auth/authDto';
 import { useEffect, useState } from 'react';
-import LoadingText from '@/components/dondeSiempre/LoadingText';
 import UserEditPassword from '@/app/profile/user-edit-password-modal';
 import TermsOfServiceModal from '@/components/dondeSiempre/TermsOfServiceModal';
 import { StripeOnBoardingButton } from '@/components/dondeSiempre/StripeOnBoardingButton'; // ajusta path
 import { StripeDashboardLinkDTO } from '@/lib/types/payment/stripeDashboardLinkDto';
 import { AccountStatusDto } from '@/lib/types/payment/accountStatusDto';
+import { Loader2 } from 'lucide-react';
 
 export function ProfilePage({}) {
   const router = useRouter();
@@ -45,7 +45,11 @@ export function ProfilePage({}) {
   }, [meQuery.data, getAuthToken, registerInfo]);
 
   if (meQuery.isLoading) {
-    return <LoadingText />;
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
+        <Loader2 className="animate-spin w-12 h-12" />
+      </div>
+    );
   }
 
   const user = meQuery.data;

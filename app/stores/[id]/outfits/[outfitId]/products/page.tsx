@@ -15,8 +15,8 @@ import { DragDropProvider } from '@dnd-kit/react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import LoadingText from '../../../../../../components/dondeSiempre/LoadingText';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
+import { Loader2 } from 'lucide-react';
 
 export default function OutfitProductsPage() {
   const params = useParams<{ id: string; outfitId: string }>();
@@ -39,7 +39,11 @@ export default function OutfitProductsPage() {
   });
 
   if (products.isLoading || outfit.isLoading) {
-    return <LoadingText />;
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
+        <Loader2 className="animate-spin w-12 h-12" />
+      </div>
+    );
   }
 
   if (products.isError || outfit.isError) {
