@@ -13,6 +13,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { authorizedOfetch } from '../api/authorizedOfetch';
 import { getBackendUrl } from '../config';
+import { FetchError } from 'ofetch';
 
 const LOCAL_STORAGE_KEY = 'auth_user_v2';
 const AUTH_TOKEN_KEY = 'auth_token_v2';
@@ -127,9 +128,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       getBackendUrl() + '/api/v1/auth/me',
       undefined,
       localStorage.getItem(AUTH_TOKEN_KEY)
-    ).catch(() => {
-      deleteInfo();
-      router.replace('/login');
+    ).catch((e) => {
+      if (e instanceof FetchError && e.statusCode === 401) {
+        deleteInfo();
+        router.replace('/login');
+      }
     });
   }, [deleteInfo, getAuthToken, user, router]);
 
