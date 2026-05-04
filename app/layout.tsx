@@ -74,7 +74,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Script src="/config.js" strategy="beforeInteractive" />
       </head>
       <body
-        className={`${quicksand.className} max-sm:[&::-webkit-scrollbar]:hidden flex flex-col min-h-screen`}
+        className={`${quicksand.className} max-sm:[&::-webkit-scrollbar]:hidden flex flex-col min-h-dvh`}
       >
         <ConfigProvider>
           <Providers>
