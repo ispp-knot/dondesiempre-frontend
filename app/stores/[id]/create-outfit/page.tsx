@@ -179,11 +179,7 @@ export default function OutfitCreationPage() {
     missingProductsCount > 0;
 
   const onSubmit = async (data: OutfitFormValues) => {
-    if (!store.data) {
-      return;
-    }
-
-    if (submitLockRef.current) {
+    if (!store.data || submitLockRef.current) {
       return;
     }
 
@@ -236,7 +232,6 @@ export default function OutfitCreationPage() {
           },
         });
       }
-
       router.push(`/stores/${params.id}/outfits`);
     } catch (error: unknown) {
       if (error instanceof FetchError && error.response?.status === 409) {
