@@ -16,7 +16,19 @@ import { LoginResponseDTO } from '@/lib/types/auth/authDto';
 import { Eye, EyeOff } from 'lucide-react';
 
 const loginSchema = z.object({
-  email: z.string().email('Email inválido'),
+  email: z
+    .email('Email inválido')
+    .max(254, 'Email demasiado largo')
+    .refine((val) => {
+      const [local, domain] = val.split('@');
+
+      if (local.length > 64) return false;
+
+      const domainLabels = domain.split('.');
+      const isDomainLabelsValid = domainLabels.every((label) => label.length <= 63);
+
+      return isDomainLabelsValid;
+    }, 'Antes del @ tiene más de 64 caracteres o después hay segmentos del dominio superiores a 63 caracteres.'),
   password: z.string().min(1, 'Contraseña requerida'),
 });
 
