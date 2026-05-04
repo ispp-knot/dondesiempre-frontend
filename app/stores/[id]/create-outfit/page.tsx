@@ -341,7 +341,14 @@ export default function OutfitCreationPage() {
                             inputMode="numeric"
                             aria-invalid={!!errors.discountPercentage}
                             className="w-24 sm:w-28"
-                            {...register('discountPercentage')}
+                            {...register('discountPercentage', {
+                              valueAsNumber: true,
+                            })}
+                            onKeyDown={(e) => {
+                              if (e.key === '.' || e.key === ',') {
+                                e.preventDefault();
+                              }
+                            }}
                           />
                           <span className="text-base font-semibold text-secondary">%</span>
                         </div>
