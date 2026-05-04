@@ -18,11 +18,24 @@ import {
 } from '@/components/ui/dialog';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { FetchError } from 'ofetch';
 
 const clientUpdateSchema = z.object({
   name: z.string().min(1, 'El nombre es obligatorio').max(255, 'Máximo 255 caracteres'),
   surname: z.string().min(1, 'Los apellidos son obligatorios').max(255, 'Máximo 255 caracteres'),
-  email: z.string().email('Email inválido'),
+  email: z
+    .email('Email inválido')
+    .max(254, 'Email demasiado largo')
+    .refine((val) => {
+      const [local, domain] = val.split('@');
+
+      if (local.length > 64) return false;
+
+      const domainLabels = domain.split('.');
+      const isDomainLabelsValid = domainLabels.every((label) => label.length <= 63);
+
+      return isDomainLabelsValid;
+    }, 'Antes del @ tiene más de 64 caracteres o después hay segmentos del dominio superiores a 63 caracteres.'),
 });
 
 type ClientUpdateValues = z.infer<typeof clientUpdateSchema>;
@@ -93,6 +106,10 @@ export default function ClientEditModal({ client, onSavedAction }: ClientEditMod
       }
       if (fetchError?.data?.message) {
         setApiError(fetchError.data.message);
+        return;
+      }
+      if (err instanceof FetchError && err.statusCode === 400 && typeof err.data === 'string') {
+        setApiError(err.data);
         return;
       }
       setApiError('No se pudo actualizar el perfil. Comprueba los datos.');
