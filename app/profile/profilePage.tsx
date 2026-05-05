@@ -18,7 +18,7 @@ import { StripeOnBoardingButton } from '@/components/dondeSiempre/StripeOnBoardi
 import { StripeDashboardLinkDTO } from '@/lib/types/payment/stripeDashboardLinkDto';
 import { AccountStatusDto } from '@/lib/types/payment/accountStatusDto';
 
-export function ProfilePage({}) {
+export function ProfilePage({ }) {
   const router = useRouter();
   const { deleteInfo, registerInfo, getAuthToken } = useAuth();
 
@@ -103,9 +103,6 @@ export function ProfilePage({}) {
       </CardContent>
 
       <CardFooter className="border-t mt-3 flex flex-col gap-3">
-        {user.client && (
-          <ClientEditModal client={user.client!} onSavedAction={() => meQuery.refetch()} />
-        )}
         {user?.store?.id && (
           <Button
             variant="outline"
