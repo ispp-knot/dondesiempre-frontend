@@ -18,7 +18,7 @@ import { StripeOnBoardingButton } from '@/components/dondeSiempre/StripeOnBoardi
 import { StripeDashboardLinkDTO } from '@/lib/types/payment/stripeDashboardLinkDto';
 import { AccountStatusDto } from '@/lib/types/payment/accountStatusDto';
 
-export function ProfilePage({ }) {
+export function ProfilePage({}) {
   const router = useRouter();
   const { deleteInfo, registerInfo, getAuthToken } = useAuth();
 
