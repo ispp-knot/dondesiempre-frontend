@@ -1,8 +1,19 @@
 ﻿'use client';
 
 import type { UserResponseDTO } from '@/lib/types/auth/authDto';
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 import { useRouter } from 'next/navigation';
+import { authorizedOfetch } from '../api/authorizedOfetch';
+import { getBackendUrl } from '../config';
+import { FetchError } from 'ofetch';
 
 export const LOCAL_STORAGE_KEY = 'auth_user_v2';
 export const AUTH_TOKEN_KEY = 'auth_token_v2';
@@ -107,6 +118,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({ getCurrentUser, registerInfo, deleteInfo, getAuthToken }),
     [getCurrentUser, registerInfo, deleteInfo, getAuthToken]
   );
+
+  // Log you out if you're logged in but your user is invalid
+  // (say if it got deleted)
+  useEffect(() => {
+    if (!user) return;
+
+    authorizedOfetch(
+      getBackendUrl() + '/api/v1/auth/me',
+      undefined,
+      localStorage.getItem(AUTH_TOKEN_KEY)
+    ).catch((e) => {
+      // For some reason the backend returns 404 if you're not logged in
+      if (e instanceof FetchError && (e.statusCode === 401 || e.statusCode === 404)) {
+        deleteInfo();
+        router.replace('/login');
+      }
+    });
+  }, [deleteInfo, getAuthToken, user, router]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

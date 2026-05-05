@@ -54,6 +54,7 @@ export default function OrdersPage() {
   const { getCurrentUser } = useAuth();
   const user = getCurrentUser();
   const isStore = user?.roles.includes('STORE') ?? false;
+  const [orderToConfirm, setOrderToConfirm] = useState<string | null>(null);
 
   const orders = usePassiveFetcher<OrderDTOExtended[]>({ url: 'orders' });
   const verified = usePassiveFetcher<AccountStatusDto>({
@@ -178,6 +179,42 @@ export default function OrdersPage() {
 
   return (
     <div className="flex flex-col items-center pb-10">
+      {orderToConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <Card className="w-full max-w-md animate-in fade-in zoom-in duration-200 shadow-2xl border-none">
+            <div className="p-8 text-center">
+              <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FaCheckCircle size={32} />
+              </div>
+
+              <h3 className="text-2xl font-bold text-primary mb-2">¿Confirmar pedido?</h3>
+
+              <p className="text-gray-500 mb-8">
+                Al confirmar este pedido, el cliente recibirá una notificación y podrá proceder al
+                pago. Esta acción no se puede deshacer.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={() => setOrderToConfirm(null)}
+                  className="flex-1 px-6 py-3 rounded-lg font-bold text-gray-500 hover:bg-gray-100 transition-colors border border-gray-200"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={async () => {
+                    await handleUpdateStatus(orderToConfirm, 'confirm');
+                    setOrderToConfirm(null);
+                  }}
+                  className="flex-1 px-6 py-3 rounded-lg font-bold bg-green-800 text-white hover:bg-green-900 shadow-lg hover:shadow-green-900/20 transition-all hover:scale-[1.02]"
+                >
+                  Sí, confirmar
+                </button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
       <Banner title={isStore ? 'Gestión de Ventas' : 'Mis Pedidos'} />
 
       <div className="flex flex-wrap justify-center items-center gap-2 mb-8 px-4 w-full max-w-4xl">
@@ -291,7 +328,8 @@ export default function OrdersPage() {
                         <>
                           {verified.data?.verified ? (
                             <button
-                              onClick={() => handleUpdateStatus(order.id, 'confirm')}
+                              //onClick={() => handleUpdateStatus(order.id, 'confirm')}
+                              onClick={() => setOrderToConfirm(order.id)}
                               className="flex-1 md:flex-none bg-green-800 hover:bg-green-900 text-white px-6 py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all hover:scale-105 hover:shadow-lg shadow-md cursor-pointer"
                             >
                               <FaCheckCircle /> Confirmar

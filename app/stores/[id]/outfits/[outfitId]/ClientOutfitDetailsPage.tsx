@@ -271,7 +271,7 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
                 </h1>
               </div>
               <div
-                className="py-4 px-8 md:px-0 flex flex-row overflow-x-auto items-center gap-4 w-full"
+                className="py-4 px-8 md:px-0 flex flex-row overflow-x-auto items-center justify-center gap-4 w-full"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
                 {outfit.products.map((p, i) => (

@@ -112,6 +112,9 @@ export default function OutfitsPage() {
           <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
             <BackButton />
           </div>
+          <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
+            <h1 className="text-3xl font-bold text-primary text-center">Tus outfits</h1>
+          </div>
           <div className="w-full md:w-8/12">
             {invalidOutfits.length > 0 && (
               <Card className="m-4 space-y-4 border-destructive/30 bg-destructive/5 p-4 shadow-xl">
@@ -141,16 +144,14 @@ export default function OutfitsPage() {
               </Card>
             )}
             <div className="flex flex-col sm:flex-row justify-between w-full gap-2 p-4">
-              <div className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12">
-                <Link
-                  href={`/stores/${params.id}/create-outfit/`}
-                  className="flex flex-row gap-2"
-                  data-testid="create-outfit-button"
-                >
-                  <IoMdAddCircleOutline className="mt-0.5 text-white text-center text-2xl" />
-                  <h1 className="font-bold text-white text-center text-xl">Crear outfit</h1>
-                </Link>
-              </div>
+              <Link
+                href={`/stores/${params.id}/create-outfit/`}
+                className="self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-secondary hover:bg-dark-secondary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"
+                data-testid="create-outfit-button"
+              >
+                <IoMdAddCircleOutline className="mt-0.5 text-white text-center text-2xl" />
+                <h1 className="font-bold text-white text-center text-xl">Crear outfit</h1>
+              </Link>
               {isOrdering ? (
                 <div
                   className="p-2 self-center flex flex-wrap items-center justify-center gap-2 md:flex-row rounded-lg bg-primary hover:bg-dark-primary hover:cursor-pointer text-white font-bold text-md md:text-xl w-full h-12"

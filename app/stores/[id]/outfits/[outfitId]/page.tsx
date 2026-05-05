@@ -10,6 +10,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useQueryClient } from '@tanstack/react-query';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import { OutfitDTO, OutfitTagDTO, OutfitUpdateDTO } from '@/lib/types/outfits/outfitsDto';
 import {
@@ -436,6 +437,7 @@ function OutfitAdminForm({
 export default function OutfitDetailsPage() {
   const params = useParams<{ id: string; outfitId: string }>();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const outfit = usePassiveFetcher<OutfitDTO>({ url: `outfits/${params.outfitId}` });
   const updateOutfit = useActiveFetcher<OutfitDTO>({
@@ -472,6 +474,9 @@ export default function OutfitDetailsPage() {
         dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
         image: imageFile ?? undefined,
       },
+    });
+    await queryClient.invalidateQueries({
+      queryKey: ['outfits'],
     });
     router.push(`/stores/${params.id}/outfits`);
   };
