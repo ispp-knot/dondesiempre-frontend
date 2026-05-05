@@ -362,7 +362,7 @@ export default function ProductDetailsPage() {
 
       <div className="flex flex-col items-center relative">
         <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
-          <BackButton />
+          <BackButton variant="ghost" onAction={() => router.push(`/stores/${params.id}`)} />
         </div>
 
         <MobileTitle />

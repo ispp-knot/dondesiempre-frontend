@@ -17,6 +17,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import LoadingText from '../../../../../../components/dondeSiempre/LoadingText';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
+import { BackButton } from '@/components/dondeSiempre/BackButton';
 
 export default function OutfitProductsPage() {
   const params = useParams<{ id: string; outfitId: string }>();
@@ -74,6 +75,10 @@ export default function OutfitProductsPage() {
         >
           <div className="flex flex-col items-center">
             <div className="w-full md:w-8/12">
+              <BackButton
+                variant="ghost"
+                onAction={() => router.push(`/stores/${params.id}/outfits`)}
+              />
               <Card className="p-4 pt-8 m-4 mb-8 shadow-xl">
                 <div>
                   <h1 className="mb-3 break-words font-bold text-primary text-center text-3xl">
