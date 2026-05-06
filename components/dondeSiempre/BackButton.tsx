@@ -1,26 +1,55 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
+import React from 'react';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface BackButtonProps {
-  className?: string;
+  text?: string;
+  onAction?: () => void;
+  variant?: 'default' | 'ghost';
 }
 
-export function BackButton({ className }: BackButtonProps) {
+export const BackButton: React.FC<BackButtonProps> = ({
+  text = 'Volver atrás',
+  onAction,
+  variant = 'default',
+}) => {
   const router = useRouter();
 
-  return (
-    <div className={`w-full flex justify-start ${className}`}>
-      <Button
-        variant="ghost"
-        onClick={() => router.back()}
-        className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors p-0 h-auto"
+  const handleBack = () => {
+    let wentBack = false;
+    window.addEventListener(
+      'popstate',
+      () => {
+        wentBack = true;
+      },
+      { once: true }
+    );
+
+    if (onAction) onAction();
+    else {
+      router.back();
+      setTimeout(() => {
+        if (!wentBack) router.push('/');
+      }, 100);
+    }
+  };
+
+  if (variant === 'ghost') {
+    return (
+      <button
+        onClick={handleBack}
+        className="flex items-center text-gray-500 hover:text-secondary transition-colors mt-2 text-sm font-semibold cursor-pointer"
       >
-        <ChevronLeft className="w-5 h-5" />
-        Volver atrás
-      </Button>
-    </div>
+        <ArrowLeft className="w-4 h-4 mr-1.5" />
+        {text}
+      </button>
+    );
+  }
+
+  return (
+    <Button size="lg" className="mt-2" onClick={handleBack}>
+      {text}
+    </Button>
   );
-}
+};

@@ -11,7 +11,7 @@ import { hasMinimumOutfitProducts } from '@/lib/types/outfits/outfitsRules';
 import { move } from '@dnd-kit/helpers';
 import { DragDropProvider } from '@dnd-kit/react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { ReactNode, useState } from 'react';
 import { BiTransfer } from 'react-icons/bi';
 import { FaRegSave } from 'react-icons/fa';
@@ -29,6 +29,7 @@ export default function OutfitsPage() {
   const [isCleaningInvalidOutfits, setIsCleaningInvalidOutfits] = useState(false);
   const [isOrdering, setIsOrdering] = useState(false);
   const [success, setSuccess] = useState(false);
+  const router = useRouter();
 
   const outfits = usePassiveFetcher<OutfitDTO[]>({ url: `stores/${params.id}/outfits` });
   const deleteOutfit = useActiveFetcher<void>({ method: 'DELETE' });
@@ -110,7 +111,11 @@ export default function OutfitsPage() {
       >
         <div className="flex flex-col items-center">
           <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
-            <BackButton />
+            <BackButton
+              variant="ghost"
+              text="Volver a la tienda"
+              onAction={() => router.push(`/stores/${params.id}`)}
+            />
           </div>
           <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
             <h1 className="text-3xl font-bold text-primary text-center">Tus outfits</h1>
