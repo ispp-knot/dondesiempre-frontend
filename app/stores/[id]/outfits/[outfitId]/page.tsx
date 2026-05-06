@@ -529,7 +529,10 @@ export default function OutfitDetailsPage() {
     >
       <div className="flex flex-col items-center relative">
         <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
-          <BackButton />
+          <BackButton
+            variant="ghost"
+            onAction={() => router.push(`/stores/${params.id}/outfits`)}
+          />
         </div>
         {outfit.data ? (
           <div className="w-full px-4 py-6">
