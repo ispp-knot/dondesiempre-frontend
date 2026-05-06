@@ -24,6 +24,7 @@ import ProductVariantSelector, {
 } from '../../products/[productId]/ProductVariantSelector';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
+import { useParams, useRouter } from 'next/navigation';
 
 export interface ClientOutfitDetailsPageProps {
   outfit?: OutfitDTO;
@@ -36,6 +37,9 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  const router = useRouter();
+  const params = useParams<{ id: string }>();
 
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
   const { getCurrentUser } = useAuth();
@@ -240,7 +244,7 @@ export default function ClientOutfitDetailsPage(props: ClientOutfitDetailsPagePr
       )}
       <div className="flex flex-col items-center relative">
         <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
-          <BackButton />
+          <BackButton variant="ghost" onAction={() => router.push(`/stores/${params.id}`)} />
         </div>
 
         <MobileTitle />
