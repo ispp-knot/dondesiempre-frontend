@@ -64,7 +64,7 @@ export function StoreMap({
   const supercluster = useMemo(() => {
     if (!stores.data?.length) return null;
 
-    const sc = new Supercluster<StoreProperties>({ radius: 60, maxZoom: 16 });
+    const sc = new Supercluster<StoreProperties>({ radius: 30, maxZoom: 14 });
 
     const points: PointFeature<StoreProperties>[] = stores.data.map((store) => ({
       type: 'Feature',

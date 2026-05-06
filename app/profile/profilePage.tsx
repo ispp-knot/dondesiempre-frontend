@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import { FaRegUser } from 'react-icons/fa';
 import { MdOutlineEmail, MdOutlineLocationOn } from 'react-icons/md';
 import { GlassCenterCard } from '@/components/dondeSiempre/GlassCenterCard';
-import ClientEditModal from '@/app/profile/client-edit-modal';
 import { usePassiveFetcher } from '@/lib/api/fetcher';
 import { UserResponseDTO } from '@/lib/types/auth/authDto';
 import { useEffect, useState } from 'react';
@@ -107,9 +106,6 @@ export function ProfilePage({}) {
       </CardContent>
 
       <CardFooter className="border-t mt-3 flex flex-col gap-3">
-        {user.client && (
-          <ClientEditModal client={user.client!} onSavedAction={() => meQuery.refetch()} />
-        )}
         {user?.store?.id && (
           <Button
             variant="outline"

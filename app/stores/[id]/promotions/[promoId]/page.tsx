@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { GenericConfirmModal } from '@/components/modals/GenericConfirmModal';
 import { Loader2 } from 'lucide-react';
+import { BackButton } from '@/components/dondeSiempre/BackButton';
 
 export default function EditPromotionPage() {
   const params = useParams<{ id: string; promoId: string }>();
@@ -191,16 +192,17 @@ export default function EditPromotionPage() {
           confirmLabel="Eliminar"
         />
       )}
-
-      <PromotionForm
-        key={promoId} // Forzamos remount si cambia la promo
-        initialData={initialData}
-        onSubmit={handleSubmit}
-        isEditMode={true}
-        isLoading={isSaving}
-        status={status}
-      />
-
+      <div className="flex flex-col items-center">
+        <BackButton variant="ghost" />
+        <PromotionForm
+          key={promoId} // Forzamos remount si cambia la promo
+          initialData={initialData}
+          onSubmit={handleSubmit}
+          isEditMode={true}
+          isLoading={isSaving}
+          status={status}
+        />
+      </div>
       <div className="mt-8 pt-6 border-t border-gray-100 flex justify-center">
         <button
           onClick={() => setIsConfirmDeleteOpen(true)}

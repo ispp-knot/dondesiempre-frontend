@@ -7,7 +7,6 @@ import { convertPrice, formatDisplayPrice } from '@/lib/utils';
 import { OrderDTO } from '@/lib/types/orders/orderDto';
 import Image from 'next/image';
 import {
-  FaArrowLeft,
   FaSearch,
   FaHashtag,
   FaCalendarAlt,
@@ -23,6 +22,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { QrScannerModal } from '@/components/modals/QrScanModal';
 import { Loader2 } from 'lucide-react';
+import { BackButton } from '@/components/dondeSiempre/BackButton';
 
 const statusMap: Record<string, string> = {
   PENDING: 'Pendiente',
@@ -112,12 +112,11 @@ export default function DeliverOrderPage() {
       </div>
 
       <div className="w-full max-w-2xl px-4">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-primary font-bold hover:text-secondary transition-all hover:scale-105 cursor-pointer mb-6"
-        >
-          <FaArrowLeft /> Volver a mis ventas
-        </button>
+        <BackButton
+          text="Volver a mis ventas"
+          variant="ghost"
+          onAction={() => router.push('/orders')}
+        />
 
         <Card className="p-6 mb-8 shadow-md border-none bg-white">
           <h2 className="text-xl font-bold text-primary mb-4">Buscar por código de cliente</h2>

@@ -141,7 +141,10 @@ export default function ProductEditPage() {
       <div className="flex flex-col items-center px-4 py-6">
         <div className="w-full max-w-6xl space-y-4">
           <div className="flex justify-start">
-            <BackButton />
+            <BackButton
+              variant="ghost"
+              onAction={() => router.push(`/stores/${params.id}/products/${params.productId}`)}
+            />
           </div>
 
           <Card className="p-4 shadow-xl sm:p-6 md:p-8">
