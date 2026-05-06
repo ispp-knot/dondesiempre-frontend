@@ -208,13 +208,6 @@ export default function OutfitCreationPage() {
         },
       });
 
-      if (createOutfit.isError) {
-        setApiError('Hubo un error al crear el outfit. Por favor, intenta de nuevo.');
-        submitLockRef.current = false;
-        setIsCreateLocked(false);
-        return;
-      }
-
       if (discountPercentage > 0 && getOutfitDiscountPercentage(createdOutfit) === 0) {
         await updateOutfit.fetch({
           url: `outfits/${createdOutfit.id}`,
