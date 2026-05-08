@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { FaCalendarAlt, FaPlus, FaTimes, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 import Image from 'next/image';
 import { format } from 'date-fns';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 // UI Components
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
@@ -22,6 +22,7 @@ import { authorizedOfetch } from '@/lib/api/authorizedOfetch';
 import { cn } from '@/lib/utils';
 import { getBackendUrl } from '@/lib/config';
 import { DateRange } from 'react-day-picker';
+import { BackButton } from './BackButton';
 
 const productSchema = z.object({
   id: z.string(),
@@ -103,6 +104,9 @@ export default function PromotionForm({
   });
 
   const [isPending, setPending] = useState<boolean>(false);
+  const router = useRouter();
+  const params = useParams<{ id: string }>();
+
   const selectedProducts =
     useWatch({
       control,
@@ -149,6 +153,10 @@ export default function PromotionForm({
       onSubmit={handleSubmit(onFormSubmit)}
       className="flex flex-col gap-6 max-w-md mx-auto w-full"
     >
+      <BackButton
+        variant="ghost"
+        onAction={() => router.push(`/stores/${params.id}/promotions/manage`)}
+      />
       <h1 className="text-2xl font-bold mb-2">
         {isEditMode ? 'Editar Promoción' : 'Nueva Promoción'}
       </h1>
