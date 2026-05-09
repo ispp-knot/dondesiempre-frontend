@@ -25,7 +25,7 @@ export default function Outfits({ storeId = undefined, outfits = [] }: Readonly<
   return (
     <HorizontalScroll title="Nuestros outfits" viewMoreHref={`/stores/${storeId}/outfits`}>
       {validOutfits.length > 0 ? (
-        validOutfits.map((out) => {
+        validOutfits.slice(0, 5).map((out) => {
           const discountPct = getOutfitDiscountPercentage(out);
           const hasDiscount = outfitWithDiscount(out);
           const originalPrice = convertPrice(out.priceInCents);
