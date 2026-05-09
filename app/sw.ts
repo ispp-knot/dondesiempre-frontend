@@ -91,16 +91,18 @@ async function subscribe(subscription: PushSubscription) {
 }
 
 async function unsubscribe(subscription: PushSubscription) {
-  await authorizedOfetch(
-    backendUrl + '/api/v1/notifications/unsubscribe',
-    {
-      method: 'POST',
-      body: {
-        notificationEndPoint: subscription.endpoint,
+  try {
+    await authorizedOfetch(
+      backendUrl + '/api/v1/notifications/unsubscribe',
+      {
+        method: 'POST',
+        body: {
+          notificationEndPoint: subscription.endpoint,
+        },
       },
-    },
-    authToken || undefined
-  );
+      authToken || undefined
+    );
+  } catch {}
 
   await subscription.unsubscribe();
 }
@@ -110,13 +112,20 @@ async function setUpNotifications() {
   if (Notification.permission !== 'granted') return;
 
   const registration = self.registration;
-  const subscription =
-    (await registration.pushManager.getSubscription()) ||
-    (await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(notificationVapidPublic),
-    }));
 
+  const existingSubscription = await registration.pushManager.getSubscription();
+  if (existingSubscription) {
+    console.log('Existing subscription -- unsubscribing');
+    unsubscribe(existingSubscription);
+  }
+
+  console.log('Generating new subscription');
+  const subscription = await registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: urlBase64ToUint8Array(notificationVapidPublic),
+  });
+
+  console.log('Subscribing');
   await subscribe(subscription);
 
   console.log('Push subscription:', subscription.toJSON());
