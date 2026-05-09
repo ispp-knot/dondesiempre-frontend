@@ -35,22 +35,40 @@ export default function OutfitCard(props: OutfitCardProps) {
   };
   return (
     <Card
-      className="relative flex flex-col gap-6 p-4 pt-8 shadow-xl overflow-hidden m-4"
+      className="relative flex flex-col gap-6 px-4 md:px-8 py-3 md:py-6 shadow-xl overflow-hidden m-4"
       data-testid="outfit-card"
     >
       {hasDiscount && (
         <RiDiscountPercentFill className="absolute top-3 right-3 text-4xl text-primary drop-shadow" />
       )}
-      <h2 className="font-bold text-primary text-center text-3xl px-8 truncate">{outfit.name}</h2>
-      <div className="flex flex-row w-fit max-w-full self-center overflow-x-auto items-center gap-4 p-4">
-        {outfit.products.map((p) => (
-          <div key={p.id} className="rounded-2xl overflow-hidden shadow-md shrink-0">
+      <h2 className="font-bold text-primary text-center text-xl md:text-2xl truncate">
+        {outfit.name}
+      </h2>
+      <div className="flex flex-wrap justify-center gap-2 md:gap-4">
+        {outfit.image ? (
+          <div className="rounded-2xl overflow-hidden shadow-md shrink-0 w-[102px] md:w-[136px] xl:w-[170px]">
+            <Image
+              src={outfit.image || '/static/img/product_placeholder.png'}
+              alt={outfit.name}
+              width={512}
+              height={512}
+              className="object-cover w-full h-30 md:h-40 xl:h-50"
+            />
+          </div>
+        ) : (
+          <></>
+        )}
+        {outfit.products.slice(0, 3 + (outfit.image ? 0 : 1)).map((p) => (
+          <div
+            key={p.id}
+            className="rounded-2xl overflow-hidden shadow-md shrink-0 w-[102px] md:w-[136px] xl:w-[170px]"
+          >
             <Image
               src={p.image || '/static/img/product_placeholder.png'}
               alt={p.name}
               width={512}
               height={512}
-              className="object-contain h-30 md:h-50 w-auto"
+              className="object-cover w-full h-30 md:h-40 xl:h-50"
             />
           </div>
         ))}
@@ -58,15 +76,15 @@ export default function OutfitCard(props: OutfitCardProps) {
       <div className="flex flex-row items-baseline justify-center gap-3">
         {hasDiscount ? (
           <>
-            <span className="text-3xl text-muted-foreground line-through">
+            <span className="text-xl md:text-2xl text-muted-foreground line-through">
               {formatDisplayPrice(convertPrice(outfit.priceInCents))}
             </span>
-            <span className="text-3xl font-bold text-primary">
+            <span className="text-xl md:text-2xl font-bold text-primary">
               {formatDisplayPrice(discountPrice(outfit.priceInCents, outfit.discountPercentage!))}
             </span>
           </>
         ) : (
-          <span className="text-3xl font-bold text-primary">
+          <span className="text-xl md:text-2xl font-bold text-primary">
             {formatDisplayPrice(convertPrice(outfit.priceInCents))}
           </span>
         )}
