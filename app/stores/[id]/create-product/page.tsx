@@ -42,6 +42,7 @@ export default function ProductCreationPage() {
     url: `products?storeId=${params.id}`,
     method: 'POST',
   });
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   const {
     control,
@@ -69,7 +70,11 @@ export default function ProductCreationPage() {
   }
 
   const submitForm = async (data: ProductFormInput) => {
+    if (isSubmitting || hasSubmitted) return;
+
+    setHasSubmitted(true);
     setApiError(null);
+
     const dto: ProductCreationDTO = {
       name: data.name,
       description: data.description,
@@ -217,7 +222,7 @@ export default function ProductCreationPage() {
                 <Button
                   type="submit"
                   className="mt-2 h-12 w-full bg-secondary text-base font-bold text-white hover:bg-dark-secondary md:w-1/3"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || hasSubmitted}
                 >
                   {isSubmitting ? 'Creando...' : 'Crear producto'}
                 </Button>
