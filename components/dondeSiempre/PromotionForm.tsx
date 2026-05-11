@@ -347,10 +347,7 @@ export default function PromotionForm({
               onChange={field.onChange}
               data-testid="promotion-image-input"
               existingImageUrl={initialData?.promotionImage}
-              className={cn(
-                'mt-2 border-2 rounded-lg transition-colors',
-                errors.promotionImage ? 'border-destructive' : 'border-transparent'
-              )}
+              className={cn('mt-2', errors.promotionImage ? 'border-destructive' : '')}
             />
           )}
         />
