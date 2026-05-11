@@ -89,12 +89,7 @@ export default function ProductCreationPage() {
           image: imageFile ?? undefined,
         },
       });
-
-      if (!createProduct.isError) {
-        router.push(`/stores/${params.id}`);
-      } else {
-        setApiError('Hubo un error al crear el producto. Por favor, intenta de nuevo.');
-      }
+      router.push(`/stores/${params.id}`);
     } catch (err: unknown) {
       setApiError(
         getUploadErrorMessage(
