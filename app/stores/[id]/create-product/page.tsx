@@ -23,7 +23,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
 import { getUploadErrorMessage } from '@/lib/utils/errorHandler';
-import { Loader2 } from 'lucide-react';
+import Loader from '@/components/dondeSiempre/Loader';
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
@@ -61,11 +61,7 @@ export default function ProductCreationPage() {
   const descriptionValue = useWatch({ control, name: 'description' }) ?? '';
 
   if (productTypes.isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
-        <Loader2 className="animate-spin w-12 h-12" />
-      </div>
-    );
+    return <Loader />;
   }
 
   if (productTypes.isError) {

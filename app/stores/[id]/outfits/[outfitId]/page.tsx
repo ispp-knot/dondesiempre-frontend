@@ -39,7 +39,7 @@ import { IoIosCloseCircle } from 'react-icons/io';
 import { z } from 'zod';
 import ClientOutfitDetailsPage from './ClientOutfitDetailsPage';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
-import { Loader2 } from 'lucide-react';
+import Loader from '@/components/dondeSiempre/Loader';
 
 type EditOutfitSchema = ReturnType<typeof createEditOutfitFormSchema>;
 type EditOutfitFormInput = z.input<EditOutfitSchema>;
@@ -455,11 +455,7 @@ export default function OutfitDetailsPage() {
   const removeProduct = useActiveFetcher<void>({ method: 'DELETE' });
 
   if (outfit.isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
-        <Loader2 className="animate-spin w-12 h-12" />
-      </div>
-    );
+    return <Loader />;
   }
 
   if (outfit.isError) {

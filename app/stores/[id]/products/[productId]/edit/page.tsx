@@ -19,7 +19,7 @@ import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import Image from 'next/image';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
 import { getUploadErrorMessage } from '@/lib/utils/errorHandler';
-import { Loader2 } from 'lucide-react';
+import Loader from '@/components/dondeSiempre/Loader';
 
 interface ProductUpdateDTO {
   name?: string;
@@ -74,11 +74,7 @@ export default function ProductEditPage() {
   }, [product.data, reset]);
 
   if (product.isLoading || productTypes.isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
-        <Loader2 className="animate-spin w-12 h-12" />
-      </div>
-    );
+    return <Loader />;
   }
 
   if (product.error || productTypes.isError) {

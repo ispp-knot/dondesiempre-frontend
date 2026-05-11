@@ -21,8 +21,8 @@ import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { QrScannerModal } from '@/components/modals/QrScanModal';
-import { Loader2 } from 'lucide-react';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
+import Loader from '@/components/dondeSiempre/Loader';
 
 const statusMap: Record<string, string> = {
   PENDING: 'Pendiente',
@@ -167,11 +167,7 @@ export default function DeliverOrderPage() {
             onClose={() => setIsScanning(false)}
           />
         )}
-        {isSearching && (
-          <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
-            <Loader2 className="animate-spin w-12 h-12" />
-          </div>
-        )}
+        {isSearching && <Loader />}
 
         {order && !isSearching && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">

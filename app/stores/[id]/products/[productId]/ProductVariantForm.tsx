@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { usePassiveFetcher } from '@/lib/api/fetcher';
 import ErrorText from '@/components/dondeSiempre/ErrorText';
-import { Loader2 } from 'lucide-react';
+import Loader from '@/components/dondeSiempre/Loader';
 
 const variantSchema = z.object({
   sizeId: z.string().min(1, 'Debes seleccionar una talla'),
@@ -110,9 +110,7 @@ export default function ProductVariantForm({
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-primary">Talla *</label>
             {sizes.isLoading ? (
-              <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
-                <Loader2 className="animate-spin w-12 h-12" />
-              </div>
+              <Loader />
             ) : sizes.isError ? (
               <ErrorText error={sizes.error} />
             ) : (
@@ -150,9 +148,7 @@ export default function ProductVariantForm({
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-primary">Color *</label>
             {colors.isLoading ? (
-              <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
-                <Loader2 className="animate-spin w-12 h-12" />
-              </div>
+              <Loader />
             ) : colors.isError ? (
               <ErrorText error={colors.error} />
             ) : (

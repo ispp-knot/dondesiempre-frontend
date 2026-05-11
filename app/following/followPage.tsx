@@ -8,7 +8,7 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { useUserLocation } from '@/lib/useGeolocation';
 import { JSX } from 'react';
-import { Loader2 } from 'lucide-react';
+import Loader from '@/components/dondeSiempre/Loader';
 
 export default function FollowPage(): JSX.Element {
   const { getCurrentUser } = useAuth();
@@ -21,11 +21,7 @@ export default function FollowPage(): JSX.Element {
   const userLocation = useUserLocation();
 
   if (followedStores.isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
-        <Loader2 className="animate-spin w-12 h-12" />
-      </div>
-    );
+    return <Loader />;
   }
 
   if (followedStores.isError) {

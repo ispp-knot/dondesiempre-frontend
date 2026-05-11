@@ -29,7 +29,8 @@ import { BackButton } from '@/components/dondeSiempre/BackButton';
 import { GenericConfirmModal } from '@/components/modals/GenericConfirmModal';
 import GenericSuccessModal from '@/components/modals/GenericSuccessModal';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
-import { BadgePercent, Loader2 } from 'lucide-react';
+import { BadgePercent } from 'lucide-react';
+import Loader from '@/components/dondeSiempre/Loader';
 
 function ProductPrice({
   product,
@@ -187,11 +188,7 @@ export default function ProductDetailsPage() {
     sizes.isLoading ||
     colors.isLoading
   ) {
-    return (
-      <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
-        <Loader2 className="animate-spin w-12 h-12" />
-      </div>
-    );
+    return <Loader />;
   }
   if (product.error || !product.data) {
     return (

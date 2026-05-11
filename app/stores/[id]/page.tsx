@@ -28,12 +28,13 @@ import { MdAccessTimeFilled } from 'react-icons/md';
 import StoreTabs from './store-tabs';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { useAuth } from '@/lib/auth/AuthContext';
-import { Edit2, Heart, Loader2 } from 'lucide-react';
+import { Edit2, Heart } from 'lucide-react';
 import StoreEditModal from './store-edit-modal';
 import StoreSocialNetworksModal from './store-social-edit-modal';
 import { Button } from '@/components/ui/button';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
+import Loader from '@/components/dondeSiempre/Loader';
 
 const getSocialIcon = (name: string) => {
   const lowerName = name.toLowerCase();
@@ -126,11 +127,7 @@ export default function StorePage() {
   });
 
   if ((store.isLoading || outfits.isLoading || products.isLoading) && !store.data) {
-    return (
-      <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
-        <Loader2 className="animate-spin w-12 h-12" />
-      </div>
-    );
+    return <Loader />;
   } else if (store.isError || outfits.isError || products.isError) {
     return (
       <>
