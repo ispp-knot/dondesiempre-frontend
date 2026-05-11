@@ -73,6 +73,7 @@ export default function OutfitCreationPage() {
   const updateOutfit = useActiveFetcher<OutfitDTO>({
     method: 'PUT',
   });
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   const {
     control,
@@ -179,10 +180,11 @@ export default function OutfitCreationPage() {
     missingProductsCount > 0;
 
   const onSubmit = async (data: OutfitFormValues) => {
-    if (!store.data || submitLockRef.current) {
+    if (!store.data || submitLockRef.current || hasSubmitted) {
       return;
     }
 
+    setHasSubmitted(true);
     setApiError(null);
     submitLockRef.current = true;
     setIsCreateLocked(true);
@@ -334,7 +336,14 @@ export default function OutfitCreationPage() {
                             inputMode="numeric"
                             aria-invalid={!!errors.discountPercentage}
                             className="w-24 sm:w-28"
-                            {...register('discountPercentage')}
+                            {...register('discountPercentage', {
+                              valueAsNumber: true,
+                            })}
+                            onKeyDown={(e) => {
+                              if (e.key === '.' || e.key === ',') {
+                                e.preventDefault();
+                              }
+                            }}
                           />
                           <span className="text-base font-semibold text-secondary">%</span>
                         </div>
@@ -468,7 +477,7 @@ export default function OutfitCreationPage() {
                     <Button
                       type="submit"
                       className="mt-2 h-12 w-full bg-secondary text-base font-bold text-white hover:bg-dark-secondary md:w-1/3"
-                      disabled={submitDisabled}
+                      disabled={submitDisabled || hasSubmitted}
                     >
                       {isSubmitting ||
                       createOutfit.isPending ||
