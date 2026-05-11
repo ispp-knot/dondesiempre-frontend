@@ -1,5 +1,4 @@
 'use client';
-
 import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { FaImage, FaLock } from 'react-icons/fa';
@@ -14,6 +13,8 @@ interface ImageUploadProps {
   mode?: 'single' | 'gallery';
 }
 
+const MAX_SIZE_BYTES = 1 * 1024 * 1024;
+
 export default function ImageUpload({
   onChange,
   existingImageUrl,
@@ -24,26 +25,34 @@ export default function ImageUpload({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(existingImageUrl ?? null);
   const [typeError, setTypeError] = useState(false);
+  const [sizeError, setSizeError] = useState(false);
 
   const isGallery = mode === 'gallery';
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
-
     if (!file) return;
 
     if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
       e.target.value = '';
       setTypeError(true);
+      setSizeError(false);
+      return;
+    }
+
+    if (file.size > MAX_SIZE_BYTES) {
+      e.target.value = '';
+      setSizeError(true);
+      setTypeError(false);
       return;
     }
 
     setTypeError(false);
+    setSizeError(false);
 
     if (!isGallery) {
       setPreview(URL.createObjectURL(file));
     }
-
     onChange(file);
   };
 
@@ -59,7 +68,6 @@ export default function ImageUpload({
   };
 
   const hasImage = Boolean(preview || existingImageUrl);
-
   const label = isGallery ? 'Añadir imagen' : hasImage ? 'Cambiar imagen' : 'Añadir imagen';
 
   return (
@@ -85,7 +93,6 @@ export default function ImageUpload({
           className="object-cover opacity-30"
         />
       )}
-
       <div
         className={cn(
           'flex items-center gap-2 font-bold z-10',
@@ -107,6 +114,7 @@ export default function ImageUpload({
       {!disabled && (
         <p className="text-red-500 text-xs z-10 [text-shadow:0_0_4px_white,0_0_8px_white,0_0_12px_white]">
           {typeError && 'Formato no válido. Solo se aceptan: JPG, PNG, WebP, AVIF, HEIC, HEIF'}
+          {sizeError && 'La imagen pesa demasiado. El tamaño máximo permitido es 1MB.'}
         </p>
       )}
     </div>
