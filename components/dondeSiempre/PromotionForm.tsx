@@ -229,6 +229,7 @@ export default function PromotionForm({
                   className="flex justify-between items-center w-full text-left outline-none"
                 >
                   <div
+                    data-testid="fecha-input"
                     className={cn(
                       'text-lg font-bold',
                       field.value?.from ? 'text-primary' : 'text-gray-300'

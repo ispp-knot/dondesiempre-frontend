@@ -21,7 +21,7 @@ test.describe.serial('outfits', () => {
     await outfitPage.click();
     await page.waitForURL(/stores\/.*\/outfits/);
 
-    const createOutfitButton = await page.locator('div').filter({ hasText: /^Crear outfit$/ });
+    const createOutfitButton = await page.getByTestId('create-outfit-button');
     const orderOutfitsButton = await page.locator('div').filter({ hasText: 'Ordenar' }).nth(5);
     await expect(createOutfitButton).toBeVisible();
     await expect(orderOutfitsButton).toBeVisible();
@@ -152,6 +152,11 @@ test.describe.serial('outfits', () => {
     const outfit = await page.getByTestId('outfit-card');
     await outfit.getByTestId('outfit-delete-button').click();
 
+    await expect(page.getByText('¿Estás seguro?¿Estás seguro')).toBeVisible();
+    await page.getByTestId('delete-button').click();
+    await expect(page.getByText('¡Acción exitosa!Pulse en')).toBeVisible();
+    await page.getByRole('button', { name: 'Cerrar' }).click();
+
     const deletedOutfit = await page.getByTestId('outfit-card');
     await expect(deletedOutfit).not.toBeVisible();
   });
@@ -167,10 +172,7 @@ test.describe.serial('outfits', () => {
 
     await page.waitForURL(/stores\/.*\/outfits/);
 
-    await page
-      .locator('div')
-      .filter({ hasText: /^Crear outfit$/ })
-      .click();
+    await page.getByTestId('create-outfit-button').click();
     await page.waitForURL(/stores\/.*\/create-outfit/);
 
     await page.getByRole('textbox', { name: 'Nombre' }).click();

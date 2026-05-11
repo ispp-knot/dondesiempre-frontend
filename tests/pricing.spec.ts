@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe.serial('pricing tests', () => {
-  test.use({ storageState: './tests/scripts/auth.client.json' });
+  test.use({ storageState: './tests/scripts/auth.store.json' });
 
   test('pricing page loads all info correctly', async ({ page }) => {
     await page.goto('http://localhost:3000/pricing');

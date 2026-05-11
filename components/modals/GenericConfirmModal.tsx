@@ -37,6 +37,7 @@ export function GenericConfirmModal({
           <Button
             onClick={onConfirm}
             disabled={isLoading}
+            data-testid="delete-button"
             className="w-full bg-secondary hover:bg-dark-secondary disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-bold"
           >
             {isLoading ? 'Procesando...' : confirmLabel}

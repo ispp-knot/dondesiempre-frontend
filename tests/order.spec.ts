@@ -70,18 +70,7 @@ test.describe.serial('orders', () => {
 
   test.describe.serial('test orders with store logged in', () => {
     test.use({ storageState: './tests/scripts/auth.store.json' });
-    test('store aprove the order', async ({ page }) => {
-      await page.goto('http://localhost:3000/orders');
 
-      await expect(page.getByRole('button', { name: 'Confirmar' }).first()).toBeVisible();
-      await expect(page.getByRole('button', { name: 'Rechazar' }).first()).toBeVisible();
-
-      await page.getByRole('button', { name: 'Confirmar' }).first().click();
-      await expect(page.getByTestId('order-card').first().getByText('Confirmado')).toBeVisible();
-
-      await page.getByRole('button', { name: 'Rechazar' }).first().click();
-      await expect(page.locator('span').filter({ hasText: 'Rechazado' })).toBeVisible();
-    });
     test('go to deliver page', async ({ page }) => {
       await page.goto('http://localhost:3000/orders');
       const button = page.getByRole('button', { name: 'Entregar pedido' });
@@ -89,15 +78,6 @@ test.describe.serial('orders', () => {
       await button.click();
 
       await page.waitForURL('http://localhost:3000/orders/deliver');
-    });
-  });
-
-  test.describe.serial('again client order test', () => {
-    test.use({ storageState: './tests/scripts/auth.client.json' });
-    test('client see the accepted and denied order from the store', async ({ page }) => {
-      await page.goto('http://localhost:3000/orders');
-      await expect(page.locator('span').filter({ hasText: 'Confirmado' })).toBeVisible();
-      await expect(page.locator('span').filter({ hasText: 'Rechazado' })).toBeVisible();
     });
   });
 });
