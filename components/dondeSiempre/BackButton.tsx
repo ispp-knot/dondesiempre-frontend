@@ -2,17 +2,20 @@ import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 interface BackButtonProps {
   text?: string;
   onAction?: () => void;
   variant?: 'default' | 'ghost';
+  className?: string;
 }
 
 export const BackButton: React.FC<BackButtonProps> = ({
   text = 'Volver atrás',
   onAction,
   variant = 'default',
+  className,
 }) => {
   const router = useRouter();
 
@@ -39,7 +42,10 @@ export const BackButton: React.FC<BackButtonProps> = ({
     return (
       <button
         onClick={handleBack}
-        className="flex items-center text-gray-500 hover:text-secondary transition-colors mt-2 text-sm font-semibold cursor-pointer"
+        className={cn(
+          'flex items-center text-gray-500 hover:text-secondary transition-colors mt-2 text-sm font-semibold cursor-pointer',
+          className
+        )}
       >
         <ArrowLeft className="w-4 h-4 mr-1.5" />
         {text}
@@ -48,7 +54,7 @@ export const BackButton: React.FC<BackButtonProps> = ({
   }
 
   return (
-    <Button size="lg" className="mt-2" onClick={handleBack}>
+    <Button size="lg" className={cn('mt-2', className)} onClick={handleBack}>
       {text}
     </Button>
   );
