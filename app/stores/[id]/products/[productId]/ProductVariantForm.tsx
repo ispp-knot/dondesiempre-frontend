@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -12,7 +12,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { usePassiveFetcher } from '@/lib/api/fetcher';
+import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import ErrorText from '@/components/dondeSiempre/ErrorText';
 
@@ -71,20 +71,46 @@ export default function ProductVariantForm({
     enabled: isOpen,
   });
 
+  const letterSizes = sizes.data?.filter((size) => isNaN(parseFloat(size.name)));
+  const numericSizes = sizes.data?.filter((size) => !isNaN(parseFloat(size.name)));
+
+  const createSize = useActiveFetcher<ProductSize>({
+    url: 'product-sizes',
+    method: 'POST',
+  });
+
   const colors = usePassiveFetcher<ProductColor[]>({
     url: 'product-colors',
     enabled: isOpen,
   });
 
-  const handleFormSubmit = async (data: ProductVariantFormData) => {
-    await onSubmit(data);
-    reset();
-  };
+  const [numericSize, setNumericSize] = useState('');
 
   const handleClose = () => {
     reset();
+    setNumericSize('');
     onErrorClear?.();
     onClose();
+  };
+
+  const handleFormSubmit = async (data: ProductVariantFormData) => {
+    let resolvedSizeId = data.sizeId;
+
+    if (numericSize) {
+      const existing = numericSizes?.find((s) => parseFloat(s.name) === parseFloat(numericSize));
+      if (existing) {
+        resolvedSizeId = existing.id;
+      } else {
+        const created = await createSize.fetch({
+          body: { size: numericSize },
+        });
+        resolvedSizeId = created.id;
+      }
+    }
+
+    await onSubmit({ ...data, sizeId: resolvedSizeId });
+    reset();
+    setNumericSize('');
   };
 
   const handleFieldChange = () => {
@@ -118,25 +144,51 @@ export default function ProductVariantForm({
                 control={control}
                 name="sizeId"
                 render={({ field }) => (
-                  <div className="flex flex-wrap gap-2" data-testid="size-list">
-                    {sizes.data?.map((size) => (
-                      <button
-                        key={size.id}
-                        data-testid={`size-${size.name}`}
-                        type="button"
-                        onClick={() => {
-                          field.onChange(size.id);
-                          handleFieldChange();
+                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-wrap gap-2" data-testid="size-list">
+                      {letterSizes?.map((size) => (
+                        <button
+                          key={size.id}
+                          data-testid={`size-${size.name}`}
+                          type="button"
+                          onClick={() => {
+                            field.onChange(size.id);
+                            setNumericSize('');
+                            handleFieldChange();
+                          }}
+                          className={`px-4 py-2 rounded-lg border-2 font-semibold text-sm transition-colors ${
+                            field.value === size.id
+                              ? 'border-secondary bg-secondary text-white'
+                              : 'border-gray-300 text-secondary hover:border-secondary'
+                          }`}
+                        >
+                          {size.name}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground shrink-0">
+                        O introduce una talla numérica:
+                      </span>
+                      <input
+                        type="number"
+                        min="1"
+                        max="999"
+                        value={numericSize}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setNumericSize(val);
+                          if (val) {
+                            field.onChange('__numeric__');
+                            handleFieldChange();
+                          } else {
+                            field.onChange('');
+                          }
                         }}
-                        className={`px-4 py-2 rounded-lg border-2 font-semibold text-sm transition-colors ${
-                          field.value === size.id
-                            ? 'border-secondary bg-secondary text-white'
-                            : 'border-gray-300 text-secondary hover:border-secondary'
-                        }`}
-                      >
-                        {size.name}
-                      </button>
-                    ))}
+                        placeholder="Ej. 42"
+                        className="w-24 h-9 rounded-md border border-input px-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary"
+                      />
+                    </div>
                   </div>
                 )}
               />

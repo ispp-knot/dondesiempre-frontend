@@ -5,6 +5,25 @@ export interface ProductVariantDTO {
   isAvailable: boolean;
 }
 
+const SIZE_ORDER = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+function orderSizes(sizes: { id: string; name: string }[]) {
+  return [...sizes].sort((a, b) => {
+    const aNum = parseFloat(a.name);
+    const bNum = parseFloat(b.name);
+
+    if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
+
+    const aIdx = SIZE_ORDER.indexOf(a.name.toUpperCase());
+    const bIdx = SIZE_ORDER.indexOf(b.name.toUpperCase());
+    if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
+
+    if (!isNaN(aNum) && isNaN(bNum)) return 1;
+    if (isNaN(aNum) && !isNaN(bNum)) return -1;
+
+    return a.name.localeCompare(b.name);
+  });
+}
+
 export default function ProductVariantSelector({
   variants,
   selectedSize,
@@ -22,7 +41,8 @@ export default function ProductVariantSelector({
   onColorChange: (colorId: string) => void;
   disabled?: boolean;
 }) {
-  const availableSizes = [...new Map(variants.map((v) => [v.size.id, v.size])).values()];
+  const allSizes = [...new Map(variants.map((v) => [v.size.id, v.size])).values()];
+  const availableSizes = orderSizes(allSizes);
 
   const availableColors = selectedSize
     ? [
