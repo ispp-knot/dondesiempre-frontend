@@ -35,7 +35,7 @@ const baseProductFormSchema = z.object({
   productTypeId: z.string().min(1, 'La categoría es obligatoria.'),
   discount: z
     .preprocess(
-      (val) => (val === '' || val === null ? 0 : val),
+      (val: number | null | undefined) => (val ? val : 0),
       z
         .number({
           error: 'El descuento debe ser un número válido.',

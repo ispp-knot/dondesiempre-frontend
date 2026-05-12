@@ -37,7 +37,7 @@ const baseOutfitFormSchema = z.object({
     }),
   discountPercentage: z
     .preprocess(
-      (val) => (val === '' || val === null ? 0 : val),
+      (val: number | null | undefined) => (val ? val : 0),
       z
         .number({
           error: 'El descuento debe ser un número válido.',

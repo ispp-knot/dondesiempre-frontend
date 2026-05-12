@@ -514,7 +514,8 @@ export default function OutfitCreationPage() {
     const dto: OutfitCreationDTO = {
       name: data.name,
       description: data.description,
-      discountPercentage: data.discountPercentage > 0 ? data.discountPercentage : null,
+      discountPercentage:
+        data.discountPercentage && data.discountPercentage > 0 ? data.discountPercentage : null,
       storefrontId: store.data.storefront.id,
       tags: data.tags.map((tag) => {
         return { name: tag } as OutfitTagDTO;
@@ -532,7 +533,11 @@ export default function OutfitCreationPage() {
         },
       });
 
-      if (data.discountPercentage > 0 && getOutfitDiscountPercentage(createdOutfit) === 0) {
+      if (
+        data.discountPercentage &&
+        data.discountPercentage > 0 &&
+        getOutfitDiscountPercentage(createdOutfit) === 0
+      ) {
         await updateOutfit.fetch({
           url: `outfits/${createdOutfit.id}`,
           formPayload: {

@@ -38,9 +38,10 @@ const promotionSchema = z.object({
     .string()
     .min(3, 'El nombre debe tener al menos 3 caracteres')
     .max(255, 'El nombre de ser como máximo de 255 caracteres'),
+  test: z.number().optional(),
   discountPercentage: z
     .preprocess(
-      (val) => (val === '' || val === null ? 0 : val),
+      (val: number | null | undefined) => (val ? val : 0),
       z
         .number({
           error: 'El descuento debe ser un número válido.',
@@ -97,7 +98,7 @@ export default function PromotionForm({
     control,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<PromotionFormData>({
+  } = useForm<PromotionFormData, unknown, PromotionFormData>({
     resolver: zodResolver(promotionSchema),
     defaultValues: {
       name: initialData?.name ?? '',
@@ -201,7 +202,7 @@ export default function PromotionForm({
             render={({ field }) => (
               <>
                 <Slider
-                  value={[field.value]}
+                  value={[field.value ?? 0]}
                   onValueChange={(val) => field.onChange(val[0])}
                   max={100}
                   min={1}
