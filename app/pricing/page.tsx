@@ -2,7 +2,7 @@ import { CheckCircle2, Zap, Share2, HelpCircle, Sparkles } from 'lucide-react';
 import { Plan, PlanCard } from '../../components/dondeSiempre/PlanCard';
 import { NotClientGuard } from '@/components/guards/NotClientGuard';
 
-// ─── Colores de marca DondeSiempre ───────────────────────────────────────────
+// ─── Colores de marca Donde Siempre ───────────────────────────────────────────
 
 // ─── Plan data ────────────────────────────────────────────────────────────────
 
@@ -16,7 +16,7 @@ const plans: Plan[] = [
     cta: 'Ya obtenido al registrarse',
     accentColor: '#4db8b0',
     features: [
-      { label: 'Tienda online en dondesiempre', icon: <CheckCircle2 size={14} />, highlight: true },
+      { label: 'Tienda online en Donde Siempre', icon: <CheckCircle2 size={14} />, highlight: true },
       {
         label: 'Gestión de productos ilimitados',
         icon: <CheckCircle2 size={14} />,
