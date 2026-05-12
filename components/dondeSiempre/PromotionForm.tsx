@@ -212,7 +212,7 @@ export default function PromotionForm({
                 <div className="flex items-center gap-1 bg-gray-100 rounded-md px-2 py-1 min-w-[60px]">
                   <input
                     type="number"
-                    value={field.value}
+                    value={field.value ?? 0}
                     max={100}
                     min={1}
                     step={1}
