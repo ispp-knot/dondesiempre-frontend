@@ -47,7 +47,7 @@ function getBackgroundImage(item: Props['item'], images?: string[]): string {
   return '/static/img/promotion_placeholder.png';
 }
 
-function getDrawOptions(item: Props['item'], typeValue: itemType) {
+function getDrawOptions(item: Props['item']) {
   const badgeTitle = '¡Nueva promoción!';
   const discount: number = item.discountPercentage ? item.discountPercentage : 0;
   item = item as PromotionDTO | ProductDTO;
@@ -101,7 +101,7 @@ export function ShareTo({ item, images, className }: Props) {
         canvas,
         backgroundImage,
         logoUrl: `${getWebUrl()}/apple-touch-icon.png`,
-        ...getDrawOptions(item, typeValue),
+        ...getDrawOptions(item),
       });
       setPreviewUrl(url);
     } catch (err) {
