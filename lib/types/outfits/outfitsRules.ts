@@ -1,5 +1,6 @@
 import type { OutfitDTO } from '@/lib/types/outfits/outfitsDto';
 import { z } from 'zod';
+import { MAX_DISCOUNT, MIN_DISCOUNT } from '../products/productsRules';
 
 export const MIN_OUTFIT_PRODUCTS = 2;
 export const MAX_OUTFIT_NAME_LENGTH = 255;
@@ -34,10 +35,19 @@ const baseOutfitFormSchema = z.object({
       const trimmedValue = value.trim();
       return trimmedValue.length === 0 ? null : trimmedValue;
     }),
-  discountPercentage: z.coerce
-    .number({ error: 'El descuento es obligatorio.' })
-    .min(0, 'El descuento no puede ser negativo.')
-    .max(100, 'El descuento no puede superar el 100%.'),
+  discountPercentage: z
+    .preprocess(
+      (val: number | null | undefined) => (val ? val : 0),
+      z
+        .number({
+          error: 'El descuento debe ser un número válido.',
+        })
+        .min(MIN_DISCOUNT, `El descuento no puede ser menor a ${MIN_DISCOUNT}%.`)
+        .max(MAX_DISCOUNT, `El descuento no puede ser mayor a ${MAX_DISCOUNT}%.`)
+        .multipleOf(1, 'El descuento debe ser un número entero.')
+        .nullable()
+    )
+    .optional(),
 });
 
 export function createOutfitFormSchema() {

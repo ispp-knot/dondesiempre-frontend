@@ -268,6 +268,11 @@ export default function ProductEditPage() {
                       placeholder="0"
                       aria-invalid={!!errors.discount}
                       className="w-32"
+                      onKeyDown={(e) => {
+                        if (e.key === '.' || e.key === ',') {
+                          e.preventDefault();
+                        }
+                      }}
                       {...register('discount', { valueAsNumber: true })}
                     />
                     <span className="text-base font-semibold text-secondary">%</span>
