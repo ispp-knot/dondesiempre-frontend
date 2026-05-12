@@ -109,18 +109,18 @@ export default function OutfitsPage() {
           );
         }}
       >
-        <div className="flex flex-col items-center">
-          <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
+        <div className="flex flex-col items-center w-full">
+          <div className="w-full md:w-8/12 md:min-w-3xl px-4 md:px-10 pt-4">
             <BackButton
               variant="ghost"
               text="Volver a la tienda"
               onAction={() => router.push(`/stores/${params.id}`)}
             />
           </div>
-          <div className="w-full max-w-5xl px-4 md:px-10 pt-4">
+          <div className="w-full md:w-8/12 md:min-w-3xl px-4 md:px-10 pt-4">
             <h1 className="text-3xl font-bold text-primary text-center">Tus outfits</h1>
           </div>
-          <div className="w-full md:w-8/12">
+          <div className="w-full md:w-8/12 md:min-w-3xl">
             {invalidOutfits.length > 0 && (
               <Card className="m-4 space-y-4 border-destructive/30 bg-destructive/5 p-4 shadow-xl">
                 <div className="space-y-2">
