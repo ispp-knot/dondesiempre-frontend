@@ -8,7 +8,7 @@ import { StoreDTO, StoreImageDTO } from '@/lib/types/stores/storesDto';
 
 import { convertPrice, discountPrice } from '@/lib/utils';
 import Image from 'next/image';
-import { JSX, useState } from 'react';
+import { JSX, useEffect, useState } from 'react';
 import StoreOptions from './options';
 import Outfits from './outfits';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
@@ -76,6 +76,18 @@ export default function StoreTabs({
   const prevPromo = () => {
     setCurrentPromoIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
+
+  useEffect(() => {
+    if (selectedPromo) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [selectedPromo]);
 
   const renderBannerContent = () => {
     if (currentPromoIndex == activePromotions.length && isOwner) {
