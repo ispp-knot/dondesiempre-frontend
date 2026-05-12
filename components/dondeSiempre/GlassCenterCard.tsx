@@ -36,8 +36,8 @@ export function GlassCenterCard({
       >
         {logo && (
           <div className="mb-6 flex flex-col items-center gap-2">
-            <Image src="/static/logo-svg.svg" alt="DondeSiempre" width={40} height={50} />
-            <span className="text-xl font-bold text-primary">DondeSiempre</span>
+            <Image src="/static/logo-svg.svg" alt="Donde Siempre" width={40} height={50} />
+            <span className="text-xl font-bold text-primary">Donde Siempre</span>
           </div>
         )}
         {children}
