@@ -3,7 +3,7 @@
 import { usePassiveFetcher } from '@/lib/api/fetcher';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { useParams, useRouter } from 'next/navigation';
-import { Plus, Edit2, ArrowLeft, Image as ImageIcon, Calendar, Tag } from 'lucide-react';
+import { Plus, Edit2, Image as ImageIcon, Calendar, Tag } from 'lucide-react';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import { useAuth } from '@/lib/auth/AuthContext';
@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { BackButton } from '@/components/dondeSiempre/BackButton';
 
 export default function ManagePromotionsPage() {
   const params = useParams<{ id: string }>();
@@ -57,13 +58,11 @@ export default function ManagePromotionsPage() {
       <div className="max-w-6xl mx-auto p-4 md:p-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
           <div>
-            <button
-              onClick={() => router.push(`/stores/${storeId}`)}
-              data-testid="back-to-storefront"
-              className="flex items-center text-gray-500 hover:text-[var(--primary)] transition-colors mb-2 text-sm font-semibold"
-            >
-              <ArrowLeft className="w-4 h-4 mr-1.5" /> Volver a mi tienda
-            </button>
+            <BackButton
+              variant="ghost"
+              text="Volver a mi tienda"
+              onAction={() => router.push(`/stores/${params.id}`)}
+            />
             <h1 className="text-3xl md:text-4xl font-black text-[var(--primary)]">
               Mis Promociones
             </h1>
