@@ -35,7 +35,8 @@ export default function Navbar() {
         <div className="flex flex-row items-center w-11/12 justify-between">
           <div className="flex flex-row items-center gap-2">
             <Image src="/static/logo-svg.svg" alt="Logo" width={35} height={45} />
-            <p className="text-2xl font-bold text-primary">DondeSiempre</p>
+            <span className="text-2xl font-bold text-primary">Donde </span>
+            <span className="text-secondary! text-2xl! font-bold!">Siempre</span>
           </div>
         </div>
       </div>
@@ -48,7 +49,8 @@ export default function Navbar() {
         <div className="flex flex-row items-center gap-10">
           <Link href={'/search'} className="flex flex-row items-center gap-2">
             <Image src="/static/logo-svg.svg" alt="Logo" width={35} height={45} />
-            <p className="text-2xl font-bold">DondeSiempre</p>
+            <span className="text-2xl font-bold text-primary">Donde </span>
+            <span className="text-secondary! text-2xl! font-bold!">Siempre</span>
           </Link>
 
           <div className="flex flex-row items-center gap-6 text-secondary">
