@@ -78,6 +78,7 @@ export default function OutfitProductsPage() {
               <BackButton
                 variant="ghost"
                 onAction={() => router.push(`/stores/${params.id}/outfits`)}
+                className="pl-3 pt-1.5"
               />
               <Card className="p-4 pt-8 m-4 mb-8 shadow-xl">
                 <div>

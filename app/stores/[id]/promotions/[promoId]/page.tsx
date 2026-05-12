@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { GenericConfirmModal } from '@/components/modals/GenericConfirmModal';
-import { BackButton } from '@/components/dondeSiempre/BackButton';
 import Loader from '@/components/dondeSiempre/Loader';
 
 export default function EditPromotionPage() {
@@ -192,7 +191,6 @@ export default function EditPromotionPage() {
         />
       )}
       <div className="flex flex-col items-center">
-        <BackButton variant="ghost" />
         <PromotionForm
           key={promoId} // Forzamos remount si cambia la promo
           initialData={initialData}

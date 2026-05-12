@@ -268,6 +268,11 @@ export default function ProductEditPage() {
                       placeholder="0"
                       aria-invalid={!!errors.discount}
                       className="w-32"
+                      onKeyDown={(e) => {
+                        if (e.key === '.' || e.key === ',') {
+                          e.preventDefault();
+                        }
+                      }}
                       {...register('discount', { valueAsNumber: true })}
                     />
                     <span className="text-base font-semibold text-secondary">%</span>
@@ -278,7 +283,7 @@ export default function ProductEditPage() {
 
               {apiError && <p className="text-sm font-bold text-destructive">{apiError}</p>}
 
-              <div className="flex justify-center gap-4">
+              <div className="flex justify-center gap-2 flex-col md:flex-row ">
                 <Button
                   type="submit"
                   className="mt-2 h-12 w-full bg-secondary text-base font-bold text-white hover:bg-dark-secondary md:w-1/3"

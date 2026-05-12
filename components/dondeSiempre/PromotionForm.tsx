@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { FaCalendarAlt, FaPlus, FaTimes, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 import Image from 'next/image';
 import { format } from 'date-fns';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 // UI Components
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
@@ -22,6 +22,8 @@ import { authorizedOfetch } from '@/lib/api/authorizedOfetch';
 import { cn } from '@/lib/utils';
 import { getBackendUrl } from '@/lib/config';
 import { DateRange } from 'react-day-picker';
+import { BackButton } from './BackButton';
+import { MAX_DISCOUNT, MIN_DISCOUNT } from '@/lib/types/products/productsRules';
 
 const productSchema = z.object({
   id: z.string(),
@@ -36,10 +38,20 @@ const promotionSchema = z.object({
     .string()
     .min(3, 'El nombre debe tener al menos 3 caracteres')
     .max(255, 'El nombre de ser como máximo de 255 caracteres'),
+  test: z.number().optional(),
   discountPercentage: z
-    .number()
-    .min(1, 'El descuento debe ser al menos 1%')
-    .max(100, 'El descuento máximo es de 100%'),
+    .preprocess(
+      (val: number | null | undefined) => (val ? val : 0),
+      z
+        .number({
+          error: 'El descuento debe ser un número válido.',
+        })
+        .min(MIN_DISCOUNT, `El descuento no puede ser menor a ${MIN_DISCOUNT}%.`)
+        .max(MAX_DISCOUNT, `El descuento no puede ser mayor a ${MAX_DISCOUNT}%.`)
+        .multipleOf(1, 'El descuento debe ser un número entero.')
+        .nullable()
+    )
+    .optional(),
   description: z.string().max(255, 'El nombre de ser como máximo de 255 caracteres'),
   products: z.array(productSchema).min(1, 'Selecciona al menos un producto'),
   isActive: z.boolean(),
@@ -86,7 +98,7 @@ export default function PromotionForm({
     control,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<PromotionFormData>({
+  } = useForm<PromotionFormData, unknown, PromotionFormData>({
     resolver: zodResolver(promotionSchema),
     defaultValues: {
       name: initialData?.name ?? '',
@@ -103,6 +115,9 @@ export default function PromotionForm({
   });
 
   const [isPending, setPending] = useState<boolean>(false);
+  const router = useRouter();
+  const params = useParams<{ id: string }>();
+
   const selectedProducts =
     useWatch({
       control,
@@ -149,6 +164,10 @@ export default function PromotionForm({
       onSubmit={handleSubmit(onFormSubmit)}
       className="flex flex-col gap-6 max-w-md mx-auto w-full"
     >
+      <BackButton
+        variant="ghost"
+        onAction={() => router.push(`/stores/${params.id}/promotions/manage`)}
+      />
       <h1 className="text-2xl font-bold mb-2">
         {isEditMode ? 'Editar Promoción' : 'Nueva Promoción'}
       </h1>
@@ -183,7 +202,7 @@ export default function PromotionForm({
             render={({ field }) => (
               <>
                 <Slider
-                  value={[field.value]}
+                  value={[field.value ?? 0]}
                   onValueChange={(val) => field.onChange(val[0])}
                   max={100}
                   min={1}
@@ -193,8 +212,16 @@ export default function PromotionForm({
                 <div className="flex items-center gap-1 bg-gray-100 rounded-md px-2 py-1 min-w-[60px]">
                   <input
                     type="number"
-                    value={field.value}
+                    value={field.value ?? 0}
+                    max={100}
+                    min={1}
+                    step={1}
                     onChange={(e) => field.onChange(Number(e.target.value))}
+                    onKeyDown={(e) => {
+                      if (e.key === '.' || e.key === ',') {
+                        e.preventDefault();
+                      }
+                    }}
                     className="w-10 outline-none text-lg text-dark-blue font-bold bg-transparent text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                   <span className="text-secondary font-bold">%</span>

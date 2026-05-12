@@ -65,12 +65,12 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
 
         <div className="overflow-y-auto flex-1 pt-4 pr-1 space-y-4 text-sm">
           <P>
-            Bienvenido/a a DondeSiempre. Antes de utilizar nuestra aplicación, le rogamos que lea
+            Bienvenido/a a Donde Siempre. Antes de utilizar nuestra aplicación, le rogamos que lea
             atentamente el presente documento, que regula tanto las condiciones de uso de la
-            plataforma como el tratamiento de sus datos personales. Al acceder o utilizar
-            DondeSiempre, usted declara haber leído, comprendido y aceptado íntegramente estos
-            términos. Si no está de acuerdo con alguno de ellos, le pedimos que se abstenga de
-            utilizar la aplicación.
+            plataforma como el tratamiento de sus datos personales. Al acceder o utilizar Donde
+            Siempre, usted declara haber leído, comprendido y aceptado íntegramente estos términos.
+            Si no está de acuerdo con alguno de ellos, le pedimos que se abstenga de utilizar la
+            aplicación.
           </P>
 
           <hr className="border-border" />
@@ -78,7 +78,7 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
           <section className="space-y-2">
             <SectionTitle>1. Descripción del Servicio</SectionTitle>
             <P>
-              DondeSiempre es una plataforma digital de comercio local que actúa como escaparate
+              Donde Siempre es una plataforma digital de comercio local que actúa como escaparate
               centralizado para tiendas físicas de moda, ropa y complementos, con especial
               implantación en la ciudad de Sevilla y su área metropolitana. La plataforma permite a
               los usuarios descubrir tiendas cercanas mediante un buscador geolocalizado, consultar
@@ -86,7 +86,7 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
               aplicación.
             </P>
             <P>
-              DondeSiempre no es el vendedor de los productos: actúa como intermediario tecnológico
+              Donde Siempre no es el vendedor de los productos: actúa como intermediario tecnológico
               entre comercios locales verificados y consumidores finales, facilitando la transacción
               y garantizando su seguridad mediante un sistema de retención de fondos hasta la
               entrega efectiva del producto.
@@ -107,11 +107,11 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
             <div className="space-y-1">
               <SubSectionTitle>2.1. Compradores</SubSectionTitle>
               <P>
-                El acceso y uso de DondeSiempre está reservado a personas mayores de 18 años. Los
+                El acceso y uso de Donde Siempre está reservado a personas mayores de 18 años. Los
                 menores de edad no podrán registrarse ni realizar compras a través de la plataforma.
                 Al crear una cuenta, el usuario declara expresamente tener 18 años cumplidos o la
-                mayoría de edad legal en su país de residencia. DondeSiempre se reserva el derecho a
-                cancelar cualquier cuenta en la que se detecte que el titular no cumple este
+                mayoría de edad legal en su país de residencia. Donde Siempre se reserva el derecho
+                a cancelar cualquier cuenta en la que se detecte que el titular no cumple este
                 requisito.
               </P>
               <P>
@@ -127,8 +127,8 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
               <P>
                 El acceso como comerciante está reservado a negocios físicos legalmente constituidos
                 con licencia comercial en vigor. El proceso de alta incluye una verificación manual
-                por parte del equipo de DondeSiempre, que podrá solicitar la documentación que
-                considere necesaria para confirmar la legitimidad del negocio. DondeSiempre se
+                por parte del equipo de Donde Siempre, que podrá solicitar la documentación que
+                considere necesaria para confirmar la legitimidad del negocio. Donde Siempre se
                 reserva el derecho a denegar o suspender el acceso de cualquier comercio que no
                 cumpla los requisitos establecidos o que incumpla las presentes condiciones.
               </P>
@@ -142,13 +142,13 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
 
             <div className="space-y-1">
               <SubSectionTitle>3.1. Flujo del Pedido</SubSectionTitle>
-              <P>El proceso de compra en DondeSiempre funciona de la siguiente manera:</P>
+              <P>El proceso de compra en Donde Siempre funciona de la siguiente manera:</P>
               <ul className="list-none space-y-1 text-sm text-foreground/80 ml-2">
                 {[
                   'El comprador selecciona los productos y realiza la solicitud de pedido.',
                   'La tienda recibe la notificación y dispone de un plazo para confirmar o rechazar el pedido.',
                   'Solo tras la confirmación por parte de la tienda se procede al cargo en el método de pago del comprador.',
-                  'El importe queda retenido en la pasarela de pago de DondeSiempre hasta que se verifica la entrega del producto.',
+                  'El importe queda retenido en la pasarela de pago de Donde Siempre hasta que se verifica la entrega del producto.',
                   'En el caso de recogida en tienda, el comprador recibe un código de pedido único que debe presentar al recoger el producto. La tienda introduce dicho código en la aplicación para confirmar la entrega y liberar el pago.',
                 ].map((item, i) => (
                   <li key={i} className="flex gap-2">
@@ -164,9 +164,9 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
             <div className="space-y-1">
               <SubSectionTitle>3.2. Retención y Transferencia de Fondos</SubSectionTitle>
               <P>
-                DondeSiempre actúa como intermediario de pagos. Los fondos abonados por el comprador
-                no se transfieren directamente a la tienda, sino que permanecen retenidos hasta que
-                la entrega queda confirmada en la plataforma.
+                Donde Siempre actúa como intermediario de pagos. Los fondos abonados por el
+                comprador no se transfieren directamente a la tienda, sino que permanecen retenidos
+                hasta que la entrega queda confirmada en la plataforma.
               </P>
             </div>
 
@@ -208,7 +208,7 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
             <SectionTitle>4. Política de Privacidad</SectionTitle>
             <P>
               En cumplimiento del Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 de
-              Protección de Datos Personales (LOPDGDD), DondeSiempre informa a sus usuarios del
+              Protección de Datos Personales (LOPDGDD), Donde Siempre informa a sus usuarios del
               tratamiento que realiza de sus datos personales.
             </P>
 
@@ -216,7 +216,7 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
               <SubSectionTitle>4.1. Responsable del Tratamiento</SubSectionTitle>
               <P>
                 El responsable del tratamiento de los datos personales recogidos a través de la
-                aplicación es DondeSiempre, S.L. (en proceso de constitución), con domicilio social
+                aplicación es Donde Siempre, S.L. (en proceso de constitución), con domicilio social
                 en Sevilla, España. Puede contactar con nosotros en materia de privacidad a través
                 de:{' '}
                 <a
@@ -263,7 +263,7 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
                       [
                         'Contraseña (cifrada)',
                         'Ejecución del contrato',
-                        'Autenticación segura del usuario en la plataforma. Almacenada siempre en formato hasheado; DondeSiempre nunca accede a la contraseña en texto claro.',
+                        'Autenticación segura del usuario en la plataforma. Almacenada siempre en formato hasheado; Donde Siempre nunca accede a la contraseña en texto claro.',
                       ],
                       [
                         'Ubicación geográfica',
@@ -273,7 +273,7 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
                       [
                         'Datos de pago (tarjeta/cuenta)',
                         'Ejecución del contrato',
-                        'Procesamiento del cobro a través de la pasarela de pago. DondeSiempre no almacena datos de tarjeta en sus servidores; son gestionados por el proveedor de pagos certificado (Stripe).',
+                        'Procesamiento del cobro a través de la pasarela de pago. Donde Siempre no almacena datos de tarjeta en sus servidores; son gestionados por el proveedor de pagos certificado (Stripe).',
                       ],
                       [
                         'Historial de pedidos',
@@ -341,7 +341,7 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
             <div className="space-y-1">
               <SubSectionTitle>4.5. Cesión de Datos a Terceros</SubSectionTitle>
               <P>
-                DondeSiempre no cederá sus datos personales a terceros salvo en los siguientes
+                Donde Siempre no cederá sus datos personales a terceros salvo en los siguientes
                 supuestos: (i) proveedores tecnológicos necesarios para la prestación del servicio
                 (pasarela de pagos, servicios de alojamiento en la nube), que actúan como encargados
                 del tratamiento bajo contrato de encargo; (ii) cuando sea requerido por obligación
@@ -360,7 +360,7 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
               <P>
                 Los comercios son los únicos responsables de la veracidad, exactitud y actualización
                 de la información de sus productos, incluyendo descripciones, precios,
-                disponibilidad de stock e imágenes. DondeSiempre se reserva el derecho a retirar o
+                disponibilidad de stock e imágenes. Donde Siempre se reserva el derecho a retirar o
                 moderar cualquier contenido que no se ajuste al ámbito de moda y comercio local, que
                 sea inexacto, engañoso o que vulnere derechos de terceros.
               </P>
@@ -380,10 +380,10 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
             <div className="space-y-1">
               <SubSectionTitle>5.3. Propiedad de la Plataforma</SubSectionTitle>
               <P>
-                Todos los derechos sobre la plataforma DondeSiempre, incluyendo su diseño, código
-                fuente, marcas, logotipos y funcionalidades, son propiedad exclusiva de DondeSiempre
-                o de sus licenciantes. Queda prohibida cualquier reproducción, distribución o uso no
-                autorizado de dichos elementos.
+                Todos los derechos sobre la plataforma Donde Siempre, incluyendo su diseño, código
+                fuente, marcas, logotipos y funcionalidades, son propiedad exclusiva de Donde
+                Siempre o de sus licenciantes. Queda prohibida cualquier reproducción, distribución
+                o uso no autorizado de dichos elementos.
               </P>
             </div>
           </section>
@@ -400,7 +400,7 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
             <div className="space-y-1">
               <SubSectionTitle>6.1. Comisiones por Venta</SubSectionTitle>
               <P>
-                DondeSiempre aplica una comisión sobre cada venta completada a través de la
+                Donde Siempre aplica una comisión sobre cada venta completada a través de la
                 plataforma. La comisión se descuenta automáticamente del importe a transferir a la
                 tienda y varía según el plan contratado:
               </P>
@@ -429,7 +429,7 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
                 Los comercios pueden acceder a funcionalidades avanzadas mediante la contratación
                 del Plan Premium. El detalle de prestaciones, precios y condiciones de contratación
                 de cada plan está disponible en la sección de tarifas (Pricing) de la aplicación.
-                DondeSiempre se reserva el derecho a modificar los precios y características de los
+                Donde Siempre se reserva el derecho a modificar los precios y características de los
                 planes con un preaviso mínimo de 30 días.
               </P>
             </div>
@@ -453,19 +453,19 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
             <div className="space-y-1">
               <SubSectionTitle>7.2. Limitación de Responsabilidad</SubSectionTitle>
               <P>
-                DondeSiempre no será responsable de los daños que puedan derivarse de interrupciones
-                del servicio ajenas a su control, del incumplimiento por parte de los comercios de
-                sus obligaciones frente al comprador, de la calidad o idoneidad de los productos
-                vendidos por los comercios, ni del uso indebido de la plataforma por parte de
-                terceros. En cualquier caso, la responsabilidad máxima de DondeSiempre se limitará
-                al importe de la última transacción realizada por el usuario afectado.
+                Donde Siempre no será responsable de los daños que puedan derivarse de
+                interrupciones del servicio ajenas a su control, del incumplimiento por parte de los
+                comercios de sus obligaciones frente al comprador, de la calidad o idoneidad de los
+                productos vendidos por los comercios, ni del uso indebido de la plataforma por parte
+                de terceros. En cualquier caso, la responsabilidad máxima de Donde Siempre se
+                limitará al importe de la última transacción realizada por el usuario afectado.
               </P>
             </div>
 
             <div className="space-y-1">
               <SubSectionTitle>7.3. Uso Indebido y Suspensión de Cuenta</SubSectionTitle>
               <P>
-                Queda expresamente prohibido el uso de DondeSiempre para fines fraudulentos o
+                Queda expresamente prohibido el uso de Donde Siempre para fines fraudulentos o
                 ilícitos. A título enunciativo y no limitativo, se consideran usos indebidos los
                 siguientes:
               </P>
@@ -487,11 +487,11 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
                 ))}
               </ul>
               <P>
-                DondeSiempre se reserva el derecho a suspender o cancelar, de forma temporal o
+                Donde Siempre se reserva el derecho a suspender o cancelar, de forma temporal o
                 definitiva y sin previo aviso, cualquier cuenta en la que se detecte un uso indebido
                 de la plataforma, fraude o incumplimiento de las presentes condiciones. En caso de
                 cancelación por motivos imputables al usuario, no habrá lugar a compensación alguna.
-                DondeSiempre podrá además emprender las acciones legales que estime oportunas para
+                Donde Siempre podrá además emprender las acciones legales que estime oportunas para
                 la defensa de sus intereses y los de la comunidad de usuarios.
               </P>
             </div>
@@ -502,7 +502,7 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
           <section className="space-y-3">
             <SectionTitle>8. Política de Cookies</SectionTitle>
             <P>
-              DondeSiempre utilizará únicamente cookies técnicas estrictamente necesarias para el
+              Donde Siempre utilizará únicamente cookies técnicas estrictamente necesarias para el
               funcionamiento de la aplicación. No utilizamos cookies de analítica, publicidad,
               rastreo ni de ningún otro tipo que no sea imprescindible para prestar el servicio.
             </P>
@@ -518,7 +518,7 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
 
             <div className="space-y-1">
               <SubSectionTitle>8.2. Cookies que utilizamos</SubSectionTitle>
-              <P>Las únicas cookies presentes en DondeSiempre son las siguientes:</P>
+              <P>Las únicas cookies presentes en Donde Siempre son las siguientes:</P>
               <ul className="list-none space-y-1 text-sm text-foreground/80 ml-2">
                 {[
                   'Sesión de usuario: identifica al usuario autenticado durante el uso de la aplicación. Se elimina al cerrar sesión.',
@@ -538,7 +538,7 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
             <div className="space-y-1">
               <SubSectionTitle>8.3. Lo que no hacemos</SubSectionTitle>
               <P>
-                DondeSiempre no instala ni utiliza cookies de analítica (como Google Analytics),
+                Donde Siempre no instala ni utiliza cookies de analítica (como Google Analytics),
                 cookies publicitarias, cookies de redes sociales ni ningún tipo de tecnología de
                 rastreo del comportamiento del usuario con fines comerciales o estadísticos. No
                 compartimos información de navegación con terceros.
@@ -557,7 +557,7 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
           <section className="space-y-2">
             <SectionTitle>9. Modificaciones y Ley Aplicable</SectionTitle>
             <P>
-              DondeSiempre se reserva el derecho a modificar los presentes términos en cualquier
+              Donde Siempre se reserva el derecho a modificar los presentes términos en cualquier
               momento. Los cambios serán notificados a los usuarios registrados con un preaviso
               mínimo de 15 días antes de su entrada en vigor. El uso continuado de la plataforma
               tras la notificación implicará la aceptación de los nuevos términos.
@@ -617,8 +617,8 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
           <section className="space-y-2">
             <SectionTitle>Comunicación en caso de brecha de seguridad</SectionTitle>
             <P>
-              En caso de detectar una brecha de seguridad que afecte a tus datos personales,
-              DondeSiempre seguirá el siguiente protocolo:
+              En caso de detectar una brecha de seguridad que afecte a tus datos personales, Donde
+              Siempre seguirá el siguiente protocolo:
             </P>
             <ul className="list-none space-y-1 text-sm text-foreground/80 ml-2">
               {[
@@ -651,7 +651,7 @@ export default function TermsOfServiceModal({ trigger }: TermsOfServiceModalProp
           </section>
 
           <p className="text-xs text-center pb-1" style={{ color: '#999' }}>
-            Última actualización: 13 de abril de 2026 · © 2026 DondeSiempre. Todos los derechos
+            Última actualización: 13 de abril de 2026 · © 2026 Donde Siempre. Todos los derechos
             reservados.
           </p>
         </div>

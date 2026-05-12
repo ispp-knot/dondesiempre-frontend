@@ -259,6 +259,7 @@ export default function ProductDetailsPage() {
           isAvailable: data.isAvailable,
         },
       });
+      await sizes.refetch();
       await variantsBackend.refetch();
       await allVariantsBackend.refetch();
       setIsCreateVariantModalOpen(false);

@@ -207,7 +207,8 @@ function OutfitAdminForm({
         {
           name: data.name,
           description: data.description,
-          discountPercentage: data.discountPercentage > 0 ? data.discountPercentage : null,
+          discountPercentage:
+            data.discountPercentage && data.discountPercentage > 0 ? data.discountPercentage : null,
         },
         imageFile
       );
