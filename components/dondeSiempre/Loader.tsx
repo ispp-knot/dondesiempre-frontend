@@ -1,9 +1,19 @@
 import { Loader2 } from 'lucide-react';
+import { ReactNode } from 'react';
 
-export default function Loader() {
+interface LoaderProps {
+  children?: ReactNode;
+  className?: string;
+}
+
+export default function Loader({
+  children,
+  className = 'flex flex-col items-center justify-center w-full h-screen bg-background',
+}: LoaderProps) {
   return (
-    <div className="flex flex-col items-center justify-center w-full h-screen bg-background">
+    <div className={className}>
       <Loader2 className="animate-spin w-12 h-12" />
+      {children}
     </div>
   );
 }
