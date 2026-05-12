@@ -573,7 +573,7 @@ export default function OutfitCreationPage() {
   };
 
   if (products.isLoading || store.isLoading) {
-    return <Loader />
+    return <Loader />;
   }
 
   if (products.isError || store.isError) {
