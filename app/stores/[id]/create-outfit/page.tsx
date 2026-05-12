@@ -43,6 +43,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { FaPlus } from 'react-icons/fa';
 import { FaTag } from 'react-icons/fa6';
 import { z } from 'zod';
+import Loader from '@/components/dondeSiempre/Loader';
 
 const outfitSchema = createOutfitFormSchema();
 
@@ -572,7 +573,7 @@ export default function OutfitCreationPage() {
   };
 
   if (products.isLoading || store.isLoading) {
-    return <LoadingText />;
+    return <Loader />
   }
 
   if (products.isError || store.isError) {
