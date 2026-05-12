@@ -1,6 +1,6 @@
 import { authorizedOfetch } from './authorizedOfetch';
 import { getBackendUrl } from '../config';
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, Dispatch, SetStateAction } from 'react';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { FetchError } from 'ofetch';
@@ -86,7 +86,6 @@ export function usePassiveFetcher<T>({
     queryKey,
     queryFn: () => executeFetch<T>({ url, getToken: getAuthToken, timeout: timeout }),
     enabled,
-    placeholderData: keepPreviousData,
   });
 
   const setData = (data: T) => {
