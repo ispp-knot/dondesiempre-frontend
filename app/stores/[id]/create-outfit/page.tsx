@@ -1,5 +1,6 @@
 'use client';
 
+import { BackButton } from '@/components/dondeSiempre/BackButton';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
 import LoadingText from '@/components/dondeSiempre/LoadingText';
@@ -105,6 +106,8 @@ function OutfitCreationForm({
   const [tagInput, setTagInput] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
   const [tagError, setTagError] = useState<string | null>(null);
+  const router = useRouter();
+  const params = useParams<{ id: string }>();
 
   const {
     control,
@@ -211,6 +214,12 @@ function OutfitCreationForm({
     >
       <div className="flex flex-col items-center px-4 py-6">
         <div className="w-full max-w-6xl">
+          <BackButton
+            variant="ghost"
+            onAction={() => router.push(`/stores/${params.id}/outfits`)}
+            className="p-2"
+          />
+
           <Card className="mb-8 p-4 shadow-xl sm:p-6 md:p-8">
             <h1 className="mb-6 text-center text-3xl font-bold text-primary">Crear outfit</h1>
 
