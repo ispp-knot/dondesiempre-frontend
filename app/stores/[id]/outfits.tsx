@@ -38,7 +38,7 @@ export default function Outfits({ storeId = undefined, outfits = [] }: Readonly<
           onMouseLeave={plugin.current.reset}
         >
           <CarouselPrevious className="hidden md:flex" />
-          <CarouselContent>
+          <CarouselContent className="items-center">
             {validOutfits.map((out) => (
               <CarouselItem key={out.id}>
                 <OutfitCard outfit={out} isOwner={false} onDelete={() => {}} />
