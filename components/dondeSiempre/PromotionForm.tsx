@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils';
 import { getBackendUrl } from '@/lib/config';
 import { DateRange } from 'react-day-picker';
 import { BackButton } from './BackButton';
+import { MAX_DISCOUNT, MIN_DISCOUNT } from '@/lib/types/products/productsRules';
 
 const productSchema = z.object({
   id: z.string(),
@@ -38,9 +39,18 @@ const promotionSchema = z.object({
     .min(3, 'El nombre debe tener al menos 3 caracteres')
     .max(255, 'El nombre de ser como máximo de 255 caracteres'),
   discountPercentage: z
-    .number()
-    .min(1, 'El descuento debe ser al menos 1%')
-    .max(100, 'El descuento máximo es de 100%'),
+    .preprocess(
+      (val) => (val === '' || val === null ? 0 : val),
+      z
+        .number({
+          error: 'El descuento debe ser un número válido.',
+        })
+        .min(MIN_DISCOUNT, `El descuento no puede ser menor a ${MIN_DISCOUNT}%.`)
+        .max(MAX_DISCOUNT, `El descuento no puede ser mayor a ${MAX_DISCOUNT}%.`)
+        .multipleOf(1, 'El descuento debe ser un número entero.')
+        .nullable()
+    )
+    .optional(),
   description: z.string().max(255, 'El nombre de ser como máximo de 255 caracteres'),
   products: z.array(productSchema).min(1, 'Selecciona al menos un producto'),
   isActive: z.boolean(),
@@ -202,7 +212,15 @@ export default function PromotionForm({
                   <input
                     type="number"
                     value={field.value}
+                    max={100}
+                    min={1}
+                    step={1}
                     onChange={(e) => field.onChange(Number(e.target.value))}
+                    onKeyDown={(e) => {
+                      if (e.key === '.' || e.key === ',') {
+                        e.preventDefault();
+                      }
+                    }}
                     className="w-10 outline-none text-lg text-dark-blue font-bold bg-transparent text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                   <span className="text-secondary font-bold">%</span>
