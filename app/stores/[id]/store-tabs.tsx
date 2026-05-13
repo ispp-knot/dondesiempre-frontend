@@ -8,7 +8,7 @@ import { StoreDTO, StoreImageDTO } from '@/lib/types/stores/storesDto';
 
 import { convertPrice, discountPrice } from '@/lib/utils';
 import Image from 'next/image';
-import { JSX, useState } from 'react';
+import { JSX, useEffect, useState } from 'react';
 import StoreOptions from './options';
 import Outfits from './outfits';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
@@ -77,6 +77,18 @@ export default function StoreTabs({
     setCurrentPromoIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
 
+  useEffect(() => {
+    if (selectedPromo) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [selectedPromo]);
+
   const renderBannerContent = () => {
     if (currentPromoIndex == activePromotions.length && isOwner) {
       return (
@@ -103,7 +115,7 @@ export default function StoreTabs({
             ¿Quieres atraer más clientes?
           </h2>
           <p className="text-gray-600 font-medium mt-2 text-sm md:text-base">
-            Crea una nueva oferta o descuento especial para tu tienda.
+            Crea un nuevo descuento o promocion especial para tu tienda.
           </p>
           <Link
             data-testid="create-promotion-button"
@@ -322,7 +334,7 @@ export default function StoreTabs({
         )}
       </div>
       {selectedPromo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pb-12 md:pb-4 bg-black/60 backdrop-blur-sm">
           <div
             className="bg-white rounded-2xl max-w-md w-full max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200"
             data-testid="promotion-products-modal"

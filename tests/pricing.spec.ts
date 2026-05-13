@@ -18,7 +18,7 @@ test.describe.serial('pricing tests', () => {
     await page.goto('http://localhost:3000/pricing');
 
     const beneficiosEsperadosBase = [
-      'Tienda online en dondesiempre',
+      'Tienda online en Donde Siempre',
       'Gestión de productos ilimitados',
       'Pasarela de pagos integrada',
       'Panel de pedidos y clientes',
