@@ -126,7 +126,7 @@ export default function StoreEditModal({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader className="flex items-center justify-center">
-          <DialogTitle className="inline-flex items-center justify-center rounded-full bg-secondary px-3 py-4 w-48 text-xl font-bold text-white">
+          <DialogTitle className="inline-flex items-center justify-center px-3 py-4 w-48 text-xl font-bold text-secondary">
             Editar tienda
           </DialogTitle>
         </DialogHeader>
