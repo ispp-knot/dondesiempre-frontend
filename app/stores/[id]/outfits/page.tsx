@@ -16,11 +16,11 @@ import { ReactNode, useState } from 'react';
 import { BiTransfer } from 'react-icons/bi';
 import { FaRegSave } from 'react-icons/fa';
 import { IoMdAddCircleOutline } from 'react-icons/io';
-import LoadingText from '../../../../components/dondeSiempre/LoadingText';
 import ClientOutfitsPage from './ClientOutfitsPage';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
 import GenericSuccessModal from '@/components/modals/GenericSuccessModal';
+import Loader from '@/components/dondeSiempre/Loader';
 
 export default function OutfitsPage() {
   const params = useParams<{ id: string }>();
@@ -39,7 +39,7 @@ export default function OutfitsPage() {
   });
 
   if (outfits.isLoading) {
-    return <LoadingText />;
+    return <Loader />;
   }
 
   if (outfits.isError) {

@@ -17,12 +17,12 @@ import {
   FaQrcode,
 } from 'react-icons/fa';
 import { MdOutlinePayments } from 'react-icons/md';
-import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { usePassiveFetcher, useActiveFetcher } from '@/lib/api/fetcher';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { QrScannerModal } from '@/components/modals/QrScanModal';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
+import Loader from '@/components/dondeSiempre/Loader';
 
 const statusMap: Record<string, string> = {
   PENDING: 'Pendiente',
@@ -167,7 +167,7 @@ export default function DeliverOrderPage() {
             onClose={() => setIsScanning(false)}
           />
         )}
-        {isSearching && <LoadingText />}
+        {isSearching && <Loader />}
 
         {order && !isSearching && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">

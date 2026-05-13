@@ -21,7 +21,7 @@ test.describe.serial('outfits', () => {
     await outfitPage.click();
     await page.waitForURL(/stores\/.*\/outfits/);
 
-    const createOutfitButton = await page.locator('div').filter({ hasText: /^Crear outfit$/ });
+    const createOutfitButton = await page.getByTestId('create-outfit-button');
     const orderOutfitsButton = await page.locator('div').filter({ hasText: 'Ordenar' }).nth(5);
     await expect(createOutfitButton).toBeVisible();
     await expect(orderOutfitsButton).toBeVisible();
@@ -37,11 +37,9 @@ test.describe.serial('outfits', () => {
 
     const outfitNameInput = await page.getByTestId('outfit-name-input');
     const discountPercentageInput = await page.getByTestId('outfit-discount-input');
-    const outfitTagsInput = await page.getByTestId('outfit-tags-input');
+    const outfitTagsInput = await page.getByRole('textbox', { name: 'Etiquetas' });
     const outfitDescriptionInput = await page.getByTestId('outfit-description-input');
     const addImageButton = await page.getByTestId('outfit-image-input');
-    const productsInput = await page.getByTestId('outfit-products-input');
-    const productsList = await page.getByTestId('outfit-products-list');
     const product1 = await page.getByText('Producto 110,00€Añadir');
     const product2 = await page.getByText('Producto 425,20€Añadir');
     const product3 = await page.getByText('Producto 2 Actualizado15,00€A');
@@ -52,8 +50,6 @@ test.describe.serial('outfits', () => {
     await expect(outfitTagsInput).toBeVisible();
     await expect(outfitDescriptionInput).toBeVisible();
     await expect(addImageButton).toBeVisible();
-    await expect(productsInput).toBeVisible();
-    await expect(productsList).toBeVisible();
     await expect(product1).toBeVisible();
     await expect(product2).toBeVisible();
     await expect(product3).toBeVisible();
@@ -152,6 +148,11 @@ test.describe.serial('outfits', () => {
     const outfit = await page.getByTestId('outfit-card');
     await outfit.getByTestId('outfit-delete-button').click();
 
+    await expect(page.getByText('¿Estás seguro?¿Estás seguro')).toBeVisible();
+    await page.getByTestId('delete-button').click();
+    await expect(page.getByText('¡Acción exitosa!Pulse en')).toBeVisible();
+    await page.getByRole('button', { name: 'Cerrar' }).click();
+
     const deletedOutfit = await page.getByTestId('outfit-card');
     await expect(deletedOutfit).not.toBeVisible();
   });
@@ -167,10 +168,7 @@ test.describe.serial('outfits', () => {
 
     await page.waitForURL(/stores\/.*\/outfits/);
 
-    await page
-      .locator('div')
-      .filter({ hasText: /^Crear outfit$/ })
-      .click();
+    await page.getByTestId('create-outfit-button').click();
     await page.waitForURL(/stores\/.*\/create-outfit/);
 
     await page.getByRole('textbox', { name: 'Nombre' }).click();
