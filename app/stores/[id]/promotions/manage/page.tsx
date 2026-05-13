@@ -54,9 +54,9 @@ export default function ManagePromotionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50/50 font-quicksand pb-24">
+    <div className="min-h-screen bg-gray-50/50 font-quicksand pb-24" >
       <div className="max-w-6xl mx-auto p-4 md:p-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10" >
           <div>
             <BackButton
               variant="ghost"

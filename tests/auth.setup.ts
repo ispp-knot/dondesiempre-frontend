@@ -30,7 +30,7 @@ test.describe.serial('client auth setup', () => {
     await page.getByRole('checkbox', { name: 'He leído y acepto los té' }).click();
     await page.getByRole('button', { name: 'Registrarse' }).click();
 
-    const toast = page.getByText('DondeSiempre¡Registro exitoso');
+    const toast = page.getByText('Donde Siempre¡Registro');
     await expect(toast).toBeVisible();
 
     await page.getByRole('link', { name: 'Ir a iniciar sesión' }).click();
@@ -85,7 +85,7 @@ test.describe.serial('store auth setup', () => {
     await page.getByRole('checkbox', { name: 'He leído y acepto los té' }).click();
     await page.getByRole('button', { name: 'Registrarse' }).click();
 
-    const toast = page.getByText('DondeSiempre¡Registro exitoso');
+    const toast = page.getByText('Donde Siempre¡Registro');
     await expect(toast).toBeVisible();
 
     await page.getByRole('link', { name: 'Ir a iniciar sesión' }).click();

@@ -24,7 +24,7 @@ test.describe.serial('promotion management', () => {
 
     await page.waitForURL(/promotions\/manage/);
 
-    const goBackButton = await page.getByTestId('back-to-storefront');
+    const goBackButton = await page.getByRole('button', { name: 'Volver a mi tienda' });
     const emptyPromotionList = await page.getByTestId('empty-promotion-list');
     const createNewPromotionButton = await page.getByTestId('create-new-promotion-button');
 
