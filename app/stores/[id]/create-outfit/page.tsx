@@ -372,7 +372,7 @@ function OutfitCreationForm({
                   <Label htmlFor="form-tags" className="text-base font-bold text-secondary">
                     Etiquetas
                   </Label>
-                  <div className="flex flex-col gap-2 sm:flex-row">
+                  <div className="flex flex-col gap-2 sm:flex-row" data-testid="outfit-tags-input">
                     <Input
                       id="form-tags"
                       value={tagInput}

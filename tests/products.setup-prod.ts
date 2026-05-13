@@ -312,6 +312,12 @@ test.describe.serial('test products', () => {
       await expect(deleteButton).toBeVisible();
 
       await page.getByTestId('product-delete-button').click();
+      await expect(page.getByText('¿Estás seguro?¿Estás seguro')).toBeVisible();
+
+      await page.getByRole('button', { name: 'Eliminar' }).nth(2).click();
+
+      await expect(page.getByText('Producto eliminadoEl producto')).toBeVisible();
+      await page.getByRole('button', { name: 'Cerrar' }).click();
 
       await page.waitForURL(storeUrl);
 
