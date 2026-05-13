@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Trash2, Save, Plus } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { z } from 'zod';
-import { GenericConfirmModal } from '@/components/modals/GenericConfirmModal';
 
 const PHONE_NETWORKS = ['Teléfono', 'Phone'];
 
