@@ -4,7 +4,6 @@ import { usePassiveFetcher } from '@/lib/api/fetcher';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { useParams, useRouter } from 'next/navigation';
 import { Plus, Edit2, Image as ImageIcon, Calendar, Tag } from 'lucide-react';
-import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useEffect } from 'react';
@@ -12,6 +11,7 @@ import Image from 'next/image';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
+import Loader from '@/components/dondeSiempre/Loader';
 
 export default function ManagePromotionsPage() {
   const params = useParams<{ id: string }>();
@@ -38,10 +38,10 @@ export default function ManagePromotionsPage() {
   }, [user, isOwner, router, storeId]);
 
   if (user === undefined || !isOwner) {
-    return <LoadingText />;
+    return <Loader />;
   }
 
-  if (isLoading) return <LoadingText />;
+  if (isLoading) return <Loader />;
 
   if (isError) {
     return (

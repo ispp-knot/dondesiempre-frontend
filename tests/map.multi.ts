@@ -34,6 +34,7 @@ test('reduction of stores in map', async ({ page }) => {
 
   await page.getByRole('textbox', { name: 'Sobre nosotros' }).click();
   await page.getByRole('textbox', { name: 'Sobre nosotros' }).fill('Info');
+  await page.getByRole('checkbox', { name: 'He leído y acepto los té' }).click();
 
   await page.getByRole('button', { name: 'Registrarse' }).click();
 
