@@ -11,7 +11,6 @@ import { useParams, useRouter } from 'next/navigation';
 
 // UI Components
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
-import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -375,24 +374,6 @@ export default function PromotionForm({
           <p className="text-destructive text-xs mt-1">{errors.promotionImage.message as string}</p>
         )}
       </div>
-
-      {/* Active Toggle */}
-      {initialData !== undefined && (
-        <div className="flex items-center justify-between py-2">
-          <span className="text-lg font-bold text-primary">Activa</span>
-          <Controller
-            control={control}
-            name="isActive"
-            render={({ field }) => (
-              <Switch
-                checked={field.value}
-                onCheckedChange={field.onChange}
-                className="cursor-pointer"
-              />
-            )}
-          />
-        </div>
-      )}
 
       {status && (
         <div
