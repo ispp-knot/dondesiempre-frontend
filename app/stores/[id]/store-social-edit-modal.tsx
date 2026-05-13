@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Trash2, Save, Plus } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { z } from 'zod';
-import { GenericConfirmModal } from '@/components/modals/GenericConfirmModal';
 
 const PHONE_NETWORKS = ['Teléfono', 'Phone'];
 
@@ -137,7 +136,6 @@ export default function StoreSocialNetworksModal({
   const [addError, setAddError] = useState<string | null>(null);
   const [updateErrors, setUpdateErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const addSocial = useActiveFetcher<StoreSocialNetworkDTO>({
     url: `stores/${storeId}/social-networks`,
@@ -322,7 +320,7 @@ export default function StoreSocialNetworksModal({
                 <Button
                   size="icon"
                   className="bg-primary hover:opacity-90 text-white shrink-0"
-                  onClick={() => setPendingDeleteId(social.id)}
+                  onClick={() => handleDelete(social.id)}
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -368,18 +366,6 @@ export default function StoreSocialNetworksModal({
             </Button>
           </div>
         </div>
-        {pendingDeleteId && (
-          <GenericConfirmModal
-            message="¿Estás seguro de que deseas eliminar esta red social?"
-            onConfirm={async () => {
-              await handleDelete(pendingDeleteId);
-              setPendingDeleteId(null);
-            }}
-            onClose={() => setPendingDeleteId(null)}
-            isLoading={deleteSocial.isPending}
-            confirmLabel="Eliminar"
-          />
-        )}
       </DialogContent>
     </Dialog>
   );
