@@ -103,7 +103,7 @@ export default function StoreTabs({
             ¿Quieres atraer más clientes?
           </h2>
           <p className="text-gray-600 font-medium mt-2 text-sm md:text-base">
-            Crea un nuevo descuento o promocion especial para tu tienda.
+            Crea una nueva promoción especial para tu tienda.
           </p>
           <Link
             data-testid="create-promotion-button"
