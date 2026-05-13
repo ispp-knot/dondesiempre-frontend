@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { GenericConfirmModal } from '@/components/modals/GenericConfirmModal';
+import Loader from '@/components/dondeSiempre/Loader';
 
 export default function EditPromotionPage() {
   const params = useParams<{ id: string; promoId: string }>();
@@ -160,10 +161,9 @@ export default function EditPromotionPage() {
   if (isLoading || !initialData) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white font-quicksand text-primary">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div>
+        <Loader>
           <p className="font-bold text-lg">Cargando promoción...</p>
-        </div>
+        </Loader>
       </div>
     );
   }

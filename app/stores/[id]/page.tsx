@@ -26,7 +26,6 @@ import {
 import { FaLocationDot, FaWhatsapp } from 'react-icons/fa6';
 import { MdAccessTimeFilled } from 'react-icons/md';
 import StoreTabs from './store-tabs';
-import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Edit2, Heart } from 'lucide-react';
@@ -35,6 +34,7 @@ import StoreSocialNetworksModal from './store-social-edit-modal';
 import { Button } from '@/components/ui/button';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
+import Loader from '@/components/dondeSiempre/Loader';
 
 const getSocialIcon = (name: string) => {
   const lowerName = name.toLowerCase();
@@ -127,7 +127,7 @@ export default function StorePage() {
   });
 
   if ((store.isLoading || outfits.isLoading || products.isLoading) && !store.data) {
-    return <LoadingText />;
+    return <Loader />;
   } else if (store.isError || outfits.isError || products.isError) {
     return (
       <>

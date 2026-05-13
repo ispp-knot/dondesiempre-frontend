@@ -2,7 +2,6 @@
 
 import ErrorText from '@/components/dondeSiempre/ErrorText';
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
-import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -24,6 +23,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
 import { BackButton } from '@/components/dondeSiempre/BackButton';
 import { getUploadErrorMessage } from '@/lib/utils/errorHandler';
+import Loader from '@/components/dondeSiempre/Loader';
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
@@ -62,7 +62,7 @@ export default function ProductCreationPage() {
   const descriptionValue = useWatch({ control, name: 'description' }) ?? '';
 
   if (productTypes.isLoading) {
-    return <LoadingText />;
+    return <Loader />;
   }
 
   if (productTypes.isError) {

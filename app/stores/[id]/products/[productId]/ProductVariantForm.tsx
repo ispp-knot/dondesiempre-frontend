@@ -13,8 +13,8 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
-import LoadingText from '@/components/dondeSiempre/LoadingText';
 import ErrorText from '@/components/dondeSiempre/ErrorText';
+import Loader from '@/components/dondeSiempre/Loader';
 
 const variantSchema = z.object({
   sizeId: z.string().min(1, 'Debes seleccionar una talla'),
@@ -136,7 +136,7 @@ export default function ProductVariantForm({
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-primary">Talla *</label>
             {sizes.isLoading ? (
-              <LoadingText />
+              <Loader />
             ) : sizes.isError ? (
               <ErrorText error={sizes.error} />
             ) : (
@@ -200,7 +200,7 @@ export default function ProductVariantForm({
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-primary">Color *</label>
             {colors.isLoading ? (
-              <LoadingText />
+              <Loader />
             ) : colors.isError ? (
               <ErrorText error={colors.error} />
             ) : (
