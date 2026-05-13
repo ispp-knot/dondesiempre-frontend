@@ -5,6 +5,7 @@ import { usePassiveFetcher } from '@/lib/api/fetcher';
 import { FaQrcode, FaTimes } from 'react-icons/fa';
 import Image from 'next/image';
 import { Button } from '../ui/button';
+import Loader from '@/components/dondeSiempre/Loader';
 
 interface OrderQrButtonProps {
   orderCode: string;
@@ -47,11 +48,7 @@ export function OrderQrButton({ orderCode }: OrderQrButtonProps) {
               Muéstraselo a la tienda para recoger tu pedido
             </p>
 
-            {isLoading && (
-              <div className="w-48 h-48 flex items-center justify-center">
-                <div className="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
-              </div>
-            )}
+            {isLoading && <Loader />}
 
             {isError && (
               <div className="w-48 h-48 flex flex-col items-center justify-center gap-2 text-center">

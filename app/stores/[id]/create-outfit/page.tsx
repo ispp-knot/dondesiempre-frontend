@@ -3,7 +3,6 @@
 import { BackButton } from '@/components/dondeSiempre/BackButton';
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
-import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import SortableProduct from '@/components/dondeSiempre/SortableProduct';
 import { StoreOwnerGuard } from '@/components/guards/StoreOwnerGuard';
@@ -44,6 +43,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { FaPlus } from 'react-icons/fa';
 import { FaTag } from 'react-icons/fa6';
 import { z } from 'zod';
+import Loader from '@/components/dondeSiempre/Loader';
 
 const outfitSchema = createOutfitFormSchema();
 
@@ -372,7 +372,7 @@ function OutfitCreationForm({
                   <Label htmlFor="form-tags" className="text-base font-bold text-secondary">
                     Etiquetas
                   </Label>
-                  <div className="flex flex-col gap-2 sm:flex-row">
+                  <div className="flex flex-col gap-2 sm:flex-row" data-testid="outfit-tags-input">
                     <Input
                       id="form-tags"
                       value={tagInput}
@@ -573,7 +573,7 @@ export default function OutfitCreationPage() {
   };
 
   if (products.isLoading || store.isLoading) {
-    return <LoadingText />;
+    return <Loader />;
   }
 
   if (products.isError || store.isError) {

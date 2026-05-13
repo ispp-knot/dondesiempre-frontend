@@ -27,9 +27,10 @@ test.describe.serial('client auth setup', () => {
     await page.getByRole('textbox', { name: 'Nombre' }).fill('Jose');
     await page.getByRole('textbox', { name: 'Nombre' }).press('Tab');
     await page.getByRole('textbox', { name: 'Apellido' }).fill('Cliente');
+    await page.getByRole('checkbox', { name: 'He leído y acepto los té' }).click();
     await page.getByRole('button', { name: 'Registrarse' }).click();
 
-    const toast = page.getByText('DondeSiempre¡Registro exitoso');
+    const toast = page.getByText('Donde Siempre¡Registro');
     await expect(toast).toBeVisible();
 
     await page.getByRole('link', { name: 'Ir a iniciar sesión' }).click();
@@ -81,9 +82,10 @@ test.describe.serial('store auth setup', () => {
     await page.getByRole('textbox', { name: 'Color primario' }).fill('#532508');
     await page.getByRole('textbox', { name: 'Color secundario' }).click();
     await page.getByRole('textbox', { name: 'Color secundario' }).fill('#124568');
+    await page.getByRole('checkbox', { name: 'He leído y acepto los té' }).click();
     await page.getByRole('button', { name: 'Registrarse' }).click();
 
-    const toast = page.getByText('DondeSiempre¡Registro exitoso');
+    const toast = page.getByText('Donde Siempre¡Registro');
     await expect(toast).toBeVisible();
 
     await page.getByRole('link', { name: 'Ir a iniciar sesión' }).click();

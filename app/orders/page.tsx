@@ -7,7 +7,6 @@ import { convertPrice, formatDisplayPrice } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import LoadingText from '@/components/dondeSiempre/LoadingText';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import {
@@ -29,6 +28,7 @@ import { PayButton } from '@/components/dondeSiempre/PayButton';
 import { AccountStatusDto } from '@/lib/types/payment/accountStatusDto';
 import { AlertTriangle } from 'lucide-react';
 import { OrderQrButton } from '@/components/dondeSiempre/OrderQrButton';
+import Loader from '@/components/dondeSiempre/Loader';
 
 type OrderStatus = 'ALL' | 'PENDING' | 'CONFIRMED' | 'REJECTED' | 'PICKED';
 
@@ -64,7 +64,7 @@ export default function OrdersPage() {
   const updateStatus = useActiveFetcher<void>({ method: 'PATCH' });
   const [filter, setFilter] = useState<OrderStatus>('ALL');
 
-  if (orders.isLoading) return <LoadingText />;
+  if (orders.isLoading) return <Loader />;
 
   if (orders.isError) {
     const errorData = orders.error as FetcherError;

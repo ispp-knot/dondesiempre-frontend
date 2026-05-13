@@ -1,7 +1,6 @@
 'use client';
 
 import { ErrorView } from '@/components/dondeSiempre/ErrorView';
-import LoadingText from '@/components/dondeSiempre/LoadingText';
 import NotFoundText from '@/components/dondeSiempre/NotFoundText';
 import { StoreCard } from '@/components/dondeSiempre/StoreCard';
 import { usePassiveFetcher } from '@/lib/api/fetcher';
@@ -9,6 +8,7 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { StoreDTO } from '@/lib/types/stores/storesDto';
 import { useUserLocation } from '@/lib/useGeolocation';
 import { JSX } from 'react';
+import Loader from '@/components/dondeSiempre/Loader';
 
 export default function FollowPage(): JSX.Element {
   const { getCurrentUser } = useAuth();
@@ -21,7 +21,7 @@ export default function FollowPage(): JSX.Element {
   const userLocation = useUserLocation();
 
   if (followedStores.isLoading) {
-    return <LoadingText></LoadingText>;
+    return <Loader />;
   }
 
   if (followedStores.isError) {
