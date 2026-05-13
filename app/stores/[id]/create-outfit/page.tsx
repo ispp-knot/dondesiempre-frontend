@@ -378,7 +378,6 @@ function OutfitCreationForm({
                       value={tagInput}
                       maxLength={MAX_OUTFIT_TAG_LENGTH}
                       placeholder="Ej. Primavera, oficina, evento especial..."
-                      
                       className="min-w-0 break-words"
                       onChange={(event) => {
                         setTagInput(event.target.value);
