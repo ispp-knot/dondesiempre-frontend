@@ -17,7 +17,7 @@ import { StripeDashboardLinkDTO } from '@/lib/types/payment/stripeDashboardLinkD
 import { AccountStatusDto } from '@/lib/types/payment/accountStatusDto';
 import Loader from '@/components/dondeSiempre/Loader';
 
-export function ProfilePage({ }) {
+export function ProfilePage({}) {
   const router = useRouter();
   const { deleteInfo, registerInfo, getAuthToken } = useAuth();
 

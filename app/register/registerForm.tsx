@@ -127,20 +127,22 @@ export function RegisterForm() {
         <button
           type="button"
           onClick={() => handleTypeSwitch('client')}
-          className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${type === 'client'
-            ? 'bg-secondary text-white'
-            : 'bg-transparent text-secondary hover:bg-secondary/10'
-            }`}
+          className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+            type === 'client'
+              ? 'bg-secondary text-white'
+              : 'bg-transparent text-secondary hover:bg-secondary/10'
+          }`}
         >
           Soy cliente
         </button>
         <button
           type="button"
           onClick={() => handleTypeSwitch('store')}
-          className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${type === 'store'
-            ? 'bg-secondary text-white'
-            : 'bg-transparent text-secondary hover:bg-secondary/10'
-            }`}
+          className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+            type === 'store'
+              ? 'bg-secondary text-white'
+              : 'bg-transparent text-secondary hover:bg-secondary/10'
+          }`}
         >
           Soy tienda
         </button>
@@ -150,15 +152,17 @@ export function RegisterForm() {
       {started && (
         <div className="flex items-center justify-center gap-2">
           <span
-            className={`size-7 rounded-full flex items-center justify-center text-xs font-bold ${step === 1 ? 'bg-primary text-white' : 'bg-primary/20 text-primary'
-              }`}
+            className={`size-7 rounded-full flex items-center justify-center text-xs font-bold ${
+              step === 1 ? 'bg-primary text-white' : 'bg-primary/20 text-primary'
+            }`}
           >
             1
           </span>
           <div className="h-px w-8 bg-border" />
           <span
-            className={`size-7 rounded-full flex items-center justify-center text-xs font-bold ${step === 2 ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'
-              }`}
+            className={`size-7 rounded-full flex items-center justify-center text-xs font-bold ${
+              step === 2 ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'
+            }`}
           >
             2
           </span>
