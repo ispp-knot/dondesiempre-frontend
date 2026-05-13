@@ -127,7 +127,7 @@ export function ProfilePage({}) {
                   : () => dashboard.refetch()
               }
             >
-              {verified.isLoading ? 'Verificando' : 'Dashboard'}
+              {verified.isLoading ? 'Verificando' : 'Dashboard de pagos'}
             </Button>
             {dashboard.isError && (
               <p className="text-[11px] text-destructive px-1 leading-tight">
