@@ -11,7 +11,6 @@ import { useParams, useRouter } from 'next/navigation';
 
 // UI Components
 import ImageUpload from '@/components/dondeSiempre/ImageUpload';
-import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -374,9 +373,6 @@ export default function PromotionForm({
           <p className="text-destructive text-xs mt-1">{errors.promotionImage.message as string}</p>
         )}
       </div>
-
-
-
 
       {status && (
         <div
