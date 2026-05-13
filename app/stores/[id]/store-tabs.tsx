@@ -350,7 +350,7 @@ export default function StoreTabs({
                 fill
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent" />
               <button
                 onClick={() => setSelectedPromo(null)}
                 className="absolute top-3 right-3 text-white bg-black/20 hover:bg-black/40 p-1.5 rounded-full backdrop-blur-md transition cursor-pointer hover:scale-105"
@@ -379,9 +379,9 @@ export default function StoreTabs({
                   selectedPromo.products.map((product, index) => (
                     <div
                       key={`${selectedPromo.id}-prod-${index}`}
-                      className="flex items-center gap-3 p-2 border border-gray-100 rounded-xl hover:bg-gray-50 transition justify-between"
+                      className="flex items-center gap-3 p-2 border border-gray-100 rounded-xl hover:bg-gray-50 transition justify-between overflow-hidden"
                     >
-                      <div>
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
                         <div className="relative h-14 w-14 rounded-lg overflow-hidden shrink-0 border">
                           <Image
                             src={product.image || '/static/img/outfit_placeholder.jpg'}
@@ -411,7 +411,7 @@ export default function StoreTabs({
                       <Link
                         href={`/stores/${store.id}/products/${product.id}?promotionId=${selectedPromo.id}`}
                       >
-                        <Button className="m-2">Aplicar promoción</Button>
+                        <Button className="m-2 shrink-0">Aplicar promoción</Button>
                       </Link>
                     </div>
                   ))
