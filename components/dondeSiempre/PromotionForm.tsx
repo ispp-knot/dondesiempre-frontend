@@ -375,23 +375,8 @@ export default function PromotionForm({
         )}
       </div>
 
-      {/* Active Toggle */}
-      {initialData !== undefined && (
-        <div className="flex items-center justify-between py-2">
-          <span className="text-lg font-bold text-primary">Activa</span>
-          <Controller
-            control={control}
-            name="isActive"
-            render={({ field }) => (
-              <Switch
-                checked={field.value}
-                onCheckedChange={field.onChange}
-                className="cursor-pointer"
-              />
-            )}
-          />
-        </div>
-      )}
+
+
 
       {status && (
         <div

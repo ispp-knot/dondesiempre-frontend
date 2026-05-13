@@ -111,7 +111,6 @@ export default function EditPromotionPage() {
     const dto = {
       name: formData.name,
       discountPercentage: formData.discountPercentage,
-      isActive: formData.isActive,
       productIds: formData.products.map((p) => p.id),
       storeId: storeId,
       description: formData.description,
@@ -204,11 +203,10 @@ export default function EditPromotionPage() {
         <button
           onClick={() => setIsConfirmDeleteOpen(true)}
           disabled={isSaving || isDeleting}
-          className={`px-6 py-2 rounded-full font-bold transition-colors ${
-            isDeleting
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-red-50 text-destructive border border-destructive hover:bg-destructive hover:text-white'
-          }`}
+          className={`px-6 py-2 rounded-full font-bold transition-colors ${isDeleting
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            : 'bg-red-50 text-destructive border border-destructive hover:bg-destructive hover:text-white'
+            }`}
         >
           {isDeleting ? 'Eliminando...' : 'Eliminar Promoción'}
         </button>

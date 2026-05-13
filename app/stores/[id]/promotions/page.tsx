@@ -27,7 +27,6 @@ export default function CreatePromotionPage() {
     const dto = {
       name: formData.name,
       discountPercentage: formData.discountPercentage,
-      active: formData.isActive,
       productIds: formData.products.map((p: Product) => p.id),
       storeId: storeId,
       description: formData.description,
