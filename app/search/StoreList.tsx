@@ -44,7 +44,7 @@ export default function StoreList() {
 
       <div className="flex-1 overflow-y-auto px-4 py-2 max-w-6xl mx-auto w-full">
         {isPending && !stores ? (
-          <Loader className="flex justify-center items-center h-40" />
+          <Loader className="flex flex-col justify-center items-center h-40" >Cargando tiendas...</Loader>
         ) : stores && stores.length > 0 ? (
           <div className="grid grid-cols-1 wide:grid-cols-2 gap-4 wide:gap-6">
             {stores.map((store) => (

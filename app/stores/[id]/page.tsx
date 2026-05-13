@@ -127,7 +127,7 @@ export default function StorePage() {
   });
 
   if ((store.isLoading || outfits.isLoading || products.isLoading) && !store.data) {
-    return <Loader />;
+    return <Loader>Cargando tienda...</Loader>;
   } else if (store.isError || outfits.isError || products.isError) {
     return (
       <>
@@ -207,9 +207,8 @@ export default function StorePage() {
           >
             <Heart
               size={16}
-              className={`flex-shrink-0 transition-colors duration-200 ${
-                isFollowing.data?.isFollowing ? 'fill-current' : ''
-              }`}
+              className={`flex-shrink-0 transition-colors duration-200 ${isFollowing.data?.isFollowing ? 'fill-current' : ''
+                }`}
             />
             <span className="hidden md:inline">
               {isFollowing.data?.isFollowing ? 'Siguiendo' : 'Seguir'}
