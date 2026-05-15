@@ -180,6 +180,13 @@ export default function ProductDetailsPage() {
   const isStore = user?.roles.includes('STORE') ?? false;
   const isStoreOwner = (user?.store && user?.store.id === product.data?.storeId) ?? false;
 
+  useEffect(() => {
+    const openCreateVariantModal = searchParams.get('createVariant') && isStoreOwner;
+    if (openCreateVariantModal) {
+      setIsCreateVariantModalOpen(true);
+    }
+  }, [isStoreOwner, searchParams]);
+
   const isClient = Boolean(user?.client?.id);
 
   if (
