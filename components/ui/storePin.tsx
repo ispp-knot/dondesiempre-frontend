@@ -7,7 +7,7 @@ export function StorePin({ store, size = 40 }: { store: StoreDTO; size?: number 
   return (
     <div className="flex flex-col items-center gap-2" data-testid="store-pin">
       <label
-        className="bg-white px-1.5 py-0.5 rounded-lg whitespace-nowrap text-lg font-medium shadow-md cursor-pointer max-w-[50vw] sm:max-w-[35vw] md:max-w-[25vw] lg:max-w-[15vw] truncate"
+        className="bg-white px-1.5 py-0.5 rounded-lg whitespace-nowrap text-lg font-medium shadow-md cursor-pointer max-w-52 md:max-w-2xs truncate"
         style={{ color: convertToBrightness(color, 25) }}
       >
         {store.name}
