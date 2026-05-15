@@ -170,7 +170,7 @@ export default function ManagePromotionsPage() {
                     {promo.name}
                   </h3>
 
-                  <p className="text-gray-500 text-sm line-clamp-2 min-h-[2.5rem] mb-4">
+                  <p className="text-gray-500 text-sm line-clamp-4 wrap-break-word min-h-[2.5rem] mb-4">
                     {promo.description || 'Sin descripción detallada.'}
                   </p>
 
