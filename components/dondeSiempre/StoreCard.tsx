@@ -116,18 +116,12 @@ export function StoreCard({
     >
       {/* Image */}
       <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-xl md:rounded-3xl overflow-hidden bg-gray-100 mr-4 sm:mr-8 flex-shrink-0 shadow-inner">
-        {store.storefront?.bannerImageUrl ? (
-          <Image
-            src={store.storefront.bannerImageUrl}
-            alt={store.name}
-            fill
-            className="object-cover"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary/30">
-            <HiOutlineLocationMarker className="w-8 h-8 md:w-14 md:h-14" />
-          </div>
-        )}
+        <Image
+          src={store.storefront.bannerImageUrl || '/static/img/banner.jpg'}
+          alt={store.name}
+          fill
+          className="object-cover"
+        />
       </div>
 
       {/* Info */}
