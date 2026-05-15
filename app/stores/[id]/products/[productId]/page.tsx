@@ -29,8 +29,9 @@ import { BackButton } from '@/components/dondeSiempre/BackButton';
 import { GenericConfirmModal } from '@/components/modals/GenericConfirmModal';
 import GenericSuccessModal from '@/components/modals/GenericSuccessModal';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
-import { BadgePercent } from 'lucide-react';
+import { AlertCircleIcon, BadgePercent } from 'lucide-react';
 import Loader from '@/components/dondeSiempre/Loader';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 function ProductPrice({
   product,
@@ -457,10 +458,16 @@ export default function ProductDetailsPage() {
               />
             )}
 
-            {!hasVariants && !isStoreOwner && (
-              <p className="text-sm text-muted-foreground">
-                Este producto no tiene variantes disponibles.
-              </p>
+            {!hasVariants && (
+              <Alert variant="destructive" className="max-w-md">
+                <AlertCircleIcon />
+                <AlertTitle>Producto sin variantes</AlertTitle>
+                <AlertDescription>
+                  {isStoreOwner
+                    ? 'Tus clientes no podrán comprar este producto hasta que le crees variantes.'
+                    : 'Este producto no puede ser comprado porque no tiene variantes disponibles.'}
+                </AlertDescription>
+              </Alert>
             )}
 
             {isClient && hasVariants && (
