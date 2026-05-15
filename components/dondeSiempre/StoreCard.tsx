@@ -134,7 +134,7 @@ export function StoreCard({
       <div className="flex flex-col flex-1 min-w-0 justify-start">
         <div className="flex flex-row items-start gap-2 md:gap-5 md:mb-1 justify-between w-full">
           <h3
-            className="text-md md:text-lg font-bold md:font-extrabold text-dark-blue group-hover:text-primary transition-colors tracking-tight flex-1 min-w-0"
+            className="text-md md:text-lg font-bold md:font-extrabold text-dark-blue group-hover:text-primary transition-colors tracking-tight flex-1 min-w-0 line-clamp-2 wrap-break-word"
             style={{ color: convertToBrightness(store.storefront.primaryColor, 40) }}
           >
             {store.name}
