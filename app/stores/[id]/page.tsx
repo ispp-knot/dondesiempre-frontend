@@ -219,7 +219,7 @@ export default function StorePage() {
       </div>
 
       <div className="flex flex-col items-center gap-2 mt-5 px-4">
-        <div className="text-center text-3xl md:text-5xl text-[var(--primary)] font-bold">
+        <div className="w-full wrap-break-word line-clamp-2 pb-2 text-center text-3xl md:text-5xl text-[var(--primary)] font-bold">
           {store.data.name}
         </div>
 
