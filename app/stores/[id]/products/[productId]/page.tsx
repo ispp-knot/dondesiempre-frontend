@@ -13,7 +13,7 @@ import { OrderDTO } from '@/lib/types/orders/orderDto';
 import { convertPrice, formatDisplayPrice, discountPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { FetchError } from 'ofetch';
 import ProductVariantSelector, { ProductVariantDTO } from './ProductVariantSelector';
 import AuthModal from '@/components/modals/AuthModal';
@@ -29,8 +29,9 @@ import { BackButton } from '@/components/dondeSiempre/BackButton';
 import { GenericConfirmModal } from '@/components/modals/GenericConfirmModal';
 import GenericSuccessModal from '@/components/modals/GenericSuccessModal';
 import { PromotionDTO } from '@/lib/types/promotions/promotionsDto';
-import { BadgePercent } from 'lucide-react';
+import { AlertCircleIcon, BadgePercent } from 'lucide-react';
 import Loader from '@/components/dondeSiempre/Loader';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 function ProductPrice({
   product,
@@ -63,30 +64,48 @@ function ProductPrice({
   );
 }
 
+const MobileTitle = ({ product }: { product: ProductDTO }) => {
+  return (
+    <div className="md:hidden pt-8 px-4 pb-4 w-full text-center">
+      <h1 className="mb-1 font-bold text-primary text-3xl wrap-break-word">{product.name}</h1>
+    </div>
+  );
+};
+
+const DesktopTitle = ({ product }: { product: ProductDTO }) => {
+  return (
+    <div className="hidden md:block">
+      <h1 className="font-bold text-primary text-3xl mb-1 wrap-break-word">{product.name}</h1>
+    </div>
+  );
+};
+
 export default function ProductDetailsPage() {
   const params = useParams<{ id: string; productId: string }>();
 
   const searchParams = useSearchParams();
   const promotionId = searchParams.get('promotionId');
 
+  const { getCurrentUser } = useAuth();
+  const user = getCurrentUser();
+  const isStore = user?.roles.includes('STORE') ?? false;
+  const isStoreOwner = (user?.store && user?.store.id === params.id) ?? false;
+
+  const openCreateVariantModal = !!searchParams.get('createVariant') && isStoreOwner;
+
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
-  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isCreateVariantModalOpen, setIsCreateVariantModalOpen] = useState(false);
+  const [isCreateVariantModalOpen, setIsCreateVariantModalOpen] = useState(openCreateVariantModal);
+  const [isCreateVariantSuccess, setIsCreateVariantSuccess] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [isSubmittingVariant, setIsSubmittingVariant] = useState(false);
-  const [isDeletingVariants, setIsDeletingVariants] = useState(false);
-  const [isUpdatingVariants, setIsUpdatingVariants] = useState(false);
   const [activeFetchingError, setActiveFetchingError] = useState<string | null>(null);
   const [variantCreationError, setVariantCreationError] = useState<string | null>(null);
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
-  const [promotion, setPromotion] = useState<PromotionDTO | undefined>(undefined);
 
   const router = useRouter();
 
@@ -97,11 +116,7 @@ export default function ProductDetailsPage() {
     enabled: !!promotionId,
   });
 
-  useEffect(() => {
-    if (promotionFetcher.data) {
-      setPromotion(promotionFetcher.data);
-    }
-  }, [promotionFetcher.data]);
+  const promotion = promotionFetcher.data;
 
   const variantsBackend = usePassiveFetcher<ProductVariantBackendDTO[]>({
     url: `product-variants/product/${params.productId}/available`,
@@ -174,11 +189,6 @@ export default function ProductDetailsPage() {
     method: 'POST',
   });
 
-  const { getCurrentUser } = useAuth();
-  const user = getCurrentUser();
-  const isStore = user?.roles.includes('STORE') ?? false;
-  const isStoreOwner = (user?.store && user?.store.id === product.data?.storeId) ?? false;
-
   const isClient = Boolean(user?.client?.id);
 
   if (
@@ -224,7 +234,6 @@ export default function ProductDetailsPage() {
       );
       return;
     }
-    setIsCreatingOrder(true);
     try {
       await createOrder.fetch({ body: { [selectedVariant.id]: 1 } });
       setIsConfirmModalOpen(false);
@@ -243,13 +252,11 @@ export default function ProductDetailsPage() {
       } else {
         setActiveFetchingError('Hubo un problema al crear el pedido.');
       }
-    } finally {
-      setIsCreatingOrder(false);
     }
   };
 
   const handleCreateVariant = async (data: ProductVariantFormData) => {
-    setIsSubmittingVariant(true);
+    setIsCreateVariantSuccess(false);
     try {
       await createVariant.fetch({
         body: {
@@ -262,8 +269,9 @@ export default function ProductDetailsPage() {
       await sizes.refetch();
       await variantsBackend.refetch();
       await allVariantsBackend.refetch();
-      setIsCreateVariantModalOpen(false);
+      // setIsCreateVariantModalOpen(false);
       setVariantCreationError(null);
+      setIsCreateVariantSuccess(true);
     } catch (error) {
       const err = error as FetchError;
       if (err.data?.includes('already exists')) {
@@ -271,13 +279,10 @@ export default function ProductDetailsPage() {
       } else {
         setVariantCreationError('Hubo un problema al crear la variante.');
       }
-    } finally {
-      setIsSubmittingVariant(false);
     }
   };
 
   const handleDeleteVariants = async (variantIds: string[]) => {
-    setIsDeletingVariants(true);
     try {
       await Promise.all(
         variantIds.map((id) => deleteVariant.fetch({ url: `product-variants/${id}` }))
@@ -289,13 +294,10 @@ export default function ProductDetailsPage() {
       setIsDeleteModalOpen(false);
       console.error('Error deleting variants:', error);
       setActiveFetchingError('Hubo un problema al eliminar las variantes.');
-    } finally {
-      setIsDeletingVariants(false);
     }
   };
 
   const handleUpdateVariants = async (changes: Array<{ id: string; isAvailable: boolean }>) => {
-    setIsUpdatingVariants(true);
     try {
       await Promise.all(
         changes.map(({ id, isAvailable }) =>
@@ -312,12 +314,10 @@ export default function ProductDetailsPage() {
       setIsUpdateModalOpen(false);
       console.error('Error updating variants:', error);
       setActiveFetchingError('Hubo un problema al actualizar las variantes.');
-    } finally {
-      setIsUpdatingVariants(false);
     }
   };
+
   const handleDelete = async () => {
-    setIsDeleting(true);
     try {
       await deleteProduct.fetch({ url: `products/${product.data?.id}` });
       setIsConfirmDeleteOpen(false);
@@ -330,29 +330,7 @@ export default function ProductDetailsPage() {
           ? 'No puede ser borrado porque es usado en uno o más outfits.'
           : 'Hubo un problema al eliminar el producto';
       setActiveFetchingError(message);
-    } finally {
-      setIsDeleting(false);
     }
-  };
-
-  const MobileTitle = () => {
-    return (
-      <div className="md:hidden pt-8 px-4 pb-4 w-full text-center">
-        <h1 className="mb-1 font-bold text-primary text-3xl wrap-break-word">
-          {product.data.name}
-        </h1>
-      </div>
-    );
-  };
-
-  const DesktopTitle = () => {
-    return (
-      <div className="hidden md:block">
-        <h1 className="font-bold text-primary text-3xl mb-1 wrap-break-word">
-          {product.data.name}
-        </h1>
-      </div>
-    );
   };
 
   return (
@@ -366,7 +344,7 @@ export default function ProductDetailsPage() {
           <BackButton variant="ghost" onAction={() => router.push(`/stores/${params.id}`)} />
         </div>
 
-        <MobileTitle />
+        <MobileTitle product={product.data} />
 
         <div className="w-full md:max-w-5xl md:flex md:flex-row md:gap-10 md:px-10 md:py-10 md:pt-4">
           <div className="md:w-1/2 shrink-0 flex flex-col">
@@ -393,13 +371,13 @@ export default function ProductDetailsPage() {
             className="md:w-1/2 flex flex-col gap-5 pt-4 pb-8 px-8 md:px-0 md:py-0 md:justify-start"
             data-testid="product-desktop-name"
           >
-            <DesktopTitle />
+            <DesktopTitle product={product.data} />
             {isConfirmDeleteOpen && (
               <GenericConfirmModal
                 message="¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer."
                 onConfirm={handleDelete}
                 onClose={() => setIsConfirmDeleteOpen(false)}
-                isLoading={isDeleting}
+                isLoading={deleteProduct.isPending}
                 confirmLabel="Eliminar"
               />
             )}
@@ -457,10 +435,16 @@ export default function ProductDetailsPage() {
               />
             )}
 
-            {!hasVariants && !isStoreOwner && (
-              <p className="text-sm text-muted-foreground">
-                Este producto no tiene variantes disponibles.
-              </p>
+            {!hasVariants && (
+              <Alert variant="destructive" className="max-w-md">
+                <AlertCircleIcon />
+                <AlertTitle>Producto sin variantes</AlertTitle>
+                <AlertDescription>
+                  {isStoreOwner
+                    ? 'Tus clientes no podrán comprar este producto hasta que le crees variantes.'
+                    : 'Este producto no puede ser comprado porque no tiene variantes disponibles.'}
+                </AlertDescription>
+              </Alert>
             )}
 
             {isClient && hasVariants && (
@@ -527,7 +511,7 @@ export default function ProductDetailsPage() {
             product.data.priceInCents,
             promotion ? promotion.discountPercentage : product.data.discountPercentage
           )}
-          isCreatingOrder={isCreatingOrder}
+          isCreatingOrder={createOrder.isPending}
           onConfirm={confirmAndCreateOrder}
           onClose={() => setIsConfirmModalOpen(false)}
         >
@@ -574,9 +558,10 @@ export default function ProductDetailsPage() {
           setVariantCreationError(null);
         }}
         onSubmit={handleCreateVariant}
-        isSubmitting={isSubmittingVariant}
+        isSubmitting={createVariant.isPending}
         error={variantCreationError}
         onErrorClear={() => setVariantCreationError(null)}
+        isSuccess={isCreateVariantSuccess}
       />
 
       {allVariants.data && (
@@ -586,7 +571,7 @@ export default function ProductDetailsPage() {
             onClose={() => setIsDeleteModalOpen(false)}
             variants={allVariants.data}
             onDelete={handleDeleteVariants}
-            isDeleting={isDeletingVariants}
+            isDeleting={deleteVariant.isPending}
           />
 
           <UpdateVariantsModal
@@ -594,7 +579,7 @@ export default function ProductDetailsPage() {
             onClose={() => setIsUpdateModalOpen(false)}
             variants={allVariants.data}
             onUpdate={handleUpdateVariants}
-            isUpdating={isUpdatingVariants}
+            isUpdating={updateVariant.isPending}
           />
           {deleteSuccess && (
             <GenericSuccessModal
