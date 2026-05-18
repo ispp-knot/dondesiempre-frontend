@@ -83,13 +83,13 @@ export default function ProductCreationPage() {
     };
 
     try {
-      await createProduct.fetch({
+      const product = await createProduct.fetch({
         formPayload: {
           dto: new Blob([JSON.stringify(dto)], { type: 'application/json' }),
           image: imageFile ?? undefined,
         },
       });
-      router.push(`/stores/${params.id}`);
+      router.push(`/stores/${params.id}/products/${product.id}?createVariant=true`);
     } catch (err: unknown) {
       setApiError(
         getUploadErrorMessage(

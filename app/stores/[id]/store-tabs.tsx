@@ -370,7 +370,7 @@ export default function StoreTabs({
             </div>
 
             <div className="p-5 overflow-y-auto">
-              <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+              <p className="text-gray-600 text-sm mb-4 leading-relaxed wrap-break-word line-clamp-5">
                 {selectedPromo.description}
               </p>
 
