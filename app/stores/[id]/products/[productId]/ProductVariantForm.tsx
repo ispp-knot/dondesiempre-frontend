@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -15,6 +15,7 @@ import {
 import { useActiveFetcher, usePassiveFetcher } from '@/lib/api/fetcher';
 import ErrorText from '@/components/dondeSiempre/ErrorText';
 import Loader from '@/components/dondeSiempre/Loader';
+import { Check } from 'lucide-react';
 
 const variantSchema = z.object({
   sizeId: z.string().min(1, 'Debes seleccionar una talla'),
@@ -29,6 +30,7 @@ interface ProductVariantFormProps {
   onClose: () => void;
   onSubmit: (data: ProductVariantFormData) => Promise<void>;
   isSubmitting: boolean;
+  isSuccess?: boolean;
   error?: string | null;
   onErrorClear?: () => void;
 }
@@ -49,6 +51,7 @@ export default function ProductVariantForm({
   onClose,
   onSubmit,
   isSubmitting,
+  isSuccess = false,
   error,
   onErrorClear,
 }: ProductVariantFormProps) {
@@ -258,6 +261,13 @@ export default function ProductVariantForm({
               )}
             />
           </div>
+
+          {isSuccess && (
+            <div className="flex flex-row gap-2 justify-center items-center text-green-700 font-bold">
+              <Check />
+              <p>Variante creada con éxito</p>
+            </div>
+          )}
 
           <DialogFooter className="mt-4">
             <Button
